@@ -1,0 +1,39 @@
+body, ul, li, dl, dt, dd, p, ol, h1, h2, h3, h4, h5, h6, form, img, table, fieldset, legend {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 22px;
+}
+
+ul, li, ol {
+  list-style: none;
+}
+
+img, fieldset {
+  border: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+input, a {
+  outline: none;
+}
+
+.yc-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.yc-line {
+  border-top: 1px solid #e2e4e9;
+}
+
