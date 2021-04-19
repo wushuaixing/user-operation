@@ -7,7 +7,7 @@ import router from "./router";
 import lang from "element-plus/lib/locale/lang/zh-cn";
 import locale from "element-plus/lib/locale";
 import store from "./store";
-// import "element-plus/lib/theme-chalk/index.css";
+import '../element-variables.scss';
 import "./assets/public.scss";
 
 

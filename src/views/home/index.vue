@@ -82,13 +82,12 @@ export default {
 }
 
 .el-header {
-  background-color: #016aa9;
   color: #fff;
   height: 50px !important;
 }
 
 .el-aside {
-  background-color: #001529;
+  background-color: #19283F;
   height: 100%;
 }
 </style>

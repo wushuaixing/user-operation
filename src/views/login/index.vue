@@ -131,7 +131,7 @@ export default {
     };
   },
   created() {
-    this.isLocal = /localhost/.test(window.location.host);
+    this.isLocal = /localhost/.test(window.location.host) || /142/.test(window.location.host) ;
   },
   methods: {
     onSubmit() {

@@ -24,6 +24,9 @@ a {
 input, a {
   outline: none;
 }
+a{
+  color: #296DD3;
+}
 
 .yc-ellipsis {
   overflow: hidden;
@@ -37,3 +40,8 @@ input, a {
   border-top: 1px solid #e2e4e9;
 }
 
+.bold-text{
+  font-weight: bold;
+  color: #293038;
+  font-size: 16px;
+}

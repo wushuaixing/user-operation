@@ -31,6 +31,8 @@ import {
   ElTree,
   ElCheckbox,
   ElTabPane,
+  ElLink,
+  ElDivider,
 } from "element-plus";
 
 const list = [
@@ -66,6 +68,8 @@ const list = [
   ElTree,
   ElCheckbox,
   ElTabPane,
+  ElLink,
+  ElDivider,
 ];
 
 export default (app) => {

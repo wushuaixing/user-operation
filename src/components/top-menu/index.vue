@@ -163,12 +163,16 @@ export default {
         type: "warning",
         showClose: false,
         closeOnClickModal: false,
-      }).then(() => {
-        LoginApi.loginOut().then(() => {
-          localStorage.clear();
-          this.$router.push("/login");
+      })
+        .then(() => {
+          LoginApi.loginOut().then(() => {
+            localStorage.clear();
+            this.$router.push("/login");
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      });
     },
   },
 };
@@ -176,7 +180,7 @@ export default {
 
 <style lang="scss">
 .el-header {
-  padding-right: 0;
+  padding: 0;
 }
 
 .yc-header-container {
@@ -188,6 +192,9 @@ export default {
   .title {
     display: flex;
     align-items: center;
+    height: 100%;
+    background-color: #132032;
+    padding: 0 25px 0 20px;
 
     span {
       font-size: 16px;
@@ -197,21 +204,22 @@ export default {
   }
 
   .user-message {
-    &:hover {
-      background-color: #0286d5;
-    }
-  }
+    //&:hover {
+    //  background-color: #0286d5;
+    //}
+    .el-dropdown {
+      &:hover {
+        color: #296dd3;
+      }
 
-  .el-dropdown {
-    color: #fff;
-
-    .el-dropdown-selfdefine {
-      display: flex;
-      min-width: 80px;
-      padding: 0 20px;
-      height: 50px;
-      align-items: center;
-      justify-content: center;
+      .el-dropdown-selfdefine {
+        display: flex;
+        min-width: 80px;
+        padding: 0 20px;
+        height: 50px;
+        align-items: center;
+        justify-content: center;
+      }
     }
   }
 }

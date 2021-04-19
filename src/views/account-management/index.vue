@@ -1,6 +1,7 @@
 <template>
-  <div class="yc-container">
-    <nav>
+  <div class="yc-container account-management-container">
+    <nav class="breadcrumb">
+      <div class="title bold-text">审核账号</div>
       <el-button type="primary" icon="el-icon-plus" @click="visible = true">
         添加账号
       </el-button>
@@ -22,13 +23,11 @@
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button size="mini" @click="handleAction(scope.row, 'edit')">
+          <el-button type="text" @click="handleAction(scope.row, 'edit')">
             重置密码
           </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleAction(scope.row, 'del')"
+          <el-divider direction="vertical"></el-divider>
+          <el-button type="text" @click="handleAction(scope.row, 'del')"
             >删除
           </el-button>
         </template>
@@ -92,7 +91,7 @@ import AdminApi from "@/server/api/admin";
 import { toRaw } from "vue";
 import { encryptInfo } from "@/utils/encrypt";
 import { SORTER_TYPE } from "@/utils/static";
-
+import WarningIcon from "@/assets/img/warn-icon.png";
 export default {
   name: "index",
   data() {
@@ -161,6 +160,7 @@ export default {
           ],
         },
       },
+      WarningIcon,
     };
   },
   created() {
@@ -182,30 +182,33 @@ export default {
     },
     handleAction({ id, userName }, action) {
       const isDel = action === "del";
-      const text = isDel ? `确认删除${userName}的账号?` : "确认重置密码?";
+      const text = isDel
+        ? "删除后，该账号将无法在平台登录"
+        : "重置密码后，该账号密码为账号后6位";
+      const title = isDel ? `确认删除${userName}的账号?` : "确认重置密码?";
       const messageText = isDel ? "删除成功" : "重置密码成功";
-      this.$confirm(
-        `<span><i class="el-icon-warning-outline"></i>${text}</span>`,
-        {
-          title: null,
-          dangerouslyUseHTMLString: true,
-        }
-      ).then(() => {
-        AdminApi.delUserAndResetPwd({ id }, action).then((res) => {
-          const { code } = res.data || {};
-          if (code === 200) {
-            this.$message.success({
-              message: messageText,
-              duration: 1000,
-              onClose: () => {
-                this.getList();
-              },
-            });
-          } else {
-            this.$message.error(res.data.message);
-          }
+      this.$confirm(text, title, {
+        type: "warning",
+      })
+        .then(() => {
+          AdminApi.delUserAndResetPwd({ id }, action).then((res) => {
+            const { code } = res.data || {};
+            if (code === 200) {
+              this.$message.success({
+                message: messageText,
+                duration: 1000,
+                onClose: () => {
+                  this.getList();
+                },
+              });
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      });
     },
     handlePwd() {
       const phone = this.form.phone;
@@ -267,3 +270,19 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.account-management-container {
+  nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    align-items: center;
+    .title {
+      line-height: 20px;
+      border-left: 3px solid #296dd3;
+      height: 20px;
+      padding-left: 8px;
+    }
+  }
+}
+</style>

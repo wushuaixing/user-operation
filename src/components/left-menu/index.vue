@@ -3,11 +3,11 @@
     <el-menu
       :default-active="$route.path"
       :default-openeds="['/index']"
-      class="el-menu-vertical-demo"
-      background-color="#001529"
+      class="el-aside-menu"
+      background-color="#19283F"
       text-color="#fff"
       router
-      active-text-color="#016aa9"
+      active-text-color="#fff"
     >
       <template
         v-for="item in role === 'Admin' ? adminMenu : userMenu"
@@ -104,4 +104,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.yc-aside-container {
+  .el-aside-menu {
+    .is-active {
+      background-color: #296dd3 !important;
+    }
+  }
+
+  .el-submenu,
+  .el-menu-item {
+    width: 200px;
+  }
+}
+</style>

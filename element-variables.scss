@@ -1,0 +1,63 @@
+/* element-plus 样式修改 */
+$--color-primary: #296DD3;
+
+$--color-success: #1BBA7C !default;
+
+$--color-warning: #F93535 !default;
+
+$--color-danger: #F93535 !default;
+
+$--color-info: #909399 !default;
+
+$--color-text-regular: #20242E !default;
+
+$--border-color-base: #C5C7CE !default;
+$--background-color-base: #EFF5FF !default;
+
+$--font-size-base: 14px !default;
+$--font-size-large: 16px !default;
+$--link-color: $--color-primary;
+$--link-hover-color: blue;
+
+/* Button
+-------------------------- */
+$--button-border-radius: 2px !default;
+$--button-font-size: $--font-size-base !default;
+$--button-padding-vertical: 8px !default;
+/* Input
+-------------------------- */
+$--input-height: 32px !default;
+$--input-border-color: $--border-color-base !default;
+/* Table
+-------------------------- */
+$--table-header-background-color: #EDEFF3 !default;
+$--table-header-font-color: #4E5566 !default;
+$--table-row-hover-background-color: $--background-color-base !default;
+/* Pagination
+-------------------------- */
+$--pagination-font-size: 12px !default;
+$--pagination-border-radius: 2px !default;
+.el-pagination {
+  text-align: right;
+  margin-top: 30px;
+}
+
+/* Menu
+--------------------------*/
+$--menu-item-hover-fill: red !default;
+
+
+/* Dropdown
+-------------------------- */
+$--dropdown-menuItem-hover-fill: #EFF5FF !default;
+
+/* Dialog
+-------------------------- */
+.el-message-box__title{
+  font-weight: bold;
+}
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-plus/lib/theme-chalk/fonts';
+
+@import "~element-plus/packages/theme-chalk/src/index";
