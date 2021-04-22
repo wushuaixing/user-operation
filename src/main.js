@@ -10,8 +10,6 @@ import store from "./store";
 import '../element-variables.scss';
 import "./assets/public.scss";
 
-
-
 const app = createApp(App);
 
 app.use(router);

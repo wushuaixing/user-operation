@@ -21,7 +21,13 @@
         </template>
       </el-dropdown>
     </div>
-    <el-dialog title="修改密码" v-model="visible" @close="resetForm">
+    <el-dialog
+      title="修改密码"
+      v-model="visible"
+      @close="resetForm"
+      width="500px"
+      custom-class="change-pwd-modal"
+    >
       <el-form
         :model="form"
         ref="editPwdForm"
@@ -237,6 +243,14 @@ export default {
 
   .el-popper__arrow::before {
     content: none;
+  }
+}
+
+.change-pwd-modal {
+  .el-dialog__body {
+    .el-form {
+      padding:0 30px;
+    }
   }
 }
 </style>

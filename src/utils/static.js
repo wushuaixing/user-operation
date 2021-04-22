@@ -102,10 +102,23 @@ const dataAuditTabs = (matchNum, noReadNum) => [
     name: "4",
   },
 ];
+
+const taskAssignTabs = (toBeAllocatedNum) => [
+  {
+    label: `待分配机构(${toBeAllocatedNum})`,
+    name: "0",
+  },
+  {
+    label: "已分配机构",
+    name: "1",
+  },
+];
+
 export {
   SORTER_TYPE,
   AUCTION_STATUS,
   DEBTORES_TYPE,
   ACTION_TYPE,
   dataAuditTabs,
+  taskAssignTabs,
 };

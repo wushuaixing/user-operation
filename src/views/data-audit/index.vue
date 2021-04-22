@@ -23,8 +23,9 @@
       <el-tree
         :data="data"
         :props="defaultProps"
+        accordion
         @node-click="handleNodeClick"
-      ></el-tree>
+      />
     </div>
     <div class="content-right">
       <BreadCrumb :text="title" />
@@ -40,7 +41,10 @@
             <el-input v-model="params.title" placeholder="拍卖标题"></el-input>
           </el-form-item>
           <el-form-item label="机构名称：">
-            <el-input v-model="params.orgName" placeholder="机构名称"></el-input>
+            <el-input
+              v-model="params.orgName"
+              placeholder="机构名称"
+            ></el-input>
           </el-form-item>
           <el-form-item label="拍卖状态：">
             <el-select v-model="params.status">
@@ -100,9 +104,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">搜索</el-button>
-            <el-button type="primary" @click="resetForm"
-              >清空搜索条件</el-button
-            >
+            <el-button type="primary" @click="resetForm">清空搜索条件</el-button>
           </el-form-item>
         </el-form>
       </div>

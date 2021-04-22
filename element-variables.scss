@@ -53,9 +53,26 @@ $--dropdown-menuItem-hover-fill: #EFF5FF !default;
 
 /* Dialog
 -------------------------- */
-.el-message-box__title{
+$--dialog-title-font-size: 16px !default;
+$--dialog-padding-primary: 0px !default;
+
+.el-dialog__header{
   font-weight: bold;
+  border-bottom: 1px solid #e2e4e9;
+  padding: 20px 0 20px 20px !important;
+  .el-dialog__title{
+    line-height: 16px !important;
+  }
+
 }
+.el-dialog__body{
+  padding: 32px 0 0 0 !important;
+}
+.el-dialog__footer{
+  border-top: 1px solid #e2e4e9;
+  padding: 20px 20px 20px 0 !important;
+}
+
 
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-plus/lib/theme-chalk/fonts';

@@ -39,8 +39,7 @@
       :current-page="page"
       layout="total, prev, pager, next, jumper"
       :total="total"
-    >
-    </el-pagination>
+    />
     <el-dialog title="添加账号" v-model="visible" @close="resetForm">
       <el-form
         :model="form"
@@ -92,6 +91,8 @@ import { toRaw } from "vue";
 import { encryptInfo } from "@/utils/encrypt";
 import { SORTER_TYPE } from "@/utils/static";
 import WarningIcon from "@/assets/img/warn-icon.png";
+import { accountManagementColumn } from "@/static/column";
+
 export default {
   name: "index",
   data() {
@@ -104,38 +105,7 @@ export default {
       },
       total: 0,
       loading: false,
-      column: [
-        {
-          prop: "id",
-          label: "ID",
-          width: "180",
-          sort: false,
-        },
-        {
-          prop: "phone",
-          label: "账号",
-          width: "180",
-          sort: false,
-        },
-        {
-          prop: "userName",
-          label: "姓名",
-          width: "180",
-          sort: false,
-        },
-        {
-          prop: "normalErrorNum",
-          label: "负责合作机构数",
-          width: "180",
-          sort: "custom",
-        },
-        {
-          prop: "notIncludeErrorNum",
-          label: "债务人数",
-          width: "180",
-          sort: "custom",
-        },
-      ],
+      column: accountManagementColumn,
       accountList: [],
       visible: false,
       form: {
@@ -231,10 +201,7 @@ export default {
             const { list, page, total } = data || {};
             this.accountList = list;
             this.total = total;
-            this.params = {
-              ...this.params,
-              page,
-            };
+            this.page = page;
           } else {
             this.$message.error("请求出错");
           }
@@ -277,6 +244,7 @@ export default {
     justify-content: space-between;
     margin-bottom: 16px;
     align-items: center;
+
     .title {
       line-height: 20px;
       border-left: 3px solid #296dd3;
