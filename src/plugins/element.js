@@ -33,6 +33,12 @@ import {
   ElTabPane,
   ElLink,
   ElDivider,
+  ElTimeline,
+  ElTimelineItem,
+  ElCol,
+  ElRadioGroup,
+  ElRadio,
+  ElCheckboxGroup,
 } from "element-plus";
 
 const list = [
@@ -70,6 +76,13 @@ const list = [
   ElTabPane,
   ElLink,
   ElDivider,
+  ElTimeline,
+  ElTimelineItem,
+  ElCol,
+  ElRadioGroup,
+  ElRadio,
+  ElCheckbox,
+  ElCheckboxGroup,
 ];
 
 export default (app) => {

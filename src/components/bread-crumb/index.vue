@@ -3,6 +3,9 @@
     <div class="title">
       {{ text }}
     </div>
+    <div class="action-btn" v-if="btnText">
+      <el-button type="primary" @click="$emit('handleClick')">{{btnText}}</el-button>
+    </div>
   </nav>
 </template>
 
@@ -12,7 +15,15 @@ export default {
   props: {
     text: {
       type: String,
-      default: "面包屑",
+      default: "",
+    },
+    btnText:{
+      type:String,
+      default: "",
+    },
+    handleClick:{
+      type:Function,
+      default:null,
     },
   },
   data() {

@@ -40,7 +40,7 @@
       layout="total, prev, pager, next, jumper"
       :total="total"
     />
-    <el-dialog title="添加账号" v-model="visible" @close="resetForm">
+    <el-dialog title="添加账号" v-model="visible" @close="resetForm"  width="500px">
       <el-form
         :model="form"
         ref="addAccountForm"
@@ -118,6 +118,7 @@ export default {
           labelPosition: "right",
           labelWidth: "120px",
           destroyOnClose: true,
+          class:'add-account-modal'
         },
         rules: {
           name: [{ required: true, message: "请输入姓名", trigger: "change" }],
@@ -252,5 +253,8 @@ export default {
       padding-left: 8px;
     }
   }
+}
+.add-account-modal{
+  padding-right:40px;
 }
 </style>
