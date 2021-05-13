@@ -9,7 +9,7 @@ import locale from "element-plus/lib/locale";
 import store from "./store";
 import '../element-variables.scss';
 import "./assets/public.scss";
-
+import "./assets/font/iconfont.css";
 const app = createApp(App);
 
 app.use(router);
