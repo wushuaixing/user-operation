@@ -249,7 +249,7 @@ export default {
 .change-pwd-modal {
   .el-dialog__body {
     .el-form {
-      padding:0 30px;
+      padding: 0 30px;
     }
   }
 }
