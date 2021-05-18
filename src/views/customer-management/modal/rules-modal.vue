@@ -129,6 +129,7 @@
 <script>
 export default {
   name: "rules-modal",
+  nameComment:'客户管理-权限管理弹窗',
   props: {
     formData: {
       type: Object,

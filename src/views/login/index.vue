@@ -104,7 +104,8 @@ import { clearEmpty } from "@/utils";
 import { ruleProcess } from "@/utils/rule";
 
 export default {
-  name: "index",
+  name: "login",
+  nameComment: "登录",
   data() {
     return {
       params: {
@@ -131,7 +132,9 @@ export default {
     };
   },
   created() {
-    this.isLocal = /localhost/.test(window.location.host) || /142/.test(window.location.host) ;
+    this.isLocal =
+      /localhost/.test(window.location.host) ||
+      /142/.test(window.location.host);
   },
   methods: {
     onSubmit() {
