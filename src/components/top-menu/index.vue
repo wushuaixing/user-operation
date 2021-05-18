@@ -76,6 +76,7 @@ import LoginApi from "@/server/api/login";
 
 export default {
   name: "index",
+  nameComment:'顶部导航栏',
   data() {
     const validateOld = (rule, value, callback) => {
       if (this.form.newPassword !== "") {

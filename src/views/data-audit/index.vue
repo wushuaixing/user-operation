@@ -176,7 +176,8 @@ import {
 } from "@/utils/static";
 
 export default {
-  name: "customerManagement",
+  name: "dataAudit",
+  nameComment:'数据审核',
   components: {
     BreadCrumb,
   },

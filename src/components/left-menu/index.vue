@@ -45,6 +45,7 @@
 <script>
 export default {
   name: "index",
+  nameComment:'左侧导航栏',
   data() {
     return {
       adminMenu: [
