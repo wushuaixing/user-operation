@@ -72,13 +72,26 @@
             </el-input>
           </el-form-item>
           <el-form-item class="login-btn">
-            <el-button type="primary" @click="onSubmit" :loading="loading">
+            <el-button
+              type="primary"
+              @click="onSubmit"
+              :loading="loading"
+              class="button-first"
+            >
               登录
             </el-button>
           </el-form-item>
           <template v-if="isLocal">
-            <el-button type="primary" @click="onFill(true)">管理员</el-button>
-            <el-button type="primary" @click="onFill(false)"
+            <el-button
+              type="primary"
+              @click="onFill(true)"
+              class="button-second"
+              >管理员</el-button
+            >
+            <el-button
+              type="primary"
+              @click="onFill(false)"
+              class="button-third"
               >审核人员
             </el-button>
           </template>
