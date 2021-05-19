@@ -24,6 +24,49 @@ $--link-hover-color: blue;
 $--button-border-radius: 2px !default;
 $--button-font-size: $--font-size-base !default;
 $--button-padding-vertical: 8px !default;
+$--button-hover-tint-percent: 0% !default;
+$--button-active-shade-percent: 0% !default;
+.button{
+  //一级按钮
+  &-first{
+    border: none;
+    background-color: #296DD3;
+    &:hover{
+      background: #2E7BED !important;
+    }
+    &:active{
+      background: #2460BA !important;
+    }
+  }
+  //二级按钮
+  &-second{
+    border: 1px solid #296DD3 !important;
+    background-color: #EFF5FF !important;
+    color: #296DD3 !important;
+    &:hover{
+      border: none;
+      color: #fff !important;
+      background: #2E7BED !important;
+    }
+    &:active{
+      color: #fff !important;
+      background: #2460BA !important;
+    }
+  }
+  //三级按钮
+  &-third{
+    border: 1px solid #296DD3 !important;
+    background-color: #fff !important;
+    color: #296DD3 !important;
+    &:hover{
+      background: #EFF5FF !important;
+    }
+    &:active{
+      background: #EFF5FF !important;
+      box-shadow: 0px 0px 4px 0px rgba(41, 109, 211, 0.53);
+    }
+  }
+}
 /* Input
 -------------------------- */
 $--input-height: 32px !default;

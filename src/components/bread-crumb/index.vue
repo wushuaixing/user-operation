@@ -36,9 +36,9 @@ export default {
       type:String,
       default: "",
     },
-    handleClick:{
-      type:Function,
-      default:null,
+    handleClick: {
+      type: Function,
+      default: null,
     },
   },
   data() {

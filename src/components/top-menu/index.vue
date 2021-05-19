@@ -76,6 +76,7 @@ import LoginApi from "@/server/api/login";
 
 export default {
   name: "index",
+  nameComment:'顶部导航栏',
   data() {
     const validateOld = (rule, value, callback) => {
       if (this.form.newPassword !== "") {
@@ -249,7 +250,7 @@ export default {
 .change-pwd-modal {
   .el-dialog__body {
     .el-form {
-      padding:0 30px;
+      padding: 0 30px;
     }
   }
 }

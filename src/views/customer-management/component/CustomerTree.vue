@@ -1,7 +1,7 @@
 <template>
   <div class="customer-tree">
     <div class="customer-tree-title" >
-      <i class="iconfont icon-yonghuyunying-quanbushiyongjigou"></i>
+      <i class="iconfont iconyonghuyunying-quanbushiyongjigou"></i>
       <span class="titleText" :class="{active: selectAll}" @click="handleSelect('all')">{{allCustomer.content + setText(allCustomer)}}</span>
       <el-tooltip class="item" effect="dark" content="合作中机构数/总机构数" placement="top">
         <img src="../../../assets/img/icon.png"/>

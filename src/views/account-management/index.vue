@@ -40,7 +40,12 @@
       layout="total, prev, pager, next, jumper"
       :total="total"
     />
-    <el-dialog title="添加账号" v-model="visible" @close="resetForm"  width="500px">
+    <el-dialog
+      title="添加账号"
+      v-model="visible"
+      @close="resetForm"
+      width="500px"
+    >
       <el-form
         :model="form"
         ref="addAccountForm"
@@ -95,6 +100,7 @@ import { accountManagementColumn } from "@/static/column";
 
 export default {
   name: "index",
+  nameComment:'账号管理-审核账号',
   data() {
     return {
       page: 1,
@@ -118,7 +124,7 @@ export default {
           labelPosition: "right",
           labelWidth: "120px",
           destroyOnClose: true,
-          class:'add-account-modal'
+          class: "add-account-modal",
         },
         rules: {
           name: [{ required: true, message: "请输入姓名", trigger: "change" }],
@@ -254,7 +260,7 @@ export default {
     }
   }
 }
-.add-account-modal{
-  padding-right:40px;
+.add-account-modal {
+  padding-right: 40px;
 }
 </style>

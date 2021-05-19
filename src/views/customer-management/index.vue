@@ -166,7 +166,11 @@
             </span>
           </template>
         </el-dialog>
-        <RulesModal :formData="rulesForm" :visible="rulesModalVisible" @close="$emit('close')"/>
+        <RulesModal
+          :formData="rulesForm"
+          :visible="rulesModalVisible"
+          @close="rulesModalVisible = false"
+        />
       </div>
     </div>
   </div>
@@ -182,6 +186,7 @@ import RulesModal from "@/views/customer-management/modal/rules-modal";
 import CustomerTree from './component/CustomerTree';
 export default {
   name: "customerManagement",
+  nameComment:'客户管理',
   components: {
     RulesModal,
     BreadCrumb,
@@ -221,24 +226,26 @@ export default {
         },
       ],
       addOrgVisible: false,
-      rulesModalVisible:false,
+      rulesModalVisible: false,
       addOrgForm: {
         url: "",
         name: "",
       },
-      rulesForm:{
-        a:'2112111ID',
-        b:'顶级合作机构名称',
+      rulesForm: {
+        a: "2112111ID",
+        b: "顶级合作机构名称",
       },
       addOrgFormOptions: {
         options: {
           labelPosition: "right",
           labelWidth: "120px",
           destroyOnClose: true,
-          class:'add-org-modal'
+          class: "add-org-modal",
         },
         rules: {
-          url: [{ required: true, message: "请输入二级域名", trigger: "change" }],
+          url: [
+            { required: true, message: "请输入二级域名", trigger: "change" },
+          ],
           name: [
             { required: true, message: "请输入机构名称", trigger: "change" },
           ],
@@ -331,7 +338,7 @@ export default {
       if (!isChecked) this.$refs.multipleTable.clearSelection();
     },
     handleAction(params, sign) {
-      if(sign ==='rules'){
+      if (sign === "rules") {
         this.rulesModalVisible = true;
       }
       console.log(params, sign);
@@ -432,7 +439,7 @@ export default {
     }
   }
 }
-.add-org-modal{
+.add-org-modal {
   padding-right: 40px;
 }
 </style>
