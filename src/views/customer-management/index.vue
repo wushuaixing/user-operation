@@ -50,7 +50,7 @@
     </div>
     <div class="main-content">
       <div class="main-content-left">
-        <el-timeline>
+        <!-- <el-timeline>
           <el-timeline-item
             v-for="(activity, index) in activities"
             :key="index"
@@ -59,14 +59,18 @@
           >
             {{ activity.content }}
           </el-timeline-item>
-        </el-timeline>
+        </el-timeline> -->
+        <CustomerTree ref="CustomerTree" @handleClick="customerTreeClick"></CustomerTree>
       </div>
       <div class="main-content-right">
         <BreadCrumb
           :text="title"
+          :editable="true"
           btnText="创建域名机构"
           @handleClick="addOrgVisible = true"
-        />
+        >
+          <!-- <template v-slot:detail>这里是详情</template> -->
+        </BreadCrumb>
         <div class="table-content">
           <div class="table-content-btn">
             <el-button type="primary" @click="isChecked = !this.isChecked">{{
@@ -175,11 +179,13 @@ import { taskAssignColumn } from "@/static/column";
 import { toRaw } from "vue";
 import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
+import CustomerTree from './component/CustomerTree';
 export default {
   name: "customerManagement",
   components: {
     RulesModal,
     BreadCrumb,
+    CustomerTree,
   },
   data() {
     return {
@@ -201,9 +207,9 @@ export default {
       total: 0,
       isActive: 0,
       activities: [
-        {
-          content: "全部机构",
-        },
+        // {
+        //   content: "全部机构",
+        // },
         {
           content: "恒丰银行域名机构（1/1）",
         },
@@ -275,6 +281,12 @@ export default {
       };
       this.activities = [...this.activities, obj];
     }
+  },
+  mounted () {
+   
+  },
+  watch: {
+    
   },
   methods: {
     getList() {
@@ -367,6 +379,12 @@ export default {
     resetAddOrgForm() {
       this.$refs["addOrgForm"].resetFields();
     },
+    // 左侧树点击事件
+    customerTreeClick (obj) {
+      // 通过路由控制，改变右侧表格数据
+      this.title = obj.content
+      this.$router.push(`/customerManagement/${this.title}/${obj.id}`)
+    }
   },
   computed: {
     batchHandleText: function () {
