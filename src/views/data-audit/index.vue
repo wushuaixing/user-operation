@@ -104,7 +104,9 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">搜索</el-button>
-            <el-button type="primary" @click="resetForm">清空搜索条件</el-button>
+            <el-button type="primary" @click="resetForm"
+              >清空搜索条件</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -177,7 +179,7 @@ import {
 
 export default {
   name: "dataAudit",
-  nameComment:'数据审核',
+  nameComment: "数据审核",
   components: {
     BreadCrumb,
   },

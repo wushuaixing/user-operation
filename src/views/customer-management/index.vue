@@ -181,7 +181,7 @@ import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
 export default {
   name: "customerManagement",
-  nameComment:'客户管理',
+  nameComment: "客户管理",
   components: {
     RulesModal,
     BreadCrumb,

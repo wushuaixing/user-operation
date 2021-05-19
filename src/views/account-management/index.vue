@@ -100,7 +100,7 @@ import { accountManagementColumn } from "@/static/column";
 
 export default {
   name: "index",
-  nameComment:'账号管理-审核账号',
+  nameComment: "账号管理-审核账号",
   data() {
     return {
       page: 1,

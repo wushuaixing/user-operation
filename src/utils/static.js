@@ -115,18 +115,17 @@ const taskAssignTabs = (toBeAllocatedNum) => [
 ];
 
 const topOrgStatus = {
-  0:'合作中',
-  1:'已过期',
-  2:'即将过期',
-  3:'已过期',
+  0: "合作中",
+  1: "已过期",
+  2: "即将过期",
+  3: "已过期",
 };
 
 // 机构类型
 const orgType = {
-  0:'正式',
-  1:'试用',
-}
-
+  0: "正式",
+  1: "试用",
+};
 
 export {
   SORTER_TYPE,
@@ -136,5 +135,5 @@ export {
   dataAuditTabs,
   taskAssignTabs,
   topOrgStatus,
-  orgType
+  orgType,
 };

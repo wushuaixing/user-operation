@@ -141,7 +141,7 @@ import clearHoverIcon from "@/assets/img/records_del_hover.jpg";
 let storage = window.localStorage;
 export default {
   name: "documentSearch",
-  nameComment:'文书搜索',
+  nameComment: "文书搜索",
   data() {
     return {
       page: 1,
