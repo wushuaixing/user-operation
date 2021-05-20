@@ -41,6 +41,20 @@ import {
   ElCheckboxGroup,
 } from "element-plus";
 
+["success", "warning", "info", "error"].forEach((type) => {
+  ElMessage[type] = (options) => {
+    if (typeof options === "string") {
+      options = {
+        message: options,
+        type,
+      };
+    } else {
+      options.type = type;
+    }
+    return ElMessage({ ...options, offset: 250 });
+  };
+});
+
 const list = [
   ElButton,
   ElAside,
