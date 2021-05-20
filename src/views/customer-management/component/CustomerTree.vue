@@ -1,81 +1,93 @@
 <template>
   <div class="customer-tree">
-    <div class="customer-tree-title" >
-      <i class="iconfont iconyonghuyunying-quanbushiyongjigou"></i>
-      <span class="titleText" :class="{active: selectAll}" @click="handleSelect('all')">{{allCustomer.content + setText(allCustomer)}}</span>
-      <el-tooltip class="item" effect="dark" content="合作中机构数/总机构数" placement="top">
+    <div class="customer-tree-title">
+      <svg class="icon" aria-hidden="true" style="font-size: 20px;">
+        <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
+      </svg>
+      <span
+        class="titleText"
+        :class="{ active: selectAll }"
+        @click="handleSelect('all')"
+        >{{`全部机构（${totalOperatedOrgNum}/${totalOrgNum}）`}}</span
+      >
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="合作中机构数/总机构数"
+        placement="top"
+      >
         <img src="../../../assets/img/icon.png"/>
       </el-tooltip>
     </div>
     <div class="customer-tree-content">
-      <div v-for="(item, index) in list" :key="item.content" class="customer-tree-content-item">
-        <span :class="{active: isActive === index}" class="itemText">
-          <span @click="handleSelect('item', index, item)">{{item.content}}</span>
-          {{setText(item)}}</span>
+      <div
+        v-for="(item, index) in activities"
+        :key="item.id"
+        class="customer-tree-content-item"
+      >
+        <span :class="{ active: isActive === index }" class="itemText">
+          <span @click="handleSelect('item', index, item)">{{
+            item.name
+          }}</span>
+          {{ setText(item) }}</span
+        >
         <!-- 横线 -->
-        <div class="itemS" :style="isActive === index ? 'background: #296DD3' : ''"></div>
+        <div
+          class="itemS"
+          :style="isActive === index ? 'background: #296DD3' : ''"
+        ></div>
         <!-- 竖线 -->
-        <div class="itemV" :style="index ? '' : 'height: 20px;top:-13px;'"></div>
+        <div
+          class="itemV"
+          :style="index ? '' : 'height: 20px;top:-13px;'"
+        ></div>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'CustomerTree',
-  data () {
+  name: "CustomerTree",
+  props: {
+    activities: {
+      type: Array,
+      default: () => []
+    },
+    totalOrgNum: { // 总机构数
+      type: Number,
+      default: 0
+    },
+    totalOperatedOrgNum: { // 总合作中机构数
+      type: Number,
+      default: 0
+    }
+  },
+  data() {
     return {
       selectAll: true,
       isActive: false,
-      allCustomer: {
-        content: "全部机构",
-        active: 4,
-        all: 3,
-        id: 0,
-      },
-      list: [
-        {
-          content: "恒丰银行域名机构",
-          active: 1,
-          all: 1,
-          id: 1,
-        },
-        {
-          content: "台州银行域名机构",
-          active: 0,
-          all: 1,
-          id: 2,
-        },
-        {
-          content: "光大银行域名机构",
-          active: 2,
-          all: 2,
-          id: 4,
-        },
-      ]
-    }
+    };
   },
   methods: {
     // 设置文字+数字
-    setText (item) {
-      return `（${item.active}/${item.all}）`
+    setText(item) {
+      return `（${item.operatedOrgNum}/${item.orgNum}）`;
     },
 
     // 点击选中某一项
-    handleSelect (val, index, item) {
-      if (val === 'all') {
-        this.selectAll = true
-        this.isActive = -1
-        this.$emit('handleClick', this.allCustomer)
+    handleSelect(val, index, item) {
+      if (val === "all") {
+        this.selectAll = true;
+        this.isActive = -1;
+        this.$emit("handleClick", 'all', {});
       } else {
-        this.selectAll = false
-        this.isActive = index
-        this.$emit('handleClick', item)
+        this.selectAll = false;
+        this.isActive = index;
+        this.$emit("handleClick", '', item);
       }
-
-    }
-  }
-}
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
 .customer-tree {
@@ -86,10 +98,11 @@ export default {
     cursor: pointer;
     font-weight: 600;
     .titleText {
-      color: #20242E;
+      color: #20242e;
+      margin-left: 6px;
     }
     .active {
-      color: #296DD3;
+      color: #296dd3;
     }
   }
   &-content {
@@ -97,31 +110,30 @@ export default {
     line-height: 14px;
     cursor: pointer;
     margin-top: 21px;
-    color: #20242E;
+    color: #20242e;
     &-item {
       margin-top: 20px;
       position: relative;
-      padding-left: 24px;
+      padding-left: 28px;
       .itemText {
-         margin-left: 30px;
       }
       .active {
-        color: #296DD3;
+        color: #296dd3;
       }
       .itemS {
         position: absolute;
-        background: #C5C7CE;
+        background: #c5c7ce;
         width: 8px;
         height: 1px;
         top: 6px;
         left: 8px;
       }
       .activeS {
-        background: #296DD3;
+        background: #296dd3;
       }
       .itemV {
         position: absolute;
-        background: #C5C7CE;
+        background: #c5c7ce;
         width: 1px;
         height: 34px;
         top: -27px;

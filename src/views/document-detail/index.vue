@@ -50,7 +50,7 @@ import copy from "copy-to-clipboard";
 
 export default {
   name: "documentDetail",
-  nameComment:'文书详情',
+  nameComment: "文书详情",
   data() {
     return {
       data: {},

@@ -9,6 +9,6 @@ module.exports = {
         },
       },
     },
-    open: true
+    open: true,
   },
 };

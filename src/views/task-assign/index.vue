@@ -106,7 +106,12 @@
       </div>
     </div>
     <div class="modal-content">
-      <el-dialog title="分配" v-model="visible" @close="handleCloseModal" width="500px">
+      <el-dialog
+        title="分配"
+        v-model="visible"
+        @close="handleCloseModal"
+        width="500px"
+      >
         <ul>
           <li v-for="item in modalOptions" :key="item.label">
             <div>{{ item.label }}：</div>
@@ -153,7 +158,7 @@ import AdminApi from "@/server/api/admin";
 import { toRaw } from "vue";
 export default {
   name: "index",
-  nameComment:'审核任务分配',
+  nameComment: "审核任务分配",
   data() {
     return {
       visible: false,
@@ -318,7 +323,7 @@ export default {
   .modal-content {
     .el-dialog__body {
       ul {
-        padding-left:36px;
+        padding-left: 36px;
         li {
           display: flex;
           line-height: 14px;
@@ -328,10 +333,10 @@ export default {
               min-width: 126px;
               text-align: right;
             }
-            &:last-child{
-              p{
-                margin-bottom:12px;
-                &:last-child{
+            &:last-child {
+              p {
+                margin-bottom: 12px;
+                &:last-child {
                   margin-bottom: 0;
                 }
               }

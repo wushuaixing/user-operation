@@ -60,7 +60,13 @@
             {{ activity.content }}
           </el-timeline-item>
         </el-timeline> -->
-        <CustomerTree ref="CustomerTree" @handleClick="customerTreeClick"></CustomerTree>
+        <CustomerTree
+          ref="CustomerTree"
+          :totalOrgNum="totalOrgNum"
+          :totalOperatedOrgNum="totalOperatedOrgNum"
+          :activities="activities"
+          @handleClick="customerTreeClick"
+        ></CustomerTree>
       </div>
       <div class="main-content-right">
         <BreadCrumb
@@ -69,7 +75,40 @@
           btnText="创建域名机构"
           @handleClick="addOrgVisible = true"
         >
-          <!-- <template v-slot:detail>这里是详情</template> -->
+          <template v-slot:detail>
+            <div class="customer-detail">
+              <div class="customer-detail-left">
+                <div class="link">
+                  <span>二级域名:</span>
+                  <a href="" @click="linkTo()">{{customerObj.link}}</a>
+                </div>
+                <div class="link">
+                  <span>创建时间:</span>
+                  <span>{{customerObj.createTime}}</span>
+                </div>
+              </div>
+              <div class="customer-detail-right">
+                <div class="customer num1">
+                  <div class="customer-type">
+                    <div class="img">
+                      <img src="../../assets/img/icon.png"/>
+                    </div>
+                    顶级合作机构(家)</div>
+                  <div class="customer-num">{{customerObj.total}}</div>
+                </div>
+                <div class="divider"></div>
+                <div class="customer num2">
+                  <div class="customer-type">正式机构(家)</div>
+                  <div class="customer-num">{{customerObj.officialNum}}</div>
+                </div>
+                <div class="divider" style="margin-right: 31px;"></div>
+                <div class="customer num3">
+                  <div class="customer-type">试用机构(家)</div>
+                  <div class="customer-num">{{customerObj.tryOutNum}}</div>
+                </div>
+              </div>
+            </div>
+          </template>
         </BreadCrumb>
         <div class="table-content">
           <div class="table-content-btn">
@@ -183,10 +222,10 @@ import { taskAssignColumn } from "@/static/column";
 import { toRaw } from "vue";
 import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
-import CustomerTree from './component/CustomerTree';
+import CustomerTree from "./component/CustomerTree";
 export default {
   name: "customerManagement",
-  nameComment:'客户管理',
+  nameComment: "客户管理",
   components: {
     RulesModal,
     BreadCrumb,
@@ -211,20 +250,35 @@ export default {
       page: 1,
       total: 0,
       isActive: 0,
-      activities: [
-        // {
-        //   content: "全部机构",
-        // },
+      activities: [ // 域名机构列表
         {
-          content: "恒丰银行域名机构（1/1）",
+          id: 1,
+          name: "台州银行域名机构",
+          operatedOrgNum: 1,
+          orgNum: 3
         },
         {
-          content: "台州银行域名机构（0/1）",
+          id: 2,
+          name: "杭州银行域名机构",
+          operatedOrgNum: 2,
+          orgNum: 4
         },
         {
-          content: "光大银行域名机构（2/2）",
+          id: 3,
+          name: "溫州银行域名机构",
+          operatedOrgNum: 3,
+          orgNum: 5
         },
       ],
+      totalOrgNum: 12, // 总机构数
+      totalOperatedOrgNum: 6, // 总合作中机构数
+      customerObj: { // 选中的域名机构对象
+        link: 'cmbc.yczcjk.com',
+        createTime: '2019-12-21',
+        total: 12,
+        officialNum: 8,
+        tryOutNum: 4
+      },
       addOrgVisible: false,
       rulesModalVisible: false,
       addOrgForm: {
@@ -255,45 +309,47 @@ export default {
   },
   created() {
     this.getList();
-    let name = [
-      "河北省",
-      "山西省",
-      "辽宁省",
-      "吉林省",
-      "黑龙江省",
-      "江苏省",
-      "浙江省",
-      "安徽省",
-      "福建省",
-      "江西省",
-      "山东省",
-      "河南省",
-      "湖北省",
-      "湖南省",
-      "广东省",
-      "海南省",
-      "四川省",
-      "贵州省",
-      "云南省",
-      "陕西省",
-      "甘肃省",
-      "青海省",
-      "台湾省",
-    ];
-    for (let i = 0; i < name.length; i++) {
-      let obj = {
-        content: `${name[i]}银行域名机构(${Math.random().toString()[5]}/${
-          Math.random().toString()[8]
-        })`,
-      };
-      this.activities = [...this.activities, obj];
-    }
+    // let name = [
+    //   "河北省",
+    //   "山西省",
+    //   "辽宁省",
+    //   "吉林省",
+    //   "黑龙江省",
+    //   "江苏省",
+    //   "浙江省",
+    //   "安徽省",
+    //   "福建省",
+    //   "江西省",
+    //   "山东省",
+    //   "河南省",
+    //   "湖北省",
+    //   "湖南省",
+    //   "广东省",
+    //   "海南省",
+    //   "四川省",
+    //   "贵州省",
+    //   "云南省",
+    //   "陕西省",
+    //   "甘肃省",
+    //   "青海省",
+    //   "台湾省",
+    // ];
+    // for (let i = 0; i < name.length; i++) {
+    //   let obj = {
+    //     content: `${name[i]}银行域名机构(${Math.random().toString()[5]}/${
+    //       Math.random().toString()[8]
+    //     })`,
+    //   };
+    //   this.activities = [...this.activities, obj];
+    // }
   },
-  mounted () {
-   
+  mounted() {
   },
   watch: {
-    
+    $route() {
+      // 对路由变化作出响应...
+      // this.title = to.params.customerName
+    },
   },
   methods: {
     getList() {
@@ -387,11 +443,20 @@ export default {
       this.$refs["addOrgForm"].resetFields();
     },
     // 左侧树点击事件
-    customerTreeClick (obj) {
+    customerTreeClick(val, obj) {
       // 通过路由控制，改变右侧表格数据
-      this.title = obj.content
-      this.$router.push(`/customerManagement/${this.title}/${obj.id}`)
-    }
+      if (val && val === 'all') {
+        this.title = `全部机构（${this.operatedOrgNum}/${this.orgNum}）`;
+        this.$router.push('/customerManagement');
+      } else {
+        this.title = `${obj.name}（ID：${obj.id}）`
+        this.$router.push(`/customerManagement/${obj.name}/${obj.id}`);
+      }
+    },
+    // 域名地址跳转
+    linkTo () {
+
+    },
   },
   computed: {
     batchHandleText: function () {
@@ -429,6 +494,70 @@ export default {
       flex: 1 !important;
       width: 500px;
       background-color: #fff;
+      .customer-detail {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 12px;
+        padding-bottom: 21px;
+        &-left {
+          width: calc(100% - 450px);
+          font-size: 14px;
+          color: #4E5566;
+          .link {
+            line-height: 14px;
+            a {
+              color: #296DD3;
+            }
+            span:first-child {
+              margin-right: 11px;
+            }
+          }
+          .link:last-child {
+            margin-top: 16px;
+          }
+        }
+        &-right {
+          width: 450px;
+          text-align: right;
+          .customer {
+            display: inline-block;
+            text-align: center;
+            &-type {
+              color: #4E5566;
+              font-size: 14px;
+              line-height: 14px;
+              .img {
+                display: inline;
+                vertical-align: text-bottom;
+                cursor: pointer;
+              }
+            }
+            &-num {
+              color: #20242E;
+              line-height: 22px;
+              font-size: 22px;
+              margin-top: 10px;
+            }
+          }
+          .num1 {
+            width: 180px;
+          }
+          .num2 {
+            width: 147px;
+          }
+          .num3 {
+            width: 82px;
+            text-align: center;
+          }
+          .divider {
+            display: inline-block;
+            vertical-align: super;
+            width: 1px;
+            height: 28px;
+            background:#E2E4E9;
+          }
+        }
+      }
       .table-content {
         padding: 20px;
         &-btn {

@@ -3,15 +3,19 @@
     <div class="yc-bread-crumb-title">
       <div class="title" v-if="!editStatus">
         {{ text }}
-        <span v-if="editable" class="iconfont icon-bianji2" @click="showEdit"></span>
+        <i class="iconfont iconbianji2 editI" v-if="editable" @click="showEdit"></i>
       </div>
       <div v-else>
-        <el-input style="width: 300px;" v-model="editValue"></el-input>
-        <el-button type="primary" style="margin-left: 32px;" @click="save">保存</el-button>
+        <el-input style="width: 300px" v-model="editValue"></el-input>
+        <el-button type="primary" style="margin-left: 32px" @click="save"
+          >保存</el-button
+        >
         <el-button @click="cancel">取消</el-button>
       </div>
       <div class="action-btn" v-if="btnText">
-        <el-button type="primary" @click="$emit('handleClick')">{{btnText}}</el-button>
+        <el-button type="primary" @click="$emit('handleClick')">{{
+          btnText
+        }}</el-button>
       </div>
     </div>
     <div class="slot-area">
@@ -30,10 +34,10 @@ export default {
     },
     editable: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    btnText:{
-      type:String,
+    btnText: {
+      type: String,
       default: "",
     },
     handleClick: {
@@ -43,26 +47,24 @@ export default {
   },
   data() {
     return {
-      editValue: '',
+      editValue: "",
       editStatus: false,
       childMessage: "子组件",
     };
   },
-  mounted () {
-    
-  },
+  mounted() {},
   methods: {
-    showEdit () {
-      this.editStatus = true
-      this.editValue = this.text
+    showEdit() {
+      this.editStatus = true;
+      this.editValue = this.text;
     },
-    save () {
-      this.editStatus = false
+    save() {
+      this.editStatus = false;
     },
-    cancel () {
-      this.editStatus = false
-    }
-  }
+    cancel() {
+      this.editStatus = false;
+    },
+  },
 };
 </script>
 
@@ -80,6 +82,12 @@ export default {
     font-weight: 700;
     font-size: 18px;
     height: 58px;
+    .editI {
+      font-size: 20px;
+      color: #296DD3;
+      cursor: pointer;
+      margin-left: 10px;
+    }
   }
 }
 </style>
