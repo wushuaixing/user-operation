@@ -5,16 +5,20 @@
       <span>源诚用户运营平台</span>
     </div>
     <div class="user-message">
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" @visible-change="handleToggle">
         <span class="el-dropdown-link">
-          hi,{{ name }}<i class="el-icon-arrow-down el-icon--right"></i>
+          hi,{{ name }}
+          <i class="el-icon-caret-top" v-if="iconToggle"></i>
+          <i class="el-icon-caret-bottom" v-else></i>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item icon="el-icon-check" @click="visible = true">
+            <el-dropdown-item @click="visible = true">
+              <span class="iconfont iconxiugaimima"></span>
               修改密码
             </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-check" @click="loginOut">
+            <el-dropdown-item @click="loginOut">
+              <span class="iconfont icontuichudenglu1"></span>
               退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -103,6 +107,7 @@ export default {
     return {
       logo: logoImg,
       visible: false,
+      iconToggle: false,
       form: {
         oldPassword: "",
         newPassword: "",
@@ -181,6 +186,9 @@ export default {
           console.log(err);
         });
     },
+    handleToggle(val){
+      this.iconToggle = val;
+    },
   },
 };
 </script>
@@ -201,8 +209,9 @@ export default {
     align-items: center;
     height: 100%;
     background-color: #132032;
-    padding: 0 25px 0 20px;
-
+    padding-left: 20px;
+    width: 220px;
+    box-sizing: border-box;
     span {
       font-size: 16px;
       margin-left: 6px;
@@ -211,9 +220,6 @@ export default {
   }
 
   .user-message {
-    //&:hover {
-    //  background-color: #0286d5;
-    //}
     .el-dropdown {
       &:hover {
         color: #296dd3;
@@ -232,14 +238,22 @@ export default {
 }
 
 .el-dropdown__popper {
-  top: 50px !important;
+  top: 60px !important;
   left: unset !important;
   right: 0 !important;
-  width: 120px;
+  width: 117px;
   border-radius: 0;
 
   .el-dropdown-menu {
     padding: 0;
+    &__item{
+      height: 39px;
+      line-height: 39px;
+      span{
+        position: relative;
+        top: 1px;
+      }
+    }
   }
 
   .el-popper__arrow::before {

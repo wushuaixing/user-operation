@@ -4,7 +4,7 @@
       <TopMenu :name="name" />
     </el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="220px">
         <LeftMenu :role="roleName" />
       </el-aside>
       <el-main>
@@ -76,14 +76,14 @@ export default {
     .yc-container {
       padding: 20px;
       background: #fff;
-      min-height: 86vh;
+      min-height: 83vh;
     }
   }
 }
 
 .el-header {
   color: #fff;
-  height: 50px !important;
+  height: 60px !important;
 }
 
 .el-aside {
