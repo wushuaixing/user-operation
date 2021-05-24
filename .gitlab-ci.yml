@@ -7,7 +7,7 @@ cache:
   key: ${CI_BUILD_REF_NAME}
   paths:
     - node_modules/
-    - build/
+    - dist/
 
 # 安装依赖
 install_deps:
