@@ -51,7 +51,7 @@ import {
     } else {
       options.type = type;
     }
-    return ElMessage({ ...options, offset: 250 });
+    return ElMessage({ ...options, offset: 340 });
   };
 });
 
