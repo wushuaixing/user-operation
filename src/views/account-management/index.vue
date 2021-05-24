@@ -120,7 +120,7 @@ export default {
       loading: false,
       column: accountManagementColumn,
       accountList: [],
-      visible: false,
+      visible: true,
       form: {
         name: "",
         phone: "",
@@ -284,6 +284,6 @@ export default {
   }
 }
 .add-account-modal {
-  padding-right: 40px;
+  padding-right: 75px;
 }
 </style>
