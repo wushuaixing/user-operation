@@ -202,8 +202,10 @@ $--message-padding: 16px 32px !default;
 
 /* Form
 --------------------------*/
-.el-form-item__label{
-  podding-right: 1px !important;
+.el-form-item{
+  &__label{
+    padding: 0px !important;
+  }
 }
 
 /* Timeline
