@@ -65,22 +65,24 @@
           :totalOrgNum="totalOrgNum"
           :totalOperatedOrgNum="totalOperatedOrgNum"
           :activities="activities"
+          :activeKey="activeKey"
           @handleClick="customerTreeClick"
         ></CustomerTree>
       </div>
       <div class="main-content-right">
         <BreadCrumb
           :text="title"
-          :editable="true"
-          btnText="创建域名机构"
-          @handleClick="addOrgVisible = true"
+          :editable="editable"
+          :btnText="!editable ? '创建域名机构' : '创建顶级合作机构'"
+          @handleClick="showModal"
+          @saveName="saveName"
         >
-          <template v-slot:detail>
+          <template v-slot:detail v-if="editable">
             <div class="customer-detail">
               <div class="customer-detail-left">
                 <div class="link">
                   <span>二级域名:</span>
-                  <a href="" @click="linkTo()">{{customerObj.link}}</a>
+                  <a :href="`http://www.${this.customerObj.link}`" target='_blank'>{{customerObj.link}}</a>
                 </div>
                 <div class="link">
                   <span>创建时间:</span>
@@ -90,20 +92,18 @@
               <div class="customer-detail-right">
                 <div class="customer num1">
                   <div class="customer-type">
-                    <div class="img">
-                      <img src="../../assets/img/icon.png"/>
-                    </div>
-                    顶级合作机构(家)</div>
+                    <img src="../../assets/img/icon.png"/>
+                    顶级合作机构（家）</div>
                   <div class="customer-num">{{customerObj.total}}</div>
                 </div>
                 <div class="divider"></div>
                 <div class="customer num2">
-                  <div class="customer-type">正式机构(家)</div>
+                  <div class="customer-type">正式机构（家）</div>
                   <div class="customer-num">{{customerObj.officialNum}}</div>
                 </div>
                 <div class="divider" style="margin-right: 31px;"></div>
                 <div class="customer num3">
-                  <div class="customer-type">试用机构(家)</div>
+                  <div class="customer-type">试用机构（家）</div>
                   <div class="customer-num">{{customerObj.tryOutNum}}</div>
                 </div>
               </div>
@@ -207,6 +207,7 @@
         </el-dialog>
         <RulesModal
           :formData="rulesForm"
+          :isAdd="isAdd"
           :visible="rulesModalVisible"
           @close="rulesModalVisible = false"
         />
@@ -250,29 +251,13 @@ export default {
       page: 1,
       total: 0,
       isActive: 0,
-      activities: [ // 域名机构列表
-        {
-          id: 1,
-          name: "台州银行域名机构",
-          operatedOrgNum: 1,
-          orgNum: 3
-        },
-        {
-          id: 2,
-          name: "杭州银行域名机构",
-          operatedOrgNum: 2,
-          orgNum: 4
-        },
-        {
-          id: 3,
-          name: "溫州银行域名机构",
-          operatedOrgNum: 3,
-          orgNum: 5
-        },
-      ],
+      activities: [], // 域名机构列表
       totalOrgNum: 12, // 总机构数
       totalOperatedOrgNum: 6, // 总合作中机构数
-      customerObj: { // 选中的域名机构对象
+      activeKey: -1,
+      isAdd: true, // 是否是新增
+      editable: false, // 是否可编辑
+      customerObj: { // 选中的域名机构详情
         link: 'cmbc.yczcjk.com',
         createTime: '2019-12-21',
         total: 12,
@@ -288,6 +273,8 @@ export default {
       rulesForm: {
         a: "2112111ID",
         b: "顶级合作机构名称",
+        f:"559",
+        g: "民生银行域名机构",
       },
       addOrgFormOptions: {
         options: {
@@ -344,15 +331,30 @@ export default {
     // }
   },
   mounted() {
+    this.getCuntomerTreeData()
+    // 点击浏览器刷新时，响应 对带参做处理
+    let { customerName, id } = this.$route.params;
+    if (id) {
+      setTimeout(() => {})
+      this.activeKey = Number(id) || -1;
+      this.title = `${customerName}（ID：${id}）`
+      this.editable = true
+    } else {
+      this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`
+      this.editable = false
+    }
   },
   watch: {
     $route() {
       // 对路由变化作出响应...
       // this.title = to.params.customerName
+      this.getCuntomerTreeData()
     },
   },
   methods: {
+    // 获取列表数据
     getList() {
+      this.activeKey = 20
       this.loading = true;
       console.log(toRaw(this.queryParams));
       const params = {
@@ -371,7 +373,41 @@ export default {
             this.$message.error("请求出错");
           }
         })
-        .finally((this.loading = false));
+        .finally(() => this.loading = false);
+    },
+    // 获取左侧树 数据
+    getCuntomerTreeData () {
+       this.activities = [ // 域名机构列表
+        // {
+        //   id: 1,
+        //   name: "台州银行域名机构台州银行台州银行域名机构台州银行域名机构台州域名机构台州",
+        //   operatedOrgNum: 1,
+        //   orgNum: 3
+        // },
+        // {
+        //   id: 2,
+        //   name: "杭州银行域名机构",
+        //   operatedOrgNum: 2,
+        //   orgNum: 4
+        // },
+        // {
+        //   id: 3,
+        //   name: "溫州银行域名机构",
+        //   operatedOrgNum: 3,
+        //   orgNum: 5
+        // },
+      ];
+      for (let i = 0; i < 50; i++) {
+        let obj = {
+          operatedOrgNum: 2,
+          orgNum: 4,
+          name: "杭州银行域名机构"
+        }
+        obj.id = i + 1
+        this.activities.push(obj)
+      }
+      this.totalOrgNum = 12; // 总机构数
+      this.totalOperatedOrgNum = 6; // 总合作中机构数
     },
     //排序
     handleSortChange({ prop, order }) {
@@ -396,6 +432,7 @@ export default {
     handleAction(params, sign) {
       if (sign === "rules") {
         this.rulesModalVisible = true;
+        this.isAdd = false
       }
       console.log(params, sign);
     },
@@ -442,21 +479,32 @@ export default {
     resetAddOrgForm() {
       this.$refs["addOrgForm"].resetFields();
     },
+    // 打开弹窗 域名机构以及顶级机构创建
+    showModal () {
+      if (this.editable) {
+        this.rulesModalVisible = true
+        this.isAdd = true
+      } else {
+        this.addOrgVisible = true
+      }
+    },
     // 左侧树点击事件
     customerTreeClick(val, obj) {
       // 通过路由控制，改变右侧表格数据
       if (val && val === 'all') {
-        this.title = `全部机构（${this.operatedOrgNum}/${this.orgNum}）`;
+        this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`;
         this.$router.push('/customerManagement');
+        this.editable = false
       } else {
         this.title = `${obj.name}（ID：${obj.id}）`
         this.$router.push(`/customerManagement/${obj.name}/${obj.id}`);
+        this.editable = true
       }
     },
-    // 域名地址跳转
-    linkTo () {
-
-    },
+    // 保存顶级机构名称
+    saveName (name) {
+      console.log(name)
+    }
   },
   computed: {
     batchHandleText: function () {
@@ -486,7 +534,7 @@ export default {
     &-left {
       min-height: 79vh;
       background: #fff;
-      min-width: 320px;
+      width: 300px;
       margin-right: 20px;
       padding: 20px;
     }
@@ -517,7 +565,7 @@ export default {
           }
         }
         &-right {
-          width: 450px;
+          width: 500px;
           text-align: right;
           .customer {
             display: inline-block;
@@ -526,10 +574,12 @@ export default {
               color: #4E5566;
               font-size: 14px;
               line-height: 14px;
-              .img {
-                display: inline;
-                vertical-align: text-bottom;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              img {
                 cursor: pointer;
+                margin-right: 5px;
               }
             }
             &-num {
@@ -546,7 +596,7 @@ export default {
             width: 147px;
           }
           .num3 {
-            width: 82px;
+            width: 98px;
             text-align: center;
           }
           .divider {

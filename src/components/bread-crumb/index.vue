@@ -13,7 +13,7 @@
         <el-button @click="cancel">取消</el-button>
       </div>
       <div class="action-btn" v-if="btnText">
-        <el-button type="primary" @click="$emit('handleClick')">{{
+        <el-button type="primary" icon="el-icon-plus" @click="$emit('handleClick')">{{
           btnText
         }}</el-button>
       </div>
@@ -56,10 +56,12 @@ export default {
   methods: {
     showEdit() {
       this.editStatus = true;
-      this.editValue = this.text;
+      this.editValue = this.text.split('（')[0]
     },
     save() {
       this.editStatus = false;
+      // 将输入框的值返回 做保存处理
+      this.$emit('saveName', this.editValue)
     },
     cancel() {
       this.editStatus = false;

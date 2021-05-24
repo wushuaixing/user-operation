@@ -41,7 +41,7 @@ const taskAssignColumn = [
   },
   {
     prop: "phone",
-    label: "顶级合作机构",
+    label: "顶级合作机构名称",
     sort: false,
   },
   {
@@ -51,12 +51,22 @@ const taskAssignColumn = [
   },
   {
     prop: "normalErrorNum",
-    label: "客户使用机构数",
+    label: "全部子机构数",
     sort: "custom",
   },
   {
     prop: "notIncludeErrorNum",
-    label: "债务人数",
+    label: "总账号数",
+    sort: "custom",
+  },
+  {
+    prop: "userName",
+    label: "合同开始日期",
+    sort: false,
+  },
+  {
+    prop: "notIncludeErrorNum",
+    label: "合同结束日期",
     sort: "custom",
   },
 ];

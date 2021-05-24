@@ -6,12 +6,12 @@
       v-bind="rulesFormOptions.options"
       :rules="rulesFormOptions.rules"
     >
-      <el-form-item label="ID：">
+      <el-form-item label="ID：" v-if="!isAdd">
         <div>
           {{ rulesForm.a }}
         </div>
       </el-form-item>
-      <el-form-item label="顶级合作机构名称：">
+      <el-form-item label="顶级合作机构名称：" prop="b">
         <el-input
           v-model="rulesForm.b"
           autocomplete="off"
@@ -19,13 +19,13 @@
           placeholder="请输入顶级合作机构名称"
         />
       </el-form-item>
-      <el-form-item label="机构类型：">
+      <el-form-item label="机构类型：" prop="c">
         <el-radio-group v-model="rulesForm.c" size="medium">
-          <el-radio :label="1">不限</el-radio>
-          <el-radio :label="2">限制</el-radio>>
+          <el-radio :label="1">试用</el-radio>
+          <el-radio :label="2">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：">
+      <el-form-item label="合同起止日期：" prop="e">
         <el-col :span="11">
           <el-date-picker
             type="date"
@@ -34,7 +34,7 @@
             style="width: 100%"
           ></el-date-picker>
         </el-col>
-        <el-col class="line" :span="2">-</el-col>
+        <el-col class="line" :span="2">至</el-col>
         <el-col :span="11">
           <el-date-picker
             type="date"
@@ -44,8 +44,8 @@
           ></el-date-picker>
         </el-col>
       </el-form-item>
-      <el-form-item label="上级机构ID：">
-        <el-select v-model="rulesForm.f" placeholder="请选择上级机构ID">
+      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'f'">
+        <el-select v-model="rulesForm.f" placeholder="请选择上级机构ID" v-if="!isAdd">
           <el-option
             v-for="item in rulesForm.fList"
             :label="item.label"
@@ -53,19 +53,23 @@
             :key="item.value"
           />
         </el-select>
+        <span v-else>{{rulesForm.f}}</span>
       </el-form-item>
-      <el-form-item label="上级机构名称：">
+      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'g'">
         <el-input
+          v-if="!isAdd"
           v-model="rulesForm.g"
           autocomplete="off"
           maxlength="11"
           placeholder="请输入顶级合作机构名称"
         />
+        <span v-else>{{rulesForm.g}}</span>
       </el-form-item>
       <el-form-item
         v-for="item in rulesFormOptions.itemsRaido"
         :label="`${item.label}:`"
         :key="item.val"
+        :prop="item.val"
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
@@ -77,10 +81,11 @@
           <el-form-item
             label="上限："
             label-width="70px"
+            :prop="item.num || ''"
             v-if="rulesForm[item.val] === 2"
           >
             <el-input
-              v-model="rulesForm.gg"
+              v-model="rulesForm[item.num]"
               autocomplete="off"
               maxlength="11"
               placeholder=""
@@ -88,7 +93,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="资产监控权限：">
+      <el-form-item label="资产监控权限：" error="请进行授权" :showMessage="permissionErrormsgShow" required>
         <div class="zcjk-rules-box">
           <div
             class="zcjk-rules-box-item"
@@ -119,7 +124,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="$emit('close')">取 消</el-button>
+        <el-button @click="permissionErrormsgShow = false">取 消</el-button>
         <el-button type="primary" @click="onsubmit">确 定</el-button>
       </span>
     </template>
@@ -139,79 +144,93 @@ export default {
       type: Boolean,
       default: false,
     },
+    isAdd: {
+      type: Boolean,
+      default: true,
+    }
   },
   created() {
-    this.rulesForm = this.formData;
+    this.rulesForm = Object.assign(this.rulesForm, this.formData);
+    if (this.isAdd) {
+      let { customerName, id } = this.$route.params;
+      this.rulesForm.f = id;
+      this.rulesForm.g = customerName
+    }
   },
   data() {
     return {
+      permissionErrormsgShow: true,
       rulesForm: {
         a: "",
         b: "",
-        c: "",
+        c: 2,
         d: "",
         e: "",
         f: "",
         g: "",
         h: "",
-        i: "",
-        j: "",
-        k: "",
-        l: "",
-        m: "",
+        i: 1,
+        j: 1,
+        k: 1,
+        l: 1,
+        m: 1,
+        numi: "",
+        numk: "",
+        numl: "",
+        numm: "",
       },
       checkList: {
         a: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
           isIndeterminate: false,
           options: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
         },
         b: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3"],
           isIndeterminate: false,
           options: ["1", "2", "3"],
         },
         c: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3", "4"],
           isIndeterminate: false,
           options: ["1", "2", "3", "4"],
         },
         d: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3", "4", "5", "6"],
           isIndeterminate: false,
           options: ["1", "2", "3", "4", "5", "6"],
         },
         e: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3", "4", "5", "6"],
           isIndeterminate: false,
           options: ["1", "2", "3", "4", "5", "6"],
         },
         f: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2"],
           isIndeterminate: false,
           options: ["1", "2"],
         },
         g: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1"],
           isIndeterminate: false,
           options: ["1"],
         },
         h: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
           isIndeterminate: false,
           options: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
         },
         i: {
-          checkAll: false,
-          checkedData: [],
+          checkAll: true,
+          checkedData: ["1", "2", "3"],
           isIndeterminate: false,
           options: ["1", "2", "3"],
         },
@@ -229,13 +248,56 @@ export default {
           destroyOnClose: true,
           class: "rules-modal",
         },
-        rules: {},
+        rules: {
+          b: {
+            required: true, message: "顶级合作机构名称不允许为空", trigger: "blur",
+          },
+          c: {
+            required: true, message: "请选择机构类型", trigger: "change",
+          },
+          e: {
+            required: true, message: "合同结束日期不允许为空", trigger: "blur",
+          },
+          f: {
+            required: true, message: "请选择上级机构ID", trigger: "change",
+          },
+          g: {
+            required: true, message: "上级机构名称不允许为空", trigger: "change",
+          },
+          i: {
+            required: true, message: "请选择限制画像查询次数", trigger: "change",
+          },
+          j: {
+            required: true, message: "请选择限制分类搜索次数", trigger: "change",
+          },
+          k: {
+            required: true, message: "请选择限制监控债务人数", trigger: "change",
+          },
+          l: {
+            required: true, message: "请选择限制配置子机构数", trigger: "change",
+          },
+          m: {
+            required: true, message: "请选择限制配置账号数", trigger: "change",
+          },
+          numi: {
+            required: true, message: "请输入上限", trigger: "blur",
+          },
+          numk: {
+            required: true, message: "请输入上限", trigger: "blur",
+          },
+          numl: {
+            required: true, message: "请输入上限", trigger: "blur",
+          },
+          numm: {
+            required: true, message: "请输入上限", trigger: "blur",
+          },
+        },
         itemsRaido: [
-          { label: "限制画像查询次数", val: "i" },
+          { label: "限制画像查询次数", val: "i", num: "numi" },
           { label: "限制分类搜索次数", val: "j" },
-          { label: "限制监控债务人数", val: "k" },
-          { label: "限制配置子机构数", val: "l" },
-          { label: "限制配置账号数", val: "m" },
+          { label: "限制监控债务人数", val: "k", num: "numk" },
+          { label: "限制配置子机构数", val: "l", num: "numl" },
+          { label: "限制配置账号数", val: "m", num: "numm" },
         ],
         itemsChecked: [
           {
@@ -488,11 +550,23 @@ export default {
   },
   methods: {
     onsubmit() {
-      console.log(this.rulesForm);
+      this.$refs['rulesForm'].validate((valid) => {
+        if (valid && !this.permissionErrormsgShow) {
+          alert('submit!');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
     handleCheckAllChange(val, key) {
       this.checkList[key].checkedData = val ? this.checkList[key].options : [];
       this.checkList[key].isIndeterminate = false;
+      if (val) {
+        this.checkPermissionIsSet()
+      } else {
+        this.permissionErrormsgShow = false
+      }
     },
     handleCheckedItemChange(val, key) {
       let count = val.length;
@@ -500,6 +574,19 @@ export default {
         count === this.checkList[key].options.length;
       this.checkList[key].isIndeterminate =
         count > 0 && count < this.checkList[key].options.length;
+      if (!count) {
+        this.checkPermissionIsSet()
+      } else {
+        this.permissionErrormsgShow = false
+      }
+    },
+    // 判断权限是否没有配置 并设置error显示
+    checkPermissionIsSet () {
+      let len = 0;
+      for (let key in this.checkList) {
+        len += this.checkList[key].checkedData.length;
+      };
+      this.permissionErrormsgShow = !len
     },
   },
 };

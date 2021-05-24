@@ -2,7 +2,7 @@
   <div class="yc-container account-management-container">
     <nav class="breadcrumb">
       <div class="title bold-text">审核账号</div>
-      <el-button type="primary" icon="el-icon-plus" @click="visible = true">
+      <el-button type="primary" icon="el-icon-plus" @click="$message.success('123')">
         添加账号
       </el-button>
     </nav>
