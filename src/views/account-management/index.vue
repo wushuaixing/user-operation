@@ -120,7 +120,7 @@ export default {
       loading: false,
       column: accountManagementColumn,
       accountList: [],
-      visible: true,
+      visible: false,
       form: {
         name: "",
         phone: "",
