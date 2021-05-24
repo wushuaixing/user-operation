@@ -52,7 +52,7 @@ deploy_step:
     - chmod 644 ~/.ssh/know_hosts
     - ls
     #    - ssh -o StrictHostKeyChecking=no -p 22 work@$DEPLOY_SERVER "cd $SHELL_PATH; chmod +x clear-test.sh; ./clear-test.sh; exit"
-    - scp -o StrictHostKeyChecking=no -r -P 22 ./build/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/dev
+    - scp -o StrictHostKeyChecking=no -r -P 22 ./dist/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/dev
 
 deploy_step-sit:
   stage: deploy
@@ -69,7 +69,7 @@ deploy_step-sit:
     - chmod 644 ~/.ssh/know_hosts
     - ls
     #    - ssh -o StrictHostKeyChecking=no -p 22 work@$DEPLOY_SERVER "cd $SHELL_PATH; chmod +x clear-test.sh; ./clear-test.sh; exit"
-    - scp -o StrictHostKeyChecking=no -r -P 22 ./build/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/sit
+    - scp -o StrictHostKeyChecking=no -r -P 22 ./dist/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/sit
 
 deploy_step-uat:
   stage: deploy
@@ -86,4 +86,4 @@ deploy_step-uat:
     - chmod 644 ~/.ssh/know_hosts
     - ls
     #    - ssh -o StrictHostKeyChecking=no -p 22 work@$DEPLOY_SERVER "cd $SHELL_PATH; chmod +x clear-test.sh; ./clear-test.sh; exit"
-    - scp -o StrictHostKeyChecking=no -r -P 22 ./build/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/uat
+    - scp -o StrictHostKeyChecking=no -r -P 22 ./dist/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/uat

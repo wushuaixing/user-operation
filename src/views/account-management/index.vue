@@ -129,7 +129,7 @@ export default {
       formOptions: {
         options: {
           labelPosition: "right",
-          labelWidth: "120px",
+          labelWidth: "125px",
           destroyOnClose: true,
           class: "add-account-modal",
         },
@@ -285,5 +285,11 @@ export default {
 }
 .add-account-modal {
   padding-right: 75px;
+  .el-form{
+    &-item{
+      margin-bottom: 16px !important;
+
+    }
+  }
 }
 </style>
