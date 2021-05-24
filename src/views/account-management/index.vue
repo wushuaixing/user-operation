@@ -1,8 +1,13 @@
 <template>
   <div class="yc-container account-management-container">
     <nav class="breadcrumb">
-      <div class="title bold-text">审核账号</div>
-      <el-button type="primary" icon="el-icon-plus" @click="visible = true">
+      <div class="title bold-text">运营账号</div>
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        @click="visible = true"
+        class="button-first"
+      >
         添加账号
       </el-button>
     </nav>
@@ -18,7 +23,9 @@
         :label="item.label"
         :sortable="item.sort"
         :width="item.width"
-        :key="item.label"
+        :key="item.class"
+        :align="item.align"
+        :class-name="item.class"
       >
       </el-table-column>
       <el-table-column label="操作">
@@ -213,7 +220,7 @@ export default {
             this.$message.error("请求出错");
           }
         })
-        .finally((this.loading = false));
+        .finally(() => (this.loading = false));
     },
     onSubmit() {
       this.$refs["addAccountForm"].validate((valid) => {
@@ -246,6 +253,7 @@ export default {
 </script>
 <style lang="scss">
 .account-management-container {
+  padding-top: 16px !important;
   nav {
     display: flex;
     justify-content: space-between;
@@ -257,6 +265,21 @@ export default {
       border-left: 3px solid #296dd3;
       height: 20px;
       padding-left: 8px;
+    }
+    .el-button {
+      width: 100px;
+      padding: 0;
+      i {
+        font-size: 12px;
+      }
+    }
+  }
+  tbody {
+    .normal-error-num {
+      padding-right: 25px;
+    }
+    .not-include-errorNum {
+      padding-right: 18px;
     }
   }
 }
