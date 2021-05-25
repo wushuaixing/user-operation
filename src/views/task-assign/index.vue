@@ -78,6 +78,10 @@
           v-loading="loading"
           :row-key="(val) => val.id"
         >
+          <template #empty>
+            <img src="../../assets/img/no_data.png" alt="">
+            <p>暂无数据</p>
+          </template>
           <el-table-column
             type="selection"
             v-if="isChecked"

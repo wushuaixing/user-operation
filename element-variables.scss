@@ -150,6 +150,10 @@ $--table-row-hover-background-color: $--background-color-base !default;
       box-sizing: border-box;
     }
   }
+  &__empty-text{
+    line-height: 36px !important;
+    padding: 120px 0;
+  }
 }
 
 /* Pagination

@@ -17,6 +17,10 @@
       @sort-change="sortChange"
       v-loading="loading"
     >
+      <template #empty>
+        <img src="../../assets/img/no_data.png" alt="">
+        <p>暂无数据</p>
+      </template>
       <el-table-column
         v-for="item in column"
         :prop="item.prop"
