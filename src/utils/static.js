@@ -106,11 +106,11 @@ const dataAuditTabs = (matchNum, noReadNum) => [
 const taskAssignTabs = (toBeAllocatedNum) => [
   {
     label: `待分配机构(${toBeAllocatedNum})`,
-    name: "0",
+    name: "1",
   },
   {
     label: " 已分配机构 ",
-    name: "1",
+    name: "2",
   },
 ];
 
