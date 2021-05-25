@@ -45,15 +45,21 @@
           type="primary"
           v-if="!isChecked"
           @click="handleBatchCheck(true)"
+          class="button-third"
+          icon="iconfont iconyonghuyunying-piliangguanli"
         >
           批量管理
         </el-button>
-        <el-button type="primary" v-else @click="handleBatchCheck(false)"
+        <el-button
+          type="primary"
+          v-else
+          @click="handleBatchCheck(false)"
+          class="button-second"
           >取消批量管理</el-button
         >
-        <el-button @click="handleOpenModal('batch')">{{
-          tabKey === "0" ? "分配" : "重新分配"
-        }}</el-button>
+        <el-button @click="handleOpenModal('batch')" class="button-fourth">
+          {{ tabKey === "0" ? "分配" : "重新分配" }}
+        </el-button>
       </div>
       <div class="table-content-body">
         <el-table
@@ -78,7 +84,9 @@
             :label="item.label"
             :sortable="item.sort"
             :width="item.width"
-            :key="item.label"
+            :key="item.class"
+            :align="item.align"
+            :class-name="item.class"
           />
           <el-table-column
             prop="userName"
@@ -318,6 +326,16 @@ export default {
   .table-content {
     &-btn {
       margin: 0px 0 12px 0;
+    }
+    &-body {
+      tbody {
+        .normal-errorNum {
+          padding-right: 25px;
+        }
+        .not-include-errrorNum {
+          padding-right: 18px;
+        }
+      }
     }
   }
   .modal-content {

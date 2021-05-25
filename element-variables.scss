@@ -105,6 +105,22 @@ $--input-hover-border: #296DD3 !default;
   box-shadow: 0px 0px 4px 0px rgba(1, 106, 169, 0.46);
 }
 
+/* Tabs
+-------------------------- */
+$--tab-header-color: red !default;
+.el-tabs{
+  &__item{
+    font-size: 16px !important;
+    color: #20242E !important;
+    &:hover{
+      color: #296DD3 !important;
+    }
+  }
+  .is-active{
+    color: #296DD3 !important;
+  }
+}
+
 /* Table
 -------------------------- */
 $--table-border-color: #e2e4e9 !default;

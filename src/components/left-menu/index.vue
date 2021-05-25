@@ -70,7 +70,7 @@ export default {
           key: "CustomerManagement",
         },
         {
-          text: "审核任务分配",
+          text: "顶级机构分配",
           icon: "el-icon-picture-outline-round",
           path: "/taskAssign",
           key: "TaskAssign",

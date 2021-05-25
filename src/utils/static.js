@@ -109,7 +109,7 @@ const taskAssignTabs = (toBeAllocatedNum) => [
     name: "0",
   },
   {
-    label: "已分配机构",
+    label: " 已分配机构 ",
     name: "1",
   },
 ];

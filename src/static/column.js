@@ -38,7 +38,7 @@ const accountManagementColumn = [
     width: "320",
     sort: "custom",
     align:'center',
-    class:'not-include-errorNum',
+    class:'not-include-error-num',
   },
 ];
 
@@ -48,26 +48,36 @@ const taskAssignColumn = [
     prop: "id",
     label: "ID",
     sort: false,
+    align:'left',
+    class:'id',
   },
   {
     prop: "phone",
     label: "顶级合作机构",
     sort: false,
+    align:'left',
+    class:'phone',
   },
   {
     prop: "userName",
     label: "机构类型",
     sort: false,
+    align:'left',
+    class:'user-name',
   },
   {
     prop: "normalErrorNum",
     label: "客户使用机构数",
     sort: "custom",
+    align:'center',
+    class:'normal-errorNum',
   },
   {
     prop: "notIncludeErrorNum",
     label: "债务人数",
     sort: "custom",
+    align:'center',
+    class:'not-include-errrorNum',
   },
 ];
 
