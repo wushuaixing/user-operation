@@ -19,7 +19,7 @@
         >
           <el-form-item prop="phone">
             <el-input
-              v-model="params.phone"
+              v-model="params.username"
               placeholder="请输入11位账号"
               maxlength="11"
               oninput="value = value.replace(/\D/g,'')"
@@ -126,12 +126,12 @@ export default {
       loading: false,
       isLocal: false,
       params: {
-        phone: "",
+        username: "",
         password: "",
         picCode: "",
       },
       rules: {
-        phone: [
+        username: [
           { required: true, message: "请输入账号", trigger: "change" },
           { min: 11, message: "账号小于11位", trigger: "change" },
         ],
@@ -182,13 +182,13 @@ export default {
         this.errorCount = errorCount;
         if (this.errorCount > 3) this.toRefreshImg();
       };
-      const suc = ({ roleName, token, name }) => {
+      const suc = ({ groupId, token, name }) => {
         localStorage.setItem("token", token);
-        localStorage.setItem("role", roleName);
+        localStorage.setItem("role", groupId);
         ruleProcess(this);
         this.$router.push({
           name: "Index",
-          params: { info: "success", name, roleName },
+          params: { info: "success", name, groupId },
         });
       };
       LoginApi.login(params)
@@ -214,8 +214,8 @@ export default {
         .finally(() => (this.loading = false));
     },
     toRefreshImg() {
-      const { phone } = this.params;
-      LoginApi.getCaptcha(phone).then((res) => {
+      const { username } = this.params;
+      LoginApi.getCaptcha(username).then((res) => {
         const {
           data: { code, data },
         } = res;
@@ -230,8 +230,8 @@ export default {
     onFill(flag) {
       this.params = {
         ...this.params,
-        phone: flag ? "17630829902" : "66666666666",
-        password: flag ? "123456" : "777777",
+        username: flag ? "12345678910" : "15225645956",
+        password: flag ? "678910" : "123456a",
       };
     },
   },

@@ -1,7 +1,7 @@
 //排序字段&&方式 对应
 const SORTER_TYPE = {
-  normalErrorNum: "NORMAL_ERROR_RATE",
-  notIncludeErrorNum: "NOT_INCLUDE_ERROR_RATE",
+  obligorNum: "OBLIGOR_NUM",
+  orgNum: "ORG_NUM",
   ascending: "ASC",
   descending: "DESC",
 };
@@ -106,11 +106,11 @@ const dataAuditTabs = (matchNum, noReadNum) => [
 const taskAssignTabs = (toBeAllocatedNum) => [
   {
     label: `待分配机构(${toBeAllocatedNum})`,
-    name: "0",
+    name: "1",
   },
   {
-    label: "已分配机构",
-    name: "1",
+    label: " 已分配机构 ",
+    name: "2",
   },
 ];
 

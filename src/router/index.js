@@ -20,7 +20,7 @@ const router = createRouter({
   routes,
 });
 
-const list = role === "Admin" ? adminRoutes : normalRoutes;
+const list = role === "204" ? normalRoutes : adminRoutes ;
 list.forEach((i) => router.addRoute(i));
 
 export default router;

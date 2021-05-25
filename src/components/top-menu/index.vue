@@ -43,6 +43,7 @@
             v-model="form.oldPassword"
             autocomplete="off"
             maxlength="20"
+            placeholder="请输入原密码"
           >
           </el-input>
         </el-form-item>
@@ -52,6 +53,7 @@
             autocomplete="off"
             maxlength="20"
             oninput="value = value.replace(/[\W_]/g,'')"
+            placeholder="请输入新密码"
           ></el-input>
         </el-form-item>
         <el-form-item label="确认新密码：" prop="confirmPassword">
@@ -59,6 +61,7 @@
             v-model="form.confirmPassword"
             autocomplete="off"
             maxlength="20"
+            placeholder="请再次输入新密码"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -77,6 +80,7 @@ import logoImg from "@/assets/img/top_logo.png";
 import { encryptEditPwd } from "@/utils/encrypt";
 import { toRaw } from "vue";
 import LoginApi from "@/server/api/login";
+import { $modalConfirm } from "@/utils/better-el";
 
 export default {
   name: "index",
@@ -116,7 +120,7 @@ export default {
       formOptions: {
         options: {
           labelPosition: "right",
-          labelWidth: "120px",
+          labelWidth: "146px",
           destroyOnClose: true,
         },
         rules: {
@@ -169,13 +173,7 @@ export default {
       this.$refs["editPwdForm"].resetFields();
     },
     loginOut() {
-      this.$confirm("确认退出登录吗", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        showClose: false,
-        closeOnClickModal: false,
-      })
+      $modalConfirm({ title: "确认要退出登录吗?" })
         .then(() => {
           LoginApi.loginOut().then(() => {
             localStorage.clear();
@@ -186,7 +184,7 @@ export default {
           console.log(err);
         });
     },
-    handleToggle(val){
+    handleToggle(val) {
       this.iconToggle = val;
     },
   },
@@ -246,10 +244,10 @@ export default {
 
   .el-dropdown-menu {
     padding: 0;
-    &__item{
+    &__item {
       height: 39px;
       line-height: 39px;
-      span{
+      span {
         position: relative;
         top: 1px;
       }
@@ -262,9 +260,13 @@ export default {
 }
 
 .change-pwd-modal {
-  .el-dialog__body {
-    .el-form {
-      padding: 0 30px;
+  .el-form {
+    padding-right: 54px;
+    &-item {
+      margin-bottom: 16px !important;
+      &:last-child {
+        margin-bottom: 36px !important;
+      }
     }
   }
 }

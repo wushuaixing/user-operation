@@ -52,6 +52,6 @@ export const adminRoutes = [
 
 export const ruleProcess = (_this) => {
   const role = localStorage.getItem("role");
-  const list = role === "Admin" ? adminRoutes : normalRoutes;
+  const list = role === "204" ? normalRoutes : adminRoutes;
   list.forEach((i) => _this.$router.addRoute(i));
 };
