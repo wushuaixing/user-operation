@@ -158,7 +158,7 @@ import AdminApi from "@/server/api/admin";
 import { toRaw } from "vue";
 export default {
   name: "index",
-  nameComment: "审核任务分配",
+  nameComment: "顶级机构分配",
   data() {
     return {
       visible: false,

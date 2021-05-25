@@ -102,9 +102,8 @@ import AdminApi from "@/server/api/admin";
 import { toRaw } from "vue";
 import { encryptInfo } from "@/utils/encrypt";
 import { SORTER_TYPE } from "@/utils/static";
-import WarningIcon from "@/assets/img/warn-icon.png";
 import { accountManagementColumn } from "@/static/column";
-
+import { $modalConfirm } from "@/utils/better-el";
 export default {
   name: "index",
   nameComment: "账号管理-审核账号",
@@ -144,7 +143,6 @@ export default {
           ],
         },
       },
-      WarningIcon,
     };
   },
   created() {
@@ -167,13 +165,12 @@ export default {
     handleAction({ id, userName }, action) {
       const isDel = action === "del";
       const text = isDel
-        ? "删除后，该账号将无法在平台登录"
-        : "重置密码后，该账号密码为账号后6位";
+        ? "点击确定，该账号将被删除并无法在用户运营平台登录"
+        : "点击确定，密码将被重置为账号后6位";
+
       const title = isDel ? `确认删除${userName}的账号?` : "确认重置密码?";
       const messageText = isDel ? "删除成功" : "重置密码成功";
-      this.$confirm(text, title, {
-        type: "warning",
-      })
+      $modalConfirm({ text, title })
         .then(() => {
           AdminApi.delUserAndResetPwd({ id }, action).then((res) => {
             const { code } = res.data || {};
@@ -285,10 +282,12 @@ export default {
 }
 .add-account-modal {
   padding-right: 75px;
-  .el-form{
-    &-item{
+  .el-form {
+    &-item {
       margin-bottom: 16px !important;
-
+      &:last-child {
+        margin-bottom: 36px !important;
+      }
     }
   }
 }

@@ -1,5 +1,4 @@
 import moment from "moment";
-
 /**
  * 去除对象中空值
  * @param obj

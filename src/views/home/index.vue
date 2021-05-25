@@ -87,7 +87,7 @@ export default {
 }
 
 .el-aside {
-  background-color: #19283F;
+  background-color: #19283f;
   height: 100%;
 }
 </style>
