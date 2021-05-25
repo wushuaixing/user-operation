@@ -30,11 +30,18 @@
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button type="text" @click="handleAction(scope.row, 'edit')">
+          <el-button
+            type="text"
+            @click="handleAction(scope.row, 'edit')"
+            class="button-link"
+          >
             重置密码
           </el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button type="text" @click="handleAction(scope.row, 'del')"
+          <el-button
+            type="text"
+            @click="handleAction(scope.row, 'del')"
+            class="button-link"
             >删除
           </el-button>
         </template>
@@ -275,7 +282,7 @@ export default {
     .normal-error-num {
       padding-right: 25px;
     }
-    .not-include-errorNum {
+    .not-include-error-num {
       padding-right: 18px;
     }
   }

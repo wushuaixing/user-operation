@@ -32,9 +32,9 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getList">搜索</el-button>
+          <el-button type="primary" @click="getList" class="button-first">搜索</el-button>
           <el-button type="primary" @click="resetOptions"
-            >清空搜索条件</el-button
+            class="button-fourth">清空搜索条件</el-button
           >
         </el-form-item>
       </el-form>
@@ -98,6 +98,7 @@
               <el-button
                 type="text"
                 @click="handleOpenModal('single', scope.row)"
+                class="button-link"
               >
                 {{ tabKey === "0" ? "分配" : "重新分配" }}
               </el-button>

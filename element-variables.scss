@@ -77,6 +77,16 @@ $--button-active-shade-percent: 0% !default;
     box-shadow: 0px 0px 4px 0px rgba(41, 109, 211, 0.53);
   }
 }
+@mixin btn-link{
+  color: #296DD3 !important;
+  &:hover{
+    color: #2E7BED !important;
+    text-decoration: underline;
+  }
+  &:active{
+    color: #2460BA !important;
+  }
+}
 .button{
   //一级按钮
   &-first{
@@ -93,6 +103,9 @@ $--button-active-shade-percent: 0% !default;
   //四级按钮
   &-fourth{
     @include btn-fourth;
+  }
+  &-link{
+    @include btn-link;
   }
 }
 /* Input
