@@ -11,7 +11,7 @@
       unique-opened="true"
     >
       <template
-        v-for="item in role === 'Admin' ? adminMenu : userMenu"
+        v-for="item in role === '204' ?userMenu: adminMenu "
         :key="item.text"
       >
         <el-submenu v-if="item.child" :index="item.path">

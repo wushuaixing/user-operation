@@ -49,9 +49,12 @@
     </el-table>
     <el-pagination
       @current-change="pageChange"
+      @size-change="sizeChange"
       background
       :current-page="page"
-      layout="total, prev, pager, next, jumper"
+      :page-sizes="[10, 20, 30, 40, 50]"
+      :page-size="params.num"
+      layout="total,sizes, prev, pager, next, jumper"
       :total="total"
     />
     <el-dialog
@@ -119,7 +122,7 @@ export default {
       page: 1,
       params: {
         num: 10,
-        orderField: "",
+        sortColumn: "",
         sortOrder: "",
       },
       total: 0,
@@ -156,26 +159,37 @@ export default {
     this.getList();
   },
   methods: {
+    //翻页
     pageChange(page) {
       this.page = parseInt(page);
       this.getList();
     },
+    //pageSize 改变
+    sizeChange(num) {
+      this.params = {
+        ...this.params,
+        num,
+      };
+      this.getList();
+    },
+    //排序
     sortChange({ prop, order }) {
       this.params = {
         ...this.params,
-        orderField: SORTER_TYPE[prop],
+        sortColumn: SORTER_TYPE[prop],
         sortOrder: SORTER_TYPE[order],
       };
       this.page = 1;
       this.getList();
     },
-    handleAction({ id, userName }, action) {
+    //重置密码 && 删除账号
+    handleAction({ id, name }, action) {
       const isDel = action === "del";
       const text = isDel
         ? "点击确定，该账号将被删除并无法在用户运营平台登录"
         : "点击确定，密码将被重置为账号后6位";
 
-      const title = isDel ? `确认删除${userName}的账号?` : "确认重置密码?";
+      const title = isDel ? `确认删除${name}的账号?` : "确认重置密码?";
       const messageText = isDel ? "删除成功" : "重置密码成功";
       $modalConfirm({ text, title })
         .then(() => {
@@ -198,21 +212,22 @@ export default {
           console.log(err);
         });
     },
+    //添加账号-密码默认为账号后六位
     handlePwd() {
       const phone = this.form.phone;
-      console.log(this.form.phone);
       if (/^\d{11}$/.test(phone)) {
         this.form.password =
           phone.length > 6 ? phone.substring(phone.length - 6) : phone;
       }
     },
+    //列表数据
     getList() {
       this.loading = true;
       const params = {
         ...toRaw(this.params),
         page: this.page,
       };
-      AdminApi.getUsersList(params)
+      AdminApi.getAccountList(params)
         .then((res) => {
           const { code, data } = res.data || {};
           if (code === 200) {
@@ -224,15 +239,17 @@ export default {
             this.$message.error("请求出错");
           }
         })
+        .catch(() => (this.loading = false))
         .finally(() => (this.loading = false));
     },
+    //添加账号
     onSubmit() {
       this.$refs["addAccountForm"].validate((valid) => {
         if (valid) {
-          AdminApi.addUser(encryptInfo(toRaw(this.form))).then((res) => {
+          AdminApi.addAccount(encryptInfo(toRaw(this.form))).then((res) => {
             const { code } = res.data || {};
             if (code === 5005) {
-              this.$message.warning("用户已存在");
+              this.$message.warning("账号已存在");
             } else if (code === 200) {
               this.$message.success({
                 message: "添加成功",
@@ -279,10 +296,10 @@ export default {
     }
   }
   tbody {
-    .normal-error-num {
+    .org-num {
       padding-right: 25px;
     }
-    .not-include-error-num {
+    .obligor-num {
       padding-right: 18px;
     }
   }

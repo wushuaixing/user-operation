@@ -248,7 +248,7 @@ export default {
     };
   },
   created() {
-    this.getList();
+    // this.getList();
     let name = [
       "河北省",
       "山西省",

@@ -218,12 +218,12 @@ export default {
   },
   methods: {
     getData() {
-      this.getUserList();
+      this.simpleUserList();
       this.getList();
     },
-    getUserList() {
+    simpleUserList() {
       const all = { id: "", value: "全部" };
-      AdminApi.simpleListUser().then((res) => {
+      AdminApi.simpleUserList().then((res) => {
         const { data } = res.data || {};
         this.userList = [all, ...data];
       });
@@ -234,7 +234,7 @@ export default {
         ...toRaw(this.params),
         page: this.page,
       };
-      AdminApi.getUsersList(params)
+      AdminApi.distributeList(1,params)
         .then((res) => {
           const { code, data } = res.data || {};
           if (code === 200) {

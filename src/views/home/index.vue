@@ -36,23 +36,23 @@ export default {
   },
   created() {
     const {
-      params: { info, name, roleName },
+      params: { info, name, groupId },
     } = this.$route;
     if (info === "success") {
       this.$message.success("登录成功");
       this.name = name;
-      this.roleName = roleName;
+      this.roleName = groupId;
     } else {
       this.loading = true;
       LoginApi.getUserInfo().then((res) => {
         const {
           data: { code, data },
         } = res;
-        const { name, roleName } = data || {};
+        const { name, groupId } = data || {};
         if (code === 200) {
           this.name = name;
           this.loading = false;
-          this.roleName = roleName;
+          this.roleName = groupId;
         } else {
           this.$router.push("/login");
         }

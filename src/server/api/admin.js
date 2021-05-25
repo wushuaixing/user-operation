@@ -2,53 +2,48 @@ import axios from "../index";
 import { clearEmpty, queryApi } from "@/utils";
 
 const AdminApi = {
-  //账号管理->结构化账号->账号列表
-
-  getUsersList: (params) =>
-    axios.post("/api/user/findUsers", clearEmpty(params)),
 
   //添加账号
   addUser: (params) => axios.post("/api/user/addUser", params),
 
-  //删除账号 && 重置密码
-  delUserAndResetPwd: (params, sign) => {
-    let url =
-      sign === "del" ? "/api/user/deleteUser" : "/api/user/resetPassword";
-    return axios.post(url, params);
-  },
 
-  //获取标注人员列表
-  simpleListUser: () => axios.get("/api/assetCheck/simpleListUser"),
 
-  Degree: (params) => axios.post("/api/assetCheck/judge", params),
+
+
+
+
+
+
+
+
 
   /*--------------------------账号管理----------------------*/
   //添加账号
-  addAccount: (params) => axios.post("/admin/account/addAccount", params),
+  addAccount: (params) => axios.post("/api/admin/account/addAccount", params),
 
-  //删除账号
-  delAccount: (params) => axios.post("/admin/account/deleteAccount", params),
+  //删除账号 && 重置密码
+  delUserAndResetPwd: (params, sign) => {
+    let url = sign === "del" ? "deleteAccount" : "resetPassword";
+    return axios.post(`/api/admin/account/${url}`, params);
+  },
 
   //账号列表
   getAccountList: (params) =>
-    axios.get(`/admin/account/list${queryApi(params)}`),
-
-  //重置密码
-  resetPassword: (params) => axios.post("/admin/account/resetPassword", params),
+    axios.get(`/api/admin/account/list?${queryApi(params)}`),
 
   /*--------------------------顶级机构分配----------------------*/
   //批量分配-重新分配
-  distribute: (params) => axios.post("/distribution/distribute", params),
+  distribute: (params) => axios.post("/api/admin/distribution/distribute", params),
 
   //待分配顶级机构数量
-  getNum: () => axios.get("/distribution/getNum"),
+  getNum: () => axios.get("/api/admin/distribution/getNum"),
 
   //顶级机构分配列表
   distributeList: (type, params) =>
-    axios.post(`/distribution/list/${type}`, clearEmpty(params)),
+    axios.post(`/api/admin/distribution/list/${type}`, clearEmpty(params)),
 
   //负责人列表
-  simpleUserList: () => axios.get("/distribution/simpleUserList"),
+  simpleUserList: () => axios.get("/api/admin/distribution/simpleUserList"),
 
   /*--------------------------客户管理----------------------*/
   //创建域名机构
