@@ -5,7 +5,7 @@
     </el-header>
     <el-container>
       <el-aside width="220px">
-        <LeftMenu :role="roleName" :num="toBeAllocatedNum"/>
+        <LeftMenu :role="roleName"/>
       </el-aside>
       <el-main>
         <div class="yc-main-wrapper">
@@ -20,7 +20,7 @@
 import TopMenu from "@/components/top-menu";
 import LeftMenu from "@/components/left-menu";
 import LoginApi from "@/server/api/login";
-import AdminApi from "@/server/api/admin";
+
 export default {
   name: "Home",
   data() {
@@ -39,10 +39,7 @@ export default {
     const {
       params: { info, name, groupId },
     } = this.$route;
-    AdminApi.getNum().then((res) => {
-      const { data } = res.data || {};
-      this.toBeAllocatedNum = data;
-    });
+    this.$store.dispatch("getNumAction");
     if (info === "success") {
       this.$message.success("登录成功");
       this.name = name;

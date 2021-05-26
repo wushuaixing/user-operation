@@ -11,7 +11,7 @@
       unique-opened="true"
     >
       <template
-        v-for="item in role === '204' ?userMenu: adminMenu"
+        v-for="item in role === '204' ? userMenu : adminMenu"
         :key="item.text"
       >
         <el-submenu v-if="item.child" :index="item.path">
@@ -36,8 +36,17 @@
           :route="{ path: item.path }"
         >
           <i :class="item.icon"></i>
-          <template #title>{{ item.text }}
-            <svg class="icon" aria-hidden="true" v-if="(item.key === 'TaskAssign') && Number(num)" style="font-size: 14px">
+          <template #title
+            >{{ item.text }}
+            <svg
+              class="icon"
+              aria-hidden="true"
+              v-if="
+                item.key === 'TaskAssign' &&
+                Number($store.state.toBeAllocatedNum)
+              "
+              style="font-size: 16px;position: relative;top: 1px;"
+            >
               <use xlink:href="#iconfenpei"></use>
             </svg>
           </template>
@@ -48,7 +57,7 @@
 </template>
 
 <script>
-import {userMenu,adminMenu} from '../../utils/rule';
+import { userMenu, adminMenu } from "../../utils/rule";
 export default {
   name: "index",
   nameComment: "左侧导航栏",
@@ -64,13 +73,6 @@ export default {
       type: String,
       default: "",
     },
-    num: {
-      type: Number,
-      default: 0,
-    },
-  },
-  created() {
-    console.log(this.role);
   },
 };
 </script>
@@ -85,11 +87,11 @@ export default {
 
   .el-submenu {
     width: 220px;
-    &__title{
+    &__title {
       height: 58px;
       line-height: 58px;
     }
-    &::after{
+    &::after {
       content: none !important;
     }
     .el-menu-item {
@@ -113,15 +115,15 @@ export default {
   }
   .is-active {
     opacity: 1;
-    &::after{
-      display:block;
-      content:'';
+    &::after {
+      display: block;
+      content: "";
       border-width: 6px 7px 6px 7px;
-      border-style:solid;
-      border-color: transparent #EEF1F7 transparent transparent;
-      position:absolute;
-      right:0;
-      top:calc(50% - 6px);
+      border-style: solid;
+      border-color: transparent #eef1f7 transparent transparent;
+      position: absolute;
+      right: 0;
+      top: calc(50% - 6px);
     }
   }
 }
