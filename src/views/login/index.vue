@@ -17,9 +17,9 @@
           ref="loginForm"
           class="login-form"
         >
-          <el-form-item prop="phone">
+          <el-form-item prop="username">
             <el-input
-              v-model="params.phone"
+              v-model="params.username"
               placeholder="请输入11位账号"
               maxlength="11"
               oninput="value = value.replace(/\D/g,'')"
@@ -39,6 +39,7 @@
               placeholder="请输入密码"
               maxlength="20"
               oninput="value = value.replace(/[\W_]/g,'')"
+              show-password
             >
               <template #prefix>
                 <img
@@ -67,7 +68,7 @@
                 />
               </template>
               <template #suffix>
-                <img :src="picCodeImg" alt="" />
+                <img :src="picCodeImg" alt="" @click="toRefreshImg" />
               </template>
             </el-input>
           </el-form-item>
@@ -78,7 +79,7 @@
               :loading="loading"
               class="button-first"
             >
-              登录
+              登 录
             </el-button>
           </el-form-item>
           <template v-if="isLocal">
@@ -121,16 +122,17 @@ export default {
   nameComment: "登录",
   data() {
     return {
-      params: {
-        phone: "",
-        password: "",
-        picCode: "",
-      },
       picCodeImg: "",
       errorCount: 0,
       loading: false,
+      isLocal: false,
+      params: {
+        username: "",
+        password: "",
+        picCode: "",
+      },
       rules: {
-        phone: [
+        username: [
           { required: true, message: "请输入账号", trigger: "change" },
           { min: 11, message: "账号小于11位", trigger: "change" },
         ],
@@ -141,13 +143,10 @@ export default {
           { required: true, message: "请输入验证码", trigger: "change" },
         ],
       },
-      isLocal: false,
     };
   },
   created() {
-    this.isLocal =
-      /localhost/.test(window.location.host) ||
-      /142/.test(window.location.host);
+    this.isLocal = /localhost/.test(window.location.host);
   },
   methods: {
     onSubmit() {
@@ -166,7 +165,7 @@ export default {
                 const f = () => {
                   this.loading = false;
                   this.errorCount = 4;
-                  this.toRefreshImg(params);
+                  this.toRefreshImg();
                 };
                 picCode ? this.login(params) : f();
               } else {
@@ -182,15 +181,15 @@ export default {
       const defaultErr = ({ errorCount }) => {
         err("账号或密码错误");
         this.errorCount = errorCount;
-        if (this.errorCount > 3) this.toRefreshImg(params);
+        if (this.errorCount > 3) this.toRefreshImg();
       };
-      const suc = ({ roleName, token, name }) => {
+      const suc = ({ groupId, token, name }) => {
         localStorage.setItem("token", token);
-        localStorage.setItem("role", roleName);
+        localStorage.setItem("role", groupId);
         ruleProcess(this);
         this.$router.push({
           name: "Index",
-          params: { info: "success", name, roleName },
+          params: { info: "success", name, groupId },
         });
       };
       LoginApi.login(params)
@@ -201,7 +200,7 @@ export default {
           switch (code) {
             case 5004:
               err("验证码错误");
-              this.toRefreshImg(params);
+              this.toRefreshImg();
               break;
             case 5006:
               err("账号不存在");
@@ -213,10 +212,11 @@ export default {
               defaultErr(data || {});
           }
         })
-        .finally((this.loading = false));
+        .finally(() => (this.loading = false));
     },
-    toRefreshImg({ phone }) {
-      LoginApi.getCaptcha(phone).then((res) => {
+    toRefreshImg() {
+      const { username } = this.params;
+      LoginApi.getCaptcha(username).then((res) => {
         const {
           data: { code, data },
         } = res;
@@ -231,8 +231,8 @@ export default {
     onFill(flag) {
       this.params = {
         ...this.params,
-        phone: flag ? "17630829902" : "66666666666",
-        password: flag ? "123456" : "777777",
+        username: flag ? "12345678910" : "15225645956",
+        password: flag ? "678910" : "123456a",
       };
     },
   },
@@ -260,7 +260,7 @@ export default {
       width: 640px;
       height: 560px;
       border-radius: 4px 0 0 4px;
-
+      box-shadow: 0px 2px 6px 0px rgba(2, 39, 95, 0.44);
       h1 {
         text-align: center;
         height: 40px;
@@ -277,7 +277,8 @@ export default {
       height: 100%;
       border-radius: 4px;
       padding: 80px 70px 0;
-
+      box-shadow: 0px 2px 6px 0px rgba(41, 109, 211, 0.21);
+      box-sizing: border-box;
       .title {
         color: #293038;
         line-height: 28px;
@@ -298,7 +299,11 @@ export default {
             width: 100%;
             background: #296dd3;
             border-radius: 2px;
-            font-size: 18px;
+            height: 44px;
+            span {
+              font-size: 18px;
+              line-height: 18px;
+            }
           }
         }
 
@@ -351,6 +356,7 @@ export default {
       width: 30px;
       background-color: #296dd3;
       border-radius: 0 4px 4px 0;
+      box-shadow: 0px 2px 6px 0px rgba(2, 39, 95, 0.44);
     }
   }
 
@@ -367,7 +373,8 @@ export default {
       img {
         width: 14px;
         vertical-align: middle;
-        margin-right: 4px;
+        position: relative;
+        top: -1px;
       }
     }
   }

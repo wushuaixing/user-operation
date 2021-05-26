@@ -1,0 +1,89 @@
+stages:
+  - install_deps
+  - build
+  - deploy
+
+cache:
+  key: ${CI_BUILD_REF_NAME}
+  paths:
+    - node_modules/
+    - dist/
+
+# 安装依赖
+install_deps:
+  stage: install_deps
+  tags:
+    - font-group-runner-8
+  only:
+    - develop
+    - release-sit
+    - release-uat
+  script:
+    - node -v
+    - yarn config set registry https://registry.npm.taobao.org
+    - yarn config set sass-binary-site https://npm.taobao.org/mirrors/node-sass
+    - yarn install
+
+# 编译
+build_step:
+  stage: build
+  tags:
+    - font-group-runner-8
+  only:
+    - develop
+    - release-sit
+    - release-uat
+  script:
+    - CI=false yarn build
+
+# 拷贝
+deploy_step:
+  stage: deploy
+  tags:
+    - font-group-runner-8
+  only:
+    - develop
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_8" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_SERVER_8 >> ~/.ssh/know_hosts
+    - chmod 644 ~/.ssh/know_hosts
+    - ls
+    #    - ssh -o StrictHostKeyChecking=no -p 22 work@$DEPLOY_SERVER "cd $SHELL_PATH; chmod +x clear-test.sh; ./clear-test.sh; exit"
+    - scp -o StrictHostKeyChecking=no -r -P 22 ./dist/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/dev
+
+deploy_step-sit:
+  stage: deploy
+  tags:
+    - font-group-runner-8
+  only:
+    - release-sit
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_8" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_SERVER_8 >> ~/.ssh/know_hosts
+    - chmod 644 ~/.ssh/know_hosts
+    - ls
+    #    - ssh -o StrictHostKeyChecking=no -p 22 work@$DEPLOY_SERVER "cd $SHELL_PATH; chmod +x clear-test.sh; ./clear-test.sh; exit"
+    - scp -o StrictHostKeyChecking=no -r -P 22 ./dist/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/sit
+
+deploy_step-uat:
+  stage: deploy
+  tags:
+    - font-group-runner-8
+  only:
+    - release-uat
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_8" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_SERVER_8 >> ~/.ssh/know_hosts
+    - chmod 644 ~/.ssh/know_hosts
+    - ls
+    #    - ssh -o StrictHostKeyChecking=no -p 22 work@$DEPLOY_SERVER "cd $SHELL_PATH; chmod +x clear-test.sh; ./clear-test.sh; exit"
+    - scp -o StrictHostKeyChecking=no -r -P 22 ./dist/* work@$DEPLOY_SERVER_8:$DEPLOY_RESOURCE_BASE_PATH/internal/user-operation/web/uat

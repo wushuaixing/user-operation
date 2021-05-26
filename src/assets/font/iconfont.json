@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "21839899",
+      "name": "分配",
+      "font_class": "fenpei",
+      "unicode": "e70e",
+      "unicode_decimal": 59150
+    },
+    {
+      "icon_id": "21835597",
+      "name": "选中数据",
+      "font_class": "xuanzhongshuju",
+      "unicode": "e70d",
+      "unicode_decimal": 59149
+    },
+    {
+      "icon_id": "21776296",
+      "name": "arrow_select_bottom",
+      "font_class": "arrow_select_bottom",
+      "unicode": "e709",
+      "unicode_decimal": 59145
+    },
+    {
+      "icon_id": "21776297",
+      "name": "arrow_select_top",
+      "font_class": "arrow_select_top",
+      "unicode": "e70b",
+      "unicode_decimal": 59147
+    },
+    {
       "icon_id": "21176451",
       "name": "用户运营-选中箭头",
       "font_class": "yonghuyunying-xuanzhongjiantou",

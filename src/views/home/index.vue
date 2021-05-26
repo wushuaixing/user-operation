@@ -4,8 +4,8 @@
       <TopMenu :name="name" />
     </el-header>
     <el-container>
-      <el-aside width="200px">
-        <LeftMenu :role="roleName" />
+      <el-aside width="220px">
+        <LeftMenu :role="roleName" :num="toBeAllocatedNum"/>
       </el-aside>
       <el-main>
         <div class="yc-main-wrapper">
@@ -20,7 +20,7 @@
 import TopMenu from "@/components/top-menu";
 import LeftMenu from "@/components/left-menu";
 import LoginApi from "@/server/api/login";
-
+import AdminApi from "@/server/api/admin";
 export default {
   name: "Home",
   data() {
@@ -28,6 +28,7 @@ export default {
       name: "",
       loading: false,
       roleName: "",
+      toBeAllocatedNum:0,
     };
   },
   components: {
@@ -36,23 +37,27 @@ export default {
   },
   created() {
     const {
-      params: { info, name, roleName },
+      params: { info, name, groupId },
     } = this.$route;
+    AdminApi.getNum().then((res) => {
+      const { data } = res.data || {};
+      this.toBeAllocatedNum = data;
+    });
     if (info === "success") {
       this.$message.success("登录成功");
       this.name = name;
-      this.roleName = roleName;
+      this.roleName = groupId;
     } else {
       this.loading = true;
       LoginApi.getUserInfo().then((res) => {
         const {
           data: { code, data },
         } = res;
-        const { name, roleName } = data || {};
+        const { name, groupId } = data || {};
         if (code === 200) {
           this.name = name;
           this.loading = false;
-          this.roleName = roleName;
+          this.roleName = groupId;
         } else {
           this.$router.push("/login");
         }
@@ -76,14 +81,14 @@ export default {
     .yc-container {
       padding: 20px;
       background: #fff;
-      min-height: 86vh;
+      min-height: 83vh;
     }
   }
 }
 
 .el-header {
   color: #fff;
-  height: 50px !important;
+  height: 60px !important;
 }
 
 .el-aside {

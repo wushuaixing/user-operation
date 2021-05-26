@@ -57,6 +57,50 @@ export const adminRoutes = [
 
 export const ruleProcess = (_this) => {
   const role = localStorage.getItem("role");
-  const list = role === "Admin" ? adminRoutes : normalRoutes;
+  const list = role === "204" ? normalRoutes : adminRoutes;
   list.forEach((i) => _this.$router.addRoute(i));
 };
+
+export const adminMenu = [
+  {
+    text: "账号管理",
+    icon: "iconfont iconyonghuyunying-zhanghaoguanli",
+    path: "/index",
+    key: "Instructions",
+    child: [
+      {
+        text: "运营账号",
+        path: "/index",
+        key: "Instructions",
+      },
+    ],
+  },
+  {
+    text: "客户管理",
+    icon: "iconfont iconyonghuyunying-kehuguanli",
+    path: "/customerManagement",
+    key: "CustomerManagement",
+  },
+  {
+    text: "顶级机构分配",
+    icon: "iconfont iconyonghuyunying-shenherenwufenpei",
+    path: "/taskAssign",
+    key: "TaskAssign",
+  },
+];
+
+export const userMenu = [
+  {
+    text: "数据审核",
+    icon: "el-icon-picture-outline-round",
+    path: "/index",
+    key: "DataAudit",
+  },
+  {
+    text: "文书搜索",
+    icon: "el-icon-present",
+    path: "/documentSearch",
+    key: "DocumentSearch",
+  },
+];
+

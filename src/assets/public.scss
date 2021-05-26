@@ -1,3 +1,7 @@
+html,body{
+  width: 100%;
+  overflow-x: auto;
+}
 body, ul, li, dl, dt, dd, p, ol, h1, h2, h3, h4, h5, h6, form, img, table, fieldset, legend {
   margin: 0;
   padding: 0;
@@ -38,6 +42,26 @@ a{
 
 .yc-line {
   border-top: 1px solid #e2e4e9;
+}
+
+.yc-confirm-modal{
+  &-title{
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #20242E;
+    font-weight: bold;
+    img{
+      width: 24px;
+      margin-right: 13px;
+    }
+  }
+  &-body{
+    margin-top: 10px;
+    line-height: 14px;
+    color: #4E5566;
+    padding-left: 38px;
+  }
 }
 
 .bold-text{
