@@ -3,7 +3,7 @@
     <header>
       <el-tabs v-model="tabKey">
         <el-tab-pane
-          v-for="item in taskAssignTabs(toBeAllocatedNum)"
+          v-for="item in taskAssignTabs($store.state.toBeAllocatedNum)"
           :label="item.label"
           :name="item.name"
           :key="item.name"
@@ -33,10 +33,16 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="resetOptions(true)" class="button-first"
+          <el-button
+            type="primary"
+            @click="resetOptions(true)"
+            class="button-first"
             >搜索</el-button
           >
-          <el-button type="primary" @click="resetOptions(false)" class="button-fourth"
+          <el-button
+            type="primary"
+            @click="resetOptions(false)"
+            class="button-fourth"
             >清空搜索条件</el-button
           >
         </el-form-item>
@@ -71,7 +77,7 @@
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#iconxuanzhongshuju"></use>
           </svg>
-          已选中 <b>{{(multipleSelection || []).length}}</b> 条数据
+          已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
         </span>
       </div>
       <div class="table-content-body">
@@ -209,7 +215,6 @@ export default {
       visible: false,
       taskAssignTabs,
       toggle: true,
-      toBeAllocatedNum: 0,
       column: taskAssignColumn,
       isChecked: false,
       tabKey: "1",
@@ -228,7 +233,7 @@ export default {
         orgName: "",
         uid: "",
       },
-      queryOption:{},
+      queryOption: {},
       modalParams: {
         idList: [],
         uid: "",
@@ -249,7 +254,7 @@ export default {
     simpleUserList() {
       AdminApi.simpleUserList().then((res) => {
         const { data } = res.data || {};
-        this.userList = [{id: '', value: "全部"},...data];
+        this.userList = [{ id: "", value: "全部" }, ...data];
       });
     },
     getList() {
@@ -273,11 +278,7 @@ export default {
         })
         .then(() => {
           const isGetNum = this.tabKey === "1";
-          isGetNum &&
-            AdminApi.getNum().then((res) => {
-              const { data } = res.data || {};
-              this.toBeAllocatedNum = data;
-            });
+          isGetNum && this.$store.dispatch("getNumAction");
         })
         .finally(() => (this.loading = false));
     },
@@ -312,13 +313,13 @@ export default {
       const { clearSelection, clearSort } = this.$refs.multipleTable;
       clearSelection();
       clearSort();
-      if (!flag){
+      if (!flag) {
         this.queryParams = {
           orgName: "",
           uid: "",
         };
-      };
-      this.queryOption = {...this.queryParams};
+      }
+      this.queryOption = { ...this.queryParams };
       this.getList();
     },
     //（取消）批量管理
@@ -349,6 +350,7 @@ export default {
     //（重新）分配弹窗关闭
     handleCloseModal() {
       this.visible = false;
+      this.toggle = true;
       this.modalParams = {
         idList: [],
         uid: "",

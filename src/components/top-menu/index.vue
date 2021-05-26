@@ -7,7 +7,7 @@
     <div class="user-message">
       <el-dropdown trigger="click" @visible-change="handleToggle">
         <span class="el-dropdown-link">
-          hi,{{ name }}
+          hi，{{ name }}
           <i class="el-icon-caret-top" v-if="iconToggle"></i>
           <i class="el-icon-caret-bottom" v-else></i>
         </span>
@@ -45,6 +45,8 @@
             maxlength="20"
             placeholder="请输入原密码"
             oninput="value = value.replace(/[\W_]/g,'')"
+            show-password
+            class="passward-item"
           >
           </el-input>
         </el-form-item>
@@ -55,15 +57,23 @@
             maxlength="20"
             oninput="value = value.replace(/[\W_]/g,'')"
             placeholder="请输入新密码"
+            show-password
+            class="passward-item"
           ></el-input>
         </el-form-item>
-        <el-form-item label="确认新密码：" prop="confirmPassword">
+        <el-form-item
+          label="确认新密码："
+          prop="confirmPassword"
+          class="confirm-pwd"
+        >
           <el-input
             v-model="form.confirmPassword"
             autocomplete="off"
             maxlength="20"
             placeholder="请再次输入新密码"
             oninput="value = value.replace(/[\W_]/g,'')"
+            show-password
+            class="passward-item"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -96,7 +106,7 @@ export default {
     };
     const validateNew = (rule, value, callback) => {
       if (value === this.form.oldPassword) {
-        callback(new Error("新密码不能与原密码一致!"));
+        callback(new Error("新密码不能与原密码一致"));
       }
       if (this.form.confirmPassword !== "") {
         this.$refs.editPwdForm.validateField("confirmPassword");
@@ -105,7 +115,7 @@ export default {
     };
     const validateConfirm = (rule, value, callback) => {
       if (value !== this.form.newPassword) {
-        callback(new Error("密码不一致!"));
+        callback(new Error("密码不一致"));
       } else {
         callback();
       }
@@ -135,9 +145,7 @@ export default {
             { min: 6, message: "密码小于6位", trigger: "change" },
             { validator: validateNew, trigger: "blur" },
           ],
-          confirmPassword: [
-            { validator: validateConfirm, trigger: "blur" },
-          ],
+          confirmPassword: [{ validator: validateConfirm, trigger: "blur" }],
         },
       },
     };
@@ -267,6 +275,15 @@ export default {
       margin-bottom: 16px !important;
       &:last-child {
         margin-bottom: 36px !important;
+      }
+    }
+    .confirm-pwd {
+      .el-form-item__label {
+        &::before {
+          content: "*";
+          color: #f93535;
+          margin-right: 4px;
+        }
       }
     }
   }
