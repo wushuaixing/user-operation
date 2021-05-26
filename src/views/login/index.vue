@@ -39,6 +39,7 @@
               placeholder="请输入密码"
               maxlength="20"
               oninput="value = value.replace(/[\W_]/g,'')"
+              class="passward-item"
               show-password
             >
               <template #prefix>
@@ -291,7 +292,6 @@ export default {
         .el-form-item {
           margin-bottom: 30px;
         }
-
         .login-btn {
           margin-top: 80px;
 
