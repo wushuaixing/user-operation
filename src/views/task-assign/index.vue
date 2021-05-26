@@ -69,7 +69,7 @@
         </el-button>
         <span v-if="(multipleSelection || []).length" class="total-tips">
           <svg class="icon" aria-hidden="true">
-            <use xlink:href="#iconyonghuyunying-piliangguanli"></use>
+            <use xlink:href="#iconxuanzhongshuju"></use>
           </svg>
           已选中 <b>{{(multipleSelection || []).length}}</b> 条数据
         </span>

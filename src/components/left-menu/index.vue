@@ -11,7 +11,7 @@
       unique-opened="true"
     >
       <template
-        v-for="item in role === '204' ?userMenu: adminMenu "
+        v-for="item in role === '204' ?userMenu: adminMenu"
         :key="item.text"
       >
         <el-submenu v-if="item.child" :index="item.path">
@@ -36,7 +36,11 @@
           :route="{ path: item.path }"
         >
           <i :class="item.icon"></i>
-          <template #title>{{ item.text }}</template>
+          <template #title>{{ item.text }}
+            <svg class="icon" aria-hidden="true" v-if="(item.key === 'TaskAssign') && Number(num)" style="font-size: 14px">
+              <use xlink:href="#iconfenpei"></use>
+            </svg>
+          </template>
         </el-menu-item>
       </template>
     </el-menu>
@@ -44,52 +48,14 @@
 </template>
 
 <script>
+import {userMenu,adminMenu} from '../../utils/rule';
 export default {
   name: "index",
   nameComment: "左侧导航栏",
   data() {
     return {
-      adminMenu: [
-        {
-          text: "账号管理",
-          icon: "iconfont iconyonghuyunying-zhanghaoguanli",
-          path: "/index",
-          key: "Instructions",
-          child: [
-            {
-              text: "运营账号",
-              path: "/index",
-              key: "Instructions",
-            },
-          ],
-        },
-        {
-          text: "客户管理",
-          icon: "iconfont iconyonghuyunying-kehuguanli",
-          path: "/customerManagement",
-          key: "CustomerManagement",
-        },
-        {
-          text: "顶级机构分配",
-          icon: "iconfont iconyonghuyunying-shenherenwufenpei",
-          path: "/taskAssign",
-          key: "TaskAssign",
-        },
-      ],
-      userMenu: [
-        {
-          text: "数据审核",
-          icon: "el-icon-picture-outline-round",
-          path: "/index",
-          key: "DataAudit",
-        },
-        {
-          text: "文书搜索",
-          icon: "el-icon-present",
-          path: "/documentSearch",
-          key: "DocumentSearch",
-        },
-      ],
+      userMenu,
+      adminMenu,
       roleName: "",
     };
   },
@@ -97,6 +63,10 @@ export default {
     role: {
       type: String,
       default: "",
+    },
+    num: {
+      type: Number,
+      default: 0,
     },
   },
   created() {
