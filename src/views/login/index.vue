@@ -39,6 +39,7 @@
               placeholder="请输入密码"
               maxlength="20"
               oninput="value = value.replace(/[\W_]/g,'')"
+              show-password
             >
               <template #prefix>
                 <img
