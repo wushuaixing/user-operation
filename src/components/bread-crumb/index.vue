@@ -4,7 +4,9 @@
       {{ text }}
     </div>
     <div class="action-btn" v-if="btnText">
-      <el-button type="primary" @click="$emit('handleClick')">{{btnText}}</el-button>
+      <el-button type="primary" @click="$emit('handleClick')">{{
+        btnText
+      }}</el-button>
     </div>
   </nav>
 </template>
@@ -17,13 +19,13 @@ export default {
       type: String,
       default: "",
     },
-    btnText:{
-      type:String,
+    btnText: {
+      type: String,
       default: "",
     },
-    handleClick:{
-      type:Function,
-      default:null,
+    handleClick: {
+      type: Function,
+      default: null,
     },
   },
   data() {

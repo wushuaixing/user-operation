@@ -1,7 +1,7 @@
 //排序字段&&方式 对应
 const SORTER_TYPE = {
-  normalErrorNum: "NORMAL_ERROR_RATE",
-  notIncludeErrorNum: "NOT_INCLUDE_ERROR_RATE",
+  obligorNum: "OBLIGOR_NUM",
+  orgNum: "ORG_NUM",
   ascending: "ASC",
   descending: "DESC",
 };
@@ -106,27 +106,26 @@ const dataAuditTabs = (matchNum, noReadNum) => [
 const taskAssignTabs = (toBeAllocatedNum) => [
   {
     label: `待分配机构(${toBeAllocatedNum})`,
-    name: "0",
+    name: "1",
   },
   {
-    label: "已分配机构",
-    name: "1",
+    label: " 已分配机构 ",
+    name: "2",
   },
 ];
 
 const topOrgStatus = {
-  0:'合作中',
-  1:'已过期',
-  2:'即将过期',
-  3:'已过期',
+  0: "合作中",
+  1: "已过期",
+  2: "即将过期",
+  3: "已过期",
 };
 
 // 机构类型
 const orgType = {
-  0:'正式',
-  1:'试用',
-}
-
+  0: "正式",
+  1: "试用",
+};
 
 export {
   SORTER_TYPE,
@@ -136,5 +135,5 @@ export {
   dataAuditTabs,
   taskAssignTabs,
   topOrgStatus,
-  orgType
+  orgType,
 };

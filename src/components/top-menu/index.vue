@@ -5,16 +5,20 @@
       <span>源诚用户运营平台</span>
     </div>
     <div class="user-message">
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" @visible-change="handleToggle">
         <span class="el-dropdown-link">
-          hi,{{ name }}<i class="el-icon-arrow-down el-icon--right"></i>
+          hi,{{ name }}
+          <i class="el-icon-caret-top" v-if="iconToggle"></i>
+          <i class="el-icon-caret-bottom" v-else></i>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item icon="el-icon-check" @click="visible = true">
+            <el-dropdown-item @click="visible = true">
+              <span class="iconfont iconxiugaimima"></span>
               修改密码
             </el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-check" @click="loginOut">
+            <el-dropdown-item @click="loginOut">
+              <span class="iconfont icontuichudenglu1"></span>
               退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -39,6 +43,7 @@
             v-model="form.oldPassword"
             autocomplete="off"
             maxlength="20"
+            placeholder="请输入原密码"
           >
           </el-input>
         </el-form-item>
@@ -48,6 +53,7 @@
             autocomplete="off"
             maxlength="20"
             oninput="value = value.replace(/[\W_]/g,'')"
+            placeholder="请输入新密码"
           ></el-input>
         </el-form-item>
         <el-form-item label="确认新密码：" prop="confirmPassword">
@@ -55,6 +61,7 @@
             v-model="form.confirmPassword"
             autocomplete="off"
             maxlength="20"
+            placeholder="请再次输入新密码"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -73,9 +80,11 @@ import logoImg from "@/assets/img/top_logo.png";
 import { encryptEditPwd } from "@/utils/encrypt";
 import { toRaw } from "vue";
 import LoginApi from "@/server/api/login";
+import { $modalConfirm } from "@/utils/better-el";
 
 export default {
   name: "index",
+  nameComment: "顶部导航栏",
   data() {
     const validateOld = (rule, value, callback) => {
       if (this.form.newPassword !== "") {
@@ -102,6 +111,7 @@ export default {
     return {
       logo: logoImg,
       visible: false,
+      iconToggle: false,
       form: {
         oldPassword: "",
         newPassword: "",
@@ -110,7 +120,7 @@ export default {
       formOptions: {
         options: {
           labelPosition: "right",
-          labelWidth: "120px",
+          labelWidth: "146px",
           destroyOnClose: true,
         },
         rules: {
@@ -163,13 +173,7 @@ export default {
       this.$refs["editPwdForm"].resetFields();
     },
     loginOut() {
-      this.$confirm("确认退出登录吗", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        showClose: false,
-        closeOnClickModal: false,
-      })
+      $modalConfirm({ title: "确认要退出登录吗?" })
         .then(() => {
           LoginApi.loginOut().then(() => {
             localStorage.clear();
@@ -179,6 +183,9 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    handleToggle(val) {
+      this.iconToggle = val;
     },
   },
 };
@@ -200,8 +207,9 @@ export default {
     align-items: center;
     height: 100%;
     background-color: #132032;
-    padding: 0 25px 0 20px;
-
+    padding-left: 20px;
+    width: 220px;
+    box-sizing: border-box;
     span {
       font-size: 16px;
       margin-left: 6px;
@@ -210,9 +218,6 @@ export default {
   }
 
   .user-message {
-    //&:hover {
-    //  background-color: #0286d5;
-    //}
     .el-dropdown {
       &:hover {
         color: #296dd3;
@@ -231,14 +236,22 @@ export default {
 }
 
 .el-dropdown__popper {
-  top: 50px !important;
+  top: 60px !important;
   left: unset !important;
   right: 0 !important;
-  width: 120px;
+  width: 117px;
   border-radius: 0;
 
   .el-dropdown-menu {
     padding: 0;
+    &__item {
+      height: 39px;
+      line-height: 39px;
+      span {
+        position: relative;
+        top: 1px;
+      }
+    }
   }
 
   .el-popper__arrow::before {
@@ -247,9 +260,13 @@ export default {
 }
 
 .change-pwd-modal {
-  .el-dialog__body {
-    .el-form {
-      padding:0 30px;
+  .el-form {
+    padding-right: 54px;
+    &-item {
+      margin-bottom: 16px !important;
+      &:last-child {
+        margin-bottom: 36px !important;
+      }
     }
   }
 }

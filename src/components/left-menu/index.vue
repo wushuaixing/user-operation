@@ -8,9 +8,10 @@
       text-color="#fff"
       router
       active-text-color="#fff"
+      unique-opened="true"
     >
       <template
-        v-for="item in role === 'Admin' ? adminMenu : userMenu"
+        v-for="item in role === '204' ?userMenu: adminMenu "
         :key="item.text"
       >
         <el-submenu v-if="item.child" :index="item.path">
@@ -24,7 +25,7 @@
             :index="childItem.path"
             :route="{ path: childItem.path }"
           >
-            <i :class="item.icon"></i>
+            <i v-if="childItem.icon" :class="childItem.icon"></i>
             <template #title>{{ childItem.text }}</template>
           </el-menu-item>
         </el-submenu>
@@ -45,18 +46,18 @@
 <script>
 export default {
   name: "index",
+  nameComment: "左侧导航栏",
   data() {
     return {
       adminMenu: [
         {
           text: "账号管理",
-          icon: "el-icon-menu",
+          icon: "iconfont iconyonghuyunying-zhanghaoguanli",
           path: "/index",
           key: "Instructions",
           child: [
             {
               text: "审核账号",
-              icon: "el-icon-menu",
               path: "/index",
               key: "Instructions",
             },
@@ -64,13 +65,13 @@ export default {
         },
         {
           text: "客户管理",
-          icon: "el-icon-present",
+          icon: "iconfont iconyonghuyunying-kehuguanli",
           path: "/customerManagement",
           key: "CustomerManagement",
         },
         {
-          text: "审核任务分配",
-          icon: "el-icon-picture-outline-round",
+          text: "顶级机构分配",
+          icon: "iconfont iconyonghuyunying-shenherenwufenpei",
           path: "/taskAssign",
           key: "TaskAssign",
         },
@@ -112,9 +113,46 @@ export default {
     }
   }
 
-  .el-submenu,
+  .el-submenu {
+    width: 220px;
+    &__title{
+      height: 58px;
+      line-height: 58px;
+    }
+    &::after{
+      content: none !important;
+    }
+    .el-menu-item {
+      padding-left: 44px !important;
+      height: 46px;
+      line-height: 46px;
+    }
+  }
+
   .el-menu-item {
-    width: 200px;
+    width: 220px;
+    position: relative;
+    height: 58px;
+    line-height: 58px;
+    opacity: 0.8;
+  }
+  .iconfont {
+    margin-right: 8px;
+    position: relative;
+    top: -1px;
+  }
+  .is-active {
+    opacity: 1;
+    &::after{
+      display:block;
+      content:'';
+      border-width: 6px 7px 6px 7px;
+      border-style:solid;
+      border-color: transparent #EEF1F7 transparent transparent;
+      position:absolute;
+      right:0;
+      top:calc(50% - 6px);
+    }
   }
 }
 </style>
