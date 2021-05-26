@@ -77,7 +77,7 @@
           <el-input
             v-model="form.name"
             autocomplete="off"
-            maxlength="20"
+            maxlength="100"
             placeholder="请输入姓名"
           >
           </el-input>
@@ -88,7 +88,7 @@
             autocomplete="off"
             maxlength="11"
             oninput="value = value.replace(/\D/g,'')"
-            placeholder="请输入账号"
+            placeholder="请输入手机号"
             @blur="handlePwd"
           ></el-input>
         </el-form-item>
@@ -99,6 +99,7 @@
             maxlength="20"
             oninput="value = value.replace(/[\W_]/g,'')"
             placeholder="密码默认为账号后六位"
+            show-password
           ></el-input>
         </el-form-item>
       </el-form>
@@ -120,7 +121,7 @@ import { accountManagementColumn } from "@/static/column";
 import { $modalConfirm } from "@/utils/better-el";
 export default {
   name: "index",
-  nameComment: "账号管理-审核账号",
+  nameComment: "账号管理-运营账号",
   data() {
     return {
       page: 1,
@@ -149,11 +150,12 @@ export default {
         rules: {
           name: [{ required: true, message: "请输入姓名", trigger: "change" }],
           phone: [
-            { required: true, message: "请输入账号", trigger: "change" },
+            { required: true, message: "请输入手机号", trigger: "change" },
             { min: 11, message: "账号小于11位", trigger: "change" },
           ],
           password: [
             { required: true, message: "请输入密码", trigger: "change" },
+            { min: 6, message: "密码小于6位", trigger: "change" },
           ],
         },
       },
@@ -161,6 +163,7 @@ export default {
   },
   created() {
     this.getList();
+    document.title = '运营账号';
   },
   methods: {
     //翻页

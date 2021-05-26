@@ -44,6 +44,7 @@
             autocomplete="off"
             maxlength="20"
             placeholder="请输入原密码"
+            oninput="value = value.replace(/[\W_]/g,'')"
           >
           </el-input>
         </el-form-item>
@@ -62,6 +63,7 @@
             autocomplete="off"
             maxlength="20"
             placeholder="请再次输入新密码"
+            oninput="value = value.replace(/[\W_]/g,'')"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -103,7 +105,7 @@ export default {
     };
     const validateConfirm = (rule, value, callback) => {
       if (value !== this.form.newPassword) {
-        callback(new Error("两次输入密码不一致!"));
+        callback(new Error("密码不一致!"));
       } else {
         callback();
       }
@@ -130,11 +132,10 @@ export default {
           ],
           newPassword: [
             { required: true, message: "请输入新密码", trigger: "blur" },
-            { min: 6, message: "密码不能小于6位", trigger: "change" },
+            { min: 6, message: "密码小于6位", trigger: "change" },
             { validator: validateNew, trigger: "blur" },
           ],
           confirmPassword: [
-            { required: true, message: "请再次输入新密码", trigger: "blur" },
             { validator: validateConfirm, trigger: "blur" },
           ],
         },
