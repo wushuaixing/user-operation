@@ -137,15 +137,15 @@ export default {
         },
         rules: {
           oldPassword: [
-            { required: true, message: "请输入原密码", trigger: "blur" },
+            { required: true, message: "请输入原密码", trigger: "change" },
             { validator: validateOld, trigger: "blur" },
           ],
           newPassword: [
             { required: true, message: "请输入新密码", trigger: "blur" },
-            { min: 6, message: "密码小于6位", trigger: "change" },
+            { min: 6, message: "密码小于6位", trigger: ["blur","change"] },
             { validator: validateNew, trigger: "blur" },
           ],
-          confirmPassword: [{ validator: validateConfirm, trigger: "blur" }],
+          confirmPassword: [{ validator: validateConfirm, trigger: "change" }],
         },
       },
     };
