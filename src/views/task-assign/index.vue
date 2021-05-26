@@ -14,10 +14,11 @@
       <el-form :inline="true" :model="queryParams" class="query-form">
         <el-form-item label="顶级合作机构名称：">
           <el-input
-            v-model="queryParams.orgName"
-            placeholder="顶级合作机构名称"
+            v-model.trim="queryParams.orgName"
+            placeholder="请输入机构名称"
             style="width: 100%"
-            @keyup.enter="onSubmit"
+            @keyup.enter="getList"
+            maxlength="100"
           />
         </el-form-item>
         <el-form-item label="负责人：">
@@ -32,10 +33,10 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getList" class="button-first"
+          <el-button type="primary" @click="resetOptions(true)" class="button-first"
             >搜索</el-button
           >
-          <el-button type="primary" @click="resetOptions" class="button-fourth"
+          <el-button type="primary" @click="resetOptions(false)" class="button-fourth"
             >清空搜索条件</el-button
           >
         </el-form-item>
@@ -66,6 +67,12 @@
         >
           {{ tabKey === "1" ? "分配" : "重新分配" }}
         </el-button>
+        <span v-if="(multipleSelection || []).length" class="total-tips">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#iconyonghuyunying-piliangguanli"></use>
+          </svg>
+          已选中 <b>{{(multipleSelection || []).length}}</b> 条数据
+        </span>
       </div>
       <div class="table-content-body">
         <el-table
@@ -79,7 +86,7 @@
           :row-key="(val) => val.id"
         >
           <template #empty>
-            <img src="../../assets/img/no_data.png" alt="">
+            <img src="../../assets/img/no_data.png" alt="" />
             <p>暂无数据</p>
           </template>
           <el-table-column
@@ -129,7 +136,7 @@
     </div>
     <div class="modal-content">
       <el-dialog
-        title="分配"
+        :title="tabKey === '1' ? '分配' : '重新分配'"
         v-model="visible"
         @close="handleCloseModal"
         width="500px"
@@ -141,7 +148,10 @@
               <p v-for="(item, index) in topOrgNameList" :key="index">
                 {{ item }}
                 <template
-                  v-if="index === (topOrgNameList.length || []) - 1 && multipleSelection.length > 5"
+                  v-if="
+                    index === (topOrgNameList.length || []) - 1 &&
+                    multipleSelection.length > 5
+                  "
                 >
                   <el-button type="text" @click="handleToggle" v-if="toggle"
                     >展开<i class="iconfont iconxia-xian"></i
@@ -165,7 +175,7 @@
                 placeholder="请选择机构负责人"
               >
                 <el-option
-                  v-for="item in userList"
+                  v-for="item in userList.slice(1)"
                   :key="item.id"
                   :label="item.value"
                   :value="item.id"
@@ -210,7 +220,7 @@ export default {
       total: 0,
       loading: false,
       params: {
-        orderField: "",
+        sortColumn: "",
         sortOrder: "",
         num: 10,
       },
@@ -218,6 +228,7 @@ export default {
         orgName: "",
         uid: "",
       },
+      queryOption:{},
       modalParams: {
         idList: [],
         uid: "",
@@ -228,6 +239,7 @@ export default {
   },
   created() {
     this.getData();
+    document.title = "顶级机构分配";
   },
   methods: {
     getData() {
@@ -237,14 +249,14 @@ export default {
     simpleUserList() {
       AdminApi.simpleUserList().then((res) => {
         const { data } = res.data || {};
-        this.userList = [...data];
+        this.userList = [{id: '', value: "全部"},...data];
       });
     },
     getList() {
       this.loading = true;
       const params = {
         ...toRaw(this.params),
-        ...toRaw(this.queryParams),
+        ...toRaw(this.queryOption),
         page: this.page,
       };
       AdminApi.distributeList(Number(this.tabKey), params)
@@ -252,7 +264,7 @@ export default {
           const { code, data } = res.data || {};
           if (code === 200) {
             const { list, page, total } = data || {};
-            this.tableData = list;
+            this.tableData = list.map((i) => ({ ...i, type: "正式" }));
             this.total = total;
             this.page = page;
           } else {
@@ -274,7 +286,7 @@ export default {
       this.isChecked = false;
       this.page = 1;
       this.params = {
-        orderField: SORTER_TYPE[prop],
+        sortColumn: SORTER_TYPE[prop],
         sortOrder: SORTER_TYPE[order],
       };
       this.getList();
@@ -294,16 +306,19 @@ export default {
     },
 
     //tab切换 && 清空搜索条件
-    resetOptions() {
+    resetOptions(flag = false) {
       this.page = 1;
       this.isChecked = false;
       const { clearSelection, clearSort } = this.$refs.multipleTable;
       clearSelection();
       clearSort();
-      this.queryParams = {
-        orgName: "",
-        uid: "",
+      if (!flag){
+        this.queryParams = {
+          orgName: "",
+          uid: "",
+        };
       };
+      this.queryOption = {...this.queryParams};
       this.getList();
     },
     //（取消）批量管理
@@ -325,7 +340,7 @@ export default {
           this.visible = true;
           this.modalParams.idList = this.multipleSelection.map((i) => i.id);
           const list = this.multipleSelection.map((i) => i.orgName);
-          this.topOrgNameList = list.slice(0,5);
+          this.topOrgNameList = list.slice(0, 5);
         } else {
           this.$message.warning("未选中数据");
         }
@@ -388,6 +403,14 @@ export default {
   .table-content {
     &-btn {
       margin: 0px 0 12px 0;
+      .total-tips {
+        font-size: 14px;
+        padding-left: 20px;
+        color: #4e5566;
+        b {
+          color: #20242e;
+        }
+      }
     }
     &-body {
       tbody {

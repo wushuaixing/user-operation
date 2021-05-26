@@ -17,7 +17,7 @@
           ref="loginForm"
           class="login-form"
         >
-          <el-form-item prop="phone">
+          <el-form-item prop="username">
             <el-input
               v-model="params.username"
               placeholder="请输入11位账号"

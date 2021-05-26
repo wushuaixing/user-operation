@@ -57,7 +57,7 @@ export default {
           key: "Instructions",
           child: [
             {
-              text: "审核账号",
+              text: "运营账号",
               path: "/index",
               key: "Instructions",
             },
