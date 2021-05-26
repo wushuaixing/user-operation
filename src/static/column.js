@@ -53,7 +53,7 @@ const taskAssignColumn = [
   },
   {
     prop: "orgName",
-    label: "顶级合作机构",
+    label: "顶级合作机构名称",
     sort: false,
     align:'left',
     class:'org-name',
