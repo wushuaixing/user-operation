@@ -42,7 +42,7 @@ const accountManagementColumn = [
   },
 ];
 
-//账号管理列表
+//顶级机构分配列表
 const taskAssignColumn = [
   {
     prop: "id",

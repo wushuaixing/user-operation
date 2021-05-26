@@ -249,6 +249,7 @@ export default {
   },
   created() {
     // this.getList();
+    document.title = '客户管理';
     let name = [
       "河北省",
       "山西省",
