@@ -3,23 +3,34 @@
     <div class="query-content">
       <el-form :inline="true" :model="queryParams" class="query-form">
         <el-form-item label="机构名称：" style="width: 300px">
-          <el-input
-            v-model="queryParams.orgName"
-            placeholder="请输入机构名称"
-          />
+          <el-select v-model="queryParams.orgId" filterable placeholder="请输入机构名称" @input="inputChange">
+            <el-option
+              v-for="item in customerOptions"
+              :key="item.id"
+              :label="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="合同结束日期：">
           <el-date-picker
-            v-model="queryParams.time"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-          >
+            class="query-time"
+            v-model="queryParams.start"
+            type="date"
+            :disabledDate="disabledStartDate"
+            placeholder="开始日期">
+          </el-date-picker>
+          <span style="margin:0 6px;">至</span>
+          <el-date-picker
+            class="query-time"
+            v-model="queryParams.end"
+            type="date"
+            @change="endTimeChange"
+            :disabledDate="disabledEndDate"
+            placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="顶级合作机构状态：">
-          <el-select v-model="queryParams.status" style="width: 150px">
+          <el-select v-model="queryParams.status" style="width: 162px" @change="statusChange">
             <el-option
               v-for="item in Object.keys(topOrgStatus)"
               :key="item"
@@ -30,7 +41,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="机构类型：">
-          <el-select v-model="queryParams.type" style="width: 150px">
+          <el-select v-model="queryParams.type" style="width: 94px">
             <el-option
               v-for="item in Object.keys(orgType)"
               :key="item"
@@ -82,7 +93,7 @@
               <div class="customer-detail-left">
                 <div class="link">
                   <span>二级域名:</span>
-                  <a :href="`http://www.${this.customerObj.link}`" target='_blank'>{{customerObj.link}}</a>
+                  <a :href="`http://www.${this.customerObj.domainName}`" target='_blank'>{{customerObj.domainName}}</a>
                 </div>
                 <div class="link">
                   <span>创建时间:</span>
@@ -94,17 +105,17 @@
                   <div class="customer-type">
                     <img src="../../assets/img/icon.png"/>
                     顶级合作机构（家）</div>
-                  <div class="customer-num">{{customerObj.total}}</div>
+                  <div class="customer-num">{{customerObj.topCooperateOrgNum}}</div>
                 </div>
                 <div class="divider"></div>
                 <div class="customer num2">
                   <div class="customer-type">正式机构（家）</div>
-                  <div class="customer-num">{{customerObj.officialNum}}</div>
+                  <div class="customer-num">{{customerObj.formalOrgNum}}</div>
                 </div>
                 <div class="divider" style="margin-right: 31px;"></div>
                 <div class="customer num3">
                   <div class="customer-type">试用机构（家）</div>
-                  <div class="customer-num">{{customerObj.tryOutNum}}</div>
+                  <div class="customer-num">{{customerObj.trialOrgNum}}</div>
                 </div>
               </div>
             </div>
@@ -125,6 +136,7 @@
               style="width: 100%"
               @selection-change="(val) => (this.multipleSelection = val)"
               @sort-change="handleSortChange"
+              @row-click="rowClick"
               v-loading="loading"
               :row-key="(val) => val.id"
             >
@@ -180,9 +192,9 @@
             v-bind="addOrgFormOptions.options"
             :rules="addOrgFormOptions.rules"
           >
-            <el-form-item label="二级域名：" prop="url">
+            <el-form-item label="二级域名：" prop="subDomain">
               <el-input
-                v-model="addOrgForm.url"
+                v-model="addOrgForm.subDomain"
                 autocomplete="off"
                 maxlength="20"
                 placeholder="请输入二级域名"
@@ -208,6 +220,7 @@
         <RulesModal
           :formData="rulesForm"
           :isAdd="isAdd"
+          :title="isAdd ? '创建顶级合作机构' : '权限管理'"
           :visible="rulesModalVisible"
           @close="rulesModalVisible = false"
         />
@@ -235,11 +248,14 @@ export default {
   data() {
     return {
       queryParams: {
-        orgName: "",
-        time: "",
-        status: "",
-        type: "",
+        orgId: "",
+        status: "0",
+        type: "0",
+        start: undefined,
+        end: undefined,
       },
+      customerOptions: [], // 搜索框中的机构列表
+      selectTimer: null,
       title: "全部",
       topOrgStatus,
       orgType,
@@ -258,16 +274,16 @@ export default {
       isAdd: true, // 是否是新增
       editable: false, // 是否可编辑
       customerObj: { // 选中的域名机构详情
-        link: 'cmbc.yczcjk.com',
+        subDomain: 'cmbc.yczcjk.com',
         createTime: '2019-12-21',
-        total: 12,
-        officialNum: 8,
-        tryOutNum: 4
+        topCooperateOrgNum: 12,
+        formalOrgNum: 8,
+        trialOrgNum: 4
       },
       addOrgVisible: false,
       rulesModalVisible: false,
       addOrgForm: {
-        url: "",
+        subDomain: "",
         name: "",
       },
       rulesForm: {
@@ -335,8 +351,7 @@ export default {
     // 点击浏览器刷新时，响应 对带参做处理
     let { customerName, id } = this.$route.params;
     if (id) {
-      setTimeout(() => {})
-      this.activeKey = Number(id) || -1;
+      this.activeKey = id || -1;
       this.title = `${customerName}（ID：${id}）`
       this.editable = true
     } else {
@@ -354,7 +369,7 @@ export default {
   methods: {
     // 获取列表数据
     getList() {
-      this.activeKey = 20
+      this.activeKey = '20'
       this.loading = true;
       console.log(toRaw(this.queryParams));
       const params = {
@@ -436,6 +451,50 @@ export default {
       }
       console.log(params, sign);
     },
+
+    // 点击一行跳转详情页
+    rowClick () {
+      window.open("/customerDetail/12", "_blank")
+    },
+
+    // 机构状态改变 结束日期改变
+    statusChange (val) {
+      let nowDate = new Date()
+      switch (val) {
+        case "1" :{
+          // 开始日期赋值当天 结束日期置空
+          this.queryParams.start = nowDate
+          this.queryParams.end = undefined
+          break
+        }
+        case "2" :{
+          // 开始日期置空 结束日期赋值昨天
+          this.queryParams.start = undefined
+          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000)
+          break
+        }
+        case "3" :{
+          // 开始日期今天 结束日期：今天+两个月
+          this.queryParams.start = new Date()
+          nowDate.setMonth(nowDate.getMonth() + 2)
+          this.queryParams.end = nowDate
+          break
+        }
+        case "4" :{
+          // 开始日期：昨天-两个月  结束日期：昨天
+          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000)
+          let date = new Date(nowDate.getTime() - 24 * 3600 * 1000)
+          date.setMonth(date.getMonth() - 2)
+          this.queryParams.start = date
+          break
+        }
+        default:
+          break
+      }
+    },
+    endTimeChange () {
+      this.queryParams.status = "0"
+    },
     //清空搜索条件
     handleClear() {
       this.page = 1;
@@ -504,6 +563,31 @@ export default {
     // 保存顶级机构名称
     saveName (name) {
       console.log(name)
+    },
+
+    // 日期控件做前后限制
+    disabledStartDate (startTime) {
+      if (this.queryParams.end) {
+        return startTime.getTime() > this.queryParams.end.getTime()
+      }
+    },
+    disabledEndDate (endTime) {
+      if (this.queryParams.start) {
+        return endTime.getTime() < this.queryParams.start.getTime()
+      }
+    },
+
+    // 机构搜索做防抖处理
+    inputChange (val) {
+      if (this.selectTimer) {
+        clearTimeout(this.selectTimer)
+        this.selectTimer = null
+      }
+      this.selectTimer = setTimeout(() => {
+        console.log('1', val.target.value)
+        clearTimeout(this.selectTimer)
+        this.selectTimer = null
+      }, 1000)
     }
   },
   computed: {
@@ -520,12 +604,18 @@ export default {
   .query-content {
     background: #fff;
     margin-bottom: 20px;
-    .query-form {
+    .query-form{
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       .el-form-item {
         margin: 22px 10px 22px;
+        .query-time {
+          width: 130px;
+          input {
+            padding-right: 15px;
+          }
+        }
       }
     }
   }

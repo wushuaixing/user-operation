@@ -48,6 +48,11 @@ export const adminRoutes = [
       },
     ],
   },
+  {
+    path: "/customerDetail/:id",
+    name: "customerDetail",
+    component: () => import("@/views/customer-management/component/CustomerDetail"),
+  }
 ];
 
 export const ruleProcess = (_this) => {

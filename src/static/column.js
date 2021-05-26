@@ -40,32 +40,32 @@ const taskAssignColumn = [
     sort: false,
   },
   {
-    prop: "phone",
+    prop: "name",
     label: "顶级合作机构名称",
     sort: false,
   },
   {
-    prop: "userName",
+    prop: "type",
     label: "机构类型",
     sort: false,
   },
   {
-    prop: "normalErrorNum",
+    prop: "subOrgNum",
     label: "全部子机构数",
     sort: "custom",
   },
   {
-    prop: "notIncludeErrorNum",
+    prop: "accountNum",
     label: "总账号数",
     sort: "custom",
   },
   {
-    prop: "userName",
+    prop: "startTime",
     label: "合同开始日期",
     sort: false,
   },
   {
-    prop: "notIncludeErrorNum",
+    prop: "endTime",
     label: "合同结束日期",
     sort: "custom",
   },

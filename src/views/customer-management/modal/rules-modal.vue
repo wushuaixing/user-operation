@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="权限管理" :model-value="visible" width="700px">
+  <el-dialog :title="title" :model-value="visible" width="690px">
     <el-form
       :model="rulesForm"
       ref="rulesForm"
@@ -8,44 +8,42 @@
     >
       <el-form-item label="ID：" v-if="!isAdd">
         <div>
-          {{ rulesForm.a }}
+          {{ rulesForm.id }}
         </div>
       </el-form-item>
-      <el-form-item label="顶级合作机构名称：" prop="b">
+      <el-form-item label="顶级合作机构名称：" prop="name">
         <el-input
-          v-model="rulesForm.b"
+          v-model="rulesForm.name"
           autocomplete="off"
           maxlength="11"
           placeholder="请输入顶级合作机构名称"
         />
       </el-form-item>
-      <el-form-item label="机构类型：" prop="c">
-        <el-radio-group v-model="rulesForm.c" size="medium">
+      <el-form-item label="机构类型：" prop="type">
+        <el-radio-group v-model="rulesForm.type" size="medium">
           <el-radio :label="1">试用</el-radio>
           <el-radio :label="2">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：" prop="e">
-        <el-col :span="11">
-          <el-date-picker
-            type="date"
-            placeholder="选择日期"
-            v-model="rulesForm.d"
-            style="width: 100%"
-          ></el-date-picker>
-        </el-col>
-        <el-col class="line" :span="2">至</el-col>
-        <el-col :span="11">
-          <el-date-picker
-            type="date"
-            placeholder="选择日期"
-            v-model="rulesForm.e"
-            style="width: 100%"
-          ></el-date-picker>
-        </el-col>
+      <el-form-item label="合同起止日期：" prop="end">
+        <el-date-picker
+          type="date"
+          placeholder="开始日期"
+          v-model="rulesForm.start"
+          :disabledDate="disabledStartDate"
+          style="width: 219px"
+        ></el-date-picker>
+        <div style="display:inline-block;padding: 0 8px;">至</div>
+        <el-date-picker
+          type="date"
+          placeholder="结束日期"
+          :disabledDate="disabledEndDate"
+          v-model="rulesForm.end"
+          style="width: 219px"
+        ></el-date-picker>
       </el-form-item>
-      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'f'">
-        <el-select v-model="rulesForm.f" placeholder="请选择上级机构ID" v-if="!isAdd">
+      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'parentId'">
+        <el-select v-model="rulesForm.parentId" placeholder="请选择上级机构ID" v-if="!isAdd">
           <el-option
             v-for="item in rulesForm.fList"
             :label="item.label"
@@ -53,28 +51,29 @@
             :key="item.value"
           />
         </el-select>
-        <span v-else>{{rulesForm.f}}</span>
+        <span v-else>{{rulesForm.parentId}}</span>
       </el-form-item>
-      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'g'">
+      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'parentName'">
         <el-input
           v-if="!isAdd"
-          v-model="rulesForm.g"
+          v-model="rulesForm.parentName"
           autocomplete="off"
           maxlength="11"
+          :disabled="true"
           placeholder="请输入顶级合作机构名称"
         />
-        <span v-else>{{rulesForm.g}}</span>
+        <span v-else>{{rulesForm.parentName}}</span>
       </el-form-item>
       <el-form-item
         v-for="item in rulesFormOptions.itemsRaido"
-        :label="`${item.label}:`"
+        :label="`${item.label}：`"
         :key="item.val"
         :prop="item.val"
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
             <el-radio :label="1">不限</el-radio>
-            <el-radio :label="2" :disabled="item.val === 'j'">限制</el-radio>
+            <el-radio :label="2" :disabled="item.val === 'isClassifiedLimit'">限制</el-radio>
           </el-radio-group>
         </el-col>
         <el-col :span="11">
@@ -101,6 +100,7 @@
             :key="item.title"
           >
             <el-checkbox
+              class="zcjk-rules-box-item-moduleType"
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
@@ -108,6 +108,7 @@
             >
             <div style="margin: 5px 0"></div>
             <el-checkbox-group
+              class="zcjk-rules-box-item-moduleList"
               v-model="checkList[item.key].checkedData"
               @change="(val) => handleCheckedItemChange(val, item.key)"
             >
@@ -124,7 +125,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="permissionErrormsgShow = false">取 消</el-button>
+        <el-button>取 消</el-button>
         <el-button type="primary" @click="onsubmit">确 定</el-button>
       </span>
     </template>
@@ -136,6 +137,10 @@ export default {
   name: "rules-modal",
   nameComment: "客户管理-权限管理弹窗",
   props: {
+    title: {
+      type: String,
+      default: "权限管理"
+    },
     formData: {
       type: Object,
       default: () => {},
@@ -151,94 +156,92 @@ export default {
   },
   created() {
     this.rulesForm = Object.assign(this.rulesForm, this.formData);
-    if (this.isAdd) {
-      let { customerName, id } = this.$route.params;
-      this.rulesForm.f = id;
-      this.rulesForm.g = customerName
-    }
+  },
+  watch: {
+    // isAdd (newVal) {
+    //   debugger
+    //   if (newVal) {
+    //     let { customerName, id } = this.$route.params;
+    //     this.rulesForm.parentId = id;
+    //     this.rulesForm.parentName = customerName
+    //   }
+    // }
   },
   data() {
     return {
-      permissionErrormsgShow: true,
+      permissionErrormsgShow: false,
       rulesForm: {
-        a: "",
-        b: "",
-        c: 2,
-        d: "",
-        e: "",
-        f: "",
-        g: "",
-        h: "",
-        i: 1,
-        j: 1,
-        k: 1,
-        l: 1,
-        m: 1,
-        numi: "",
-        numk: "",
-        numl: "",
-        numm: "",
+        id: "",
+        name: "",
+        type: 2,
+        start: "",
+        end: "",
+        parentId: "",
+        parentName: "",
+        isPortraitLimit: 1,
+        isClassifiedLimit: 1,
+        isObligorLimit: 1,
+        isSubOrgLimit: 1,
+        isAccountLimit: 1,
+        portraitLimitCount: "",
+        obligorLimitCount: "",
+        subOrgLimitCount: "",
+        accountLimit: "",
       },
       checkList: {
-        a: {
+        zcwj: {
           checkAll: true,
-          checkedData: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+          checkedData: ["2", "29", "30", "4", "31", "32", "41", "49", "44", "52", "51"],
           isIndeterminate: false,
-          options: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+          options: ["2", "29", "30", "4", "31", "32", "41", "49", "44", "52", "51"],
         },
-        b: {
+        zjgc: {
           checkAll: true,
-          checkedData: ["1", "2", "3"],
+          checkedData: ["54", "55", "56"],
           isIndeterminate: false,
-          options: ["1", "2", "3"],
+          options: ["54", "55", "56"],
         },
-        c: {
+        fxjk: {
           checkAll: true,
-          checkedData: ["1", "2", "3", "4"],
+          checkedData: ["39", "42", "40", "50"],
           isIndeterminate: false,
-          options: ["1", "2", "3", "4"],
+          options: ["39", "42", "40", "50"],
         },
-        d: {
+        jyfx: {
           checkAll: true,
-          checkedData: ["1", "2", "3", "4", "5", "6"],
+          checkedData: ["33", "34", "35", "38", "36", "37"],
           isIndeterminate: false,
-          options: ["1", "2", "3", "4", "5", "6"],
+          options: ["33", "34", "35", "38", "36", "37"],
         },
-        e: {
+        ywgl: {
           checkAll: true,
-          checkedData: ["1", "2", "3", "4", "5", "6"],
+          checkedData: ["6", "7"],
           isIndeterminate: false,
-          options: ["1", "2", "3", "4", "5", "6"],
+          options: ["6", "7"],
         },
-        f: {
+        hxss: {
           checkAll: true,
-          checkedData: ["1", "2"],
+          checkedData: ["27"],
           isIndeterminate: false,
-          options: ["1", "2"],
+          options: ["27"],
         },
-        g: {
+        xxss: {
           checkAll: true,
-          checkedData: ["1"],
+          checkedData: ["12", "13", "18", "25", "28", "42", "46", "47", "48"],
           isIndeterminate: false,
-          options: ["1"],
+          options: ["12", "13", "18", "25", "28", "42", "46", "47", "48"],
         },
-        h: {
+        jggl: {
           checkAll: true,
-          checkedData: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          checkedData: ["10", "11", "43"],
           isIndeterminate: false,
-          options: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          options: ["10", "11", "43"],
         },
-        i: {
-          checkAll: true,
-          checkedData: ["1", "2", "3"],
-          isIndeterminate: false,
-          options: ["1", "2", "3"],
-        },
-        j: {
+        dljg: {
           checkAll: false,
           checkedData: [],
           isIndeterminate: false,
-          options: ["1"],
+          options: ["35"],
         },
       },
       rulesFormOptions: {
@@ -249,72 +252,72 @@ export default {
           class: "rules-modal",
         },
         rules: {
-          b: {
+          name: {
             required: true, message: "顶级合作机构名称不允许为空", trigger: "blur",
           },
-          c: {
+          type: {
             required: true, message: "请选择机构类型", trigger: "change",
           },
-          e: {
+          end: {
             required: true, message: "合同结束日期不允许为空", trigger: "blur",
           },
-          f: {
+          parentId: {
             required: true, message: "请选择上级机构ID", trigger: "change",
           },
-          g: {
+          parentName: {
             required: true, message: "上级机构名称不允许为空", trigger: "change",
           },
-          i: {
+          isPortraitLimit: {
             required: true, message: "请选择限制画像查询次数", trigger: "change",
           },
-          j: {
+          isClassifiedLimit: {
             required: true, message: "请选择限制分类搜索次数", trigger: "change",
           },
-          k: {
+          isObligorLimit: {
             required: true, message: "请选择限制监控债务人数", trigger: "change",
           },
-          l: {
+          isSubOrgLimit: {
             required: true, message: "请选择限制配置子机构数", trigger: "change",
           },
-          m: {
+          isAccountLimit: {
             required: true, message: "请选择限制配置账号数", trigger: "change",
           },
-          numi: {
+          portraitLimitCount: {
             required: true, message: "请输入上限", trigger: "blur",
           },
-          numk: {
+          obligorLimitCount: {
             required: true, message: "请输入上限", trigger: "blur",
           },
-          numl: {
+          subOrgLimitCount: {
             required: true, message: "请输入上限", trigger: "blur",
           },
-          numm: {
+          accountLimit: {
             required: true, message: "请输入上限", trigger: "blur",
           },
         },
         itemsRaido: [
-          { label: "限制画像查询次数", val: "i", num: "numi" },
-          { label: "限制分类搜索次数", val: "j" },
-          { label: "限制监控债务人数", val: "k", num: "numk" },
-          { label: "限制配置子机构数", val: "l", num: "numl" },
-          { label: "限制配置账号数", val: "m", num: "numm" },
+          { label: "限制画像查询次数", val: "isPortraitLimit", num: "portraitLimitCount" },
+          { label: "限制分类搜索次数", val: "isClassifiedLimit" },
+          { label: "限制监控债务人数", val: "isObligorLimit", num: "obligorLimitCount" },
+          { label: "限制配置子机构数", val: "isSubOrgLimit", num: "subOrgLimitCount" },
+          { label: "限制配置账号数", val: "isAccountLimit", num: "accountLimit" },
         ],
         itemsChecked: [
           {
             title: "资产挖掘",
-            key: "a",
+            key: "zcwj",
             children: [
               {
                 label: "资产拍卖",
-                val: "1",
-              },
-              {
-                label: "土地数据",
                 val: "2",
               },
               {
+                label: "土地数据",
+                val: "29",
+              },
+              {
                 label: "招标中标",
-                val: "3",
+                val: "30",
               },
               {
                 label: "代位权",
@@ -322,225 +325,195 @@ export default {
               },
               {
                 label: "金融资产",
-                val: "5",
+                val: "31",
               },
               {
                 label: "动产抵押",
-                val: "6",
+                val: "32",
               },
               {
                 label: "无形资产",
-                val: "7",
+                val: "41",
               },
               {
                 label: "查解封资产",
-                val: "8",
+                val: "49",
               },
               {
                 label: "股权质押",
-                val: "9",
+                val: "44",
               },
               {
                 label: "车辆信息",
-                val: "10",
+                val: "52",
               },
               {
                 label: "不动产登记",
-                val: "11",
+                val: "51",
               },
             ],
           },
           {
             title: "资产挖掘-在建工程",
-            key: "b",
+            key: "zjgc",
             children: [
               {
                 label: "建设单位",
-                val: "1",
+                val: "54",
               },
               {
                 label: "中标单位",
-                val: "2",
+                val: "55",
               },
               {
                 label: "施工单位",
-                val: "3",
+                val: "56",
               },
             ],
           },
           {
             title: "风险监控",
-            key: "c",
+            key: "fxjk",
             children: [
               {
                 label: "涉诉监控",
-                val: "1",
+                val: "39",
               },
               {
                 label: "失信记录",
-                val: "2",
+                val: "42",
               },
               {
                 label: "企业破产重组",
-                val: "3",
+                val: "40",
               },
               {
                 label: "限制高消费",
-                val: "4",
+                val: "50",
               },
             ],
           },
           {
             title: "风险监控-经营风险",
-            key: "d",
+            key: "jyfx",
             children: [
               {
                 label: "经营异常",
-                val: "1",
+                val: "33",
               },
               {
                 label: "工商变更",
-                val: "2",
+                val: "34",
               },
               {
                 label: "严重违法",
-                val: "3",
+                val: "35",
               },
               {
                 label: "环保处罚",
-                val: "4",
+                val: "38",
               },
               {
                 label: "税收违法",
-                val: "5",
+                val: "36",
               },
               {
                 label: "行政处罚",
-                val: "6",
-              },
-            ],
-          },
-          {
-            title: "风险监控-经营风险",
-            key: "e",
-            children: [
-              {
-                label: "经营异常",
-                val: "1",
-              },
-              {
-                label: "工商变更",
-                val: "2",
-              },
-              {
-                label: "严重违法",
-                val: "3",
-              },
-              {
-                label: "环保处罚",
-                val: "4",
-              },
-              {
-                label: "税收违法",
-                val: "5",
-              },
-              {
-                label: "行政处罚",
-                val: "6",
+                val: "37",
               },
             ],
           },
           {
             title: "业务管理",
-            key: "f",
+            key: "ywgl",
             children: [
               {
                 label: "业务视图",
-                val: "1",
+                val: "6",
               },
               {
                 label: "债务人",
-                val: "2",
+                val: "7",
               },
             ],
           },
           {
             title: "画像搜索",
-            key: "g",
+            key: "hxss",
             children: [
               {
                 label: "画像搜索",
-                val: "1",
+                val: "27",
               },
             ],
           },
           {
             title: "信息搜索",
-            key: "h",
+            key: "xxss",
             children: [
               {
                 label: "拍卖信息",
-                val: "1",
+                val: "12",
               },
               {
                 label: "涉诉信息",
-                val: "2",
+                val: "13",
               },
               {
                 label: "文书信息",
-                val: "3",
+                val: "18",
               },
               {
                 label: "金融资产",
-                val: "4",
+                val: "25",
               },
               {
                 label: "破产重组",
-                val: "5",
+                val: "28",
               },
               {
                 label: "失信记录",
-                val: "6",
+                val: "42",
               },
               {
                 label: "土地数据",
-                val: "7",
+                val: "46",
               },
               {
                 label: "股权质押",
-                val: "8",
+                val: "47",
               },
               {
                 label: "动产抵押",
-                val: "9",
+                val: "48",
               },
             ],
           },
           {
             title: "机构管理",
-            key: "i",
+            key: "jggl",
             children: [
               {
                 label: "推送设置",
-                val: "1",
+                val: "10",
               },
               {
                 label: "账号列表",
-                val: "2",
+                val: "11",
               },
               {
                 label: "机构统计",
-                val: "3",
+                val: "43",
               },
             ],
           },
           {
             title: "代理机构",
-            key: "j",
+            key: "dljg",
             children: [
               {
                 label: "代理机构",
-                val: "1",
+                val: "35",
               },
             ],
           },
@@ -563,11 +536,12 @@ export default {
       this.checkList[key].checkedData = val ? this.checkList[key].options : [];
       this.checkList[key].isIndeterminate = false;
       if (val) {
-        this.checkPermissionIsSet()
-      } else {
         this.permissionErrormsgShow = false
+      } else {
+        this.checkPermissionIsSet()
       }
     },
+
     handleCheckedItemChange(val, key) {
       let count = val.length;
       this.checkList[key].checkAll =
@@ -580,7 +554,8 @@ export default {
         this.permissionErrormsgShow = false
       }
     },
-    // 判断权限是否没有配置 并设置error显示
+
+    // 判断权限是否有没有配置 并设置error显示
     checkPermissionIsSet () {
       let len = 0;
       for (let key in this.checkList) {
@@ -588,15 +563,54 @@ export default {
       };
       this.permissionErrormsgShow = !len
     },
+
+    // 时间控件做前后限制
+    disabledStartDate (startTime) {
+      if (this.rulesForm.end) {
+        return startTime.getTime() > this.rulesForm.end.getTime()
+      }
+    },
+    disabledEndDate (endTime) {
+      if (this.rulesForm.start) {
+        return endTime.getTime() < this.rulesForm.start.getTime()
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .rules-modal {
   padding-right: 40px;
-  .zcjk-rules-box-item {
-    border-bottom: 1px solid #e2e4e9;
+  .zcjk-rules-box {
+    border: 1px solid #C5C7CE;
+    padding-left: 16px;
+    .zcjk-rules-box-item {
+      // border-bottom: 1px solid #e2e4e9;
+      &-moduleList {
+        padding-left: 24px;
+        /deep/ .el-checkbox {
+          margin-right: 24px;
+          .el-checkbox__input.is-checked + .el-checkbox__label {
+            font-weight: 400;
+            color: #4E5566;
+            font-size: 14px;
+            padding-left: 8px;
+          }
+          .el-checkbox__label {
+            padding-left: 8px;
+          }
+        }
+      }
+      &-moduleType {
+        /deep/ .el-checkbox__label {
+          padding-left: 8px;
+          font-weight: 600;
+          color: #20242E;
+          font-size: 14px;
+        }
+      }
+    }
   }
 }
 </style>
