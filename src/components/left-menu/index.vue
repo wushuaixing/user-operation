@@ -45,7 +45,7 @@
                 item.key === 'TaskAssign' &&
                 Number($store.state.toBeAllocatedNum)
               "
-              style="font-size: 14px"
+              style="font-size: 16px;position: relative;top: 1px;"
             >
               <use xlink:href="#iconfenpei"></use>
             </svg>

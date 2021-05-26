@@ -16,13 +16,13 @@
           <el-input
             v-model.trim="queryParams.orgName"
             placeholder="请输入机构名称"
-            style="width: 100%"
+            style="width: 220px"
             @keyup.enter="getList"
             maxlength="100"
           />
         </el-form-item>
         <el-form-item label="负责人：">
-          <el-select v-model="queryParams.uid">
+          <el-select v-model="queryParams.uid" style="width: 94px">
             <el-option
               v-for="item in userList"
               :key="item.id"
@@ -56,6 +56,7 @@
           @click="handleBatchCheck(true)"
           class="button-third"
           icon="iconfont iconyonghuyunying-piliangguanli"
+          style="padding: 0 11px"
         >
           批量管理
         </el-button>
@@ -64,6 +65,7 @@
           v-else
           @click="handleBatchCheck(false)"
           class="button-second"
+          style="padding: 0 12px"
           >取消批量管理</el-button
         >
         <el-button
@@ -74,7 +76,7 @@
           {{ tabKey === "1" ? "分配" : "重新分配" }}
         </el-button>
         <span v-if="(multipleSelection || []).length" class="total-tips">
-          <svg class="icon" aria-hidden="true">
+          <svg class="icon" aria-hidden="true" style="margin-right: 3px">
             <use xlink:href="#iconxuanzhongshuju"></use>
           </svg>
           已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
@@ -179,6 +181,7 @@
               <el-select
                 v-model="modalParams.uid"
                 placeholder="请选择机构负责人"
+                style="width: 220px"
               >
                 <el-option
                   v-for="item in userList.slice(1)"
@@ -428,11 +431,16 @@ export default {
   .modal-content {
     .el-dialog__body {
       ul {
-        padding-left: 36px;
+        padding: 4px 32px 0 32px;
         li {
           display: flex;
-          line-height: 14px;
-          margin-bottom: 24px;
+          line-height: 18px;
+          margin-bottom: 22px;
+          &:last-child {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+          }
           div {
             &:first-child {
               min-width: 126px;
@@ -440,7 +448,16 @@ export default {
             }
             &:last-child {
               p {
-                margin-bottom: 12px;
+                margin-bottom: 8px;
+                .el-button {
+                  padding: 0 0 0 14px !important;
+                  min-height: 18px !important;
+                  i {
+                    margin-left: 4px;
+                    position: relative;
+                    top: 1px;
+                  }
+                }
                 &:last-child {
                   margin-bottom: 0;
                 }
