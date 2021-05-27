@@ -118,7 +118,7 @@ const AdminApi = {
 
   //搜索
   searchOrg: (params) =>
-    axios.post("/admin/organization/searchOrg", clearEmpty(params)),
+    axios.post("/api/admin/organization/searchOrg", clearEmpty(params)),
 
   //可选的上级机构列表
   selectParentOrgList: (id) =>
@@ -126,7 +126,7 @@ const AdminApi = {
 
   //机构名称模糊查询
   simpleListOrg: (key) =>
-    axios.get(`/admin/organization/simpleListOrg?id=${key}`),
+    axios.get(`/api/admin/organization/simpleListOrg?key=${key}`),
 };
 
 export default AdminApi;

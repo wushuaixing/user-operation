@@ -38,7 +38,7 @@
                 <span v-else><span class="item-bold">{{customerData.restObligorCount}}</span>/{{customerData.obligorLimitCount}}</span>
               </div>
             </div>
-            <div clas="linkAddress">
+            <div class="linkAddress">
               <div class="item">
                 <span class="item-label">域名网址</span>：
                 <a>{{customerData.url}}</a>
@@ -88,7 +88,18 @@
               客户使用机构
             </div>
             <div class="customer-tree">
-              
+              <el-tree
+                :data="treeData"
+                node-key="id"
+                default-expand-all
+                :expand-on-click-node="false">
+                <template #default="{ node }">
+                  <span class="custom-tree-node">
+                    <span>{{node.id}}</span>
+                    <span>{{ node.label }}</span>
+                  </span>
+                </template>
+              </el-tree>
             </div>
           </div>
           <div class="yc-customer-content-list" :class="{scroll: scrollShow}">
@@ -144,24 +155,29 @@
                 style="width: 100%">
                 <el-table-column
                   prop="date"
+                  width="120"
                   label="账号">
                 </el-table-column>
                 <el-table-column
                   prop="name"
+                  width="120"
                   label="姓名"
                   >
                 </el-table-column>
                 <el-table-column
                   prop="date"
+                  width="120"
                   label="角色">
                 </el-table-column>
                 <el-table-column
                   prop="name"
+                  width="120"
                   label="导入债务人数"
                   >
                 </el-table-column>
                 <el-table-column
                   prop="address"
+                  width="120"
                   label="上次登录时间">
                 </el-table-column>
                 <el-table-column label="操作">
@@ -279,7 +295,24 @@ export default {
       scrollShow: false,
       accountPage: 1,
       accountTotal: 0,
-      tableData: [{}, {}]
+      tableData: [{}, {}],
+      treeData: [
+        {
+          id: 1,
+          label: '一级 1',
+          children: [{
+            id: 4,
+            label: '二级 1-1',
+            children: [{
+              id: 9,
+              label: '三级 1-1-1'
+            }, {
+              id: 10,
+              label: '三级 1-1-2'
+            }]
+          }]
+        }
+      ]
     };
   },
   computed: {

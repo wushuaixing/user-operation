@@ -7,7 +7,8 @@
             <el-option
               v-for="item in customerOptions"
               :key="item.id"
-              :label="item.value">
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -232,7 +233,7 @@
 <script>
 import { topOrgStatus, orgType, SORTER_TYPE } from "@/utils/static";
 import BreadCrumb from "@/components/bread-crumb";
-import { taskAssignColumn } from "@/static/column";
+import { customerColumn } from "@/static/column";
 import { toRaw } from "vue";
 import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
@@ -259,11 +260,11 @@ export default {
       title: "全部",
       topOrgStatus,
       orgType,
-      tableData: [],
+      tableData: [{}, {}, {}, {}],
       multipleSelection: [],
       loading: false,
       isChecked: false,
-      column: taskAssignColumn,
+      column: customerColumn,
       page: 1,
       total: 0,
       isActive: 0,
@@ -312,39 +313,6 @@ export default {
   },
   created() {
     this.getList();
-    // let name = [
-    //   "河北省",
-    //   "山西省",
-    //   "辽宁省",
-    //   "吉林省",
-    //   "黑龙江省",
-    //   "江苏省",
-    //   "浙江省",
-    //   "安徽省",
-    //   "福建省",
-    //   "江西省",
-    //   "山东省",
-    //   "河南省",
-    //   "湖北省",
-    //   "湖南省",
-    //   "广东省",
-    //   "海南省",
-    //   "四川省",
-    //   "贵州省",
-    //   "云南省",
-    //   "陕西省",
-    //   "甘肃省",
-    //   "青海省",
-    //   "台湾省",
-    // ];
-    // for (let i = 0; i < name.length; i++) {
-    //   let obj = {
-    //     content: `${name[i]}银行域名机构(${Math.random().toString()[5]}/${
-    //       Math.random().toString()[8]
-    //     })`,
-    //   };
-    //   this.activities = [...this.activities, obj];
-    // }
   },
   mounted() {
     this.getCuntomerTreeData()
@@ -369,18 +337,17 @@ export default {
   methods: {
     // 获取列表数据
     getList() {
-      this.activeKey = '20'
       this.loading = true;
       console.log(toRaw(this.queryParams));
       const params = {
         ...toRaw(this.queryParams),
         page: this.page,
       };
-      AdminApi.getUsersList(params)
+      AdminApi.searchOrg(params)
         .then((res) => {
           const { code, data } = res.data || {};
           if (code === 200) {
-            const { list, page, total } = data || {};
+            const { list, page, total } = data.result || {};
             this.tableData = list;
             this.total = total;
             this.page = page;
@@ -584,7 +551,14 @@ export default {
         this.selectTimer = null
       }
       this.selectTimer = setTimeout(() => {
-        console.log('1', val.target.value)
+        let key = val.target.value
+        // 调用接口查询
+        AdminApi.simpleListOrg(key).then((res) => {
+          const { code, data } = res.data || {}
+          if (code === 200) {
+            this.customerOptions = data
+          }
+        })
         clearTimeout(this.selectTimer)
         this.selectTimer = null
       }, 1000)
