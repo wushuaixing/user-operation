@@ -18,7 +18,7 @@
       v-loading="loading"
     >
       <template #empty>
-        <img src="../../assets/img/no_data.png" alt="">
+        <img src="../../assets/img/no_data.png" alt="" />
         <p>暂无数据</p>
       </template>
       <el-table-column
@@ -100,6 +100,7 @@
             oninput="value = value.replace(/[\W_]/g,'')"
             placeholder="密码默认为账号后六位"
             show-password
+            class="passward-item"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -163,7 +164,7 @@ export default {
   },
   created() {
     this.getList();
-    document.title = '运营账号';
+    document.title = "运营账号";
   },
   methods: {
     //翻页
@@ -200,20 +201,24 @@ export default {
       const messageText = isDel ? "删除成功" : "重置密码成功";
       $modalConfirm({ text, title })
         .then(() => {
-          AdminApi.delUserAndResetPwd({ id }, action).then((res) => {
-            const { code } = res.data || {};
-            if (code === 200) {
-              this.$message.success({
-                message: messageText,
-                duration: 1000,
-                onClose: () => {
-                  this.getList();
-                },
-              });
-            } else {
-              this.$message.error(res.data.message);
-            }
-          });
+          AdminApi.delUserAndResetPwd({ id }, action)
+            .then((res) => {
+              const { code } = res.data || {};
+              if (code === 200) {
+                this.$message.success({
+                  message: messageText,
+                  duration: 1000,
+                  onClose: () => {
+                    this.getList();
+                  },
+                });
+              } else {
+                this.$message.error(res.data.message);
+              }
+            })
+            .then(() => {
+              isDel && this.$store.dispatch("getNumAction");
+            });
         })
         .catch((err) => {
           console.log(err);
@@ -246,7 +251,6 @@ export default {
             this.$message.error("请求出错");
           }
         })
-        .catch(() => (this.loading = false))
         .finally(() => (this.loading = false));
     },
     //添加账号

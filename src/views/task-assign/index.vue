@@ -3,7 +3,7 @@
     <header>
       <el-tabs v-model="tabKey">
         <el-tab-pane
-          v-for="item in taskAssignTabs(toBeAllocatedNum)"
+          v-for="item in taskAssignTabs($store.state.toBeAllocatedNum)"
           :label="item.label"
           :name="item.name"
           :key="item.name"
@@ -16,13 +16,13 @@
           <el-input
             v-model.trim="queryParams.orgName"
             placeholder="请输入机构名称"
-            style="width: 100%"
+            style="width: 220px"
             @keyup.enter="getList"
             maxlength="100"
           />
         </el-form-item>
         <el-form-item label="负责人：">
-          <el-select v-model="queryParams.uid">
+          <el-select v-model="queryParams.uid" style="width: 94px">
             <el-option
               v-for="item in userList"
               :key="item.id"
@@ -33,10 +33,18 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="resetOptions(true)" class="button-first"
+          <el-button
+            type="primary"
+            @click="resetOptions(true)"
+            class="button-first"
+            style="padding: 0 21px"
             >搜索</el-button
           >
-          <el-button type="primary" @click="resetOptions(false)" class="button-fourth"
+          <el-button
+            type="primary"
+            @click="resetOptions(false)"
+            class="button-fourth"
+            style="padding: 0 11px"
             >清空搜索条件</el-button
           >
         </el-form-item>
@@ -50,6 +58,7 @@
           @click="handleBatchCheck(true)"
           class="button-third"
           icon="iconfont iconyonghuyunying-piliangguanli"
+          style="padding: 0 11px"
         >
           批量管理
         </el-button>
@@ -58,6 +67,7 @@
           v-else
           @click="handleBatchCheck(false)"
           class="button-second"
+          style="padding: 0 12px"
           >取消批量管理</el-button
         >
         <el-button
@@ -68,10 +78,10 @@
           {{ tabKey === "1" ? "分配" : "重新分配" }}
         </el-button>
         <span v-if="(multipleSelection || []).length" class="total-tips">
-          <svg class="icon" aria-hidden="true">
+          <svg class="icon" aria-hidden="true" style="margin-right: 3px">
             <use xlink:href="#iconxuanzhongshuju"></use>
           </svg>
-          已选中 <b>{{(multipleSelection || []).length}}</b> 条数据
+          已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
         </span>
       </div>
       <div class="table-content-body">
@@ -173,6 +183,7 @@
               <el-select
                 v-model="modalParams.uid"
                 placeholder="请选择机构负责人"
+                style="width: 220px"
               >
                 <el-option
                   v-for="item in userList.slice(1)"
@@ -209,7 +220,6 @@ export default {
       visible: false,
       taskAssignTabs,
       toggle: true,
-      toBeAllocatedNum: 0,
       column: taskAssignColumn,
       isChecked: false,
       tabKey: "1",
@@ -228,12 +238,11 @@ export default {
         orgName: "",
         uid: "",
       },
-      queryOption:{},
+      queryOption: {},
       modalParams: {
         idList: [],
         uid: "",
       },
-
       topOrgNameList: [],
     };
   },
@@ -249,7 +258,7 @@ export default {
     simpleUserList() {
       AdminApi.simpleUserList().then((res) => {
         const { data } = res.data || {};
-        this.userList = [{id: '', value: "全部"},...data];
+        this.userList = [{ id: "", value: "全部" }, ...data];
       });
     },
     getList() {
@@ -273,11 +282,7 @@ export default {
         })
         .then(() => {
           const isGetNum = this.tabKey === "1";
-          isGetNum &&
-            AdminApi.getNum().then((res) => {
-              const { data } = res.data || {};
-              this.toBeAllocatedNum = data;
-            });
+          isGetNum && this.$store.dispatch("getNumAction");
         })
         .finally(() => (this.loading = false));
     },
@@ -312,13 +317,13 @@ export default {
       const { clearSelection, clearSort } = this.$refs.multipleTable;
       clearSelection();
       clearSort();
-      if (!flag){
+      if (!flag) {
         this.queryParams = {
           orgName: "",
           uid: "",
         };
-      };
-      this.queryOption = {...this.queryParams};
+      }
+      this.queryOption = { ...this.queryParams };
       this.getList();
     },
     //（取消）批量管理
@@ -349,6 +354,7 @@ export default {
     //（重新）分配弹窗关闭
     handleCloseModal() {
       this.visible = false;
+      this.toggle = true;
       this.modalParams = {
         idList: [],
         uid: "",
@@ -400,6 +406,7 @@ export default {
 
 <style lang="scss">
 .task-assign-container {
+  padding-top: 6px !important;
   .table-content {
     &-btn {
       margin: 0px 0 12px 0;
@@ -423,14 +430,24 @@ export default {
       }
     }
   }
+  .query-content{
+    .el-form-item{
+      margin-bottom: 12px;
+    }
+  }
   .modal-content {
     .el-dialog__body {
       ul {
-        padding-left: 36px;
+        padding: 4px 32px 0 32px;
         li {
           display: flex;
-          line-height: 14px;
-          margin-bottom: 24px;
+          line-height: 18px;
+          margin-bottom: 22px;
+          &:last-child {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+          }
           div {
             &:first-child {
               min-width: 126px;
@@ -438,7 +455,16 @@ export default {
             }
             &:last-child {
               p {
-                margin-bottom: 12px;
+                margin-bottom: 8px;
+                .el-button {
+                  padding: 0 0 0 14px !important;
+                  min-height: 18px !important;
+                  i {
+                    margin-left: 4px;
+                    position: relative;
+                    top: 1px;
+                  }
+                }
                 &:last-child {
                   margin-bottom: 0;
                 }
