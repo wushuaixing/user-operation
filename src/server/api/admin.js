@@ -50,7 +50,8 @@ const AdminApi = {
   addDomain: (params) => axios.post("/admin/organization/addDomain", params),
 
   //导出
-  orgExport: (params) => axios.post("/admin/organization/export", clearEmpty(params)),
+  orgExport: (params) =>
+    axios.post("/admin/organization/export", clearEmpty(params)),
 
   //创建顶级合作机构
   addTopOrg: (params) => axios.post("/admin/organization/addTopOrg", params),
@@ -116,7 +117,8 @@ const AdminApi = {
     axios.post("/admin/organization/savePermission", clearEmpty(params)),
 
   //搜索
-  searchOrg: (params) => axios.post("/admin/organization/searchOrg", clearEmpty(params)),
+  searchOrg: (params) =>
+    axios.post("/api/admin/organization/searchOrg", clearEmpty(params)),
 
   //可选的上级机构列表
   selectParentOrgList: (id) =>
@@ -124,7 +126,7 @@ const AdminApi = {
 
   //机构名称模糊查询
   simpleListOrg: (key) =>
-    axios.get(`/admin/organization/simpleListOrg?id=${key}`),
+    axios.get(`/api/admin/organization/simpleListOrg?key=${key}`),
 };
 
 export default AdminApi;

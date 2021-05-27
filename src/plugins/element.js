@@ -1,6 +1,7 @@
 import {
   ElButton,
   ElAside,
+  ElAffix,
   ElContainer,
   ElForm,
   ElFormItem,
@@ -58,6 +59,7 @@ import {
 const list = [
   ElButton,
   ElAside,
+  ElAffix,
   ElContainer,
   ElForm,
   ElFormItem,

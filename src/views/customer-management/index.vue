@@ -3,23 +3,35 @@
     <div class="query-content">
       <el-form :inline="true" :model="queryParams" class="query-form">
         <el-form-item label="机构名称：" style="width: 300px">
-          <el-input
-            v-model="queryParams.orgName"
-            placeholder="请输入机构名称"
-          />
+          <el-select v-model="queryParams.orgId" filterable placeholder="请输入机构名称" @input="inputChange">
+            <el-option
+              v-for="item in customerOptions"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="合同结束日期：">
           <el-date-picker
-            v-model="queryParams.time"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-          >
+            class="query-time"
+            v-model="queryParams.start"
+            type="date"
+            :disabledDate="disabledStartDate"
+            placeholder="开始日期">
+          </el-date-picker>
+          <span style="margin:0 6px;">至</span>
+          <el-date-picker
+            class="query-time"
+            v-model="queryParams.end"
+            type="date"
+            @change="endTimeChange"
+            :disabledDate="disabledEndDate"
+            placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="顶级合作机构状态：">
-          <el-select v-model="queryParams.status" style="width: 150px">
+          <el-select v-model="queryParams.status" style="width: 162px" @change="statusChange">
             <el-option
               v-for="item in Object.keys(topOrgStatus)"
               :key="item"
@@ -30,7 +42,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="机构类型：">
-          <el-select v-model="queryParams.type" style="width: 150px">
+          <el-select v-model="queryParams.type" style="width: 94px">
             <el-option
               v-for="item in Object.keys(orgType)"
               :key="item"
@@ -50,7 +62,7 @@
     </div>
     <div class="main-content">
       <div class="main-content-left">
-        <el-timeline>
+        <!-- <el-timeline>
           <el-timeline-item
             v-for="(activity, index) in activities"
             :key="index"
@@ -59,14 +71,57 @@
           >
             {{ activity.content }}
           </el-timeline-item>
-        </el-timeline>
+        </el-timeline> -->
+        <CustomerTree
+          ref="CustomerTree"
+          :totalOrgNum="totalOrgNum"
+          :totalOperatedOrgNum="totalOperatedOrgNum"
+          :activities="activities"
+          :activeKey="activeKey"
+          @handleClick="customerTreeClick"
+        ></CustomerTree>
       </div>
       <div class="main-content-right">
         <BreadCrumb
           :text="title"
-          btnText="创建域名机构"
-          @handleClick="addOrgVisible = true"
-        />
+          :editable="editable"
+          :btnText="!editable ? '创建域名机构' : '创建顶级合作机构'"
+          @handleClick="showModal"
+          @saveName="saveName"
+        >
+          <template v-slot:detail v-if="editable">
+            <div class="customer-detail">
+              <div class="customer-detail-left">
+                <div class="link">
+                  <span>二级域名:</span>
+                  <a :href="`http://www.${this.customerObj.domainName}`" target='_blank'>{{customerObj.domainName}}</a>
+                </div>
+                <div class="link">
+                  <span>创建时间:</span>
+                  <span>{{customerObj.createTime}}</span>
+                </div>
+              </div>
+              <div class="customer-detail-right">
+                <div class="customer num1">
+                  <div class="customer-type">
+                    <img src="../../assets/img/icon.png"/>
+                    顶级合作机构（家）</div>
+                  <div class="customer-num">{{customerObj.topCooperateOrgNum}}</div>
+                </div>
+                <div class="divider"></div>
+                <div class="customer num2">
+                  <div class="customer-type">正式机构（家）</div>
+                  <div class="customer-num">{{customerObj.formalOrgNum}}</div>
+                </div>
+                <div class="divider" style="margin-right: 31px;"></div>
+                <div class="customer num3">
+                  <div class="customer-type">试用机构（家）</div>
+                  <div class="customer-num">{{customerObj.trialOrgNum}}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </BreadCrumb>
         <div class="table-content">
           <div class="table-content-btn">
             <el-button type="primary" @click="isChecked = !this.isChecked">{{
@@ -82,6 +137,7 @@
               style="width: 100%"
               @selection-change="(val) => (this.multipleSelection = val)"
               @sort-change="handleSortChange"
+              @row-click="rowClick"
               v-loading="loading"
               :row-key="(val) => val.id"
             >
@@ -137,9 +193,9 @@
             v-bind="addOrgFormOptions.options"
             :rules="addOrgFormOptions.rules"
           >
-            <el-form-item label="二级域名：" prop="url">
+            <el-form-item label="二级域名：" prop="subDomain">
               <el-input
-                v-model="addOrgForm.url"
+                v-model="addOrgForm.subDomain"
                 autocomplete="off"
                 maxlength="20"
                 placeholder="请输入二级域名"
@@ -164,6 +220,8 @@
         </el-dialog>
         <RulesModal
           :formData="rulesForm"
+          :isAdd="isAdd"
+          :title="isAdd ? '创建顶级合作机构' : '权限管理'"
           :visible="rulesModalVisible"
           @close="rulesModalVisible = false"
         />
@@ -175,59 +233,65 @@
 <script>
 import { topOrgStatus, orgType, SORTER_TYPE } from "@/utils/static";
 import BreadCrumb from "@/components/bread-crumb";
-import { taskAssignColumn } from "@/static/column";
+import { customerColumn } from "@/static/column";
 import { toRaw } from "vue";
 import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
+import CustomerTree from "./component/CustomerTree";
 export default {
   name: "customerManagement",
   nameComment: "客户管理",
   components: {
     RulesModal,
     BreadCrumb,
+    CustomerTree,
   },
   data() {
     return {
       queryParams: {
-        orgName: "",
-        time: "",
-        status: "",
-        type: "",
+        orgId: "",
+        status: "0",
+        type: "0",
+        start: undefined,
+        end: undefined,
       },
+      customerOptions: [], // 搜索框中的机构列表
+      selectTimer: null,
       title: "全部",
       topOrgStatus,
       orgType,
-      tableData: [],
+      tableData: [{}, {}, {}, {}],
       multipleSelection: [],
       loading: false,
       isChecked: false,
-      column: taskAssignColumn,
+      column: customerColumn,
       page: 1,
       total: 0,
       isActive: 0,
-      activities: [
-        {
-          content: "全部机构",
-        },
-        {
-          content: "恒丰银行域名机构（1/1）",
-        },
-        {
-          content: "台州银行域名机构（0/1）",
-        },
-        {
-          content: "光大银行域名机构（2/2）",
-        },
-      ],
+      activities: [], // 域名机构列表
+      totalOrgNum: 12, // 总机构数
+      totalOperatedOrgNum: 6, // 总合作中机构数
+      activeKey: -1,
+      isAdd: true, // 是否是新增
+      editable: false, // 是否可编辑
+      customerObj: { // 选中的域名机构详情
+        subDomain: 'cmbc.yczcjk.com',
+        createTime: '2019-12-21',
+        topCooperateOrgNum: 12,
+        formalOrgNum: 8,
+        trialOrgNum: 4
+      },
       addOrgVisible: false,
       rulesModalVisible: false,
       addOrgForm: {
-        url: "",
+        subDomain: "",
         name: "",
       },
       rulesForm: {
         a: "2112111ID",
         b: "顶级合作机构名称",
+        f:"559",
+        g: "民生银行域名机构",
       },
       addOrgFormOptions: {
         options: {
@@ -248,43 +312,30 @@ export default {
     };
   },
   created() {
-    // this.getList();
-    document.title = '客户管理';
-    let name = [
-      "河北省",
-      "山西省",
-      "辽宁省",
-      "吉林省",
-      "黑龙江省",
-      "江苏省",
-      "浙江省",
-      "安徽省",
-      "福建省",
-      "江西省",
-      "山东省",
-      "河南省",
-      "湖北省",
-      "湖南省",
-      "广东省",
-      "海南省",
-      "四川省",
-      "贵州省",
-      "云南省",
-      "陕西省",
-      "甘肃省",
-      "青海省",
-      "台湾省",
-    ];
-    for (let i = 0; i < name.length; i++) {
-      let obj = {
-        content: `${name[i]}银行域名机构(${Math.random().toString()[5]}/${
-          Math.random().toString()[8]
-        })`,
-      };
-      this.activities = [...this.activities, obj];
+    this.getList();
+  },
+  mounted() {
+    this.getCuntomerTreeData()
+    // 点击浏览器刷新时，响应 对带参做处理
+    let { customerName, id } = this.$route.params;
+    if (id) {
+      this.activeKey = id || -1;
+      this.title = `${customerName}（ID：${id}）`
+      this.editable = true
+    } else {
+      this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`
+      this.editable = false
     }
   },
+  watch: {
+    $route() {
+      // 对路由变化作出响应...
+      // this.title = to.params.customerName
+      this.getCuntomerTreeData()
+    },
+  },
   methods: {
+    // 获取列表数据
     getList() {
       this.loading = true;
       console.log(toRaw(this.queryParams));
@@ -292,11 +343,11 @@ export default {
         ...toRaw(this.queryParams),
         page: this.page,
       };
-      AdminApi.getUsersList(params)
+      AdminApi.searchOrg(params)
         .then((res) => {
           const { code, data } = res.data || {};
           if (code === 200) {
-            const { list, page, total } = data || {};
+            const { list, page, total } = data.result || {};
             this.tableData = list;
             this.total = total;
             this.page = page;
@@ -304,7 +355,41 @@ export default {
             this.$message.error("请求出错");
           }
         })
-        .finally((this.loading = false));
+        .finally(() => this.loading = false);
+    },
+    // 获取左侧树 数据
+    getCuntomerTreeData () {
+       this.activities = [ // 域名机构列表
+        // {
+        //   id: 1,
+        //   name: "台州银行域名机构台州银行台州银行域名机构台州银行域名机构台州域名机构台州",
+        //   operatedOrgNum: 1,
+        //   orgNum: 3
+        // },
+        // {
+        //   id: 2,
+        //   name: "杭州银行域名机构",
+        //   operatedOrgNum: 2,
+        //   orgNum: 4
+        // },
+        // {
+        //   id: 3,
+        //   name: "溫州银行域名机构",
+        //   operatedOrgNum: 3,
+        //   orgNum: 5
+        // },
+      ];
+      for (let i = 0; i < 50; i++) {
+        let obj = {
+          operatedOrgNum: 2,
+          orgNum: 4,
+          name: "杭州银行域名机构"
+        }
+        obj.id = i + 1
+        this.activities.push(obj)
+      }
+      this.totalOrgNum = 12; // 总机构数
+      this.totalOperatedOrgNum = 6; // 总合作中机构数
     },
     //排序
     handleSortChange({ prop, order }) {
@@ -329,8 +414,53 @@ export default {
     handleAction(params, sign) {
       if (sign === "rules") {
         this.rulesModalVisible = true;
+        this.isAdd = false
       }
       console.log(params, sign);
+    },
+
+    // 点击一行跳转详情页
+    rowClick () {
+      window.open("/customerDetail/12", "_blank")
+    },
+
+    // 机构状态改变 结束日期改变
+    statusChange (val) {
+      let nowDate = new Date()
+      switch (val) {
+        case "1" :{
+          // 开始日期赋值当天 结束日期置空
+          this.queryParams.start = nowDate
+          this.queryParams.end = undefined
+          break
+        }
+        case "2" :{
+          // 开始日期置空 结束日期赋值昨天
+          this.queryParams.start = undefined
+          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000)
+          break
+        }
+        case "3" :{
+          // 开始日期今天 结束日期：今天+两个月
+          this.queryParams.start = new Date()
+          nowDate.setMonth(nowDate.getMonth() + 2)
+          this.queryParams.end = nowDate
+          break
+        }
+        case "4" :{
+          // 开始日期：昨天-两个月  结束日期：昨天
+          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000)
+          let date = new Date(nowDate.getTime() - 24 * 3600 * 1000)
+          date.setMonth(date.getMonth() - 2)
+          this.queryParams.start = date
+          break
+        }
+        default:
+          break
+      }
+    },
+    endTimeChange () {
+      this.queryParams.status = "0"
     },
     //清空搜索条件
     handleClear() {
@@ -375,6 +505,64 @@ export default {
     resetAddOrgForm() {
       this.$refs["addOrgForm"].resetFields();
     },
+    // 打开弹窗 域名机构以及顶级机构创建
+    showModal () {
+      if (this.editable) {
+        this.rulesModalVisible = true
+        this.isAdd = true
+      } else {
+        this.addOrgVisible = true
+      }
+    },
+    // 左侧树点击事件
+    customerTreeClick(val, obj) {
+      // 通过路由控制，改变右侧表格数据
+      if (val && val === 'all') {
+        this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`;
+        this.$router.push('/customerManagement');
+        this.editable = false
+      } else {
+        this.title = `${obj.name}（ID：${obj.id}）`
+        this.$router.push(`/customerManagement/${obj.name}/${obj.id}`);
+        this.editable = true
+      }
+    },
+    // 保存顶级机构名称
+    saveName (name) {
+      console.log(name)
+    },
+
+    // 日期控件做前后限制
+    disabledStartDate (startTime) {
+      if (this.queryParams.end) {
+        return startTime.getTime() > this.queryParams.end.getTime()
+      }
+    },
+    disabledEndDate (endTime) {
+      if (this.queryParams.start) {
+        return endTime.getTime() < this.queryParams.start.getTime()
+      }
+    },
+
+    // 机构搜索做防抖处理
+    inputChange (val) {
+      if (this.selectTimer) {
+        clearTimeout(this.selectTimer)
+        this.selectTimer = null
+      }
+      this.selectTimer = setTimeout(() => {
+        let key = val.target.value
+        // 调用接口查询
+        AdminApi.simpleListOrg(key).then((res) => {
+          const { code, data } = res.data || {}
+          if (code === 200) {
+            this.customerOptions = data
+          }
+        })
+        clearTimeout(this.selectTimer)
+        this.selectTimer = null
+      }, 1000)
+    }
   },
   computed: {
     batchHandleText: function () {
@@ -390,12 +578,18 @@ export default {
   .query-content {
     background: #fff;
     margin-bottom: 20px;
-    .query-form {
+    .query-form{
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       .el-form-item {
         margin: 22px 10px 22px;
+        .query-time {
+          width: 130px;
+          input {
+            padding-right: 15px;
+          }
+        }
       }
     }
   }
@@ -404,7 +598,7 @@ export default {
     &-left {
       min-height: 79vh;
       background: #fff;
-      min-width: 320px;
+      width: 300px;
       margin-right: 20px;
       padding: 20px;
     }
@@ -412,6 +606,72 @@ export default {
       flex: 1 !important;
       width: 500px;
       background-color: #fff;
+      .customer-detail {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 12px;
+        padding-bottom: 21px;
+        &-left {
+          width: calc(100% - 450px);
+          font-size: 14px;
+          color: #4E5566;
+          .link {
+            line-height: 14px;
+            a {
+              color: #296DD3;
+            }
+            span:first-child {
+              margin-right: 11px;
+            }
+          }
+          .link:last-child {
+            margin-top: 16px;
+          }
+        }
+        &-right {
+          width: 500px;
+          text-align: right;
+          .customer {
+            display: inline-block;
+            text-align: center;
+            &-type {
+              color: #4E5566;
+              font-size: 14px;
+              line-height: 14px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              img {
+                cursor: pointer;
+                margin-right: 5px;
+              }
+            }
+            &-num {
+              color: #20242E;
+              line-height: 22px;
+              font-size: 22px;
+              margin-top: 10px;
+            }
+          }
+          .num1 {
+            width: 180px;
+          }
+          .num2 {
+            width: 147px;
+          }
+          .num3 {
+            width: 98px;
+            text-align: center;
+          }
+          .divider {
+            display: inline-block;
+            vertical-align: super;
+            width: 1px;
+            height: 28px;
+            background:#E2E4E9;
+          }
+        }
+      }
       .table-content {
         padding: 20px;
         &-btn {
