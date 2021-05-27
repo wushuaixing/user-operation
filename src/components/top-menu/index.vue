@@ -228,6 +228,7 @@ export default {
 
   .user-message {
     .el-dropdown {
+      cursor: pointer;
       &:hover {
         color: #296dd3;
       }

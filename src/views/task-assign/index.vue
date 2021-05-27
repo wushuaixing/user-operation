@@ -37,12 +37,14 @@
             type="primary"
             @click="resetOptions(true)"
             class="button-first"
+            style="padding: 0 21px"
             >搜索</el-button
           >
           <el-button
             type="primary"
             @click="resetOptions(false)"
             class="button-fourth"
+            style="padding: 0 11px"
             >清空搜索条件</el-button
           >
         </el-form-item>
@@ -241,7 +243,6 @@ export default {
         idList: [],
         uid: "",
       },
-
       topOrgNameList: [],
     };
   },
@@ -405,6 +406,7 @@ export default {
 
 <style lang="scss">
 .task-assign-container {
+  padding-top: 6px !important;
   .table-content {
     &-btn {
       margin: 0px 0 12px 0;
@@ -426,6 +428,11 @@ export default {
           padding-right: 18px;
         }
       }
+    }
+  }
+  .query-content{
+    .el-form-item{
+      margin-bottom: 12px;
     }
   }
   .modal-content {
