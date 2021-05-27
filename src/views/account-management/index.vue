@@ -251,7 +251,6 @@ export default {
             this.$message.error("请求出错");
           }
         })
-        .catch(() => (this.loading = false))
         .finally(() => (this.loading = false));
     },
     //添加账号

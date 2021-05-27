@@ -124,14 +124,19 @@ $--input-hover-border: #296DD3 !default;
 }
 /* Tabs
 -------------------------- */
-$--tab-header-color: red !default;
 .el-tabs{
   &__item{
     font-size: 16px !important;
     color: #20242E !important;
+    height: 46px !important;
+    line-height: 46px !important;
     &:hover{
       color: #296DD3 !important;
     }
+  }
+  &__nav-wrap::after{
+    height: 1px !important;
+    background-color: #e2e4e9 !important;
   }
   .is-active{
     color: #296DD3 !important;
