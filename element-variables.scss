@@ -28,6 +28,9 @@ $--button-font-size: $--font-size-base !default;
 $--button-padding-vertical: 8px !default;
 $--button-hover-tint-percent: 0% !default;
 $--button-active-shade-percent: 0% !default;
+.el-button{
+  font-weight: normal !important;
+}
 .el-button + .el-button{
   margin-left: 12px !important;
 }
@@ -174,12 +177,6 @@ $--table-row-hover-background-color: $--background-color-base !default;
       .cell{
         &:hover{
           color: #296DD3 !important;
-          .ascending{
-            border-bottom-color: #296DD3 !important;
-          }
-          .descending{
-            border-top-color: #296DD3 !important;
-          }
         }
 
       }
@@ -247,8 +244,12 @@ $--pagination-background-color: #fff !important;
     .el-input{
       width: 82px !important;
     }
-    i{
-      color: #20242E !important;
+    .el-select{
+      .el-input__suffix-inner{
+        .el-input__icon{
+          color: #20242E !important;
+        }
+      }
     }
   }
 }
@@ -297,7 +298,6 @@ $--dialog-padding-primary: 0px !default;
 
 @mixin modal-footer-btn{
   width: 72px;
-  font-weight: normal !important;
   border-radius: 2px !important;
   &:first-child{
     @include btn-fourth;

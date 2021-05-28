@@ -19,6 +19,7 @@
             style="width: 220px"
             @keyup.enter="getList"
             maxlength="100"
+            clearable
           />
         </el-form-item>
         <el-form-item label="负责人：">
@@ -409,7 +410,7 @@ export default {
   padding-top: 6px !important;
   .table-content {
     &-btn {
-      margin: 1px 0 12px 0;
+      padding: 1px 0 12px 0;
       .total-tips {
         font-size: 14px;
         padding-left: 20px;

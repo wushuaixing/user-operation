@@ -144,7 +144,7 @@ export default {
       formOptions: {
         options: {
           labelPosition: "right",
-          labelWidth: "125px",
+          labelWidth: "126px",
           destroyOnClose: true,
           class: "add-account-modal",
         },

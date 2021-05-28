@@ -147,6 +147,7 @@ export default {
     };
   },
   created() {
+    document.title = "用户运营平台";
     this.isLocal = /localhost/.test(window.location.host);
   },
   methods: {
@@ -245,7 +246,7 @@ export default {
   height: 100%;
   width: 100%;
   background: url("../../assets/img/login-bg.jpg") center no-repeat;
-  background-size: 100%;
+  background-size: 100% 100%;
   overflow: auto;
 
   .content {
