@@ -368,7 +368,7 @@ export default {
           const { code } = res.data || {};
           if (code === 200) {
             this.$message.success({
-              message: "添加成功",
+              message: "分配成功",
               duration: 1000,
               onClose: () => {
                 this.visible = false;
