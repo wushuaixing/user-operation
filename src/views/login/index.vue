@@ -22,7 +22,7 @@
               v-model="params.username"
               placeholder="请输入11位账号"
               maxlength="11"
-              oninput="value = value.replace(/\D/g,'')"
+              onblur="value = value.replace(/\D/g,'')"
             >
               <template #prefix>
                 <img
@@ -38,7 +38,7 @@
               v-model="params.password"
               placeholder="请输入密码"
               maxlength="20"
-              oninput="value = value.replace(/[\W_]/g,'')"
+              onblur="value = value.replace(/[\W_]/g,'')"
               class="passward-item"
               show-password
             >
@@ -147,6 +147,7 @@ export default {
     };
   },
   created() {
+    document.title = "用户运营平台";
     this.isLocal = /localhost/.test(window.location.host);
   },
   methods: {
@@ -341,7 +342,7 @@ export default {
             height: 42px;
             border-left: 1px solid #dcdfe6;
             background-color: #fafafa;
-
+            cursor: pointer;
             img {
               height: 42px;
               width: 115px;
