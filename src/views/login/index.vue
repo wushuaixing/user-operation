@@ -245,7 +245,7 @@ export default {
   height: 100%;
   width: 100%;
   background: url("../../assets/img/login-bg.jpg") center no-repeat;
-  background-size: 100% 100%;
+  background-size: 100%;
   overflow: auto;
 
   .content {
@@ -341,7 +341,7 @@ export default {
             height: 42px;
             border-left: 1px solid #dcdfe6;
             background-color: #fafafa;
-
+            cursor: pointer;
             img {
               height: 42px;
               width: 115px;
