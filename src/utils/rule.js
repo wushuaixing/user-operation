@@ -37,7 +37,7 @@ export const adminRoutes = [
         component: () => import("@/views/account-management"),
       },
       {
-        path: "/customerManagement",
+        path: "/customerManagement/:customerName?/:id?",
         name: "CustomerManagement",
         component: () => import("@/views/customer-management"),
       },
@@ -48,6 +48,11 @@ export const adminRoutes = [
       },
     ],
   },
+  {
+    path: "/customerDetail/:id",
+    name: "customerDetail",
+    component: () => import("@/views/customer-management/component/CustomerDetail"),
+  }
 ];
 
 export const ruleProcess = (_this) => {
@@ -78,7 +83,7 @@ export const adminMenu = [
   },
   {
     text: "顶级机构分配",
-    icon: "iconfont iconyonghuyunying-shenherenwufenpei",
+    icon: "iconfont iconguquanchuantoutu",
     path: "/taskAssign",
     key: "TaskAssign",
   },

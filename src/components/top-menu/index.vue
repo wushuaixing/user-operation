@@ -44,7 +44,7 @@
             autocomplete="off"
             maxlength="20"
             placeholder="请输入原密码"
-            oninput="value = value.replace(/[\W_]/g,'')"
+            onblur="value = value.replace(/[\W_]/g,'')"
             show-password
             class="passward-item"
           >
@@ -55,7 +55,7 @@
             v-model="form.newPassword"
             autocomplete="off"
             maxlength="20"
-            oninput="value = value.replace(/[\W_]/g,'')"
+            onblur="value = value.replace(/[\W_]/g,'')"
             placeholder="请输入新密码"
             show-password
             class="passward-item"
@@ -71,7 +71,7 @@
             autocomplete="off"
             maxlength="20"
             placeholder="请再次输入新密码"
-            oninput="value = value.replace(/[\W_]/g,'')"
+            onblur="value = value.replace(/[\W_]/g,'')"
             show-password
             class="passward-item"
           ></el-input>

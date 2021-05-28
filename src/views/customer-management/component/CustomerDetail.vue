@@ -1,0 +1,506 @@
+<template>
+  <div class="yc-newpage-contaner">
+    <section class="main-content" v-loading="loading">
+      <div class="yc-customer-header">
+        <div class="customer-name">顶级合作机构：民生银行温州分行 (ID：1020)</div>
+        <div class="customer-message">
+          <div class="customer-message-useDetail">
+            <div class="useDetail-left">
+              <div class="item">
+                <span class="item-label">机构类型</span>：
+                <span>{{customerData.type ? "正式" : "适用"}}</span>
+              </div>
+              <div class="item">
+                <span class="item-label">剩余账号数</span>：
+                <span v-if="!customerData.isAccountLimit">不限</span>
+                <span v-else><span class="item-bold">{{customerData.restAccountCount}}</span>/{{customerData.accountLimitCount}}</span>
+              </div>
+              <div class="item">
+                <span class="item-label">剩余子机构数</span>：
+                <span v-if="!customerData.isSubOrgLimit">不限</span>
+                <span v-else><span class="item-bold">{{customerData.restSubOrgCount}}</span>/{{customerData.subOrgLimitCount}}</span>
+              </div>
+            </div>
+            <div class="useDetail-right">
+              <div class="item">
+                <span class="item-label1">剩余画像查询次数</span>：
+                <span v-if="!customerData.isPortraitLimit">不限</span>
+                <span v-else><span class="item-bold">{{customerData.restPortraitCount}}</span>/{{customerData.portraitLimitCount}}</span>
+              </div>
+              <div class="item">
+                <span class="item-label1">剩余分类搜索次数</span>：
+                <span v-if="!customerData.isClassifiedLimit">不限</span>
+                <span v-else><span class="item-bold">{{customerData.restClassifiedCount}}</span>/{{customerData.classifiedLimitCount}}</span>
+              </div>
+              <div class="item">
+                <span class="item-label1">剩余监控债务人数</span>：
+                <span v-if="!customerData.isObligorLimit">不限</span>
+                <span v-else><span class="item-bold">{{customerData.restObligorCount}}</span>/{{customerData.obligorLimitCount}}</span>
+              </div>
+            </div>
+            <div class="linkAddress">
+              <div class="item">
+                <span class="item-label">域名网址</span>：
+                <a>{{customerData.url}}</a>
+              </div>
+            </div>
+          </div>
+          <div class="customer-message-timeline time1">
+            <span>签约记录：</span>
+            <el-timeline class="timeline">
+              <el-timeline-item
+                v-for="(activity, index) in contractList"
+                color="#296DD3"
+                :key="index">
+                <div>
+                  <span>{{`${acountList[index]}次续签起止日期：${activity.start}至${activity.end}`}}</span>
+                  <span class="open" @click="showContractMessage" v-if="contractRecord.length > 3 && index === contractList.length - 1">
+                    <span v-if="showStatus === 'close'">展开<i class="el-icon-arrow-down" style="margin-left: 7px;"></i></span>
+                    <span v-else>收起<i class="el-icon-arrow-up" style="margin-left: 7px;"></i></span>
+                  </span>
+                </div>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
+          <div class="customer-message-timeline time2">
+            <span>延期记录：</span>
+            <el-timeline class="timeline">
+              <el-timeline-item
+                v-for="(activity, index) in delayList"
+                color="#296DD3"
+                :key="index">
+                <div>
+                  <span>{{`次延长时长：${activity.time}日`}}</span>
+                  <span class="open" @click="showdelayMessage" v-if="delayRecord.length > 3 && index === delayList.length - 1">
+                    <span v-if="delayShowStatus === 'close'">展开<i class="el-icon-arrow-down" style="margin-left: 7px;"></i></span>
+                    <span v-else>收起<i class="el-icon-arrow-up" style="margin-left: 7px;"></i></span>
+                  </span>
+                </div>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
+        </div>
+      </div>
+      <el-affix :offset="1" @change="affixChange">
+        <div class="yc-customer-content">
+          <div class="yc-customer-content-customerTree">
+            <div class="module-title">
+              客户使用机构
+            </div>
+            <div class="customer-tree">
+              <el-tree
+                :data="treeData"
+                node-key="id"
+                default-expand-all
+                :expand-on-click-node="false">
+                <template #default="{ node }">
+                  <span class="custom-tree-node">
+                    <span>{{node.id}}</span>
+                    <span>{{ node.label }}</span>
+                  </span>
+                </template>
+              </el-tree>
+            </div>
+          </div>
+          <div class="yc-customer-content-list" :class="{scroll: scrollShow}">
+            <div class="module-title">
+              民生银行温州分行
+            </div>
+            <div class="list">
+              <div class="list-header">
+                <span class="title">子机构列表</span>
+                <el-button type="primary" icon="el-icon-plus">创建子机构</el-button>
+              </div>
+              <el-table
+                :data="tableData"
+                style="width: 100%">
+                <el-table-column
+                  prop="date"
+                  label="ID">
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  label="机构名称"
+                  >
+                </el-table-column>
+                <el-table-column
+                  prop="address"
+                  label="总账号数">
+                </el-table-column>
+                <el-table-column label="操作">
+                  <template #default="scope">
+                    <el-button
+                      type="text"
+                      @click="handleSubOrgDelete(scope.row)"
+                    >
+                      删除
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button
+                      type="text"
+                      @click="handleSubOrgEdit(scope.row)"
+                      >编辑
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div class="list">
+              <div class="list-header">
+                <span class="title">本级机构账号</span>
+                <el-button type="primary" icon="el-icon-plus">创建本级机构</el-button>
+              </div>
+              <el-table
+                :data="tableData"
+                style="width: 100%">
+                <el-table-column
+                  prop="date"
+                  width="120"
+                  label="账号">
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  width="120"
+                  label="姓名"
+                  >
+                </el-table-column>
+                <el-table-column
+                  prop="date"
+                  width="120"
+                  label="角色">
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  width="120"
+                  label="导入债务人数"
+                  >
+                </el-table-column>
+                <el-table-column
+                  prop="address"
+                  width="120"
+                  label="上次登录时间">
+                </el-table-column>
+                <el-table-column label="操作">
+                  <template #default="scope">
+                    <el-button
+                      type="text"
+                      @click="handleSubOrgDelete(scope.row)"
+                    >
+                      删除
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button
+                      type="text"
+                      @click="handleSubOrgEdit(scope.row)"
+                      >编辑
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button
+                      type="text"
+                      @click="handleSubOrgDelete(scope.row)"
+                    >
+                      重置密码
+                    </el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button
+                      type="text"
+                      @click="handleSubOrgEdit(scope.row)"
+                      >操作记录
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-pagination
+                @current-change="accountPageChange"
+                background
+                :current-page="accountPage"
+                layout="total, prev, pager, next, jumper"
+                :total="accountTotal"
+              />
+            </div>
+          </div>
+        </div>
+      </el-affix>
+    </section>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: "CustomerDetail",
+  nameComment: "机构详情",
+  components: {
+
+  },
+  data() {
+    return {
+      loading: false, // 整页loading
+      customerData: {
+        // 账号数
+        isAccountLimit: 1, // 是否限制 0：否  1：是
+        accountLimitCount: 1000, // 总
+        restAccountCount: 1000, // 剩余
+        // 分类搜索
+        isClassifiedLimit: 1,
+        classifiedLimitCount: 1000,
+        restClassifiedCount: 1000,
+        // 监控债务
+        isObligorLimit: 1,
+        obligorLimitCount: 1000,
+        restObligorCount: 1000,
+        // 画像查询
+        isPortraitLimit: 1,
+        portraitLimitCount: 1000,
+        restPortraitCount: 1000,
+        // 子机构
+        isSubOrgLimit: 1,
+        subOrgLimitCount: 1000,
+        restSubOrgCount: 1000,
+
+        type: 0,
+		    url: "cmbc.yczcjk.com",
+      },
+      contractShowIndex: 3,
+      delayShowIndex: 3,
+      showStatus: "close",
+      delayShowStatus: "close",
+      acountList: ["首", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"],
+      contractRecord: [
+        {
+          start: "2021-03-21",
+          end: "2021-03-21"
+        }, {
+          start: "2021-03-21",
+          end: "2021-03-21"
+        }, {
+          start: "2021-03-21",
+          end: "2021-03-21"
+        }, {
+          start: "2021-03-21",
+          end: "2021-03-21"
+        }
+      ],
+      delayRecord: [
+        {
+          time: 60
+        }, {
+          time: 60
+        }, {
+          time: 60
+        }, {
+          time: 60
+        }
+      ],
+      scrollShow: false,
+      accountPage: 1,
+      accountTotal: 0,
+      tableData: [{}, {}],
+      treeData: [
+        {
+          id: 1,
+          label: '一级 1',
+          children: [{
+            id: 4,
+            label: '二级 1-1',
+            children: [{
+              id: 9,
+              label: '三级 1-1-1'
+            }, {
+              id: 10,
+              label: '三级 1-1-2'
+            }]
+          }]
+        }
+      ]
+    };
+  },
+  computed: {
+    contractList () {
+      return this.contractRecord.filter(( item, index) => {
+        return index < this.contractShowIndex
+      })
+    },
+    delayList () {
+      return this.delayRecord.filter(( item, index) => {
+        return index < this.delayShowIndex
+      })
+    }
+  },
+  created() {
+    document.title = "顶级机构详情页";
+  },
+  methods: {
+    // 展开收起
+    showContractMessage () {
+      this.contractShowIndex = this.showStatus === "open" ? 3 : this.contractRecord.length
+      this.showStatus = this.contractShowIndex === 3 ? "close" : "open"
+    },
+    showdelayMessage () {
+      this.delayShowIndex = this.delayShowStatus === "open" ? 3 : this.delayRecord.length
+      this.delayShowStatus = this.delayShowIndex === 3 ? "close" : "open"
+    },
+
+    // 固钉状态改变
+    affixChange (val) {
+      this.scrollShow = val
+    },
+
+    // 子机构列表
+    handleSubOrgDelete () {},
+    handleSubOrgEdit () {},
+    accountPageChange () {},
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.main-content {
+  width: 1400px;
+  margin: 20px auto;
+  min-height: 94vh;
+  .yc-customer-header {
+    min-height: 146px;
+    background: #FFFFFF;
+    padding: 20px;
+    .customer-name {
+      font-weight: 600;
+      color: #20242E;
+      font-size: 20px;
+      line-height: 20px;
+      margin-bottom: 24px;
+    }
+    .customer-message {
+      display: flex;
+      flex-direction: row;
+      &-useDetail {
+        width: 34%;
+        color: #4E5566;
+        font-size: 14px;
+        .useDetail-left {
+          display: inline-block;
+          width: 200px;
+        }
+        .useDetail-right {
+          display: inline-block;
+          width: calc(100% - 200px);
+        }
+        .item {
+            line-height: 14px;
+            margin-top: 16px;
+            &-label {
+              width: 85px;
+              display: inline-block;
+              text-align-last: justify;
+            }
+            &-label1 {
+              width: 115px;
+              display: inline-block;
+              text-align-last: justify;
+            }
+            &-bold {
+              color: #20242E;
+              font-weight: 600;
+            }
+          }
+          .item:first-child {
+            margin-top: 0px;
+          }
+        .linkAddress {
+          margin-top: 12px;
+        }
+      }
+      &-timeline {
+        width: 33%;
+        font-size: 14px;
+        color: #20242E;
+        line-height: 14px;
+        position: relative;
+        .timeline /deep/ {
+          display: inline-grid;
+          .open {
+            font-size: 14px;
+            color: #296DD3;
+            cursor: pointer;
+            margin-left: 16px;
+          }
+          .el-timeline-item {
+            padding-bottom: 8px !important;
+          }
+          .el-timeline-item__tail {
+            left: 4px;
+            top: 7px;
+            border-left: 1px solid #E2E4E9;
+          }
+          .el-timeline-item__node--normal {
+            left: 2px;
+            width: 6px;
+            height: 6px;
+            top: 4px;
+          }
+          .el-timeline-item__wrapper {
+            padding-left: 16px;
+            top: 0;
+          }
+        }
+      }
+    }
+  }
+  .yc-customer-content {
+    margin-top: 20px;
+    min-height: 69vh;
+    display: flex;
+    flex-direction: row;
+    &-customerTree {
+      width: 420px;
+      background: #FFFFFF;
+    }
+    &-list {
+      width: 960px;
+      margin-left: 20px;
+      background: #FFFFFF;
+      .list {
+        padding: 15px 20px;
+        &-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+          margin-bottom: 18px;
+          .title {
+            font-size: 16px;
+            color: #20242E;
+            line-height: 16px;
+            font-weight: 600;
+            margin-left: 11px;
+          }
+          .title::before {
+            content: "";
+            width: 3px;
+            height: 20px;
+            position: absolute;
+            top: 6px;
+            left: 0;
+            background: #296DD3;
+          }
+        }
+      }
+    }
+    .scroll {
+      overflow-y: auto;
+      max-height: 96vh;
+    }
+    .module-title {
+      color: #20242E;
+      line-height: 18px;
+      font-size: 18px;
+      font-weight: 600;
+      height: 58px;
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #E2E4E9;
+    }
+  }
+}
+</style>

@@ -10,7 +10,8 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family:Microsoft YaHei, PingFangSC-Regular, PingFang SC, Helvetica, Arial, sans-serif;
+  font-family: Microsoft YaHei, PingFangSC-Regular, PingFang SC, Helvetica,
+    Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #20242e;

@@ -81,4 +81,46 @@ const taskAssignColumn = [
   },
 ];
 
-export { accountManagementColumn, taskAssignColumn };
+// 客户管理列表
+const customerColumn = [
+  {
+    prop: "id",
+    label: "ID",
+    sort: false,
+  },
+  {
+    prop: "name",
+    label: "顶级合作机构名称",
+    sort: false,
+  },
+  {
+    prop: "type",
+    label: "机构类型",
+    sort: false,
+  },
+  {
+    prop: "subOrgNum",
+    label: "全部子机构数",
+    align: 'center',
+    sort: false,
+  },
+  {
+    prop: "accountNum",
+    label: "总账号数",
+    align: 'center',
+    sort: false,
+  },
+  {
+    prop: "startTime",
+    label: "合同开始日期",
+    sort: "custom",
+  },
+  {
+    prop: "endTime",
+    label: "合同结束日期",
+    sort: "custom",
+  },
+];
+
+
+export { accountManagementColumn, taskAssignColumn, customerColumn };

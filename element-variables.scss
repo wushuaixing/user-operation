@@ -3,7 +3,7 @@ $--color-primary: #296DD3;
 
 $--color-success: #1BBA7C !default;
 
-$--color-warning: #F93535 !default;
+$--color-warning: #ff871c !default;
 
 $--color-danger: #F93535 !default;
 
@@ -28,6 +28,12 @@ $--button-font-size: $--font-size-base !default;
 $--button-padding-vertical: 8px !default;
 $--button-hover-tint-percent: 0% !default;
 $--button-active-shade-percent: 0% !default;
+.el-button{
+  font-weight: normal !important;
+}
+.el-button + .el-button{
+  margin-left: 12px !important;
+}
 @mixin btn-first{
   border: none;
   background-color: #296DD3;
@@ -122,6 +128,14 @@ $--input-hover-border: #296DD3 !default;
     display: none;
   }
 }
+
+.el-select{
+  .el-input__suffix{
+    .el-input__icon{
+      color: #7D8699 !important;
+    }
+  }
+}
 /* Tabs
 -------------------------- */
 .el-tabs{
@@ -140,6 +154,7 @@ $--input-hover-border: #296DD3 !default;
   }
   .is-active{
     color: #296DD3 !important;
+    font-weight: bold;
   }
 }
 
@@ -157,6 +172,25 @@ $--table-row-hover-background-color: $--background-color-base !default;
     th,td{
       padding: 11px 0 ;
       box-sizing: border-box;
+    }
+    .is-sortable{
+      .cell{
+        &:hover{
+          color: #296DD3 !important;
+        }
+
+      }
+    }
+  }
+  thead{
+    th{
+      border-bottom: none !important;
+      &:first-child{
+        border-radius: 2px 0 0 0;
+      }
+      &:last-child{
+        border-radius: 0 2px 0 0;
+      }
     }
   }
   &__empty-text{
@@ -194,13 +228,28 @@ $--pagination-background-color: #fff !important;
     }
   }
   button{
-    border: 1px dashed #C5C7CE !important;
+    border: 1px solid #C5C7CE !important;
     margin: 0 4px !important;
   }
-  .el-pagination__jump{
+  &__jump{
     margin-left: 8px !important;
     .el-input__inner{
       width: 50px !important;
+    }
+  }
+  &__sizes{
+    margin-right: 3px !important;
+    position: relative;
+    top: -1px;
+    .el-input{
+      width: 82px !important;
+    }
+    .el-select{
+      .el-input__suffix-inner{
+        .el-input__icon{
+          color: #20242E !important;
+        }
+      }
     }
   }
 }
@@ -231,6 +280,9 @@ $--dialog-padding-primary: 0px !default;
      right: 13px;
      font-size: 24px;
   }
+  .el-dialog__title{
+    color: #20242E !important;
+  }
 }
 .el-dialog__body{
   padding: 28px 0 0 0 !important;
@@ -246,11 +298,13 @@ $--dialog-padding-primary: 0px !default;
 
 @mixin modal-footer-btn{
   width: 72px;
+  border-radius: 2px !important;
   &:first-child{
     @include btn-fourth;
   }
   &:last-child{
     @include btn-first;
+    margin-left: 12px;
   }
 }
 
@@ -291,6 +345,7 @@ $--msgbox-width: 440px !default;
       padding: 0 32px 22px 0 !important;
       .el-button{
         @include  modal-footer-btn;
+        font-size: 14px !important;
       }
     }
   }

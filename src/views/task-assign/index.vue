@@ -19,6 +19,7 @@
             style="width: 220px"
             @keyup.enter="getList"
             maxlength="100"
+            clearable
           />
         </el-form-item>
         <el-form-item label="负责人：">
@@ -67,7 +68,7 @@
           v-else
           @click="handleBatchCheck(false)"
           class="button-second"
-          style="padding: 0 12px"
+          style="padding: 0 12px;"
           >取消批量管理</el-button
         >
         <el-button
@@ -78,7 +79,7 @@
           {{ tabKey === "1" ? "分配" : "重新分配" }}
         </el-button>
         <span v-if="(multipleSelection || []).length" class="total-tips">
-          <svg class="icon" aria-hidden="true" style="margin-right: 3px">
+          <svg class="icon" aria-hidden="true" style="margin-right: 3px;font-size: 16px;position: relative;top: 1px">
             <use xlink:href="#iconxuanzhongshuju"></use>
           </svg>
           已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
@@ -368,7 +369,7 @@ export default {
           const { code } = res.data || {};
           if (code === 200) {
             this.$message.success({
-              message: "添加成功",
+              message: "分配成功",
               duration: 1000,
               onClose: () => {
                 this.visible = false;
@@ -409,7 +410,7 @@ export default {
   padding-top: 6px !important;
   .table-content {
     &-btn {
-      margin: 0px 0 12px 0;
+      padding: 1px 0 12px 0;
       .total-tips {
         font-size: 14px;
         padding-left: 20px;
@@ -432,7 +433,7 @@ export default {
   }
   .query-content{
     .el-form-item{
-      margin-bottom: 12px;
+      margin: 0 32px 12px 0;
     }
   }
   .modal-content {
