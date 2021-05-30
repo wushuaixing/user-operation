@@ -22,6 +22,7 @@ const rsaEncrypt = (str) => {
 export const encryptInfo = (info = {}) =>
   Object.assign({}, info, {
     password: info.password ? rsaEncrypt(info.password) : "",
+    name:info.name ? info.name.trim() : ''
   });
 
 //修改密码加密

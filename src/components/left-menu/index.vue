@@ -45,7 +45,7 @@
                 item.key === 'TaskAssign' &&
                 Number($store.state.toBeAllocatedNum)
               "
-              style="font-size: 16px;position: relative;top: 1px;"
+              style="font-size: 16px; position: relative; top: 1px"
             >
               <use xlink:href="#iconfenpei"></use>
             </svg>
@@ -84,12 +84,16 @@ export default {
       background-color: #296dd3 !important;
     }
   }
-
   .el-submenu {
     width: 220px;
     &__title {
       height: 58px;
       line-height: 58px;
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-size: 16px;
+      i {
+        color: rgba(255, 255, 255, 0.8);
+      }
     }
     &::after {
       content: none !important;
@@ -98,6 +102,7 @@ export default {
       padding-left: 44px !important;
       height: 46px;
       line-height: 46px;
+      font-size: 14px;
     }
   }
 
@@ -107,6 +112,7 @@ export default {
     height: 58px;
     line-height: 58px;
     opacity: 0.8;
+    font-size: 16px;
   }
   .iconfont {
     margin-right: 8px;
@@ -125,6 +131,13 @@ export default {
       right: 0;
       top: calc(50% - 6px);
     }
+    .el-submenu__title{
+      color: #fff !important;
+      i {
+        color: #fff !important;
+      }
+    }
   }
+
 }
 </style>

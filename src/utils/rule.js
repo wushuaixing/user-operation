@@ -83,7 +83,7 @@ export const adminMenu = [
   },
   {
     text: "顶级机构分配",
-    icon: "iconfont iconyonghuyunying-shenherenwufenpei",
+    icon: "iconfont iconguquanchuantoutu",
     path: "/taskAssign",
     key: "TaskAssign",
   },

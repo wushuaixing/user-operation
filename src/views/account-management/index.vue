@@ -87,7 +87,7 @@
             v-model="form.phone"
             autocomplete="off"
             maxlength="11"
-            oninput="value = value.replace(/\D/g,'')"
+            onblur="value = value.replace(/\D/g,'')"
             placeholder="请输入手机号"
             @blur="handlePwd"
           ></el-input>
@@ -97,7 +97,7 @@
             v-model="form.password"
             autocomplete="off"
             maxlength="20"
-            oninput="value = value.replace(/[\W_]/g,'')"
+            onblur="value = value.replace(/[\W_]/g,'')"
             placeholder="密码默认为账号后六位"
             show-password
             class="passward-item"
@@ -144,7 +144,7 @@ export default {
       formOptions: {
         options: {
           labelPosition: "right",
-          labelWidth: "125px",
+          labelWidth: "126px",
           destroyOnClose: true,
           class: "add-account-modal",
         },
