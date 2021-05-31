@@ -178,7 +178,10 @@ export default {
         ...this.params,
         num,
       };
-      this.getList();
+      setTimeout(() => {
+        this.page = 1;
+        this.getList();
+      }, 10);
     },
     //排序
     sortChange({ prop, order }) {
