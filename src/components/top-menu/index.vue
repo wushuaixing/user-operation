@@ -44,7 +44,9 @@
             autocomplete="off"
             maxlength="20"
             placeholder="请输入原密码"
-            onblur="value = value.replace(/[\W_]/g,'')"
+            @change="
+              (value) => (form.oldPassword = value.replace(/[\W_]/g, ''))
+            "
             show-password
             class="passward-item"
           >
@@ -55,7 +57,9 @@
             v-model="form.newPassword"
             autocomplete="off"
             maxlength="20"
-            onblur="value = value.replace(/[\W_]/g,'')"
+            @change="
+              (value) => (form.newPassword = value.replace(/[\W_]/g, ''))
+            "
             placeholder="请输入新密码"
             show-password
             class="passward-item"
@@ -71,7 +75,9 @@
             autocomplete="off"
             maxlength="20"
             placeholder="请再次输入新密码"
-            onblur="value = value.replace(/[\W_]/g,'')"
+            @change="
+              (value) => (form.confirmPassword = value.replace(/[\W_]/g, ''))
+            "
             show-password
             class="passward-item"
           ></el-input>
@@ -142,7 +148,7 @@ export default {
           ],
           newPassword: [
             { required: true, message: "请输入新密码", trigger: "blur" },
-            { min: 6, message: "密码小于6位", trigger: ["blur","change"] },
+            { min: 6, message: "密码小于6位", trigger: ["blur", "change"] },
             { validator: validateNew, trigger: "blur" },
           ],
           confirmPassword: [{ validator: validateConfirm, trigger: "change" }],
