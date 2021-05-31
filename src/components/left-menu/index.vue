@@ -1,7 +1,7 @@
 <template>
   <div class="yc-aside-container">
     <el-menu
-      :default-active="$route.path"
+      :default-active="$route.path.replace(/^\/([^\/]*).*$/, '/$1')"
       :default-openeds="['/index']"
       class="el-aside-menu"
       background-color="#19283F"
@@ -131,13 +131,12 @@ export default {
       right: 0;
       top: calc(50% - 6px);
     }
-    .el-submenu__title{
+    .el-submenu__title {
       color: #fff !important;
       i {
         color: #fff !important;
       }
     }
   }
-
 }
 </style>

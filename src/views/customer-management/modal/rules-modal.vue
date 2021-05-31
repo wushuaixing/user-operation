@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :model-value="visible" width="690px">
+  <el-dialog :title="title" :model-value="visible" width="690px" @close="close">
     <el-form
       :model="rulesForm"
       ref="rulesForm"
