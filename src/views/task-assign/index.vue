@@ -68,7 +68,7 @@
           v-else
           @click="handleBatchCheck(false)"
           class="button-second"
-          style="padding: 0 12px;"
+          style="padding: 0 12px"
           >取消批量管理</el-button
         >
         <el-button
@@ -79,7 +79,16 @@
           {{ tabKey === "1" ? "分配" : "重新分配" }}
         </el-button>
         <span v-if="(multipleSelection || []).length" class="total-tips">
-          <svg class="icon" aria-hidden="true" style="margin-right: 3px;font-size: 16px;position: relative;top: 1px">
+          <svg
+            class="icon"
+            aria-hidden="true"
+            style="
+              margin-right: 3px;
+              font-size: 16px;
+              position: relative;
+              top: 1px;
+            "
+          >
             <use xlink:href="#iconxuanzhongshuju"></use>
           </svg>
           已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
@@ -344,8 +353,12 @@ export default {
         this.isChecked = false;
         this.$refs.multipleTable.clearSelection();
         this.visible = true;
-        const { id, orgName } = toRaw(val);
+        const { id, orgName ,uid } = toRaw(val);
         this.topOrgNameList = [orgName];
+        this.modalParams = {
+          idList: [id],
+          uid,
+        };
         this.modalParams.idList = [id];
       } else {
         if ((this.multipleSelection || []).length) {
@@ -437,8 +450,8 @@ export default {
       }
     }
   }
-  .query-content{
-    .el-form-item{
+  .query-content {
+    .el-form-item {
       margin: 0 32px 12px 0;
     }
   }
