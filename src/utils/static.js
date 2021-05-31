@@ -6,6 +6,14 @@ const SORTER_TYPE = {
   descending: "DESC",
 };
 
+// 顶级机构列表排序
+const CUSTOMER_LIST = {
+  startTime: "START",
+  endTime: "END",
+  ascending: "ASC",
+  descending: "DESC",
+}
+
 //拍卖状态
 const AUCTION_STATUS = [
   {
@@ -131,6 +139,7 @@ const orgType = {
 
 export {
   SORTER_TYPE,
+  CUSTOMER_LIST,
   AUCTION_STATUS,
   DEBTORES_TYPE,
   ACTION_TYPE,
