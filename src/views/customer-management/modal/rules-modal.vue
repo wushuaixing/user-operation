@@ -21,8 +21,8 @@
       </el-form-item>
       <el-form-item label="机构类型：" prop="type">
         <el-radio-group v-model="rulesForm.type" size="medium">
-          <el-radio :label="1">试用</el-radio>
-          <el-radio :label="2">正式</el-radio>
+          <el-radio :label="0">试用</el-radio>
+          <el-radio :label="1">正式</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="合同起止日期：" prop="end">
@@ -72,8 +72,8 @@
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
-            <el-radio :label="1">不限</el-radio>
-            <el-radio :label="2" :disabled="item.val === 'isClassifiedLimit'">限制</el-radio>
+            <el-radio :label="0">不限</el-radio>
+            <el-radio :label="1" :disabled="item.val === 'isClassifiedLimit'">限制</el-radio>
           </el-radio-group>
         </el-col>
         <el-col :span="11">
@@ -125,7 +125,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button>取 消</el-button>
+        <el-button @click="close">取 消</el-button>
         <el-button type="primary" @click="onsubmit">确 定</el-button>
       </span>
     </template>
@@ -133,6 +133,7 @@
 </template>
 
 <script>
+import AdminApi from "@/server/api/admin";
 export default {
   name: "rules-modal",
   nameComment: "客户管理-权限管理弹窗",
@@ -145,10 +146,6 @@ export default {
       type: Object,
       default: () => {},
     },
-    visible: {
-      type: Boolean,
-      default: false,
-    },
     isAdd: {
       type: Boolean,
       default: true,
@@ -158,31 +155,24 @@ export default {
     this.rulesForm = Object.assign(this.rulesForm, this.formData);
   },
   watch: {
-    // isAdd (newVal) {
-    //   debugger
-    //   if (newVal) {
-    //     let { customerName, id } = this.$route.params;
-    //     this.rulesForm.parentId = id;
-    //     this.rulesForm.parentName = customerName
-    //   }
-    // }
   },
   data() {
     return {
+      visible: false,
       permissionErrormsgShow: false,
       rulesForm: {
         id: "",
         name: "",
         type: 2,
-        start: "",
-        end: "",
+        start: undefined,
+        end: undefined,
         parentId: "",
         parentName: "",
-        isPortraitLimit: 1,
-        isClassifiedLimit: 1,
-        isObligorLimit: 1,
-        isSubOrgLimit: 1,
-        isAccountLimit: 1,
+        isPortraitLimit: 0,
+        isClassifiedLimit: 0,
+        isObligorLimit: 0,
+        isSubOrgLimit: 0,
+        isAccountLimit: 0,
         portraitLimitCount: "",
         obligorLimitCount: "",
         subOrgLimitCount: "",
@@ -522,16 +512,66 @@ export default {
     };
   },
   methods: {
+    // 弹窗打开
+    open(val) {
+      const {domainId, domainName} = val
+      this.rulesForm.parentId = domainId
+      this.rulesForm.parentName = domainName
+      this.visible = true
+    },
+    close() {
+      this.visible = false
+    },
     onsubmit() {
       this.$refs['rulesForm'].validate((valid) => {
         if (valid && !this.permissionErrormsgShow) {
-          alert('submit!');
+          // 获取权限列表数组
+          debugger
+          let permission = this.getPermission()
+          let params = Object.assign({}, this.rulesForm)
+          // 处理时间
+          params.start && (params.start = this.setTime(params.start))
+          params.end && (params.end = this.setTime(params.end))
+          params.permissions = permission
+          AdminApi.addTopOrg(params).then(res => {
+            const {code, message} = res.data
+            if (code === 200) {
+              this.$message.success("顶级合作机构创建成功!")
+              this.$emit("afterSuccessAdd")
+              this.visible = false
+              // 通过回调函数处理
+            } else {
+              this.$message.error(message)
+            }
+          })
         } else {
           console.log('error submit!!');
           return false;
         }
       });
     },
+    // 获取权限并形成数组
+    getPermission () {
+      let arr = []
+      for (let key in this.checkList) {
+        let obj = {}
+        obj.moduleName = key
+        obj.permission = this.checkList[key].checkedData
+        arr.push(obj)
+      }
+      return arr
+    },
+
+    // 设置时间格式
+    setTime (date) {
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      month = month <= 9 ? '0' + month : month
+      let day = date.getDate()
+      day = day <= 9 ? '0' + day : day
+      return `${year}${month}${day}`
+    },
+
     handleCheckAllChange(val, key) {
       this.checkList[key].checkedData = val ? this.checkList[key].options : [];
       this.checkList[key].isIndeterminate = false;

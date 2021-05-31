@@ -47,14 +47,14 @@ const AdminApi = {
 
   /*--------------------------客户管理----------------------*/
   //创建域名机构
-  addDomain: (params) => axios.post("/admin/organization/addDomain", params),
+  addDomain: (params) => axios.post("/api/admin/organization/addDomain", params),
 
   //导出
   orgExport: (params) =>
     axios.post("/admin/organization/export", clearEmpty(params)),
 
   //创建顶级合作机构
-  addTopOrg: (params) => axios.post("/admin/organization/addTopOrg", params),
+  addTopOrg: (params) => axios.post("/api/admin/organization/addTopOrg", params),
 
   //详情-顶级合作机构详情页
   orgDetail: (id) => axios.get(`/admin/organization/detail?id:${id}`),
@@ -103,7 +103,7 @@ const AdminApi = {
   detailSubOrg: (id) => axios.get(`/admin/organization/detail/subOrg?id=${id}`),
 
   //域名机构列表
-  orgListDomain: () => axios.get("/admin/organization/listDomain"),
+  orgListDomain: () => axios.get("/api/admin/organization/listDomain"),
 
   //操作日志
   orgListOrgLog: (params) =>
