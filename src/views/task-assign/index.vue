@@ -290,6 +290,8 @@ export default {
     //排序
     handleSortChange({ prop, order }) {
       this.isChecked = false;
+      const { clearSelection } = this.$refs.multipleTable;
+      clearSelection();
       this.page = 1;
       this.params = {
         ...this.params,
