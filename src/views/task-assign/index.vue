@@ -292,6 +292,7 @@ export default {
       this.isChecked = false;
       this.page = 1;
       this.params = {
+        ...this.params,
         sortColumn: SORTER_TYPE[prop],
         sortOrder: SORTER_TYPE[order],
       };
