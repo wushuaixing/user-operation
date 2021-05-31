@@ -132,9 +132,9 @@ const topOrgStatus = {
 
 // 机构类型
 const orgType = {
-  0: "全部",
-  1: "正式",
-  2: "试用",
+  "全部": -1,
+  "正式": 1,
+  "试用": 0,
 };
 
 export {

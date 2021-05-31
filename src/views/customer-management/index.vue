@@ -61,9 +61,9 @@
           <el-select v-model="queryParams.type" style="width: 94px">
             <el-option
               v-for="item in Object.keys(orgType)"
-              :key="item"
-              :label="orgType[item]"
-              :value="item"
+              :key="orgType[item]"
+              :label="item"
+              :value="orgType[item]"
             >
             </el-option>
           </el-select>
@@ -131,10 +131,56 @@
         </BreadCrumb>
         <div class="table-content">
           <div class="table-content-btn">
-            <el-button type="primary" @click="isChecked = !this.isChecked">{{
+            <!-- <el-button type="primary" @click="isChecked = !this.isChecked">{{
               batchHandleText
             }}</el-button>
-            <el-button type="primary" @click="handleExport">导出</el-button>
+            <el-button type="primary" @click="handleExport">导出</el-button> -->
+            <el-button
+              type="primary"
+              v-if="!isChecked"
+              @click="handleBatchCheck(true)"
+              class="button-third"
+              icon="iconfont iconyonghuyunying-piliangguanli"
+              style="padding: 0 11px"
+            >
+              批量管理
+            </el-button>
+            <el-button
+              type="primary"
+              v-if="!isChecked"
+              @click="handleExport('all')"
+              class="button-third"
+              icon="iconfont iconyonghuyunying-daochu"
+              style="padding: 0 11px"
+            >
+              一键导出
+            </el-button>
+            <el-button
+              type="primary"
+              v-if="isChecked"
+              @click="handleBatchCheck(false)"
+              class="button-second"
+              style="padding: 0 12px;"
+              >取消批量管理</el-button
+            >
+            <el-button
+              @click="handleExport()"
+              class="button-fourth"
+              v-show="isChecked"
+            >导出
+            </el-button>
+            <el-button
+              @click="handleDelete"
+              class="button-fourth"
+              v-show="isChecked"
+            >删除
+            </el-button>
+            <span v-if="(multipleSelection || []).length" class="total-tips">
+              <svg class="icon" aria-hidden="true" style="margin-right: 3px;font-size: 16px;position: relative;top: 1px">
+                <use xlink:href="#iconxuanzhongshuju"></use>
+              </svg>
+              已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
+            </span>
           </div>
           <div class="table-contend-body">
             <el-table
@@ -252,6 +298,7 @@ import { toRaw } from "vue";
 import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
 import CustomerTree from "./component/CustomerTree";
+import { $modalConfirm } from "@/utils/better-el";
 export default {
   name: "customerManagement",
   nameComment: "客户管理",
@@ -265,7 +312,7 @@ export default {
       queryParams: {
         orgId: "",
         status: "0",
-        type: "0",
+        type: -1,
         start: undefined,
         end: undefined,
       },
@@ -322,12 +369,13 @@ export default {
   },
   created() {
     this.getCuntomerTreeData()
+    this.$router.push("/customerManagement/全部/all")
   },
   mounted() {
     // 点击浏览器刷新时，响应 对带参做处理
     this.$nextTick(() => {
       let { id, customerName } = this.$route.params;
-      if (id) {
+      if (id !== "all") {
         this.queryParams.orgId = id
         this.customerName = customerName
         this.customerOptions = [Object.assign({}, {value: customerName, id: id})]
@@ -352,9 +400,7 @@ export default {
       };
       params.start && (params.start = this.setTime(params.start))
       params.end && (params.end = this.setTime(params.end))
-      if (params.type !== "0") {
-        params.type -= 1
-      } else {
+      if (params.type === -1) {
         delete params.type
       }
       this.loading = true;
@@ -474,10 +520,8 @@ export default {
 
     // 搜索
     handleQuery () {
-      let url = this.queryParams.orgId ? `/${this.customerName}/${this.queryParams.orgId}`  : ""
-      if (url) {
-        this.$router.push(`/customerManagement${url}`);
-      }
+      let url = this.queryParams.orgId ? `/${this.customerName}/${this.queryParams.orgId}`  : "/全部/all"
+      this.$router.push(`/customerManagement${url}`);
       this.page = 1
       this.isChecked = false;
       const { clearSelection, clearSort } = this.$refs.multipleTable;
@@ -496,7 +540,7 @@ export default {
       this.queryParams = {
         orgId: "",
         status: "0",
-        type: "0",
+        type: -1,
         start: undefined,
         end: undefined,
       };
@@ -527,16 +571,22 @@ export default {
         }
       });
     },
-    handleExport() {
-      this.$confirm(
-        "点击确定，将为您导出选中的所有信息",
-        "点击确定，将为您导出选中的所有信息",
-        {
-          type: "warning",
-        }
-      )
-        .then(() => {
+    handleExport(type) {
+      let text = "点击确定，将为您导出选中的所有信息"
+      let title = type ? "确认导出所有信息吗？" : "确认导出选中的所有信息吗？"
+      $modalConfirm({ text, title }).then(
+        () => {
           this.$message.success("导出成功");
+        }
+      ).catch((err) => {
+          console.log(err);
+        });
+    },
+    handleDelete () {
+      let text = "点击确定，选中的顶级合作机构及其子机构都被清空，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认"
+      let title = "确认删除选中的所有机构吗？"
+      $modalConfirm({ text, title }).then(() => {
+          this.$message.success("删除成功");
         })
         .catch((err) => {
           console.log(err);
@@ -560,6 +610,7 @@ export default {
       let url = "/customerManagement"
       if (val && val === 'all') {
         this.queryParams.orgId = ""
+        url += `/全部/all`
       } else {
         this.customerOptions = [Object.assign(obj, {value: obj.name})]
         this.queryParams.orgId = obj.id
@@ -766,7 +817,14 @@ export default {
         padding: 20px;
         &-btn {
           margin-bottom: 20px;
-          width: 400px !important;
+          .total-tips {
+            font-size: 14px;
+            padding-left: 20px;
+            color: #4e5566;
+            b {
+              color: #20242e;
+            }
+          }
         }
       }
     }
