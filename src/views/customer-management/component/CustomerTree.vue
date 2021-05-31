@@ -117,6 +117,8 @@ export default {
       if (val === "all") {
         this.selectAll = true;
         this.isActive = -1;
+        let dom = document.getElementById("customerTree")
+        dom.scrollTop = 0
         this.$emit("handleClick", 'all', {});
       } else {
         this.selectAll = false;
@@ -130,7 +132,7 @@ export default {
 <style lang="scss" scoped>
 .customer-tree {
   width: 100%;
-  max-height: 89vh;
+  max-height: 84vh;
   overflow-y: auto;
   &-title {
     font-size: 16px;
@@ -158,7 +160,7 @@ export default {
       .itemText {
         &-ellipsis {
           display: inline-block;
-          max-width: 236px;
+          max-width: 214px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
