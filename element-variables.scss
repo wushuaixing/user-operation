@@ -338,6 +338,8 @@ $--msgbox-width: 440px !default;
     top: 1px;
   }
   &-box{
+    position: relative;
+    top: -20vh !important;
     &__content{
       padding: 32px 32px 40px 32px !important;
     }
