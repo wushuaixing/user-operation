@@ -291,8 +291,7 @@ export default {
           }
         })
         .then(() => {
-          const isGetNum = this.tabKey === "1";
-          isGetNum && this.$store.dispatch("getNumAction");
+            this.$store.dispatch("getNumAction");
         })
         .finally(() => (this.loading = false));
     },
@@ -353,7 +352,7 @@ export default {
         this.isChecked = false;
         this.$refs.multipleTable.clearSelection();
         this.visible = true;
-        const { id, orgName ,uid } = toRaw(val);
+        const { id, orgName, uid } = toRaw(val);
         this.topOrgNameList = [orgName];
         this.modalParams = {
           idList: [id],
