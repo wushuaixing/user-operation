@@ -162,7 +162,13 @@
                 :width="item.width"
                 :align="item.align"
                 :key="item.label"
-              />
+              >
+                <template #default="scope" v-if="item.prop === 'name'">
+                  <span>{{ scope.row.name }}</span>
+                  <span style="color: #F93535;font-size: 12px;line-height: 12px;border: 1px solid #F93535;margin-left: 10px;border-radius: 3px;padding: 2px 3px;display: inline-block;"
+                        v-if="scope.row.isExpire">已过期</span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作">
                 <template #default="scope">
                   <el-button
@@ -472,6 +478,11 @@ export default {
       if (url) {
         this.$router.push(`/customerManagement${url}`);
       }
+      this.page = 1
+      this.isChecked = false;
+      const { clearSelection, clearSort } = this.$refs.multipleTable;
+      clearSelection();
+      clearSort();
       this.getList()
     },
 
