@@ -87,7 +87,7 @@
             v-model="form.phone"
             autocomplete="off"
             maxlength="11"
-            onblur="value = value.replace(/\D/g,'')"
+            @change="(value) => (form.phone = value.replace(/\D/g, ''))"
             placeholder="请输入手机号"
             @blur="handlePwd"
           ></el-input>
@@ -97,7 +97,7 @@
             v-model="form.password"
             autocomplete="off"
             maxlength="20"
-            onblur="value = value.replace(/[\W_]/g,'')"
+            @change="(value) => (form.password = value.replace(/[\W_]/g, ''))"
             placeholder="密码默认为账号后六位"
             show-password
             class="passward-item"
