@@ -1,7 +1,7 @@
 <template>
   <div class="yc-aside-container">
     <el-menu
-      :default-active="$route.path"
+       :default-active="$route.path.replace(/^\/([^\/]*).*$/, '/$1')"
       :default-openeds="['/index']"
       class="el-aside-menu"
       background-color="#19283F"
@@ -33,7 +33,7 @@
           v-else
           :key="item.key"
           :index="item.path"
-          :route="{ path: item.path }"
+          :route="{ path: item.path, query: {id: ''} }"
         >
           <i :class="item.icon"></i>
           <template #title
