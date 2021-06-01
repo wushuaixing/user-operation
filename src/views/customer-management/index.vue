@@ -111,7 +111,6 @@
               <div class="customer-detail-right">
                 <div class="customer num1">
                   <div class="customer-type">
-                    <img src="../../assets/img/icon.png"/>
                     顶级合作机构（家）</div>
                   <div class="customer-num">{{customerObj.topCooperateOrgNum}}</div>
                 </div>
@@ -585,7 +584,7 @@ export default {
     handleDelete () {
       let text = "点击确定，选中的顶级合作机构及其子机构都被清空，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认"
       let title = "确认删除选中的所有机构吗？"
-      $modalConfirm({ text, title }).then(() => {
+      $modalConfirm({ text, title ,color: '#F93535'}).then(() => {
           this.$message.success("删除成功");
         })
         .catch((err) => {
