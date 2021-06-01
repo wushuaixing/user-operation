@@ -8,7 +8,7 @@
       text-color="#fff"
       router
       active-text-color="#fff"
-      unique-opened="true"
+      :unique-opened="true"
     >
       <template
         v-for="item in role === '204' ? userMenu : adminMenu"

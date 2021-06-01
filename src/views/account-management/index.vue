@@ -131,6 +131,7 @@ export default {
         sortColumn: "",
         sortOrder: "",
       },
+      isTriggerCurrent: false,
       total: 0,
       loading: false,
       column: accountManagementColumn,
@@ -169,8 +170,11 @@ export default {
   methods: {
     //翻页
     pageChange(page) {
-      this.page = parseInt(page);
-      this.getList();
+      if (!this.isTriggerCurrent) {
+        this.page = parseInt(page);
+        this.getList();
+      }
+      this.isTriggerCurrent = false;
     },
     //pageSize 改变
     sizeChange(num) {
@@ -178,10 +182,9 @@ export default {
         ...this.params,
         num,
       };
-      setTimeout(() => {
-        this.page = 1;
-        this.getList();
-      }, 10);
+      this.isTriggerCurrent = this.page > Math.ceil(this.total / num);
+      this.page = 1;
+      this.getList();
     },
     //排序
     sortChange({ prop, order }) {
