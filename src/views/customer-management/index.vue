@@ -5,10 +5,11 @@
         <div>
           <el-form-item label="机构名称：" style="width: 300px">
           <el-select
+            id="org-select"
             v-model="queryParams.orgId"
             filterable
             remote
-            maxlength="100"
+            :max-length="10"
             placeholder="请输入机构名称"
             :remote-method="remoteMethod"
             @change="setCustomerName"
@@ -363,16 +364,19 @@ export default {
     // 点击浏览器刷新时，响应 对带参做处理
     this.$nextTick(() => {
       let { id, customerName } = this.$route.params;
-      if (id !== "all") {
+      if (id && id !== "all") {
         this.queryParams.orgId = id
         this.customerName = customerName
         this.customerOptions = [Object.assign({}, {value: customerName, id: id})]
       } else {
-        // 查询机构
-        
+        // 查询机构 使得2查询框默认展示搜索数据
+        this.getOrgList("")
       }
       this.getList()
     })
+    // 给机构搜索select框添加最大输入长度
+    let dom = document.getElementById("org-select")
+    dom.setAttribute("maxLength", 100)
   },
   watch: {
     $route() {
@@ -479,7 +483,6 @@ export default {
         case "1" :{
           // 开始日期赋值当天 结束日期置空
           this.queryParams.start = nowDate
-          this.queryParams.end = nowDate
           this.queryParams.end = undefined
           break
         }
@@ -643,7 +646,6 @@ export default {
       }
     },
     disabledEndDate (endTime) {
-      
       if (this.queryParams.start) {
         return endTime.getTime() < this.queryParams.start.getTime()
       }
@@ -651,28 +653,31 @@ export default {
     },
 
     remoteMethod (val) {
-      if (val !== '') {
-        if (this.selectTimer) {
-          clearTimeout(this.selectTimer)
-          this.selectTimer = null
-        }
-        this.selectTimer = setTimeout(() => {
-          // 调用接口查询
-          AdminApi.simpleListOrg(val).then((res) => {
-            const { code, data } = res.data || {}
-            if (code === 200) {
-              this.customerOptions = data
-            }
-          })
-          clearTimeout(this.selectTimer)
-          this.selectTimer = null
-        }, 300)
-      } else {
-        this.customerOptions = [];
+      if (this.selectTimer) {
         clearTimeout(this.selectTimer)
         this.selectTimer = null
       }
+      this.selectTimer = setTimeout(() => {
+        // 调用接口查询
+        this.getOrgList(val)
+        clearTimeout(this.selectTimer)
+        this.selectTimer = null
+      }, 300)
     },
+    // 查询机构数据
+    getOrgList (val) {
+      AdminApi.simpleListOrg(val).then((res) => {
+        const { code, data } = res.data || {}
+        if (code === 200) {
+          this.customerOptions = data
+        } else {
+          this.$message.error(res.message)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+
     setCustomerName (val) {
       let arr = this.customerOptions.filter(item => item.id === val)
       this.customerName = arr[0].value

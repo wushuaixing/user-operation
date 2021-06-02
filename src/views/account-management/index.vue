@@ -87,7 +87,7 @@
             v-model="form.phone"
             autocomplete="off"
             maxlength="11"
-            onblur="value = value.replace(/\D/g,'')"
+            @change="(value) => (form.phone = value.replace(/\D/g, ''))"
             placeholder="请输入手机号"
             @blur="handlePwd"
           ></el-input>
@@ -97,7 +97,7 @@
             v-model="form.password"
             autocomplete="off"
             maxlength="20"
-            onblur="value = value.replace(/[\W_]/g,'')"
+            @change="(value) => (form.password = value.replace(/[\W_]/g, ''))"
             placeholder="密码默认为账号后六位"
             show-password
             class="passward-item"
@@ -131,6 +131,7 @@ export default {
         sortColumn: "",
         sortOrder: "",
       },
+      isTriggerCurrent: false,
       total: 0,
       loading: false,
       column: accountManagementColumn,
@@ -169,8 +170,11 @@ export default {
   methods: {
     //翻页
     pageChange(page) {
-      this.page = parseInt(page);
-      this.getList();
+      if (!this.isTriggerCurrent) {
+        this.page = parseInt(page);
+        this.getList();
+      }
+      this.isTriggerCurrent = false;
     },
     //pageSize 改变
     sizeChange(num) {
@@ -178,10 +182,9 @@ export default {
         ...this.params,
         num,
       };
-      setTimeout(() => {
-        this.page = 1;
-        this.getList();
-      }, 10);
+      this.isTriggerCurrent = this.page > Math.ceil(this.total / num);
+      this.page = 1;
+      this.getList();
     },
     //排序
     sortChange({ prop, order }) {

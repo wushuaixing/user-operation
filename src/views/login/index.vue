@@ -22,7 +22,7 @@
               v-model="params.username"
               placeholder="请输入11位账号"
               maxlength="11"
-              onblur="value = value.replace(/\D/g,'')"
+              @change="(value) => (params.username = value.replace(/\D/g, ''))"
             >
               <template #prefix>
                 <img
@@ -38,7 +38,7 @@
               v-model="params.password"
               placeholder="请输入密码"
               maxlength="20"
-              onblur="value = value.replace(/[\W_]/g,'')"
+              @change="(value) => (params.password = value.replace(/[\W_]/g, ''))"
               class="passward-item"
               show-password
             >

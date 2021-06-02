@@ -1,14 +1,14 @@
 <template>
   <div class="yc-aside-container">
     <el-menu
-       :default-active="$route.path.replace(/^\/([^\/]*).*$/, '/$1')"
+      :default-active="$route.path.replace(/^\/([^\/]*).*$/, '/$1')"
       :default-openeds="['/index']"
       class="el-aside-menu"
       background-color="#19283F"
       text-color="#fff"
       router
       active-text-color="#fff"
-      unique-opened="true"
+      :unique-opened="true"
     >
       <template
         v-for="item in role === '204' ? userMenu : adminMenu"
@@ -131,13 +131,12 @@ export default {
       right: 0;
       top: calc(50% - 6px);
     }
-    .el-submenu__title{
+    .el-submenu__title {
       color: #fff !important;
       i {
         color: #fff !important;
       }
     }
   }
-
 }
 </style>
