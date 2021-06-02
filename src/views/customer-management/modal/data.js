@@ -1,9 +1,9 @@
 const rulesFormOptions = {
   options: {
     labelPosition: "right",
-    labelWidth: "180px",
+    labelWidth: "166px",
     destroyOnClose: true,
-    class: "rules-modal",
+    class: "rules-modal-form",
   },
   rules: {
     name: {
@@ -24,7 +24,7 @@ const rulesFormOptions = {
     end: {
       required: true,
       message: "合同结束日期不允许为空",
-      trigger: "blur",
+      trigger: "change",
     },
     parentId: {
       required: true,
