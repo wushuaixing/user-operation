@@ -1,79 +1,105 @@
 <template>
-  <el-dialog :title="title" :model-value="visible" width="690px" @close="close">
+  <el-dialog
+    :title="isAdd ? '创建顶级合作机构' : '权限管理'"
+    v-model="visible"
+    width="666px"
+    @close="close"
+    custom-class="rules-modal"
+  >
     <el-form
       :model="rulesForm"
       ref="rulesForm"
       v-bind="rulesFormOptions.options"
       :rules="rulesFormOptions.rules"
     >
-      <el-form-item label="ID：" v-if="!isAdd">
+      <el-form-item label="ID：" v-if="!isAdd" style="margin:-8px 0 10px">
         <div>
-          {{ rulesForm.id }}
+          {{ $filters._show(rulesForm.id) }}
         </div>
       </el-form-item>
-      <el-form-item label="顶级合作机构名称：" prop="name">
+      <el-form-item label="顶级合作机构名称：" prop="name" style="margin-bottom: 11px">
         <el-input
           v-model="rulesForm.name"
           autocomplete="off"
-          maxlength="11"
-          placeholder="请输入顶级合作机构名称"
+          maxlength="100"
+          placeholder="请输入机构名称"
+          style="width: 468px"
         />
       </el-form-item>
-      <el-form-item label="机构类型：" prop="type">
+      <el-form-item label="机构类型：" prop="type" style="margin-bottom: 11px">
         <el-radio-group v-model="rulesForm.type" size="medium">
-          <el-radio :label="0">试用</el-radio>
+          <el-radio :label="0" :disabled="!isAdd && disabledType === 1"
+            >试用</el-radio
+          >
           <el-radio :label="1">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：" prop="end">
+      <el-form-item label="合同起止日期：" prop="end" style="margin-bottom: 10px">
         <el-date-picker
           type="date"
           placeholder="开始日期"
           v-model="rulesForm.start"
-          :disabledDate="disabledStartDate"
           style="width: 219px"
+          :disabledDate="disabledStartDate"
         ></el-date-picker>
-        <div style="display:inline-block;padding: 0 8px;">至</div>
+        <div style="display: inline-block; padding: 0 8px">至</div>
         <el-date-picker
           type="date"
           placeholder="结束日期"
-          :disabledDate="disabledEndDate"
           v-model="rulesForm.end"
           style="width: 219px"
+          :disabledDate="disabledEndDate"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'parentId'">
-        <el-select v-model="rulesForm.parentId" placeholder="请选择上级机构ID" v-if="!isAdd">
+      <el-form-item
+        label="是否延期或续签："
+        v-if="isContractTypeDisplay"
+        prop="contractType"
+      >
+        <el-radio-group v-model="rulesForm.contractType" size="medium">
+          <el-radio :label="1">延期</el-radio>
+          <el-radio :label="2">签约</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'parentId'" :style="{margin:isAdd? 0 :'20px 0'}">
+        <el-select
+          v-model="rulesForm.parentId"
+          placeholder="请选择上级机构ID"
+          v-if="!isAdd"
+        >
           <el-option
-            v-for="item in rulesForm.fList"
-            :label="item.label"
-            :value="item.valyue"
-            :key="item.value"
+            v-for="item in parentOrg"
+            :label="item.id"
+            :value="item.id"
+            :key="item.id"
           />
         </el-select>
-        <span v-else>{{rulesForm.parentId}}</span>
+        <span v-else>{{ $filters._show(rulesForm.parentId) }}</span>
       </el-form-item>
-      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'parentName'">
+      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'parentName'" :style="{marginBottom:isAdd? 0 :'10px'}">
         <el-input
           v-if="!isAdd"
-          v-model="rulesForm.parentName"
+          :modelValue="dynamicParentName"
           autocomplete="off"
           maxlength="11"
           :disabled="true"
-          placeholder="请输入顶级合作机构名称"
+          placeholder="请输入上级机构名称"
         />
-        <span v-else>{{rulesForm.parentName}}</span>
+        <span v-else>{{ $filters._show(rulesForm.parentName) }}</span>
       </el-form-item>
       <el-form-item
         v-for="item in rulesFormOptions.itemsRaido"
         :label="`${item.label}：`"
         :key="item.val"
         :prop="item.val"
+        style="margin-bottom: 0"
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
             <el-radio :label="0">不限</el-radio>
-            <el-radio :label="1" :disabled="item.val === 'isClassifiedLimit'">限制</el-radio>
+            <el-radio :label="1" :disabled="item.val === 'isClassifiedLimit'"
+              >限制</el-radio
+            >
           </el-radio-group>
         </el-col>
         <el-col :span="11">
@@ -81,18 +107,18 @@
             label="上限："
             label-width="70px"
             :prop="item.num || ''"
-            v-if="rulesForm[item.val] === 2"
+            v-if="rulesForm[item.val] === 1"
           >
-            <el-input
+            <el-input-number
               v-model="rulesForm[item.num]"
               autocomplete="off"
-              maxlength="11"
-              placeholder=""
+              :min="rulesForm[item.limit] || 0"
+              :max="9999999999"
             />
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="资产监控权限：" error="请进行授权" :showMessage="permissionErrormsgShow" required>
+      <el-form-item label="资产监控权限：" style="margin-top: 11px">
         <div class="zcjk-rules-box">
           <div
             class="zcjk-rules-box-item"
@@ -106,7 +132,6 @@
               @change="(val) => handleCheckAllChange(val, item.key)"
               >{{ item.title }}</el-checkbox
             >
-            <div style="margin: 5px 0"></div>
             <el-checkbox-group
               class="zcjk-rules-box-item-moduleList"
               v-model="checkList[item.key].checkedData"
@@ -125,7 +150,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
+        <el-button @click="visible = false">取 消</el-button>
         <el-button type="primary" @click="onsubmit">确 定</el-button>
       </span>
     </template>
@@ -134,523 +159,225 @@
 
 <script>
 import AdminApi from "@/server/api/admin";
+import { rulesFormOptions, rulesForm, checkList } from "./data";
+import { dateUtils, clone } from "@/utils";
 export default {
   name: "rules-modal",
   nameComment: "客户管理-权限管理弹窗",
+  emits: ["getData"],
   props: {
-    title: {
-      type: String,
-      default: "权限管理"
-    },
     formData: {
       type: Object,
       default: () => {},
     },
-    isAdd: {
-      type: Boolean,
-      default: true,
-    }
   },
-  created() {
-    this.rulesForm = Object.assign(this.rulesForm, this.formData);
-  },
-  watch: {
-  },
+  watch: {},
   data() {
     return {
       visible: false,
-      permissionErrormsgShow: false,
-      rulesForm: {
-        id: "",
-        name: "",
-        type: 2,
-        start: undefined,
-        end: undefined,
-        parentId: "",
-        parentName: "",
-        isPortraitLimit: 0,
-        isClassifiedLimit: 0,
-        isObligorLimit: 0,
-        isSubOrgLimit: 0,
-        isAccountLimit: 0,
-        portraitLimitCount: "",
-        obligorLimitCount: "",
-        subOrgLimitCount: "",
-        accountLimit: "",
-      },
-      checkList: {
-        zcwj: {
-          checkAll: true,
-          checkedData: ["2", "29", "30", "4", "31", "32", "41", "49", "44", "52", "51"],
-          isIndeterminate: false,
-          options: ["2", "29", "30", "4", "31", "32", "41", "49", "44", "52", "51"],
-        },
-        zjgc: {
-          checkAll: true,
-          checkedData: ["54", "55", "56"],
-          isIndeterminate: false,
-          options: ["54", "55", "56"],
-        },
-        fxjk: {
-          checkAll: true,
-          checkedData: ["39", "42", "40", "50"],
-          isIndeterminate: false,
-          options: ["39", "42", "40", "50"],
-        },
-        jyfx: {
-          checkAll: true,
-          checkedData: ["33", "34", "35", "38", "36", "37"],
-          isIndeterminate: false,
-          options: ["33", "34", "35", "38", "36", "37"],
-        },
-        ywgl: {
-          checkAll: true,
-          checkedData: ["6", "7"],
-          isIndeterminate: false,
-          options: ["6", "7"],
-        },
-        hxss: {
-          checkAll: true,
-          checkedData: ["27"],
-          isIndeterminate: false,
-          options: ["27"],
-        },
-        xxss: {
-          checkAll: true,
-          checkedData: ["12", "13", "18", "25", "28", "42", "46", "47", "48"],
-          isIndeterminate: false,
-          options: ["12", "13", "18", "25", "28", "42", "46", "47", "48"],
-        },
-        jggl: {
-          checkAll: true,
-          checkedData: ["10", "11", "43"],
-          isIndeterminate: false,
-          options: ["10", "11", "43"],
-        },
-        dljg: {
-          checkAll: false,
-          checkedData: [],
-          isIndeterminate: false,
-          options: ["35"],
-        },
-      },
-      rulesFormOptions: {
-        options: {
-          labelPosition: "right",
-          labelWidth: "180px",
-          destroyOnClose: true,
-          class: "rules-modal",
-        },
-        rules: {
-          name: {
-            required: true, message: "顶级合作机构名称不允许为空", trigger: "blur",
-          },
-          type: {
-            required: true, message: "请选择机构类型", trigger: "change",
-          },
-          end: {
-            required: true, message: "合同结束日期不允许为空", trigger: "blur",
-          },
-          parentId: {
-            required: true, message: "请选择上级机构ID", trigger: "change",
-          },
-          parentName: {
-            required: true, message: "上级机构名称不允许为空", trigger: "change",
-          },
-          isPortraitLimit: {
-            required: true, message: "请选择限制画像查询次数", trigger: "change",
-          },
-          isClassifiedLimit: {
-            required: true, message: "请选择限制分类搜索次数", trigger: "change",
-          },
-          isObligorLimit: {
-            required: true, message: "请选择限制监控债务人数", trigger: "change",
-          },
-          isSubOrgLimit: {
-            required: true, message: "请选择限制配置子机构数", trigger: "change",
-          },
-          isAccountLimit: {
-            required: true, message: "请选择限制配置账号数", trigger: "change",
-          },
-          portraitLimitCount: {
-            required: true, message: "请输入上限", trigger: "blur",
-          },
-          obligorLimitCount: {
-            required: true, message: "请输入上限", trigger: "blur",
-          },
-          subOrgLimitCount: {
-            required: true, message: "请输入上限", trigger: "blur",
-          },
-          accountLimit: {
-            required: true, message: "请输入上限", trigger: "blur",
-          },
-        },
-        itemsRaido: [
-          { label: "限制画像查询次数", val: "isPortraitLimit", num: "portraitLimitCount" },
-          { label: "限制分类搜索次数", val: "isClassifiedLimit" },
-          { label: "限制监控债务人数", val: "isObligorLimit", num: "obligorLimitCount" },
-          { label: "限制配置子机构数", val: "isSubOrgLimit", num: "subOrgLimitCount" },
-          { label: "限制配置账号数", val: "isAccountLimit", num: "accountLimit" },
-        ],
-        itemsChecked: [
-          {
-            title: "资产挖掘",
-            key: "zcwj",
-            children: [
-              {
-                label: "资产拍卖",
-                val: "2",
-              },
-              {
-                label: "土地数据",
-                val: "29",
-              },
-              {
-                label: "招标中标",
-                val: "30",
-              },
-              {
-                label: "代位权",
-                val: "4",
-              },
-              {
-                label: "金融资产",
-                val: "31",
-              },
-              {
-                label: "动产抵押",
-                val: "32",
-              },
-              {
-                label: "无形资产",
-                val: "41",
-              },
-              {
-                label: "查解封资产",
-                val: "49",
-              },
-              {
-                label: "股权质押",
-                val: "44",
-              },
-              {
-                label: "车辆信息",
-                val: "52",
-              },
-              {
-                label: "不动产登记",
-                val: "51",
-              },
-            ],
-          },
-          {
-            title: "资产挖掘-在建工程",
-            key: "zjgc",
-            children: [
-              {
-                label: "建设单位",
-                val: "54",
-              },
-              {
-                label: "中标单位",
-                val: "55",
-              },
-              {
-                label: "施工单位",
-                val: "56",
-              },
-            ],
-          },
-          {
-            title: "风险监控",
-            key: "fxjk",
-            children: [
-              {
-                label: "涉诉监控",
-                val: "39",
-              },
-              {
-                label: "失信记录",
-                val: "42",
-              },
-              {
-                label: "企业破产重组",
-                val: "40",
-              },
-              {
-                label: "限制高消费",
-                val: "50",
-              },
-            ],
-          },
-          {
-            title: "风险监控-经营风险",
-            key: "jyfx",
-            children: [
-              {
-                label: "经营异常",
-                val: "33",
-              },
-              {
-                label: "工商变更",
-                val: "34",
-              },
-              {
-                label: "严重违法",
-                val: "35",
-              },
-              {
-                label: "环保处罚",
-                val: "38",
-              },
-              {
-                label: "税收违法",
-                val: "36",
-              },
-              {
-                label: "行政处罚",
-                val: "37",
-              },
-            ],
-          },
-          {
-            title: "业务管理",
-            key: "ywgl",
-            children: [
-              {
-                label: "业务视图",
-                val: "6",
-              },
-              {
-                label: "债务人",
-                val: "7",
-              },
-            ],
-          },
-          {
-            title: "画像搜索",
-            key: "hxss",
-            children: [
-              {
-                label: "画像搜索",
-                val: "27",
-              },
-            ],
-          },
-          {
-            title: "信息搜索",
-            key: "xxss",
-            children: [
-              {
-                label: "拍卖信息",
-                val: "12",
-              },
-              {
-                label: "涉诉信息",
-                val: "13",
-              },
-              {
-                label: "文书信息",
-                val: "18",
-              },
-              {
-                label: "金融资产",
-                val: "25",
-              },
-              {
-                label: "破产重组",
-                val: "28",
-              },
-              {
-                label: "失信记录",
-                val: "42",
-              },
-              {
-                label: "土地数据",
-                val: "46",
-              },
-              {
-                label: "股权质押",
-                val: "47",
-              },
-              {
-                label: "动产抵押",
-                val: "48",
-              },
-            ],
-          },
-          {
-            title: "机构管理",
-            key: "jggl",
-            children: [
-              {
-                label: "推送设置",
-                val: "10",
-              },
-              {
-                label: "账号列表",
-                val: "11",
-              },
-              {
-                label: "机构统计",
-                val: "43",
-              },
-            ],
-          },
-          {
-            title: "代理机构",
-            key: "dljg",
-            children: [
-              {
-                label: "代理机构",
-                val: "35",
-              },
-            ],
-          },
-        ],
-      },
+      isAdd: false,
+      disabledType: "",
+      endTime: "",
+      parentOrg: [],
+      rulesForm,
+      checkList: clone(checkList),
+      rulesFormOptions,
     };
   },
+
   methods: {
     // 弹窗打开
-    open(val) {
-      const {domainId, domainName} = val
-      this.rulesForm.parentId = domainId
-      this.rulesForm.parentName = domainName
-      this.visible = true
+    open(params = {}, isAdd) {
+      if (isAdd) {
+        const { domainId, domainName } = params;
+        this.rulesForm = {
+          ...this.rulesForm,
+          parentId: domainId,
+          parentName: domainName,
+        };
+      } else {
+        const { permissions = [], ...rest } = params;
+        const { id, type, end, start } = rest;
+        this.disabledType = type;
+        this.endTime = end;
+        this.getCheckList(permissions);
+        this.rulesForm = {
+          ...rest,
+          start: start ? new Date(start) : "",
+          end: new Date(end),
+        };
+        AdminApi.selectParentOrgList(id).then((res) => {
+          const { code, data = [] } = res.data || {};
+          if (code === 200) {
+            this.parentOrg = data;
+          } else {
+            this.$message.error("请求错误");
+          }
+        });
+      }
+      this.isAdd = isAdd;
+      this.visible = true;
     },
+    //弹窗关闭
     close() {
-      this.visible = false
+      this.$refs["rulesForm"].resetFields();
+      this.rulesForm = rulesForm;
+      this.checkList = clone(checkList);
     },
+    //提交
     onsubmit() {
-      this.$refs['rulesForm'].validate((valid) => {
-        if (valid && !this.permissionErrormsgShow) {
-          // 获取权限列表数组
-          debugger
-          let permission = this.getPermission()
-          let params = Object.assign({}, this.rulesForm)
-          // 处理时间
-          params.start && (params.start = this.setTime(params.start))
-          params.end && (params.end = this.setTime(params.end))
-          params.permissions = permission
-          AdminApi.addTopOrg(params).then(res => {
-            const {code, message} = res.data
+      this.$refs["rulesForm"].validate((valid) => {
+        if (valid) {
+          const permissions = this.getPermission();
+          const _time = (val) => dateUtils.formatStandardDate(val);
+          const {
+            end,
+            start,
+            isPortraitLimit,
+            isObligorLimit,
+            isSubOrgLimit,
+            isAccountLimit,
+            portraitLimitCount,
+            obligorLimitCount,
+            subOrgLimitCount,
+            accountLimitCount,
+          } = this.rulesForm;
+          const params = {
+            ...this.rulesForm,
+            permissions,
+            end: _time(end),
+            start: _time(start),
+            portraitLimitCount: isPortraitLimit ? portraitLimitCount : 0,
+            obligorLimitCount: isObligorLimit ? obligorLimitCount : 0,
+            subOrgLimitCount: isSubOrgLimit ? subOrgLimitCount : 0,
+            accountLimitCount: isAccountLimit ? accountLimitCount : 0,
+          };
+          const sign = this.isAdd ? "add" : "edit";
+          const text = this.isAdd ? "顶级合作机构创建成功" : "修改成功";
+          AdminApi.addAndEditRules(params, sign).then((res) => {
+            const { code, message } = res.data || {};
             if (code === 200) {
-              this.$message.success("顶级合作机构创建成功!")
-              this.$emit("afterSuccessAdd")
-              this.visible = false
-              // 通过回调函数处理
+              this.$message.success({
+                message: text,
+                onClose: () => {
+                  this.visible = false;
+                  this.$emit("getData");
+                },
+              });
             } else {
-              this.$message.error(message)
+              this.$message.error(message);
             }
-          })
-        } else {
-          console.log('error submit!!');
-          return false;
+          });
         }
       });
     },
-    // 获取权限并形成数组
-    getPermission () {
-      let arr = []
+
+    // 提交时处理 权限数组
+    getPermission() {
+      let arr = [];
       for (let key in this.checkList) {
-        let obj = {}
-        obj.moduleName = key
-        obj.permission = this.checkList[key].checkedData
-        arr.push(obj)
+        let obj = {};
+        obj.moduleName = key;
+        obj.permission = this.checkList[key].checkedData;
+        arr.push(obj);
       }
-      return arr
+      return arr;
+    },
+    // 回显时处理 权限数组
+    getCheckList(arr = []) {
+      arr.forEach((i) => {
+        const list = i.permission || [];
+        this.checkList[i.moduleName].checkedData = list.map((j) =>
+          j.toString()
+        );
+        this.handleCheckedItemChange(list, i.moduleName);
+      });
     },
 
-    // 设置时间格式
-    setTime (date) {
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      month = month <= 9 ? '0' + month : month
-      let day = date.getDate()
-      day = day <= 9 ? '0' + day : day
-      return `${year}${month}${day}`
-    },
-
+    //权限模块-全选
     handleCheckAllChange(val, key) {
       this.checkList[key].checkedData = val ? this.checkList[key].options : [];
       this.checkList[key].isIndeterminate = false;
-      if (val) {
-        this.permissionErrormsgShow = false
-      } else {
-        this.checkPermissionIsSet()
-      }
     },
-
+    //权限模块-单选
     handleCheckedItemChange(val, key) {
       let count = val.length;
       this.checkList[key].checkAll =
         count === this.checkList[key].options.length;
       this.checkList[key].isIndeterminate =
         count > 0 && count < this.checkList[key].options.length;
-      if (!count) {
-        this.checkPermissionIsSet()
-      } else {
-        this.permissionErrormsgShow = false
-      }
     },
-
-    // 判断权限是否有没有配置 并设置error显示
-    checkPermissionIsSet () {
-      let len = 0;
-      for (let key in this.checkList) {
-        len += this.checkList[key].checkedData.length;
-      };
-      this.permissionErrormsgShow = !len
-    },
-
     // 时间控件做前后限制
-    disabledStartDate (startTime) {
-      if (this.rulesForm.end) {
-        return startTime.getTime() > this.rulesForm.end.getTime()
-      }
+    disabledStartDate(startTime) {
+      const endTime = this.rulesForm.end;
+      if (!startTime || !endTime) return false;
+      const _endTime = new Date(endTime).valueOf();
+      return startTime.valueOf() > _endTime;
     },
-    disabledEndDate (endTime) {
-      if (this.rulesForm.start) {
-        return endTime.getTime() < this.rulesForm.start.getTime()
-      }
+    disabledEndDate(endTime) {
+      const startTime = this.isAdd ? this.rulesForm.start : this.endTime;
+      if (!endTime || !startTime) return false;
+      const _startTime = new Date(startTime).valueOf() - 86400000;
+      console.log(startTime);
+      return endTime.valueOf() <= _startTime;
+    },
+  },
+  computed: {
+    //上级机构名称(随上级机构Id联动)
+    dynamicParentName() {
+      const { parentId } = this.rulesForm;
+      return ((this.parentOrg || []).filter((i) => i.id === parentId)[0] || {})
+        .value;
+    },
+    //是否延期或续签 (随合同结束日期联动)
+    isContractTypeDisplay() {
+      const isOvertime =
+        new Date(this.rulesForm.end).valueOf() >
+        new Date(this.endTime).valueOf();
+      return !this.isAdd && isOvertime;
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .rules-modal {
-  padding-right: 40px;
-  .zcjk-rules-box {
-    border: 1px solid #C5C7CE;
-    padding-left: 16px;
-    .zcjk-rules-box-item {
-      // border-bottom: 1px solid #e2e4e9;
-      &-moduleList {
-        padding-left: 24px;
-        /deep/ .el-checkbox {
-          margin-right: 24px;
-          .el-checkbox__input.is-checked + .el-checkbox__label {
-            font-weight: 400;
-            color: #4E5566;
-            font-size: 14px;
-            padding-left: 8px;
-          }
-          .el-checkbox__label {
-            padding-left: 8px;
-          }
-        }
+  &-form {
+    padding-right: 32px;
+    .el-form-item{
+      &__content{
+        line-height: 32px !important;
       }
-      &-moduleType {
-        /deep/ .el-checkbox__label {
-          padding-left: 8px;
-          font-weight: 600;
-          color: #20242E;
-          font-size: 14px;
-        }
+      &__label{
+        line-height: 32px !important;
       }
     }
+    .zcjk-rules-box{
+      padding: 7px 16px 16px;
+      border-radius: 2px;
+      border: 1px solid #C5C7CE;
+      &-item{
+        &-moduleType{
+          font-weight: bold;
+        }
+        .el-checkbox{
+          min-width: 82px;
+          margin-right: 20px;
+          line-height:20px !important;
+          &__label{
+            padding-left: 8px ;
+          }
+        }
+        &-moduleList{
+          padding-left: 22px;
+        }
+      }
+
+
+    }
+  }
+  .el-dialog__body{
+      padding-top: 24px !important;
   }
 }
 </style>
