@@ -12,7 +12,7 @@ const CUSTOMER_LIST = {
   endTime: "END",
   ascending: "ASC",
   descending: "DESC",
-}
+};
 
 //拍卖状态
 const AUCTION_STATUS = [
@@ -132,9 +132,9 @@ const topOrgStatus = {
 
 // 机构类型
 const orgType = {
-  "全部": -1,
-  "正式": 1,
-  "试用": 0,
+  全部: -1,
+  正式: 1,
+  试用: 0,
 };
 
 export {
