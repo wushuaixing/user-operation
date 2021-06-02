@@ -2,8 +2,9 @@
   <el-dialog
     :title="isAdd ? '创建顶级合作机构' : '权限管理'"
     v-model="visible"
-    width="690px"
+    width="666px"
     @close="close"
+    custom-class="rules-modal"
   >
     <el-form
       :model="rulesForm"
@@ -11,20 +12,21 @@
       v-bind="rulesFormOptions.options"
       :rules="rulesFormOptions.rules"
     >
-      <el-form-item label="ID：" v-if="!isAdd">
+      <el-form-item label="ID：" v-if="!isAdd" style="margin:-8px 0 10px">
         <div>
           {{ $filters._show(rulesForm.id) }}
         </div>
       </el-form-item>
-      <el-form-item label="顶级合作机构名称：" prop="name">
+      <el-form-item label="顶级合作机构名称：" prop="name" style="margin-bottom: 11px">
         <el-input
           v-model="rulesForm.name"
           autocomplete="off"
           maxlength="100"
           placeholder="请输入机构名称"
+          style="width: 468px"
         />
       </el-form-item>
-      <el-form-item label="机构类型：" prop="type">
+      <el-form-item label="机构类型：" prop="type" style="margin-bottom: 11px">
         <el-radio-group v-model="rulesForm.type" size="medium">
           <el-radio :label="0" :disabled="!isAdd && disabledType === 1"
             >试用</el-radio
@@ -32,7 +34,7 @@
           <el-radio :label="1">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：" prop="end">
+      <el-form-item label="合同起止日期：" prop="end" style="margin-bottom: 10px">
         <el-date-picker
           type="date"
           placeholder="开始日期"
@@ -59,7 +61,7 @@
           <el-radio :label="2">签约</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'parentId'">
+      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'parentId'" :style="{margin:isAdd? 0 :'20px 0'}">
         <el-select
           v-model="rulesForm.parentId"
           placeholder="请选择上级机构ID"
@@ -74,7 +76,7 @@
         </el-select>
         <span v-else>{{ $filters._show(rulesForm.parentId) }}</span>
       </el-form-item>
-      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'parentName'">
+      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'parentName'" :style="{marginBottom:isAdd? 0 :'10px'}">
         <el-input
           v-if="!isAdd"
           :modelValue="dynamicParentName"
@@ -90,6 +92,7 @@
         :label="`${item.label}：`"
         :key="item.val"
         :prop="item.val"
+        style="margin-bottom: 0"
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
@@ -115,7 +118,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="资产监控权限：">
+      <el-form-item label="资产监控权限：" style="margin-top: 11px">
         <div class="zcjk-rules-box">
           <div
             class="zcjk-rules-box-item"
@@ -129,7 +132,6 @@
               @change="(val) => handleCheckAllChange(val, item.key)"
               >{{ item.title }}</el-checkbox
             >
-            <div style="margin: 5px 0"></div>
             <el-checkbox-group
               class="zcjk-rules-box-item-moduleList"
               v-model="checkList[item.key].checkedData"
@@ -201,7 +203,7 @@ export default {
         this.getCheckList(permissions);
         this.rulesForm = {
           ...rest,
-          start: new Date(start),
+          start: start ? new Date(start) : "",
           end: new Date(end),
         };
         AdminApi.selectParentOrgList(id).then((res) => {
@@ -338,38 +340,44 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .rules-modal {
-  padding-right: 40px;
-  .zcjk-rules-box {
-    border: 1px solid #c5c7ce;
-    padding-left: 16px;
-    .zcjk-rules-box-item {
-      // border-bottom: 1px solid #e2e4e9;
-      &-moduleList {
-        padding-left: 24px;
-        /deep/ .el-checkbox {
-          margin-right: 24px;
-          .el-checkbox__input.is-checked + .el-checkbox__label {
-            font-weight: 400;
-            color: #4e5566;
-            font-size: 14px;
-            padding-left: 8px;
-          }
-          .el-checkbox__label {
-            padding-left: 8px;
-          }
-        }
+  &-form {
+    padding-right: 32px;
+    .el-form-item{
+      &__content{
+        line-height: 32px !important;
       }
-      &-moduleType {
-        /deep/ .el-checkbox__label {
-          padding-left: 8px;
-          font-weight: 600;
-          color: #20242e;
-          font-size: 14px;
-        }
+      &__label{
+        line-height: 32px !important;
       }
     }
+    .zcjk-rules-box{
+      padding: 7px 16px 16px;
+      border-radius: 2px;
+      border: 1px solid #C5C7CE;
+      &-item{
+        &-moduleType{
+          font-weight: bold;
+        }
+        .el-checkbox{
+          min-width: 82px;
+          margin-right: 20px;
+          line-height:20px !important;
+          &__label{
+            padding-left: 8px ;
+          }
+        }
+        &-moduleList{
+          padding-left: 22px;
+        }
+      }
+
+
+    }
+  }
+  .el-dialog__body{
+      padding-top: 24px !important;
   }
 }
 </style>
