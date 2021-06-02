@@ -57,9 +57,9 @@ const http = {
   get: "",
 };
 
-http.post = function (api, data) {
+http.post = function (api, data, obj = {}) {
   return new Promise((resolve) => {
-    axios.post(api, data).then((res) => {
+    axios.post(api, data, obj).then((res) => {
       resolve(res);
     });
   });
