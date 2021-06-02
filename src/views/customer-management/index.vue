@@ -4,18 +4,12 @@
       <el-form :inline="true" :model="queryParams" class="query-form">
         <div>
           <el-form-item label="机构名称：" style="width: 300px">
-          <!-- <el-select v-model="queryParams.orgId" filterable clearable placeholder="请输入机构名称" @input="inputChange">
-            <el-option
-              v-for="item in customerOptions"
-              :key="item.id"
-              :label="item.value"
-              :value="item.id">
-            </el-option>
-          </el-select> -->
           <el-select
+            id="org-select"
             v-model="queryParams.orgId"
             filterable
             remote
+            :max-length="10"
             placeholder="请输入机构名称"
             :remote-method="remoteMethod"
             @change="setCustomerName"
@@ -33,6 +27,7 @@
             class="query-time"
             v-model="queryParams.start"
             type="date"
+            @change="endTimeChange"
             :disabledDate="disabledStartDate"
             placeholder="开始日期">
           </el-date-picker>
@@ -111,7 +106,6 @@
               <div class="customer-detail-right">
                 <div class="customer num1">
                   <div class="customer-type">
-                    <img src="../../assets/img/icon.png"/>
                     顶级合作机构（家）</div>
                   <div class="customer-num">{{customerObj.topCooperateOrgNum}}</div>
                 </div>
@@ -168,12 +162,6 @@
               class="button-fourth"
               v-show="isChecked"
             >导出
-            </el-button>
-            <el-button
-              @click="handleDelete"
-              class="button-fourth"
-              v-show="isChecked"
-            >删除
             </el-button>
             <span v-if="(multipleSelection || []).length" class="total-tips">
               <svg class="icon" aria-hidden="true" style="margin-right: 3px;font-size: 16px;position: relative;top: 1px">
@@ -257,7 +245,7 @@
               <el-input
                 v-model="addOrgForm.subDomain"
                 autocomplete="off"
-                maxlength="20"
+                maxlength="100"
                 placeholder="请输入二级域名"
               >
               </el-input>
@@ -266,7 +254,7 @@
               <el-input
                 v-model="addOrgForm.name"
                 autocomplete="off"
-                maxlength="11"
+                maxlength="100"
                 placeholder="请输入机构名称"
               ></el-input>
             </el-form-item>
@@ -299,6 +287,8 @@ import AdminApi from "@/server/api/admin";
 import RulesModal from "@/views/customer-management/modal/rules-modal";
 import CustomerTree from "./component/CustomerTree";
 import { $modalConfirm } from "@/utils/better-el";
+import { dateUtils, fileDownload } from "@/utils";
+
 export default {
   name: "customerManagement",
   nameComment: "客户管理",
@@ -358,10 +348,10 @@ export default {
         },
         rules: {
           subDomain: [
-            { required: true, message: "二级域名不能为空", trigger: "change" },
+            { required: true, message: "二级域名不允许为空", trigger: "change" },
           ],
           name: [
-            { required: true, message: "机构名称不能为空", trigger: "change" },
+            { required: true, message: "机构名称不允许为空", trigger: "change" },
           ],
         },
       },
@@ -369,19 +359,24 @@ export default {
   },
   created() {
     this.getCuntomerTreeData()
-    this.$router.push("/customerManagement/全部/all")
   },
   mounted() {
     // 点击浏览器刷新时，响应 对带参做处理
     this.$nextTick(() => {
       let { id, customerName } = this.$route.params;
-      if (id !== "all") {
+      if (id && id !== "all") {
         this.queryParams.orgId = id
         this.customerName = customerName
         this.customerOptions = [Object.assign({}, {value: customerName, id: id})]
+      } else {
+        // 查询机构 使得2查询框默认展示搜索数据
+        this.getOrgList("")
       }
       this.getList()
     })
+    // 给机构搜索select框添加最大输入长度
+    let dom = document.getElementById("org-select")
+    dom.setAttribute("maxLength", 100)
   },
   watch: {
     $route() {
@@ -398,8 +393,8 @@ export default {
         ...toRaw(this.queryParams),
         page: this.page,
       };
-      params.start && (params.start = this.setTime(params.start))
-      params.end && (params.end = this.setTime(params.end))
+      params.start && (params.start = dateUtils.formatStandardDate(params.start))
+      params.end && (params.end = dateUtils.formatStandardDate(params.end))
       if (params.type === -1) {
         delete params.type
       }
@@ -411,7 +406,8 @@ export default {
             const { list, page, total } = data.result || {};
             this.tableData = list.map(item => {
               let typeName = item.type ? "正式" : "试用"
-              return Object.assign(item, {typeName: typeName})
+              let startTime = item.startTime || "-"
+              return Object.assign(item, {typeName: typeName, startTime: startTime})
             });
             this.total = total;
             this.page = page;
@@ -448,6 +444,7 @@ export default {
     //排序
     handleSortChange({ prop, order }) {
       this.isChecked = false;
+      this.multipleSelection = []
       this.page = 1;
       let sort = {
         sortColumn: CUSTOMER_LIST[prop],
@@ -520,6 +517,7 @@ export default {
 
     // 搜索
     handleQuery () {
+      debugger
       let url = this.queryParams.orgId ? `/${this.customerName}/${this.queryParams.orgId}`  : "/全部/all"
       this.$router.push(`/customerManagement${url}`);
       this.page = 1
@@ -560,7 +558,7 @@ export default {
           AdminApi.addDomain(this.addOrgForm).then((res) => {
             let {code, message} = res.data
             if (code === 200) {
-              this.$message.success("域名机构创建成功!")
+              this.$message.success("域名机构创建成功")
               // 关闭弹窗 刷新左侧树
               this.addOrgVisible = false
               this.getCuntomerTreeData()
@@ -574,21 +572,31 @@ export default {
     handleExport(type) {
       let text = "点击确定，将为您导出选中的所有信息"
       let title = type ? "确认导出所有信息吗？" : "确认导出选中的所有信息吗？"
-      $modalConfirm({ text, title }).then(
-        () => {
-          this.$message.success("导出成功");
-        }
-      ).catch((err) => {
-          console.log(err);
-        });
-    },
-    handleDelete () {
-      let text = "点击确定，选中的顶级合作机构及其子机构都被清空，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认"
-      let title = "确认删除选中的所有机构吗？"
+      const params = {
+        condition: {
+          ...toRaw(this.queryParams),
+          page: this.page,
+        },
+        idList: []
+      };
+      // 处理查询条件
+      params.condition.start && (params.condition.start = dateUtils.formatStandardDate(params.condition.start))
+      params.condition.end && (params.condition.end = dateUtils.formatStandardDate(params.condition.end))
+      if (params.condition.type === -1) {
+        delete params.condition.type
+      }
+      // 处理选中的id
+      params.idList = type ? [] : this.multipleSelection.map(item => item.id)
       $modalConfirm({ text, title }).then(() => {
-          this.$message.success("删除成功");
-        })
-        .catch((err) => {
+        AdminApi.orgExport(params).then(res => {
+          let {status} = res
+          if (status === 200) {
+            fileDownload(res)
+          } else {
+            this.$message.error("导出失败!")
+          }
+        })}
+      ).catch((err) => {
           console.log(err);
         });
     },
@@ -610,9 +618,11 @@ export default {
       let url = "/customerManagement"
       if (val && val === 'all') {
         this.queryParams.orgId = ""
+        this.customerName = "全部"
         url += `/全部/all`
       } else {
         this.customerOptions = [Object.assign(obj, {value: obj.name})]
+        this.customerName = obj.name
         this.queryParams.orgId = obj.id
         url += `/${obj.name}/${obj.id}`
       }
@@ -639,70 +649,39 @@ export default {
       if (this.queryParams.start) {
         return endTime.getTime() < this.queryParams.start.getTime()
       }
+      console.log(endTime, this.queryParams.start)
     },
 
     remoteMethod (val) {
-      if (val !== '') {
-        if (this.selectTimer) {
-          clearTimeout(this.selectTimer)
-          this.selectTimer = null
-        }
-        this.selectTimer = setTimeout(() => {
-          // 调用接口查询
-          AdminApi.simpleListOrg(val).then((res) => {
-            const { code, data } = res.data || {}
-            if (code === 200) {
-              this.customerOptions = data
-            }
-          })
-          clearTimeout(this.selectTimer)
-          this.selectTimer = null
-        }, 300)
-      } else {
-        this.customerOptions = [];
+      if (this.selectTimer) {
         clearTimeout(this.selectTimer)
         this.selectTimer = null
       }
+      this.selectTimer = setTimeout(() => {
+        // 调用接口查询
+        this.getOrgList(val)
+        clearTimeout(this.selectTimer)
+        this.selectTimer = null
+      }, 300)
     },
+    // 查询机构数据
+    getOrgList (val) {
+      AdminApi.simpleListOrg(val).then((res) => {
+        const { code, data } = res.data || {}
+        if (code === 200) {
+          this.customerOptions = data
+        } else {
+          this.$message.error(res.message)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+
     setCustomerName (val) {
       let arr = this.customerOptions.filter(item => item.id === val)
       this.customerName = arr[0].value
     },
-
-    // 机构搜索做防抖处理
-    inputChange (val) {
-      let key = val.target.value
-      if (key) {
-        if (this.selectTimer) {
-          clearTimeout(this.selectTimer)
-          this.selectTimer = null
-        }
-        this.selectTimer = setTimeout(() => {
-          // 调用接口查询
-          AdminApi.simpleListOrg(key).then((res) => {
-            const { code, data } = res.data || {}
-            if (code === 200) {
-              this.customerOptions = data
-            }
-          })
-          clearTimeout(this.selectTimer)
-          this.selectTimer = null
-        }, 500)
-      } else {
-        clearTimeout(this.selectTimer)
-        this.selectTimer = null
-      }
-    },
-
-    // 设置时间格式
-    setTime (date) {
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      month = month <= 9 ? '0' + month : month
-      let day = date.getDate()
-      day = day <= 9 ? '0' + day : day
-      return `${year}-${month}-${day}`
-    }
   },
   computed: {
     batchHandleText: function () {

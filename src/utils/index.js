@@ -66,4 +66,24 @@ const dateUtils = {
   },
 };
 
-export { clearEmpty, queryApi, dateUtils };
+// 文件下载处理
+const fileDownload = (res) => {
+  const { data } = res
+  // 创建blob对象
+  const blod = new Blob([data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+  // 从返回数据中获取文件名称
+  let fileName = res.headers["content-disposition"].split("\"")[1]
+  // 由于中文出现乱码 需要转码
+  fileName = decodeURIComponent(fileName).replace(/(.xlsx)/g, "")
+  // 创建a标签
+  const elink = document.createElement('a')
+  elink.style.display = 'none'
+  elink.setAttribute('download', fileName)
+  elink.href = URL.createObjectURL(blod)
+  document.body.appendChild(elink)
+  elink.click()
+  window.URL.revokeObjectURL(elink.href) // 释放URL 对象
+  document.body.removeChild(elink) // 移除a标签
+}
+
+export { clearEmpty, queryApi, dateUtils, fileDownload };

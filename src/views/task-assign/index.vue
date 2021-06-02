@@ -231,6 +231,7 @@ export default {
       taskAssignTabs,
       toggle: true,
       column: taskAssignColumn,
+      isTriggerCurrent: false,
       isChecked: false,
       tabKey: "1",
       tableData: [],
@@ -291,7 +292,7 @@ export default {
           }
         })
         .then(() => {
-            this.$store.dispatch("getNumAction");
+          this.$store.dispatch("getNumAction");
         })
         .finally(() => (this.loading = false));
     },
@@ -310,8 +311,11 @@ export default {
     },
     //翻页
     pageChange(page) {
-      this.page = parseInt(page);
-      this.getList();
+      if (!this.isTriggerCurrent) {
+        this.page = parseInt(page);
+        this.getList();
+      }
+      this.isTriggerCurrent = false;
     },
     //pageSize 改变
     sizeChange(num) {
@@ -319,10 +323,9 @@ export default {
         ...this.params,
         num,
       };
-      setTimeout(() => {
-        this.page = 1;
-        this.getList();
-      }, 10);
+      this.isTriggerCurrent = this.page > Math.ceil(this.total / num);
+      this.page = 1;
+      this.getList();
     },
 
     //tab切换 && 清空搜索条件

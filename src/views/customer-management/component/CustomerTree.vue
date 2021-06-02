@@ -47,7 +47,7 @@
         <!-- 竖线 -->
         <div
           class="itemV"
-          :style="index ? '' : 'height: 20px;top:-13px;'"
+          :style="index ? '' : 'height: 20px;top:-9px;'"
         ></div>
       </div>
     </div>
@@ -70,8 +70,8 @@ export default {
       default: 0
     },
     activeKey: {
-      type: String,
-      default: ''
+      type: Number,
+      default: -1
     }
   },
   watch: {
@@ -88,7 +88,6 @@ export default {
           let dom = document.getElementById("customerTree");
           if (dom && dom.clientHeight > 41) {
             // 若是树的总高度不高于容器，则不做任何处理  clientHeight   scrollTop
-            console.log(dom.clientHeight)
             let domHeight = dom.clientHeight
             let scrollHeight = dom.scrollTop
             let itemClientHeight = 20 + 34 * (this.isActive + 1)
@@ -149,7 +148,7 @@ export default {
   }
   &-content {
     font-size: 14px;
-    line-height: 14px;
+    // line-height: 14px;
     cursor: pointer;
     margin-top: 21px;
     color: #20242e;
@@ -175,7 +174,7 @@ export default {
         background: #c5c7ce;
         width: 8px;
         height: 1px;
-        top: 6px;
+        top: 10px;
         left: 8px;
       }
       .activeS {
@@ -185,8 +184,8 @@ export default {
         position: absolute;
         background: #c5c7ce;
         width: 1px;
-        height: 34px;
-        top: -27px;
+        height: 39px;
+        top: -28px;
         left: 7px;
       }
     }

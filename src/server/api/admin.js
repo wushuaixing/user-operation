@@ -49,9 +49,9 @@ const AdminApi = {
   //创建域名机构
   addDomain: (params) => axios.post("/api/admin/organization/addDomain", params),
 
-  //导出
+  //导出  responseType: "blob" 这个属性得加
   orgExport: (params) =>
-    axios.post("/admin/organization/export", clearEmpty(params)),
+    axios.post("/api/admin/organization/export", clearEmpty(params), {responseType: "blob"}),
 
   //创建顶级合作机构
   addTopOrg: (params) => axios.post("/api/admin/organization/addTopOrg", params),
