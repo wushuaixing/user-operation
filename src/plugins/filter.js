@@ -1,7 +1,7 @@
 import { dateUtils } from "@/utils";
 
 const filters = {
-  show_(val) {
+  _show(val) {
     if (!val) return "-";
     return val;
   },

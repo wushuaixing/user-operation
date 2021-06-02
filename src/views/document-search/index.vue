@@ -64,7 +64,7 @@
       <el-table :data="dataList" style="width: 100%" v-loading="loading">
         <el-table-column label="发布日期" width="180">
           <template #default="scope">
-            {{ $filters.show_(scope.row.publishTime) }}
+            {{ $filters._show(scope.row.publishTime) }}
           </template>
         </el-table-column>
         <el-table-column label="标题" width="180">
@@ -85,7 +85,7 @@
         </el-table-column>
         <el-table-column label="案号" width="180">
           <template #default="scope">
-            {{ $filters.show_(scope.row.ah) }}
+            {{ $filters._show(scope.row.ah) }}
           </template>
         </el-table-column>
         <el-table-column label="相关人员" width="180">
@@ -97,24 +97,24 @@
               placement="top"
             >
               <div class="yc-ellipsis">
-                {{ $filters.show_(scope.row.appellors) }}
+                {{ $filters._show(scope.row.appellors) }}
               </div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="法院" width="180">
           <template #default="scope">
-            {{ $filters.show_(scope.row.court) }}
+            {{ $filters._show(scope.row.court) }}
           </template>
         </el-table-column>
         <el-table-column label="案由" width="180">
           <template #default="scope">
-            {{ $filters.show_(scope.row.reason) }}
+            {{ $filters._show(scope.row.reason) }}
           </template>
         </el-table-column>
         <el-table-column label="案件类型" width="180">
           <template #default="scope">
-            {{ $filters.show_(scope.row.caseType) }}
+            {{ $filters._show(scope.row.caseType) }}
           </template>
         </el-table-column>
       </el-table>
