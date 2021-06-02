@@ -14,13 +14,13 @@
         <ul>
           <li v-for="item in basicInfo" :key="item.key">
             <div>{{ item.label }}：</div>
-            <div>{{ $filters.show_(data[item.key]) }}</div>
+            <div>{{ $filters._show(data[item.key]) }}</div>
           </li>
           <li>
             <div>当事人：</div>
             <div>
               <p :class="toggle ? '' : 'appellors'">
-                {{ $filters.show_(data.appellors) }}
+                {{ $filters._show(data.appellors) }}
               </p>
               <p
                 v-if="ellipsisBtnVisible"

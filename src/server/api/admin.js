@@ -3,20 +3,6 @@ import { clearEmpty, queryApi } from "@/utils";
 
 const AdminApi = {
 
-  //添加账号
-  addUser: (params) => axios.post("/api/user/addUser", params),
-
-
-
-
-
-
-
-
-
-
-
-
   /*--------------------------账号管理----------------------*/
   //添加账号
   addAccount: (params) => axios.post("/api/admin/account/addAccount", params),
@@ -53,8 +39,6 @@ const AdminApi = {
   orgExport: (params) =>
     axios.post("/admin/organization/export", clearEmpty(params)),
 
-  //创建顶级合作机构
-  addTopOrg: (params) => axios.post("/api/admin/organization/addTopOrg", params),
 
   //详情-顶级合作机构详情页
   orgDetail: (id) => axios.get(`/admin/organization/detail?id:${id}`),
@@ -110,19 +94,20 @@ const AdminApi = {
     axios.post("/admin/organization/listOrgLog", clearEmpty(params)),
 
   //机构权限查询
-  orgPermission: (id) => axios.get(`/admin/organization/permission?id=${id}`),
+  orgPermission: (id) => axios.get(`/api/admin/organization/permission?id=${id}`),
 
-  //权限修改保存
-  orgSavePermission: (params) =>
-    axios.post("/admin/organization/savePermission", clearEmpty(params)),
-
+  //创建顶级合作机构 && 权限修改保存
+  addAndEditRules: (params, sign) => {
+    let url = sign === "add" ? "addTopOrg" : "savePermission";
+    return axios.post(`/api/admin/organization/${url}`, clearEmpty(params));
+  },
   //搜索
   searchOrg: (params) =>
     axios.post("/api/admin/organization/searchOrg", clearEmpty(params)),
 
   //可选的上级机构列表
   selectParentOrgList: (id) =>
-    axios.get(`/admin/organization/selectParentOrg?id=${id}`),
+    axios.get(`/api/admin/organization/selectParentOrg?id=${id}`),
 
   //机构名称模糊查询
   simpleListOrg: (key) =>

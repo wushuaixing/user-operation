@@ -93,7 +93,7 @@
           :text="title"
           :editable="editable"
           :btnText="!editable ? '创建域名机构' : '创建顶级合作机构'"
-          @handleClick="showModal"
+          @handleClick="showModal('add')"
           @saveName="saveName"
         >
           <template v-slot:detail v-if="editable">
@@ -218,7 +218,7 @@
                 <template #default="scope">
                   <el-button
                     type="text"
-                    @click.stop="handleAction(scope.row, 'rules')"
+                    @click.stop="showModal('edit',scope.row)"
                   >
                     权限管理
                   </el-button>
@@ -280,9 +280,7 @@
         <RulesModal
           ref="RulesModal"
           :formData="rulesForm"
-          :isAdd="isAdd"
-          @afterSuccessAdd="afterSuccessAdd"
-          :title="isAdd ? '创建顶级合作机构' : '权限管理'"
+          @getData="getData"
         />
       </div>
     </div>
@@ -333,14 +331,15 @@ export default {
       totalOrgNum: 12, // 总机构数
       totalOperatedOrgNum: 6, // 总合作中机构数
       activeKey: -1,
-      isAdd: true, // 是否是新增
       editable: false, // 是否可编辑
       customerObj: { // 选中的域名机构详情
         subDomain: "",
         createTime: "",
         topCooperateOrgNum: 0,
         formalOrgNum: 0,
-        trialOrgNum: 0
+        trialOrgNum: 0,
+        domainId:'',
+        domainName:'',
       },
       addOrgVisible: false,
       addOrgForm: {
@@ -389,6 +388,10 @@ export default {
     },
   },
   methods: {
+    getData(){
+      this.getCuntomerTreeData();
+      this.getList();
+    },
     // 获取列表数据
     getList() {
       console.log(toRaw(this.queryParams));
@@ -465,12 +468,9 @@ export default {
       this.isChecked = isChecked;
       if (!isChecked) this.$refs.multipleTable.clearSelection();
     },
-    handleAction(params, sign) {
-      if (sign === "rules") {
-        this.$refs.RulesModal.open()
-        this.isAdd = false
-      }
-      console.log(params, sign);
+    //操作日志
+    handleAction(params = {}) {
+      console.log(params);
     },
 
     // 点击一行跳转详情页
@@ -548,10 +548,6 @@ export default {
       this.getList();
     },
     //域名机构切换
-    handleItemClick(index, title) {
-      this.isActive = index;
-      this.title = title;
-    },
     handleAddOrg() {
       this.$refs["addOrgForm"].validate((valid) => {
         if (valid) {
@@ -595,12 +591,23 @@ export default {
       this.$refs["addOrgForm"].resetFields();
     },
     // 打开弹窗 域名机构以及顶级机构创建
-    showModal () {
-      if (this.editable) {
-        this.$refs.RulesModal.open(this.customerObj)
-        this.isAdd = true
-      } else {
-        this.addOrgVisible = true
+    showModal (sign,params = {}) {
+      if(sign === 'edit'){
+        const { id } = params;
+        AdminApi.orgPermission(id).then((res)=>{
+          const { code, data = {} } = res.data || {};
+          if(code === 200){
+            this.$refs.RulesModal.open(data,false);
+          }else {
+            this.$message.error('请求错误');
+          }
+        })
+      }else {
+        if (this.editable) {
+          this.$refs.RulesModal.open(toRaw(this.customerObj), true);
+        } else {
+          this.addOrgVisible = true
+        }
       }
     },
     // 左侧树点击事件
@@ -619,10 +626,6 @@ export default {
       this.getList()
     },
 
-    // 创建顶级机构之后的回调 刷新列表
-    afterSuccessAdd () {
-      this.getList()
-    },
     // 保存顶级机构名称
     saveName (name) {
       console.log(name)
