@@ -356,11 +356,10 @@ export default {
     },
     // 是否延期或续签 (随合同结束日期 || 机构类型 联动)
     isContractTypeDisplay() {
-      const { type } = this.rulesForm;
       const isOvertime =
         new Date(this.rulesForm.end).valueOf() >
         new Date(this.endTime).valueOf();
-      return !this.isAdd && isOvertime && type === 1;
+      return !this.isAdd && isOvertime && this.disabledType === 1;
     },
   },
 };
