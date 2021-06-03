@@ -8,7 +8,7 @@ const rulesFormOptions = {
   rules: {
     name: {
       required: true,
-      message: "顶级合作机构名称不允许为空",
+      message: "机构名称不允许为空",
       trigger: "blur",
     },
     type: {
@@ -24,7 +24,7 @@ const rulesFormOptions = {
     end: {
       required: true,
       message: "合同结束日期不允许为空",
-      trigger: "change",
+      trigger: ["blur", "change"],
     },
     parentId: {
       required: true,
@@ -325,7 +325,7 @@ const rulesFormOptions = {
       children: [
         {
           label: "代理机构",
-          val: "35",
+          val: "53",
         },
       ],
     },
@@ -422,7 +422,7 @@ const checkList = {
     checkAll: false,
     checkedData: [],
     isIndeterminate: false,
-    options: ["35"],
+    options: ["53"],
   },
 };
 

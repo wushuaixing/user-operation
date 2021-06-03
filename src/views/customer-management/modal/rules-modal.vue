@@ -12,12 +12,16 @@
       v-bind="rulesFormOptions.options"
       :rules="rulesFormOptions.rules"
     >
-      <el-form-item label="ID：" v-if="!isAdd" style="margin:-8px 0 10px">
+      <el-form-item label="ID：" v-if="!isAdd" style="margin: -8px 0 10px">
         <div>
           {{ $filters._show(rulesForm.id) }}
         </div>
       </el-form-item>
-      <el-form-item label="顶级合作机构名称：" prop="name" style="margin-bottom: 11px">
+      <el-form-item
+        label="顶级合作机构名称："
+        prop="name"
+        style="margin-bottom: 11px"
+      >
         <el-input
           
           v-model="rulesForm.name"
@@ -25,6 +29,7 @@
           maxlength="100"
           placeholder="请输入机构名称"
           style="width: 468px"
+          @blur="handleNameBlur"
         />
       </el-form-item>
       <el-form-item label="机构类型：" prop="type" style="margin-bottom: 11px">
@@ -35,24 +40,30 @@
           <el-radio :label="1">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：" prop="end" style="margin-bottom: 10px">
-        <el-date-picker
-          type="date"
-          placeholder="开始日期"
-          v-model="rulesForm.start"
-          style="width: 219px"
-          :disabledDate="disabledStartDate"
-          @change="timeChange"
-        ></el-date-picker>
-        <div style="display: inline-block; padding: 0 8px">至</div>
-        <el-date-picker
-          type="date"
-          placeholder="结束日期"
-          class="inputName"
-          v-model="rulesForm.end"
-          style="width: 219px"
-          :disabledDate="disabledEndDate"
-        ></el-date-picker>
+      <el-form-item label="合同起止日期：" style="margin-bottom: 10px" required>
+        <el-col :span="11">
+          <el-form-item prop="start">
+            <el-date-picker
+              type="date"
+              placeholder="开始日期"
+              v-model="rulesForm.start"
+              style="width: 219px"
+              :disabledDate="disabledStartDate"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col class="line" :span="2" style="margin: 0 10px">-</el-col>
+        <el-col :span="11">
+          <el-form-item prop="end">
+            <el-date-picker
+              type="date"
+              placeholder="结束日期"
+              v-model="rulesForm.end"
+              style="width: 219px"
+              :disabledDate="disabledEndDate"
+            />
+          </el-form-item>
+        </el-col>
       </el-form-item>
       <el-form-item
         label="是否延期或续签："
@@ -64,7 +75,11 @@
           <el-radio :label="2">签约</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="上级机构ID：" :prop="isAdd ? '' : 'parentId'" :style="{margin:isAdd? 0 :'20px 0'}">
+      <el-form-item
+        label="上级机构ID："
+        :prop="isAdd ? '' : 'parentId'"
+        :style="{ margin: isAdd ? 0 : '20px 0' }"
+      >
         <el-select
           v-model="rulesForm.parentId"
           placeholder="请选择上级机构ID"
@@ -79,7 +94,11 @@
         </el-select>
         <span v-else>{{ $filters._show(rulesForm.parentId) }}</span>
       </el-form-item>
-      <el-form-item label="上级机构名称：" :prop="isAdd ? '' : 'parentName'" :style="{marginBottom:isAdd? 0 :'10px'}">
+      <el-form-item
+        label="上级机构名称："
+        :prop="isAdd ? '' : 'parentName'"
+        :style="{ marginBottom: isAdd ? 0 : '10px' }"
+      >
         <el-input
           v-if="!isAdd"
           :modelValue="dynamicParentName"
@@ -95,7 +114,7 @@
         :label="`${item.label}：`"
         :key="item.val"
         :prop="item.val"
-        style="margin-bottom: 0"
+        :style="{ marginBottom: rulesForm[item.val] ? '10px' : 0 }"
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
@@ -221,13 +240,13 @@ export default {
       this.isAdd = isAdd;
       this.visible = true;
     },
-    //弹窗关闭
+    // 弹窗关闭
     close() {
       this.$refs["rulesForm"].resetFields();
       this.rulesForm = rulesForm;
       this.checkList = clone(checkList);
     },
-    //提交
+    // 提交
     onsubmit() {
       this.$refs["rulesForm"].validate((valid) => {
         if (valid) {
@@ -297,18 +316,23 @@ export default {
       });
     },
 
-    //权限模块-全选
+    // 权限模块-全选
     handleCheckAllChange(val, key) {
       this.checkList[key].checkedData = val ? this.checkList[key].options : [];
       this.checkList[key].isIndeterminate = false;
     },
-    //权限模块-单选
+    // 权限模块-单选
     handleCheckedItemChange(val, key) {
       let count = val.length;
       this.checkList[key].checkAll =
         count === this.checkList[key].options.length;
       this.checkList[key].isIndeterminate =
         count > 0 && count < this.checkList[key].options.length;
+    },
+    // 姓名失焦去除所有空格
+    handleNameBlur() {
+      const { name } = this.rulesForm;
+      this.rulesForm.name = name.replace(/\s+/g, "");
     },
     // 时间控件做前后限制
     disabledStartDate(startTime) {
@@ -321,7 +345,6 @@ export default {
       const startTime = this.isAdd ? this.rulesForm.start : this.endTime;
       if (!endTime || !startTime) return false;
       const _startTime = new Date(startTime).valueOf() - 86400000;
-      console.log(startTime);
       return endTime.valueOf() <= _startTime;
     },
     timeChange () {
@@ -329,18 +352,18 @@ export default {
     }
   },
   computed: {
-    //上级机构名称(随上级机构Id联动)
+    // 上级机构名称(随上级机构Id联动)
     dynamicParentName() {
       const { parentId } = this.rulesForm;
       return ((this.parentOrg || []).filter((i) => i.id === parentId)[0] || {})
         .value;
     },
-    //是否延期或续签 (随合同结束日期联动)
+    // 是否延期或续签 (随合同结束日期 || 机构类型 联动)
     isContractTypeDisplay() {
       const isOvertime =
         new Date(this.rulesForm.end).valueOf() >
         new Date(this.endTime).valueOf();
-      return !this.isAdd && isOvertime;
+      return !this.isAdd && isOvertime && this.disabledType === 1;
     },
   },
 };
@@ -350,40 +373,38 @@ export default {
 .rules-modal {
   &-form {
     padding-right: 32px;
-    .el-form-item{
-      &__content{
+    .el-form-item {
+      &__content {
         line-height: 32px !important;
       }
-      &__label{
+      &__label {
         line-height: 32px !important;
       }
     }
-    .zcjk-rules-box{
+    .zcjk-rules-box {
       padding: 7px 16px 16px;
       border-radius: 2px;
-      border: 1px solid #C5C7CE;
-      &-item{
-        &-moduleType{
+      border: 1px solid #c5c7ce;
+      &-item {
+        &-moduleType {
           font-weight: bold;
         }
-        .el-checkbox{
+        .el-checkbox {
           min-width: 82px;
           margin-right: 20px;
-          line-height:20px !important;
-          &__label{
-            padding-left: 8px ;
+          line-height: 20px !important;
+          &__label {
+            padding-left: 8px;
           }
         }
-        &-moduleList{
+        &-moduleList {
           padding-left: 22px;
         }
       }
-
-
     }
   }
-  .el-dialog__body{
-      padding-top: 24px !important;
+  .el-dialog__body {
+    padding-top: 24px !important;
   }
 }
 </style>
