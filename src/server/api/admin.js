@@ -41,7 +41,7 @@ const AdminApi = {
 
 
   //详情-顶级合作机构详情页
-  orgDetail: (id) => axios.get(`/admin/organization/detail?id:${id}`),
+  orgDetail: (id) => axios.get(`/api/admin/organization/detail?id=${id}`),
 
   //详情-创建本级账号
   detailAddOrgUser: (params) =>
@@ -84,7 +84,7 @@ const AdminApi = {
     axios.get("/admin/organization/detail/simpleListRole"),
 
   //详情-客户使用机构详情
-  detailSubOrg: (id) => axios.get(`/admin/organization/detail/subOrg?id=${id}`),
+  detailSubOrg: (id) => axios.get(`/api/admin/organization/detail/subOrg?id=${id}`),
 
   //域名机构列表
   orgListDomain: () => axios.get("/api/admin/organization/listDomain"),

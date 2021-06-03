@@ -9,7 +9,6 @@
             v-model="queryParams.orgId"
             filterable
             remote
-            :max-length="10"
             placeholder="请输入机构名称"
             :remote-method="remoteMethod"
             @change="setCustomerName"
@@ -178,6 +177,10 @@
               v-loading="loading"
               :row-key="(val) => val.id"
             >
+              <template #empty>
+                <img src="../../assets/img/no_data.png" alt="" />
+                <p>暂无数据</p>
+              </template>
               <el-table-column
                 type="selection"
                 v-if="isChecked"
@@ -311,7 +314,6 @@ export default {
         end: undefined,
       },
       customerOptions: [], // 搜索框中的机构列表
-      customerName: "",
       selectTimer: null,
       title: "全部",
       topOrgStatus,
@@ -326,8 +328,8 @@ export default {
       total: 0,
       isActive: 0,
       activities: [], // 域名机构列表
-      totalOrgNum: 12, // 总机构数
-      totalOperatedOrgNum: 6, // 总合作中机构数
+      totalOrgNum: 0, // 总机构数
+      totalOperatedOrgNum: 0, // 总合作中机构数
       activeKey: -1,
       editable: false, // 是否可编辑
       customerObj: { // 选中的域名机构详情
@@ -365,20 +367,16 @@ export default {
   },
   created() {
     this.getCuntomerTreeData()
+    // 查询机构 使得2查询框默认展示搜索数据
+    this.getOrgList("")
   },
   mounted() {
     // 点击浏览器刷新时，响应 对带参做处理
     this.$nextTick(() => {
-      let { id, customerName } = this.$route.params;
+      let { id } = this.$route.params;
       if (id && id !== "all") {
-        this.queryParams.orgId = id
-        this.currentQueryParams.orgId = id
-        // customer中可能有转换的字符，需要做替换
-        this.customerName = customerName.replace(/[$]/g, "/")
-        // this.customerOptions = [Object.assign({}, {value: this.customerName, id: id})]
-      } else {
-        // 查询机构 使得2查询框默认展示搜索数据
-        this.getOrgList("")
+        this.queryParams.orgId = Number(id)
+        this.currentQueryParams.orgId = Number(id)
       }
       this.getList()
     })
@@ -389,10 +387,14 @@ export default {
   watch: {
     $route(to) {
       // 对路由变化作出响应...
-      let {id, customerName} = to.params
-      if (id !== "all") {
-        this.queryParams.orgId = Number(id)
-        this.customerName = customerName
+      let {id} = to.params
+      if (id) {
+        if (id !== "all") {
+          this.queryParams.orgId = Number(id)
+        }
+      } else {
+        this.queryParams.orgId = ""
+        this.$refs.CustomerTree.setStatusAll()
       }
       this.getOrgList("")
       this.getList()
@@ -438,7 +440,6 @@ export default {
             });
             this.total = total;
             this.page = page;
-
             // 若不是全部机构 则赋值机构详情 customerObj
             const {detail} = data
             if (detail && Object.keys(detail).length > 0) {
@@ -502,8 +503,9 @@ export default {
     },
 
     // 点击一行跳转详情页
-    rowClick () {
-      window.open("/customerDetail/12", "_blank")
+    rowClick (row) {
+      let {id} = row
+      window.open(`/customerDetail/${id}`, "_blank")
     },
 
     // 机构状态改变 结束日期改变
@@ -547,20 +549,25 @@ export default {
 
     // 搜索
     handleQuery () {
-      debugger
-      // name字段中可能会出现"/"导致路由重定向到其它页面，需要替换"/"成其它字符
-      let name = this.customerName.replace(/\//g, "$")
-      let url = this.queryParams.orgId ? `/${name}/${this.queryParams.orgId}`  : "/全部/all"
       this.page = 1
       this.isChecked = false;
       const { clearSort } = this.$refs.multipleTable;
       clearSort();
       // 赋值currentQueryParams对象
       this.currentQueryParams = {...this.queryParams}
-      this.$router.push(`/customerManagement${url}`);
-      // this.getList()
+      let url = this.queryParams.orgId ? `/${this.queryParams.orgId}`  : "/all"
+      url = `/customerManagement${url}`
+      if (this.isOrgIdChange(url)) {
+        this.$router.push(url);
+      } else {
+        this.getList()
+      }
     },
-
+    // 判断orgId是否变化
+    isOrgIdChange (url) {
+      let {path} = this.$route
+      return path !== url
+    },
     //清空搜索条件
     handleClear() {
       this.page = 1;
@@ -577,7 +584,6 @@ export default {
       this.$refs.CustomerTree.handleSelect("all")
       // 赋值currentQueryParams对象
       this.currentQueryParams = {...this.queryParams}
-      this.getList();
     },
     //域名机构切换
     handleAddOrg() {
@@ -640,6 +646,7 @@ export default {
     },
     // 打开弹窗 域名机构以及顶级机构创建
     showModal (sign,params = {}) {
+      this.isChecked = false
       if(sign === 'edit'){
         const { id } = params;
         AdminApi.orgPermission(id).then((res)=>{
@@ -664,21 +671,19 @@ export default {
       let url = "/customerManagement"
       if (val && val === 'all') {
         this.queryParams.orgId = ""
-        this.customerName = "全部"
-        url += `/全部/all`
+        url += `/all`
       } else {
-        this.customerName = obj.name
         this.queryParams.orgId = obj.id
-        // this.remoteMethod(this.customerName)
-        // name字段中可能会出现"/"导致路由重定向到其它页面，需要替换"/"成其它字符
-        let name = obj.name.replace(/\//g, "$")
-        url += `/${name}/${obj.id}`
+        url += `/${obj.id}`
       }
       this.currentQueryParams = {...this.queryParams}
       this.isChecked = false
       this.$refs.multipleTable.clearSort()
-      this.$router.push(url);
-      // this.getList()
+      if (this.isOrgIdChange(url)) {
+        this.$router.push(url);
+      } else {
+        this.getList()
+      }
     },
 
     // 保存顶级机构名称
@@ -730,9 +735,7 @@ export default {
     },
 
     // 查询完之后给多选框下拉列表赋值
-    setCustomerName (val) {
-      let arr = this.customerOptions.filter(item => item.id === val)
-      this.customerName = arr[0].value
+    setCustomerName () {
       this.getOrgList("")
     },
   }

@@ -23,6 +23,7 @@
         style="margin-bottom: 11px"
       >
         <el-input
+          
           v-model="rulesForm.name"
           autocomplete="off"
           maxlength="100"
@@ -349,6 +350,9 @@ export default {
       const _startTime = startTime - 86400000;
       return endTime.valueOf() <= _startTime;
     },
+    timeChange () {
+      document.querySelector('.inputName').querySelector('input').focus()
+    }
   },
   computed: {
     // 上级机构名称(随上级机构Id联动)
