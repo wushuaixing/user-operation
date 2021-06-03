@@ -110,7 +110,12 @@ export default {
     setText(item) {
       return `(${item.operatedOrgNum}/${item.orgNum})`;
     },
-
+    setStatusAll () {
+      this.selectAll = true;
+      this.isActive = -1;
+      let dom = document.getElementById("customerTree")
+      dom.scrollTop = 0
+    },
     // 点击选中某一项
     handleSelect(val, index, item) {
       if (val === "all") {

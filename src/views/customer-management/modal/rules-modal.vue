@@ -19,6 +19,7 @@
       </el-form-item>
       <el-form-item label="顶级合作机构名称：" prop="name" style="margin-bottom: 11px">
         <el-input
+          
           v-model="rulesForm.name"
           autocomplete="off"
           maxlength="100"
@@ -41,11 +42,13 @@
           v-model="rulesForm.start"
           style="width: 219px"
           :disabledDate="disabledStartDate"
+          @change="timeChange"
         ></el-date-picker>
         <div style="display: inline-block; padding: 0 8px">至</div>
         <el-date-picker
           type="date"
           placeholder="结束日期"
+          class="inputName"
           v-model="rulesForm.end"
           style="width: 219px"
           :disabledDate="disabledEndDate"
@@ -321,6 +324,9 @@ export default {
       console.log(startTime);
       return endTime.valueOf() <= _startTime;
     },
+    timeChange () {
+      document.querySelector('.inputName').querySelector('input').focus()
+    }
   },
   computed: {
     //上级机构名称(随上级机构Id联动)
