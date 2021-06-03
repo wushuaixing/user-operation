@@ -37,7 +37,7 @@ export const adminRoutes = [
         component: () => import("@/views/account-management"),
       },
       {
-        path: "/customerManagement/:customerName?/:id?",
+        path: "/customerManagement/:id?",
         name: "CustomerManagement",
         component: () => import("@/views/customer-management"),
       },

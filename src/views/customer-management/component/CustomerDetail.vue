@@ -2,7 +2,7 @@
   <div class="yc-newpage-contaner">
     <section class="main-content" v-loading="loading">
       <div class="yc-customer-header">
-        <div class="customer-name">顶级合作机构：民生银行温州分行 (ID：1020)</div>
+        <div class="customer-name">{{title}}</div>
         <div class="customer-message">
           <div class="customer-message-useDetail">
             <div class="useDetail-left">
@@ -45,7 +45,7 @@
               </div>
             </div>
           </div>
-          <div class="customer-message-timeline time1">
+          <div class="customer-message-timeline time1" v-if="contractRecord.length">
             <span>签约记录：</span>
             <el-timeline class="timeline">
               <el-timeline-item
@@ -53,7 +53,7 @@
                 color="#296DD3"
                 :key="index">
                 <div>
-                  <span>{{`${acountList[index]}次续签起止日期：${activity.start}至${activity.end}`}}</span>
+                  <span>{{`${acountList[index]}次续签起止日期：${activity.start || "-"} 至 ${activity.end || "-"}`}}</span>
                   <span class="open" @click="showContractMessage" v-if="contractRecord.length > 3 && index === contractList.length - 1">
                     <span v-if="showStatus === 'close'">展开<i class="el-icon-arrow-down" style="margin-left: 7px;"></i></span>
                     <span v-else>收起<i class="el-icon-arrow-up" style="margin-left: 7px;"></i></span>
@@ -62,7 +62,7 @@
               </el-timeline-item>
             </el-timeline>
           </div>
-          <div class="customer-message-timeline time2">
+          <div class="customer-message-timeline time2" v-if="delayRecord.length">
             <span>延期记录：</span>
             <el-timeline class="timeline">
               <el-timeline-item
@@ -88,14 +88,23 @@
               客户使用机构
             </div>
             <div class="customer-tree">
+              <el-input
+                placeholder="请输入内容"
+                v-model="searchValue">
+                <template #prefix>
+                  <i class="el-input__icon el-icon-search"></i>
+                </template>
+              </el-input>
               <el-tree
                 :data="treeData"
                 node-key="id"
+                @node-click="treeClick"
                 default-expand-all
+                :props="defaultProps"
                 :expand-on-click-node="false">
                 <template #default="{ node }">
                   <span class="custom-tree-node">
-                    <span>{{node.id}}</span>
+                    <span class="node-id">{{node.id}}</span>
                     <span>{{ node.label }}</span>
                   </span>
                 </template>
@@ -104,18 +113,18 @@
           </div>
           <div class="yc-customer-content-list" :class="{scroll: scrollShow}">
             <div class="module-title">
-              民生银行温州分行
+              {{activeCustonerName}}
             </div>
-            <div class="list">
+            <div class="list" v-if="isHasOrg">
               <div class="list-header">
                 <span class="title">子机构列表</span>
                 <el-button type="primary" icon="el-icon-plus">创建子机构</el-button>
               </div>
               <el-table
-                :data="tableData"
+                :data="subOrgData"
                 style="width: 100%">
                 <el-table-column
-                  prop="date"
+                  prop="id"
                   label="ID">
                 </el-table-column>
                 <el-table-column
@@ -124,7 +133,7 @@
                   >
                 </el-table-column>
                 <el-table-column
-                  prop="address"
+                  prop="accountNum"
                   label="总账号数">
                 </el-table-column>
                 <el-table-column label="操作">
@@ -151,10 +160,10 @@
                 <el-button type="primary" icon="el-icon-plus">创建本级机构</el-button>
               </div>
               <el-table
-                :data="tableData"
+                :data="accountData"
                 style="width: 100%">
                 <el-table-column
-                  prop="date"
+                  prop="phone"
                   width="120"
                   label="账号">
                 </el-table-column>
@@ -165,18 +174,18 @@
                   >
                 </el-table-column>
                 <el-table-column
-                  prop="date"
+                  prop="role"
                   width="120"
                   label="角色">
                 </el-table-column>
                 <el-table-column
-                  prop="name"
+                  prop="num"
                   width="120"
                   label="导入债务人数"
                   >
                 </el-table-column>
                 <el-table-column
-                  prop="address"
+                  prop="time"
                   width="120"
                   label="上次登录时间">
                 </el-table-column>
@@ -226,7 +235,7 @@
 </template>
 
 <script>
-
+import AdminApi from "@/server/api/admin";
 export default {
   name: "CustomerDetail",
   nameComment: "机构详情",
@@ -237,26 +246,28 @@ export default {
     return {
       loading: false, // 整页loading
       customerData: {
+        name: "",
+        id: 0,
         // 账号数
-        isAccountLimit: 1, // 是否限制 0：否  1：是
-        accountLimitCount: 1000, // 总
-        restAccountCount: 1000, // 剩余
+        isAccountLimit: 0, // 是否限制 0：否  1：是
+        accountLimitCount: 0, // 总
+        restAccountCount: 0, // 剩余
         // 分类搜索
-        isClassifiedLimit: 1,
-        classifiedLimitCount: 1000,
-        restClassifiedCount: 1000,
+        isClassifiedLimit: 0,
+        classifiedLimitCount: 0,
+        restClassifiedCount: 0,
         // 监控债务
-        isObligorLimit: 1,
-        obligorLimitCount: 1000,
-        restObligorCount: 1000,
+        isObligorLimit: 0,
+        obligorLimitCount: 0,
+        restObligorCount: 0,
         // 画像查询
-        isPortraitLimit: 1,
-        portraitLimitCount: 1000,
-        restPortraitCount: 1000,
+        isPortraitLimit: 0,
+        portraitLimitCount: 0,
+        restPortraitCount: 0,
         // 子机构
-        isSubOrgLimit: 1,
-        subOrgLimitCount: 1000,
-        restSubOrgCount: 1000,
+        isSubOrgLimit: 0,
+        subOrgLimitCount: 0,
+        restSubOrgCount: 0,
 
         type: 0,
 		    url: "cmbc.yczcjk.com",
@@ -267,55 +278,28 @@ export default {
       delayShowStatus: "close",
       acountList: ["首", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"],
       contractRecord: [
-        {
-          start: "2021-03-21",
-          end: "2021-03-21"
-        }, {
-          start: "2021-03-21",
-          end: "2021-03-21"
-        }, {
-          start: "2021-03-21",
-          end: "2021-03-21"
-        }, {
-          start: "2021-03-21",
-          end: "2021-03-21"
-        }
       ],
       delayRecord: [
-        {
-          time: 60
-        }, {
-          time: 60
-        }, {
-          time: 60
-        }, {
-          time: 60
-        }
       ],
       scrollShow: false,
       accountPage: 1,
       accountTotal: 0,
-      tableData: [{}, {}],
-      treeData: [
-        {
-          id: 1,
-          label: '一级 1',
-          children: [{
-            id: 4,
-            label: '二级 1-1',
-            children: [{
-              id: 9,
-              label: '三级 1-1-1'
-            }, {
-              id: 10,
-              label: '三级 1-1-2'
-            }]
-          }]
-        }
-      ]
+      searchValue: "",
+      subOrgData: [],
+      accountData: [],
+      treeData: [],
+      defaultProps: {
+        children: "subOrg",
+        label: "name",
+      },
+      activeCustonerName: "",
+      isHasOrg: true, // 是否有子机构
     };
   },
   computed: {
+    title () {
+      return `顶级合作机构：${this.customerData.name} (ID：${this.customerData.id})`
+    },
     contractList () {
       return this.contractRecord.filter(( item, index) => {
         return index < this.contractShowIndex
@@ -329,8 +313,42 @@ export default {
   },
   created() {
     document.title = "顶级机构详情页";
+    // 从路由获取id 调用接口获取机构详情数据
+    let {id} = this.$route.params
+    this.getOrgDetailData(id, "init")
   },
   methods: {
+    // 获取页面机构详情数据
+    getOrgDetailData (id, type = "") {
+      AdminApi.orgDetail(id).then((res) => {
+        let {code, data, message} = res.data
+        if (code === 200) {
+          // 进行赋值
+          let {contractRecord, delayRecord, tree, ...customerData} = data
+          this.customerData = customerData
+          contractRecord.length && (this.contractRecord = contractRecord)
+          delayRecord.length && (this.delayRecord = delayRecord)
+          type && (this.activeCustonerName = tree.name)
+          this.treeData = [tree]
+          type && (this.subOrgData = tree.subOrg)
+          type && this.getAccountData(id)
+        } else {
+          this.$message.error(message);
+        }
+      })
+    },
+
+    // 获取本级账号数据
+    getAccountData (id) {
+      AdminApi.detailSubOrg(id).then((res) => {
+        let {code, data, message} = res.data
+        if (code === 200) {
+          this.accountData = data.users
+        } else {
+          this.$message.error(message)
+        }
+      })
+    },
     // 展开收起
     showContractMessage () {
       this.contractShowIndex = this.showStatus === "open" ? 3 : this.contractRecord.length
@@ -350,6 +368,13 @@ export default {
     handleSubOrgDelete () {},
     handleSubOrgEdit () {},
     accountPageChange () {},
+    treeClick (obj) {
+      let {name, id, subOrg} = obj
+      this.activeCustonerName = name
+      this.getAccountData(id)
+      this.isHasOrg = Boolean(subOrg.length)
+      this.subOrgData = subOrg
+    },
   },
 };
 </script>
@@ -454,6 +479,21 @@ export default {
     &-customerTree {
       width: 420px;
       background: #FFFFFF;
+      .customer-tree /deep/ {
+        padding: 20px;
+        position: relative;
+        .el-tree-node__content {
+          .custom-tree-node {
+            .node-id {
+              position: absolute;
+              left: 20px;
+            }
+          }
+        }
+        .el-tree-node__content > .el-tree-node__expand-icon {
+          margin-left: 45px !important;
+        }
+      }
     }
     &-list {
       width: 960px;
