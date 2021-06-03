@@ -84,6 +84,7 @@
           v-model="rulesForm.parentId"
           placeholder="请选择上级机构ID"
           v-if="!isAdd"
+          filterable
         >
           <el-option
             v-for="item in parentOrg"
