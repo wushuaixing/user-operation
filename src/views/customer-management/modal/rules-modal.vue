@@ -341,9 +341,12 @@ export default {
       return startTime.valueOf() > _endTime;
     },
     disabledEndDate(endTime) {
-      const startTime = this.isAdd ? this.rulesForm.start : this.endTime;
+      const { start } = this.rulesForm;
+      const _date = (i) => new Date(i).valueOf() || 0;
+      const _maxTime = Math.max(_date(start), _date(this.endTime));
+      const startTime = this.isAdd ? _date(start) : _maxTime;
       if (!endTime || !startTime) return false;
-      const _startTime = new Date(startTime).valueOf() - 86400000;
+      const _startTime = startTime - 86400000;
       return endTime.valueOf() <= _startTime;
     },
   },
