@@ -375,7 +375,7 @@ export default {
         this.currentQueryParams.orgId = id
         // customer中可能有转换的字符，需要做替换
         this.customerName = customerName.replace(/[$]/g, "/")
-        this.customerOptions = [Object.assign({}, {value: this.customerName, id: id})]
+        // this.customerOptions = [Object.assign({}, {value: this.customerName, id: id})]
       } else {
         // 查询机构 使得2查询框默认展示搜索数据
         this.getOrgList("")
@@ -391,10 +391,10 @@ export default {
       // 对路由变化作出响应...
       let {id, customerName} = to.params
       if (id !== "all") {
-        this.queryParams.orgId = id
+        this.queryParams.orgId = Number(id)
         this.customerName = customerName
-        this.customerOptions = [Object.assign({}, {value: customerName, id: id})]
       }
+      this.getOrgList("")
       this.getList()
     },
     isChecked (newVal) {
@@ -547,6 +547,7 @@ export default {
 
     // 搜索
     handleQuery () {
+      debugger
       // name字段中可能会出现"/"导致路由重定向到其它页面，需要替换"/"成其它字符
       let name = this.customerName.replace(/\//g, "$")
       let url = this.queryParams.orgId ? `/${name}/${this.queryParams.orgId}`  : "/全部/all"
@@ -666,9 +667,9 @@ export default {
         this.customerName = "全部"
         url += `/全部/all`
       } else {
-        this.customerOptions = [Object.assign(obj, {value: obj.name})]
         this.customerName = obj.name
         this.queryParams.orgId = obj.id
+        // this.remoteMethod(this.customerName)
         // name字段中可能会出现"/"导致路由重定向到其它页面，需要替换"/"成其它字符
         let name = obj.name.replace(/\//g, "$")
         url += `/${name}/${obj.id}`
@@ -728,17 +729,13 @@ export default {
       })
     },
 
-    // 给customerName字段赋值
+    // 查询完之后给多选框下拉列表赋值
     setCustomerName (val) {
       let arr = this.customerOptions.filter(item => item.id === val)
       this.customerName = arr[0].value
+      this.getOrgList("")
     },
-  },
-  computed: {
-    batchHandleText: function () {
-      return this.isChecked ? "取消批量管理" : "批量管理";
-    },
-  },
+  }
 };
 </script>
 
