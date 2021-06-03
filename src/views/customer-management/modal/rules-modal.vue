@@ -38,7 +38,7 @@
           <el-radio :label="1">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：" style="margin-bottom: 10px">
+      <el-form-item label="合同起止日期：" style="margin-bottom: 10px" required>
         <el-col :span="11">
           <el-form-item prop="start">
             <el-date-picker

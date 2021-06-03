@@ -8,7 +8,7 @@ const rulesFormOptions = {
   rules: {
     name: {
       required: true,
-      message: "顶级合作机构名称不允许为空",
+      message: "机构名称不允许为空",
       trigger: "blur",
     },
     type: {
