@@ -51,6 +51,7 @@ import copy from "copy-to-clipboard";
 export default {
   name: "documentDetail",
   nameComment: "文书详情",
+  // TODO uncultivated
   data() {
     return {
       data: {},
