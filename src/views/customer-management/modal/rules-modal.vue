@@ -28,6 +28,7 @@
           maxlength="100"
           placeholder="请输入机构名称"
           style="width: 468px"
+          @blur="handleNameBlur"
         />
       </el-form-item>
       <el-form-item label="机构类型：" prop="type" style="margin-bottom: 11px">
@@ -238,13 +239,13 @@ export default {
       this.isAdd = isAdd;
       this.visible = true;
     },
-    //弹窗关闭
+    // 弹窗关闭
     close() {
       this.$refs["rulesForm"].resetFields();
       this.rulesForm = rulesForm;
       this.checkList = clone(checkList);
     },
-    //提交
+    // 提交
     onsubmit() {
       this.$refs["rulesForm"].validate((valid) => {
         if (valid) {
@@ -314,18 +315,23 @@ export default {
       });
     },
 
-    //权限模块-全选
+    // 权限模块-全选
     handleCheckAllChange(val, key) {
       this.checkList[key].checkedData = val ? this.checkList[key].options : [];
       this.checkList[key].isIndeterminate = false;
     },
-    //权限模块-单选
+    // 权限模块-单选
     handleCheckedItemChange(val, key) {
       let count = val.length;
       this.checkList[key].checkAll =
         count === this.checkList[key].options.length;
       this.checkList[key].isIndeterminate =
         count > 0 && count < this.checkList[key].options.length;
+    },
+    // 姓名失焦去除所有空格
+    handleNameBlur() {
+      const { name } = this.rulesForm;
+      this.rulesForm.name = name.replace(/\s+/g, "");
     },
     // 时间控件做前后限制
     disabledStartDate(startTime) {
@@ -342,13 +348,13 @@ export default {
     },
   },
   computed: {
-    //上级机构名称(随上级机构Id联动)
+    // 上级机构名称(随上级机构Id联动)
     dynamicParentName() {
       const { parentId } = this.rulesForm;
       return ((this.parentOrg || []).filter((i) => i.id === parentId)[0] || {})
         .value;
     },
-    //是否延期或续签 (随合同结束日期联动)
+    // 是否延期或续签 (随合同结束日期 || 机构类型 联动)
     isContractTypeDisplay() {
       const { type } = this.rulesForm;
       const isOvertime =
