@@ -125,10 +125,6 @@
         </BreadCrumb>
         <div class="table-content">
           <div class="table-content-btn">
-            <!-- <el-button type="primary" @click="isChecked = !this.isChecked">{{
-              batchHandleText
-            }}</el-button>
-            <el-button type="primary" @click="handleExport">导出</el-button> -->
             <el-button
               type="primary"
               v-if="!isChecked"
@@ -222,9 +218,12 @@
             </el-table>
             <el-pagination
               @current-change="pageChange"
+              @size-change="sizeChange"
               background
               :current-page="page"
-              layout="total, prev, pager, next, jumper"
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
               :total="total"
             />
           </div>
@@ -304,18 +303,26 @@ export default {
         start: undefined,
         end: undefined,
       },
+      currentQueryParams: {
+        orgId: "",
+        status: "0",
+        type: -1,
+        start: undefined,
+        end: undefined,
+      },
       customerOptions: [], // 搜索框中的机构列表
       customerName: "",
       selectTimer: null,
       title: "全部",
       topOrgStatus,
       orgType,
-      tableData: [{}, {}, {}, {}],
+      tableData: [],
       multipleSelection: [],
       loading: false,
       isChecked: false,
       column: customerColumn,
       page: 1,
+      pageSize: 10,
       total: 0,
       isActive: 0,
       activities: [], // 域名机构列表
@@ -365,8 +372,10 @@ export default {
       let { id, customerName } = this.$route.params;
       if (id && id !== "all") {
         this.queryParams.orgId = id
-        this.customerName = customerName
-        this.customerOptions = [Object.assign({}, {value: customerName, id: id})]
+        this.currentQueryParams.orgId = id
+        // customer中可能有转换的字符，需要做替换
+        this.customerName = customerName.replace(/[$]/g, "/")
+        // this.customerOptions = [Object.assign({}, {value: this.customerName, id: id})]
       } else {
         // 查询机构 使得2查询框默认展示搜索数据
         this.getOrgList("")
@@ -378,10 +387,23 @@ export default {
     dom.setAttribute("maxLength", 100)
   },
   watch: {
-    $route() {
+    $route(to) {
       // 对路由变化作出响应...
-      // this.getList()
+      let {id, customerName} = to.params
+      if (id !== "all") {
+        this.queryParams.orgId = Number(id)
+        this.customerName = customerName
+      }
+      this.getOrgList("")
+      this.getList()
     },
+    isChecked (newVal) {
+      // isChecked字段变为false时，清空选中的数组
+      if (!newVal) {
+        this.multipleSelection = []
+        this.$refs.multipleTable.clearSelection();
+      }
+    }
   },
   methods: {
     getData(){
@@ -389,12 +411,13 @@ export default {
       this.getList();
     },
     // 获取列表数据
-    getList() {
+    getList(type) {
       console.log(toRaw(this.queryParams));
       // 处理搜索条件参数
       const params = {
-        ...toRaw(this.queryParams),
+        ...toRaw(type ? this.currentQueryParams : this.queryParams),
         page: this.page,
+        num: this.pageSize,
       };
       params.start && (params.start = dateUtils.formatStandardDate(params.start))
       params.end && (params.end = dateUtils.formatStandardDate(params.end))
@@ -407,6 +430,7 @@ export default {
           const { code, data } = res.data || {};
           if (code === 200) {
             const { list, page, total } = data.result || {};
+            // 需要对返回的数据进行空处理，变为"-"
             this.tableData = list.map(item => {
               let typeName = item.type ? "正式" : "试用"
               let startTime = item.startTime || "-"
@@ -447,24 +471,30 @@ export default {
     //排序
     handleSortChange({ prop, order }) {
       this.isChecked = false;
-      this.multipleSelection = []
+      // this.multipleSelection = []
       this.page = 1;
       let sort = {
         sortColumn: CUSTOMER_LIST[prop],
         sortOrder: CUSTOMER_LIST[order],
       };
-      this.queryParams = Object.assign(this.queryParams, sort)
-      this.getList();
+      this.currentQueryParams = Object.assign(this.currentQueryParams, sort)
+      this.getList("sort");
     },
     //翻页
     pageChange(page) {
       this.page = parseInt(page);
-      this.getList();
+      this.getList("page");
+    },
+    // 页数改变
+    sizeChange (size) {
+      console.log(size)
+      this.pageSize = size
+      this.getList("page");
     },
     //（取消）批量管理
     handleBatchCheck(isChecked) {
       this.isChecked = isChecked;
-      if (!isChecked) this.$refs.multipleTable.clearSelection();
+      // if (!isChecked) this.$refs.multipleTable.clearSelection();
     },
     //操作日志
     handleAction(params = {}) {
@@ -482,8 +512,8 @@ export default {
       switch (val) {
         case "1" :{
           // 开始日期赋值当天 结束日期置空
-          this.queryParams.start = nowDate
           this.queryParams.end = undefined
+          this.queryParams.start = nowDate
           break
         }
         case "2" :{
@@ -518,22 +548,24 @@ export default {
     // 搜索
     handleQuery () {
       debugger
-      let url = this.queryParams.orgId ? `/${this.customerName}/${this.queryParams.orgId}`  : "/全部/all"
-      this.$router.push(`/customerManagement${url}`);
+      // name字段中可能会出现"/"导致路由重定向到其它页面，需要替换"/"成其它字符
+      let name = this.customerName.replace(/\//g, "$")
+      let url = this.queryParams.orgId ? `/${name}/${this.queryParams.orgId}`  : "/全部/all"
       this.page = 1
       this.isChecked = false;
-      const { clearSelection, clearSort } = this.$refs.multipleTable;
-      clearSelection();
+      const { clearSort } = this.$refs.multipleTable;
       clearSort();
-      this.getList()
+      // 赋值currentQueryParams对象
+      this.currentQueryParams = {...this.queryParams}
+      this.$router.push(`/customerManagement${url}`);
+      // this.getList()
     },
 
     //清空搜索条件
     handleClear() {
       this.page = 1;
       this.isChecked = false;
-      const { clearSelection, clearSort } = this.$refs.multipleTable;
-      clearSelection();
+      const { clearSort } = this.$refs.multipleTable;
       clearSort();
       this.queryParams = {
         orgId: "",
@@ -543,7 +575,8 @@ export default {
         end: undefined,
       };
       this.$refs.CustomerTree.handleSelect("all")
-      this.customerOptions = []
+      // 赋值currentQueryParams对象
+      this.currentQueryParams = {...this.queryParams}
       this.getList();
     },
     //域名机构切换
@@ -565,8 +598,13 @@ export default {
         }
       });
     },
+
     handleExport(type) {
-      let text = "点击确定，将为您导出选中的所有信息"
+      if (!type && !this.multipleSelection.length) {
+        this.$message.warning("未选中数据")
+        return
+      }
+      let text = type ? "点击确定，将为您导出所有信息" : "点击确定，将为您导出选中的所有信息"
       let title = type ? "确认导出所有信息吗？" : "确认导出选中的所有信息吗？"
       const params = {
         condition: {
@@ -584,6 +622,7 @@ export default {
       // 处理选中的id
       params.idList = type ? [] : this.multipleSelection.map(item => item.id)
       $modalConfirm({ text, title }).then(() => {
+        this.isChecked = false
         AdminApi.orgExport(params).then(res => {
           let {status} = res
           if (status === 200) {
@@ -621,20 +660,25 @@ export default {
     },
     // 左侧树点击事件
     customerTreeClick(val, obj) {
-      // 通过路由控制，改变右侧表格数据
+      // 改变路由后带参 以便刷新获取id和name做逻辑操作
       let url = "/customerManagement"
       if (val && val === 'all') {
         this.queryParams.orgId = ""
         this.customerName = "全部"
         url += `/全部/all`
       } else {
-        this.customerOptions = [Object.assign(obj, {value: obj.name})]
         this.customerName = obj.name
         this.queryParams.orgId = obj.id
-        url += `/${obj.name}/${obj.id}`
+        // this.remoteMethod(this.customerName)
+        // name字段中可能会出现"/"导致路由重定向到其它页面，需要替换"/"成其它字符
+        let name = obj.name.replace(/\//g, "$")
+        url += `/${name}/${obj.id}`
       }
+      this.currentQueryParams = {...this.queryParams}
+      this.isChecked = false
+      this.$refs.multipleTable.clearSort()
       this.$router.push(url);
-      this.getList()
+      // this.getList()
     },
 
     // 保存顶级机构名称
@@ -645,14 +689,15 @@ export default {
     // 日期控件做前后限制
     disabledStartDate (startTime) {
       if (this.queryParams.end) {
-        return startTime.getTime() > this.queryParams.end.getTime()
+        let time = dateUtils.formatStandardDate(this.queryParams.end)
+        return startTime.getTime() > new Date(time + " 00:00:00").getTime()
       }
     },
     disabledEndDate (endTime) {
       if (this.queryParams.start) {
-        return endTime.getTime() < this.queryParams.start.getTime()
+        let time = dateUtils.formatStandardDate(this.queryParams.start)
+        return endTime.getTime() < new Date(time + " 00:00:00").getTime()
       }
-      console.log(endTime, this.queryParams.start)
     },
 
     remoteMethod (val) {
@@ -667,9 +712,12 @@ export default {
         this.selectTimer = null
       }, 300)
     },
+
     // 查询机构数据
     getOrgList (val) {
-      AdminApi.simpleListOrg(val).then((res) => {
+      // 去除字符串中的空格
+      let data = val.replace(/\s/g, "")
+      AdminApi.simpleListOrg(data).then((res) => {
         const { code, data } = res.data || {}
         if (code === 200) {
           this.customerOptions = data
@@ -681,16 +729,13 @@ export default {
       })
     },
 
+    // 查询完之后给多选框下拉列表赋值
     setCustomerName (val) {
       let arr = this.customerOptions.filter(item => item.id === val)
       this.customerName = arr[0].value
+      this.getOrgList("")
     },
-  },
-  computed: {
-    batchHandleText: function () {
-      return this.isChecked ? "取消批量管理" : "批量管理";
-    },
-  },
+  }
 };
 </script>
 
