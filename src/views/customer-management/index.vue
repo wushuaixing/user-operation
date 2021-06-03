@@ -390,7 +390,6 @@ export default {
     },
     // 获取列表数据
     getList() {
-      console.log(toRaw(this.queryParams));
       // 处理搜索条件参数
       const params = {
         ...toRaw(this.queryParams),
@@ -652,7 +651,6 @@ export default {
       if (this.queryParams.start) {
         return endTime.getTime() < this.queryParams.start.getTime()
       }
-      console.log(endTime, this.queryParams.start)
     },
 
     remoteMethod (val) {

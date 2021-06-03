@@ -24,7 +24,7 @@ const rulesFormOptions = {
     end: {
       required: true,
       message: "合同结束日期不允许为空",
-      trigger: "change",
+      trigger: ["blur", "change"],
     },
     parentId: {
       required: true,
