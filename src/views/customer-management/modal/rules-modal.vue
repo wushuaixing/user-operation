@@ -71,8 +71,8 @@
         prop="contractType"
       >
         <el-radio-group v-model="rulesForm.contractType" size="medium">
-          <el-radio :label="1">延期</el-radio>
-          <el-radio :label="2">签约</el-radio>
+          <el-radio :label="2">延期</el-radio>
+          <el-radio :label="1">签约</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item
