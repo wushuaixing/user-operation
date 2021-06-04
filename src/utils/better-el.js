@@ -1,19 +1,19 @@
-import WarningIcon from "@/assets/img/warn-icon.png";
-import { ElMessageBox } from "element-plus";
+import WarningIcon from '@/assets/img/warn-icon.png';
+import { ElMessageBox } from 'element-plus';
 
 const $modalConfirm = (params = {}) => {
   const { text, title, color = '#4E5566' } = params;
-  const _html = (
+  const html = (
     <div class="yc-confirm-modal">
       <div class="yc-confirm-modal-title">
         <img src={WarningIcon} alt="" />
         <span>{title}</span>
       </div>
-      {text && <div className="yc-confirm-modal-body" style={{color}}>{text}</div>}
+      {text && <div className="yc-confirm-modal-body" style={{ color }}>{text}</div>}
     </div>
   );
   return ElMessageBox({
-    message: _html,
+    message: html,
     title: null,
     showClose: false,
     dangerouslyUseHTMLString: true,
@@ -21,4 +21,4 @@ const $modalConfirm = (params = {}) => {
   });
 };
 
-export { $modalConfirm };
+export default $modalConfirm;

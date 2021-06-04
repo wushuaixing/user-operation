@@ -4,7 +4,7 @@
       <div class="container-main">
         <header>
           <h1>{{ data.title }}</h1>
-          <p>发布日期：{{ $filters.date_(data.publishTime) }}</p>
+          <p>发布日期：{{ $filters.formatDate(data.publishTime) }}</p>
         </header>
         <div class="yc-line" />
         <div v-html="data.content" class="html-template" />
@@ -14,13 +14,13 @@
         <ul>
           <li v-for="item in basicInfo" :key="item.key">
             <div>{{ item.label }}：</div>
-            <div>{{ $filters._show(data[item.key]) }}</div>
+            <div>{{ $filters.undefinedShow(data[item.key]) }}</div>
           </li>
           <li>
             <div>当事人：</div>
             <div>
               <p :class="toggle ? '' : 'appellors'">
-                {{ $filters._show(data.appellors) }}
+                {{ $filters.undefinedShow(data.appellors) }}
               </p>
               <p
                 v-if="ellipsisBtnVisible"
@@ -45,12 +45,12 @@
 </template>
 
 <script>
-import CommonApi from "@/server/api/common";
-import copy from "copy-to-clipboard";
+import CommonApi from '@/server/api/common';
+import copy from 'copy-to-clipboard';
 
 export default {
-  name: "documentDetail",
-  nameComment: "文书详情",
+  name: 'documentDetail',
+  nameComment: '文书详情',
   // TODO uncultivated
   data() {
     return {
@@ -59,24 +59,24 @@ export default {
       toggle: false,
       basicInfo: [
         {
-          label: "审理法院",
-          key: "court",
+          label: '审理法院',
+          key: 'court',
         },
         {
-          label: "案件类型",
-          key: "caseType",
+          label: '案件类型',
+          key: 'caseType',
         },
         {
-          label: "案由",
-          key: "reason",
+          label: '案由',
+          key: 'reason',
         },
         {
-          label: "审理程序",
-          key: "trialRound",
+          label: '审理程序',
+          key: 'trialRound',
         },
         {
-          label: "裁判日期",
-          key: "trialDate",
+          label: '裁判日期',
+          key: 'trialDate',
         },
       ],
     };
@@ -102,7 +102,7 @@ export default {
     copy() {
       const { url } = this.data;
       copy(url);
-      this.$message.success("复制成功");
+      this.$message.success('复制成功');
     },
   },
 };

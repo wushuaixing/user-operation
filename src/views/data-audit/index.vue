@@ -169,18 +169,18 @@
 
 <script>
 // TODO uncultivated
-import BreadCrumb from "@/components/bread-crumb";
-import { toRaw } from "vue";
+import BreadCrumb from '@/components/bread-crumb/index.vue';
+import { toRaw } from 'vue';
 import {
   AUCTION_STATUS,
   DEBTORES_TYPE,
   ACTION_TYPE,
   dataAuditTabs,
-} from "@/utils/static";
+} from '@/utils/static';
 
 export default {
-  name: "dataAudit",
-  nameComment: "数据审核",
+  name: 'dataAudit',
+  nameComment: '数据审核',
   components: {
     BreadCrumb,
   },
@@ -189,62 +189,62 @@ export default {
       options: [],
       list: [
         {
-          label: "恒丰银行域名机构",
-          value: "1",
+          label: '恒丰银行域名机构',
+          value: '1',
         },
         {
-          label: "光大银行域名机构",
-          value: "2",
+          label: '光大银行域名机构',
+          value: '2',
         },
       ],
-      value: "",
+      value: '',
       loading: false,
       data: [
         {
-          label: "待审核机构",
+          label: '待审核机构',
           children: [
             {
-              label: "四川天府银行 (100)",
-              id: "10",
+              label: '四川天府银行 (100)',
+              id: '10',
               children: [
                 {
-                  label: "分行清收小组 (30)",
-                  id: "100",
+                  label: '分行清收小组 (30)',
+                  id: '100',
                 },
                 {
-                  label: "惠普清收-李四 (30)",
-                  id: "101",
+                  label: '惠普清收-李四 (30)',
+                  id: '101',
                 },
                 {
-                  label: "清收小组-章三 (40)",
-                  id: "102",
+                  label: '清收小组-章三 (40)',
+                  id: '102',
                 },
               ],
             },
           ],
         },
         {
-          label: "全部试用机构",
+          label: '全部试用机构',
           children: [
             {
-              label: "文琴银行杭州分行",
-              id: "20",
+              label: '文琴银行杭州分行',
+              id: '20',
               children: [
                 {
-                  label: "家驹清收小组（11）",
-                  id: "200",
+                  label: '家驹清收小组（11）',
+                  id: '200',
                   children: [
                     {
-                      label: "家驹清收小组（222）",
-                      id: "2000",
+                      label: '家驹清收小组（222）',
+                      id: '2000',
                       children: [
                         {
-                          label: "家驹清收小组（3333）",
-                          id: "20000",
+                          label: '家驹清收小组（3333）',
+                          id: '20000',
                           children: [
                             {
-                              label: "家驹清收小组（44444）",
-                              id: "200000",
+                              label: '家驹清收小组（44444）',
+                              id: '200000',
                             },
                           ],
                         },
@@ -255,37 +255,37 @@ export default {
               ],
             },
             {
-              label: "壮钰银行杭州分行",
-              id: "24320",
+              label: '壮钰银行杭州分行',
+              id: '24320',
               children: [
                 {
-                  label: "壮钰清收小组",
-                  id: "2432420",
+                  label: '壮钰清收小组',
+                  id: '2432420',
                 },
               ],
             },
           ],
         },
         {
-          label: "全部负责机构 (10)",
+          label: '全部负责机构 (10)',
           children: [
             {
-              label: "夏云银行南阳分行",
-              id: "424",
+              label: '夏云银行南阳分行',
+              id: '424',
               children: [
                 {
-                  label: "夏云清收小组",
-                  id: "300",
+                  label: '夏云清收小组',
+                  id: '300',
                 },
               ],
             },
             {
-              label: "王川银行河南分行",
-              id: "31443",
+              label: '王川银行河南分行',
+              id: '31443',
               children: [
                 {
-                  label: "王川清收小组",
-                  id: "3042420",
+                  label: '王川清收小组',
+                  id: '3042420',
                 },
               ],
             },
@@ -293,24 +293,24 @@ export default {
         },
       ],
       defaultProps: {
-        children: "children",
-        label: "label",
+        children: 'children',
+        label: 'label',
       },
-      title: "",
+      title: '',
       params: {
-        name: "",
-        title: "",
-        orgName: "",
-        approveStatus: "",
-        actionStatus: "",
-        status: "",
-        updateTime: "",
-        startTime: "",
+        name: '',
+        title: '',
+        orgName: '',
+        approveStatus: '',
+        actionStatus: '',
+        status: '',
+        updateTime: '',
+        startTime: '',
         important: 0,
       },
       matchNum: 20,
       noReadNum: 10,
-      tabKey: "0",
+      tabKey: '0',
       AUCTION_STATUS,
       DEBTORES_TYPE,
       ACTION_TYPE,
@@ -322,9 +322,7 @@ export default {
   methods: {
     remoteMethod(query) {
       if (query) {
-        this.options = this.list.filter((item) => {
-          return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
-        });
+        this.options = this.list.filter((item) => item.label.toLowerCase().indexOf(query.toLowerCase()) > -1);
       } else {
         this.options = [];
       }
