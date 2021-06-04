@@ -103,9 +103,9 @@
                 :props="defaultProps"
                 :expand-on-click-node="false">
                 <template #default="{ node }">
-                  <span class="custom-tree-node">
-                    <span class="node-id">{{node.id}}</span>
-                    <span>{{ node.label }}</span>
+                  <span class="custom-tree-node" :style="node.id % 2 == 0 ? 'background: #F6F7FA' : ''">
+                    <span class="node-id">{{node.key}}</span>
+                    <span class="node-name">{{ node.label }}</span>
                   </span>
                 </template>
               </el-tree>
@@ -164,18 +164,18 @@
                 style="width: 100%">
                 <el-table-column
                   prop="phone"
-                  width="120"
+                  width="140"
                   label="账号">
                 </el-table-column>
                 <el-table-column
                   prop="name"
-                  width="120"
+                  width="110"
                   label="姓名"
                   >
                 </el-table-column>
                 <el-table-column
-                  prop="role"
-                  width="120"
+                  prop="roleName"
+                  width="110"
                   label="角色">
                 </el-table-column>
                 <el-table-column
@@ -294,6 +294,7 @@ export default {
       },
       activeCustonerName: "",
       isHasOrg: true, // 是否有子机构
+      roleList: [], // 角色列表 modal中创建编辑账号使用
     };
   },
   computed: {
@@ -316,6 +317,15 @@ export default {
     // 从路由获取id 调用接口获取机构详情数据
     let {id} = this.$route.params
     this.getOrgDetailData(id, "init")
+    // 获取角色列表
+    AdminApi.getSimpleListRole().then(res => {
+      const {code, message, data} = res.data || {}
+      if (code === 200) {
+        this.roleList = data
+      } else {
+        console.log(message)
+      }
+    })
   },
   methods: {
     // 获取页面机构详情数据
@@ -343,7 +353,10 @@ export default {
       AdminApi.detailSubOrg(id).then((res) => {
         let {code, data, message} = res.data
         if (code === 200) {
-          this.accountData = data.users
+          this.accountData = data.users.map((item) => {
+            let name = item.role === "196" ? "查询用户" : "管理员用户"
+            return Object.assign({}, item, {roleName: name})
+          })
         } else {
           this.$message.error(message)
         }
@@ -375,6 +388,9 @@ export default {
       this.isHasOrg = Boolean(subOrg.length)
       this.subOrgData = subOrg
     },
+    showNode(node) {
+      console.log(node)
+    }
   },
 };
 </script>
@@ -487,8 +503,17 @@ export default {
             .node-id {
               position: absolute;
               left: 20px;
+              font-size: 14px;
+              color: #20242E;
+            }
+            .node-name {
+              color: #20242E;
+              font-size: 14px;
             }
           }
+        }
+        .el-tree-node__content:nth-of-type(2n) {
+          background: #F6F7FA !important;
         }
         .el-tree-node__content > .el-tree-node__expand-icon {
           margin-left: 45px !important;

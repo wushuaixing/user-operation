@@ -81,7 +81,7 @@ const AdminApi = {
 
   //详情-本级账号-角色查询
   getSimpleListRole: () =>
-    axios.get("/admin/organization/detail/simpleListRole"),
+    axios.get("/api/admin/organization/detail/simpleListRole"),
 
   //详情-客户使用机构详情
   detailSubOrg: (id) => axios.get(`/api/admin/organization/detail/subOrg?id=${id}`),
