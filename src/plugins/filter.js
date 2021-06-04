@@ -1,12 +1,12 @@
-import { dateUtils } from "@/utils";
+import { dateUtils } from '@/utils';
 
 const filters = {
-  _show(val) {
-    if (!val) return "-";
+  undefinedShow(val) {
+    if (!val) return '-';
     return val;
   },
-  date_(val) {
-    if (!val) return "-";
+  formatDate(val) {
+    if (!val) return '-';
     return dateUtils.formatStandardDate(val);
   },
 };

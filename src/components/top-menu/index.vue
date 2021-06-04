@@ -94,34 +94,34 @@
 </template>
 
 <script>
-import logoImg from "@/assets/img/top_logo.png";
-import { encryptEditPwd } from "@/utils/encrypt";
-import { toRaw } from "vue";
-import LoginApi from "@/server/api/login";
-import { $modalConfirm } from "@/utils/better-el";
+import logoImg from '@/assets/img/top_logo.png';
+import { encryptEditPwd } from '@/utils/encrypt';
+import { toRaw } from 'vue';
+import LoginApi from '@/server/api/login';
+import $modalConfirm from '@/utils/better-el';
 
 export default {
-  name: "index",
-  nameComment: "顶部导航栏",
+  name: 'index',
+  nameComment: '顶部导航栏',
   data() {
     const validateOld = (rule, value, callback) => {
-      if (this.form.newPassword !== "") {
-        this.$refs.editPwdForm.validateField("newPassword");
+      if (this.form.newPassword !== '') {
+        this.$refs.editPwdForm.validateField('newPassword');
       }
       callback();
     };
     const validateNew = (rule, value, callback) => {
       if (value === this.form.oldPassword) {
-        callback(new Error("新密码不能与原密码一致"));
+        callback(new Error('新密码不能与原密码一致'));
       }
-      if (this.form.confirmPassword !== "") {
-        this.$refs.editPwdForm.validateField("confirmPassword");
+      if (this.form.confirmPassword !== '') {
+        this.$refs.editPwdForm.validateField('confirmPassword');
       }
       callback();
     };
     const validateConfirm = (rule, value, callback) => {
       if (value !== this.form.newPassword) {
-        callback(new Error("密码不一致"));
+        callback(new Error('密码不一致'));
       } else {
         callback();
       }
@@ -131,27 +131,27 @@ export default {
       visible: false,
       iconToggle: false,
       form: {
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
       },
       formOptions: {
         options: {
-          labelPosition: "right",
-          labelWidth: "146px",
+          labelPosition: 'right',
+          labelWidth: '146px',
           destroyOnClose: true,
         },
         rules: {
           oldPassword: [
-            { required: true, message: "请输入原密码", trigger: "change" },
-            { validator: validateOld, trigger: "blur" },
+            { required: true, message: '请输入原密码', trigger: 'change' },
+            { validator: validateOld, trigger: 'blur' },
           ],
           newPassword: [
-            { required: true, message: "请输入新密码", trigger: "blur" },
-            { min: 6, message: "密码小于6位", trigger: ["blur", "change"] },
-            { validator: validateNew, trigger: "blur" },
+            { required: true, message: '请输入新密码', trigger: 'blur' },
+            { min: 6, message: '密码小于6位', trigger: ['blur', 'change'] },
+            { validator: validateNew, trigger: 'blur' },
           ],
-          confirmPassword: [{ validator: validateConfirm, trigger: "change" }],
+          confirmPassword: [{ validator: validateConfirm, trigger: 'change' }],
         },
       },
     };
@@ -159,21 +159,21 @@ export default {
   props: {
     name: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   methods: {
     onSubmit() {
-      this.$refs["editPwdForm"].validate((valid) => {
+      this.$refs.editPwdForm.validate((valid) => {
         if (valid) {
           const { oldPassword, newPassword } = encryptEditPwd(toRaw(this.form));
           LoginApi.editPassword({ oldPassword, newPassword }).then((res) => {
             if (res.data.code === 200) {
               this.$message.success({
-                message: "密码修改成功",
+                message: '密码修改成功',
                 onClose: () => {
                   localStorage.clear();
-                  this.$router.push("/login");
+                  this.$router.push('/login');
                   this.visible = false;
                 },
               });
@@ -185,14 +185,14 @@ export default {
       });
     },
     resetForm() {
-      this.$refs["editPwdForm"].resetFields();
+      this.$refs.editPwdForm.resetFields();
     },
     loginOut() {
-      $modalConfirm({ title: "确认要退出登录吗?" })
+      $modalConfirm({ title: '确认要退出登录吗?' })
         .then(() => {
           LoginApi.loginOut().then(() => {
             localStorage.clear();
-            this.$router.push("/login");
+            this.$router.push('/login');
           });
         })
         .catch((err) => {

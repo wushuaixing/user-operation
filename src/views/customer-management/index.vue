@@ -279,19 +279,19 @@
 </template>
 
 <script>
-import { topOrgStatus, orgType, CUSTOMER_LIST } from "@/utils/static";
-import BreadCrumb from "@/components/bread-crumb";
-import { customerColumn } from "@/static/column";
-import { toRaw } from "vue";
-import AdminApi from "@/server/api/admin";
-import RulesModal from "@/views/customer-management/modal/rules-modal";
-import CustomerTree from "./component/CustomerTree";
-import { $modalConfirm } from "@/utils/better-el";
-import { dateUtils, fileDownload } from "@/utils";
+import { topOrgStatus, orgType, CUSTOMER_LIST } from '@/utils/static';
+import BreadCrumb from '@/components/bread-crumb/index.vue';
+import { customerColumn } from '@/static/column';
+import { toRaw } from 'vue';
+import AdminApi from '@/server/api/admin';
+import RulesModal from '@/views/customer-management/modal/rules-modal.vue';
+import $modalConfirm from '@/utils/better-el';
+import { dateUtils, fileDownload } from '@/utils';
+import CustomerTree from './component/CustomerTree.vue';
 
 export default {
-  name: "customerManagement",
-  nameComment: "客户管理",
+  name: 'customerManagement',
+  nameComment: '客户管理',
   components: {
     RulesModal,
     BreadCrumb,
@@ -300,22 +300,22 @@ export default {
   data() {
     return {
       queryParams: {
-        orgId: "",
-        status: "0",
+        orgId: '',
+        status: '0',
         type: -1,
         start: undefined,
         end: undefined,
       },
       currentQueryParams: {
-        orgId: "",
-        status: "0",
+        orgId: '',
+        status: '0',
         type: -1,
         start: undefined,
         end: undefined,
       },
       customerOptions: [], // 搜索框中的机构列表
       selectTimer: null,
-      title: "全部",
+      title: '全部',
       topOrgStatus,
       orgType,
       tableData: [],
@@ -333,82 +333,82 @@ export default {
       activeKey: -1,
       editable: false, // 是否可编辑
       customerObj: { // 选中的域名机构详情
-        subDomain: "",
-        createTime: "",
+        subDomain: '',
+        createTime: '',
         topCooperateOrgNum: 0,
         formalOrgNum: 0,
         trialOrgNum: 0,
-        domainId:'',
-        domainName:'',
+        domainId: '',
+        domainName: '',
       },
       addOrgVisible: false,
       addOrgForm: {
-        subDomain: "",
-        name: "",
+        subDomain: '',
+        name: '',
       },
       rulesForm: {},
       addOrgFormOptions: {
         options: {
-          labelPosition: "right",
-          labelWidth: "120px",
+          labelPosition: 'right',
+          labelWidth: '120px',
           destroyOnClose: true,
-          class: "add-org-modal",
+          class: 'add-org-modal',
         },
         rules: {
           subDomain: [
-            { required: true, message: "二级域名不允许为空", trigger: "change" },
+            { required: true, message: '二级域名不允许为空', trigger: 'change' },
           ],
           name: [
-            { required: true, message: "机构名称不允许为空", trigger: "change" },
+            { required: true, message: '机构名称不允许为空', trigger: 'change' },
           ],
         },
       },
     };
   },
   created() {
-    this.getCuntomerTreeData()
+    this.getCuntomerTreeData();
     // 查询机构 使得2查询框默认展示搜索数据
-    this.getOrgList("")
+    this.getOrgList('');
   },
   mounted() {
     // 点击浏览器刷新时，响应 对带参做处理
     this.$nextTick(() => {
-      let { id } = this.$route.params;
-      if (id && id !== "all") {
-        this.queryParams.orgId = Number(id)
-        this.currentQueryParams.orgId = Number(id)
+      const { id } = this.$route.params;
+      if (id && id !== 'all') {
+        this.queryParams.orgId = Number(id);
+        this.currentQueryParams.orgId = Number(id);
       }
-      this.getList()
-    })
+      this.getList();
+    });
     // 给机构搜索select框添加最大输入长度
-    let dom = document.getElementById("org-select")
-    dom.setAttribute("maxLength", 100)
+    const dom = document.getElementById('org-select');
+    dom.setAttribute('maxLength', 100);
   },
   watch: {
     $route(to) {
       // 对路由变化作出响应...
-      let {id} = to.params
+      const { id } = to.params;
       if (id) {
-        if (id !== "all") {
-          this.queryParams.orgId = Number(id)
+        if (id !== 'all') {
+          this.queryParams.orgId = Number(id);
         }
       } else {
-        this.queryParams.orgId = ""
-        this.$refs.CustomerTree.setStatusAll()
+        this.queryParams.orgId = '';
+        this.$refs.CustomerTree.setStatusAll();
       }
-      this.getOrgList("")
-      this.getList()
+      this.getOrgList('');
+      this.getList();
     },
-    isChecked (newVal) {
+    isChecked(newVal) {
       // isChecked字段变为false时，清空选中的数组
       if (!newVal) {
-        this.multipleSelection = []
+        this.multipleSelection = [];
         this.$refs.multipleTable.clearSelection();
       }
-    }
+    },
   },
   methods: {
-    getData(){
+    getData() {
       this.getCuntomerTreeData();
       this.getList();
     },
@@ -421,10 +421,10 @@ export default {
         page: this.page,
         num: this.pageSize,
       };
-      params.start && (params.start = dateUtils.formatStandardDate(params.start))
-      params.end && (params.end = dateUtils.formatStandardDate(params.end))
+      if (params.start) params.start = dateUtils.formatStandardDate(params.start);
+      if (params.end) params.end = dateUtils.formatStandardDate(params.end);
       if (params.type === -1) {
-        delete params.type
+        delete params.type;
       }
       this.loading = true;
       AdminApi.searchOrg(params)
@@ -433,312 +433,312 @@ export default {
           if (code === 200) {
             const { list, page, total } = data.result || {};
             // 需要对返回的数据进行空处理，变为"-"
-            this.tableData = list.map(item => {
-              let typeName = item.type ? "正式" : "试用"
-              let startTime = item.startTime || "-"
-              return Object.assign(item, {typeName: typeName, startTime: startTime})
+            this.tableData = list.map((item) => {
+              const typeName = item.type ? '正式' : '试用';
+              const startTime = item.startTime || '-';
+              return Object.assign(item, { typeName, startTime });
             });
             this.total = total;
             this.page = page;
             // 若不是全部机构 则赋值机构详情 customerObj
-            const {detail} = data
+            const { detail } = data;
             if (detail && Object.keys(detail).length > 0) {
-              this.editable = true
-              this.customerObj = Object.assign(this.customerObj, detail)
-              this.title = `${detail.domainName}（ID：${detail.domainId}）`
-              this.activeKey = detail.domainId
+              this.editable = true;
+              this.customerObj = Object.assign(this.customerObj, detail);
+              this.title = `${detail.domainName}（ID：${detail.domainId}）`;
+              this.activeKey = detail.domainId;
             } else {
               this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`;
-              this.editable = false
+              this.editable = false;
             }
           } else {
-            this.$message.error("请求出错");
+            this.$message.error('请求出错');
           }
         })
         .finally(() => this.loading = false);
     },
     // 获取左侧树 数据
-    getCuntomerTreeData () {
-      AdminApi.orgListDomain().then(res => {
-        const {code, data} = res.data || {}
+    getCuntomerTreeData() {
+      AdminApi.orgListDomain().then((res) => {
+        const { code, data } = res.data || {};
         if (code === 200) {
-          const {list, totalOrgNum, totalOperatedOrgNum} = data
-          this.activities = list
-          this.totalOrgNum = totalOrgNum
-          this.totalOperatedOrgNum = totalOperatedOrgNum
+          const { list, totalOrgNum, totalOperatedOrgNum } = data;
+          this.activities = list;
+          this.totalOrgNum = totalOrgNum;
+          this.totalOperatedOrgNum = totalOperatedOrgNum;
         }
-      })
+      });
     },
-    //排序
+    // 排序
     handleSortChange({ prop, order }) {
       this.isChecked = false;
       // this.multipleSelection = []
       this.page = 1;
-      let sort = {
+      const sort = {
         sortColumn: CUSTOMER_LIST[prop],
         sortOrder: CUSTOMER_LIST[order],
       };
-      this.currentQueryParams = Object.assign(this.currentQueryParams, sort)
-      this.getList("sort");
+      this.currentQueryParams = Object.assign(this.currentQueryParams, sort);
+      this.getList('sort');
     },
-    //翻页
+    // 翻页
     pageChange(page) {
-      this.page = parseInt(page);
-      this.getList("page");
+      this.page = parseInt(page, 10);
+      this.getList('page');
     },
     // 页数改变
-    sizeChange (size) {
-      console.log(size)
-      this.pageSize = size
-      this.getList("page");
+    sizeChange(size) {
+      console.log(size);
+      this.pageSize = size;
+      this.getList('page');
     },
-    //（取消）批量管理
+    // （取消）批量管理
     handleBatchCheck(isChecked) {
       this.isChecked = isChecked;
       // if (!isChecked) this.$refs.multipleTable.clearSelection();
     },
-    //操作日志
+    // 操作日志
     handleAction(params = {}) {
       console.log(params);
     },
 
     // 点击一行跳转详情页
-    rowClick (row) {
-      let {id} = row
-      window.open(`/customerDetail/${id}`, "_blank")
+    rowClick(row) {
+      const { id } = row;
+      window.open(`/customerDetail/${id}`, '_blank');
     },
 
     // 机构状态改变 结束日期改变
-    statusChange (val) {
-      let nowDate = new Date()
+    statusChange(val) {
+      const nowDate = new Date();
       switch (val) {
-        case "1" :{
+        case '1': {
           // 开始日期赋值当天 结束日期置空
-          this.queryParams.end = undefined
-          this.queryParams.start = nowDate
-          break
+          this.queryParams.end = undefined;
+          this.queryParams.start = nowDate;
+          break;
         }
-        case "2" :{
+        case '2': {
           // 开始日期置空 结束日期赋值昨天
-          this.queryParams.start = undefined
-          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000)
-          break
+          this.queryParams.start = undefined;
+          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000);
+          break;
         }
-        case "3" :{
+        case '3': {
           // 开始日期今天 结束日期：今天+两个月
-          this.queryParams.start = new Date()
-          nowDate.setMonth(nowDate.getMonth() + 2)
-          this.queryParams.end = nowDate
-          break
+          this.queryParams.start = new Date();
+          nowDate.setMonth(nowDate.getMonth() + 2);
+          this.queryParams.end = nowDate;
+          break;
         }
-        case "4" :{
+        case '4': {
           // 开始日期：昨天-两个月  结束日期：昨天
-          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000)
-          let date = new Date(nowDate.getTime() - 24 * 3600 * 1000)
-          date.setMonth(date.getMonth() - 2)
-          this.queryParams.start = date
-          break
+          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000);
+          const date = new Date(nowDate.getTime() - 24 * 3600 * 1000);
+          date.setMonth(date.getMonth() - 2);
+          this.queryParams.start = date;
+          break;
         }
         default:
-          break
+          break;
       }
     },
-    endTimeChange () {
-      this.queryParams.status = "0"
+    endTimeChange() {
+      this.queryParams.status = '0';
     },
 
     // 搜索
-    handleQuery () {
-      this.page = 1
+    handleQuery() {
+      this.page = 1;
       this.isChecked = false;
       const { clearSort } = this.$refs.multipleTable;
       clearSort();
       // 赋值currentQueryParams对象
-      this.currentQueryParams = {...this.queryParams}
-      let url = this.queryParams.orgId ? `/${this.queryParams.orgId}`  : "/all"
-      url = `/customerManagement${url}`
+      this.currentQueryParams = { ...this.queryParams };
+      let url = this.queryParams.orgId ? `/${this.queryParams.orgId}` : '/all';
+      url = `/customerManagement${url}`;
       if (this.isOrgIdChange(url)) {
         this.$router.push(url);
       } else {
-        this.getList()
+        this.getList();
       }
     },
     // 判断orgId是否变化
-    isOrgIdChange (url) {
-      let {path} = this.$route
-      return path !== url
+    isOrgIdChange(url) {
+      const { path } = this.$route;
+      return path !== url;
     },
-    //清空搜索条件
+    // 清空搜索条件
     handleClear() {
       this.page = 1;
       this.isChecked = false;
       const { clearSort } = this.$refs.multipleTable;
       clearSort();
       this.queryParams = {
-        orgId: "",
-        status: "0",
+        orgId: '',
+        status: '0',
         type: -1,
         start: undefined,
         end: undefined,
       };
-      this.$refs.CustomerTree.handleSelect("all")
+      this.$refs.CustomerTree.handleSelect('all');
       // 赋值currentQueryParams对象
-      this.currentQueryParams = {...this.queryParams}
+      this.currentQueryParams = { ...this.queryParams };
     },
-    //域名机构切换
+    // 域名机构切换
     handleAddOrg() {
-      this.$refs["addOrgForm"].validate((valid) => {
+      this.$refs.addOrgForm.validate((valid) => {
         if (valid) {
           console.log(toRaw(this.addOrgForm));
           AdminApi.addDomain(this.addOrgForm).then((res) => {
-            let {code, message} = res.data
+            const { code, message } = res.data;
             if (code === 200) {
-              this.$message.success("域名机构创建成功")
+              this.$message.success('域名机构创建成功');
               // 关闭弹窗 刷新左侧树
-              this.addOrgVisible = false
-              this.getCuntomerTreeData()
+              this.addOrgVisible = false;
+              this.getCuntomerTreeData();
             } else {
-              this.$message.warning(message)
+              this.$message.warning(message);
             }
-          })
+          });
         }
       });
     },
 
     handleExport(type) {
       if (!type && !this.multipleSelection.length) {
-        this.$message.warning("未选中数据")
-        return
+        this.$message.warning('未选中数据');
+        return;
       }
-      let text = type ? "点击确定，将为您导出所有信息" : "点击确定，将为您导出选中的所有信息"
-      let title = type ? "确认导出所有信息吗？" : "确认导出选中的所有信息吗？"
+      const text = type ? '点击确定，将为您导出所有信息' : '点击确定，将为您导出选中的所有信息';
+      const title = type ? '确认导出所有信息吗？' : '确认导出选中的所有信息吗？';
       const params = {
         condition: {
           ...toRaw(this.queryParams),
           page: this.page,
         },
-        idList: []
+        idList: [],
       };
       // 处理查询条件
-      params.condition.start && (params.condition.start = dateUtils.formatStandardDate(params.condition.start))
-      params.condition.end && (params.condition.end = dateUtils.formatStandardDate(params.condition.end))
+      if (params.condition.start) params.condition.start = dateUtils.formatStandardDate(params.condition.start);
+      if (params.condition.end) params.condition.end = dateUtils.formatStandardDate(params.condition.end);
       if (params.condition.type === -1) {
-        delete params.condition.type
+        delete params.condition.type;
       }
       // 处理选中的id
-      params.idList = type ? [] : this.multipleSelection.map(item => item.id)
+      params.idList = type ? [] : this.multipleSelection.map((item) => item.id);
       $modalConfirm({ text, title }).then(() => {
-        this.isChecked = false
-        AdminApi.orgExport(params).then(res => {
-          let {status} = res
+        this.isChecked = false;
+        AdminApi.orgExport(params).then((res) => {
+          const { status } = res;
           if (status === 200) {
-            fileDownload(res)
+            fileDownload(res);
           } else {
-            this.$message.error("导出失败!")
+            this.$message.error('导出失败!');
           }
-        })}
-      ).catch((err) => {
-          console.log(err);
         });
+      }).catch((err) => {
+        console.log(err);
+      });
     },
     resetAddOrgForm() {
-      this.$refs["addOrgForm"].resetFields();
+      this.$refs.addOrgForm.resetFields();
     },
     // 打开弹窗 域名机构以及顶级机构创建
-    showModal (sign,params = {}) {
-      this.isChecked = false
-      if(sign === 'edit'){
+    showModal(sign, params = {}) {
+      this.isChecked = false;
+      if (sign === 'edit') {
         const { id } = params;
-        AdminApi.orgPermission(id).then((res)=>{
+        AdminApi.orgPermission(id).then((res) => {
           const { code, data = {} } = res.data || {};
-          if(code === 200){
-            this.$refs.RulesModal.open(data,false);
-          }else {
+          if (code === 200) {
+            this.$refs.RulesModal.open(data, false);
+          } else {
             this.$message.error('请求错误');
           }
-        })
-      }else {
-        if (this.editable) {
-          this.$refs.RulesModal.open(toRaw(this.customerObj), true);
-        } else {
-          this.addOrgVisible = true
-        }
+        });
+      } else if (this.editable) {
+        this.$refs.RulesModal.open(toRaw(this.customerObj), true);
+      } else {
+        this.addOrgVisible = true;
       }
     },
     // 左侧树点击事件
     customerTreeClick(val, obj) {
       // 改变路由后带参 以便刷新获取id和name做逻辑操作
-      let url = "/customerManagement"
+      let url = '/customerManagement';
       if (val && val === 'all') {
-        this.queryParams.orgId = ""
-        url += `/all`
+        this.queryParams.orgId = '';
+        url += '/all';
       } else {
-        this.queryParams.orgId = obj.id
-        url += `/${obj.id}`
+        this.queryParams.orgId = obj.id;
+        url += `/${obj.id}`;
       }
-      this.currentQueryParams = {...this.queryParams}
-      this.isChecked = false
-      this.$refs.multipleTable.clearSort()
+      this.currentQueryParams = { ...this.queryParams };
+      this.isChecked = false;
+      this.$refs.multipleTable.clearSort();
       if (this.isOrgIdChange(url)) {
         this.$router.push(url);
       } else {
-        this.getList()
+        this.getList();
       }
     },
 
     // 保存顶级机构名称
-    saveName (name) {
-      console.log(name)
+    saveName(name) {
+      console.log(name);
     },
 
     // 日期控件做前后限制
-    disabledStartDate (startTime) {
+    disabledStartDate(startTime) {
       if (this.queryParams.end) {
-        let time = dateUtils.formatStandardDate(this.queryParams.end)
-        return startTime.getTime() > new Date(time + " 00:00:00").getTime()
+        const time = dateUtils.formatStandardDate(this.queryParams.end);
+        return startTime.getTime() > new Date(`${time} 00:00:00`).getTime();
       }
+      return false;
     },
-    disabledEndDate (endTime) {
+    disabledEndDate(endTime) {
       if (this.queryParams.start) {
-        let time = dateUtils.formatStandardDate(this.queryParams.start)
-        return endTime.getTime() < new Date(time + " 00:00:00").getTime()
+        const time = dateUtils.formatStandardDate(this.queryParams.start);
+        return endTime.getTime() < new Date(`${time} 00:00:00`).getTime();
       }
+      return false;
     },
 
-    remoteMethod (val) {
+    remoteMethod(val) {
       if (this.selectTimer) {
-        clearTimeout(this.selectTimer)
-        this.selectTimer = null
+        clearTimeout(this.selectTimer);
+        this.selectTimer = null;
       }
       this.selectTimer = setTimeout(() => {
         // 调用接口查询
-        this.getOrgList(val)
-        clearTimeout(this.selectTimer)
-        this.selectTimer = null
-      }, 300)
+        this.getOrgList(val);
+        clearTimeout(this.selectTimer);
+        this.selectTimer = null;
+      }, 300);
     },
 
     // 查询机构数据
-    getOrgList (val) {
+    getOrgList(val) {
       // 去除字符串中的空格
-      let data = val.replace(/\s/g, "")
-      AdminApi.simpleListOrg(data).then((res) => {
-        const { code, data } = res.data || {}
+      const field = val.replace(/\s/g, '');
+      AdminApi.simpleListOrg(field).then((res) => {
+        const { code, data } = res.data || {};
         if (code === 200) {
-          this.customerOptions = data
+          this.customerOptions = data;
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
       }).catch((err) => {
-        console.log(err)
-      })
+        console.log(err);
+      });
     },
 
     // 查询完之后给多选框下拉列表赋值
-    setCustomerName () {
-      this.getOrgList("")
+    setCustomerName() {
+      this.getOrgList('');
     },
-  }
+  },
 };
 </script>
 

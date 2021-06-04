@@ -13,29 +13,39 @@
               <div class="item">
                 <span class="item-label">剩余账号数</span>：
                 <span v-if="!customerData.isAccountLimit">不限</span>
-                <span v-else><span class="item-bold">{{customerData.restAccountCount}}</span>/{{customerData.accountLimitCount}}</span>
+                <span v-else><span class="item-bold">
+                  {{customerData.restAccountCount}}</span>/{{customerData.accountLimitCount}}
+                </span>
               </div>
               <div class="item">
                 <span class="item-label">剩余子机构数</span>：
                 <span v-if="!customerData.isSubOrgLimit">不限</span>
-                <span v-else><span class="item-bold">{{customerData.restSubOrgCount}}</span>/{{customerData.subOrgLimitCount}}</span>
+                <span v-else><span class="item-bold">
+                  {{customerData.restSubOrgCount}}</span>/{{customerData.subOrgLimitCount}}
+                </span>
               </div>
             </div>
             <div class="useDetail-right">
               <div class="item">
                 <span class="item-label1">剩余画像查询次数</span>：
                 <span v-if="!customerData.isPortraitLimit">不限</span>
-                <span v-else><span class="item-bold">{{customerData.restPortraitCount}}</span>/{{customerData.portraitLimitCount}}</span>
+                <span v-else><span class="item-bold">
+                  {{customerData.restPortraitCount}}</span>/{{customerData.portraitLimitCount}}
+                </span>
               </div>
               <div class="item">
                 <span class="item-label1">剩余分类搜索次数</span>：
                 <span v-if="!customerData.isClassifiedLimit">不限</span>
-                <span v-else><span class="item-bold">{{customerData.restClassifiedCount}}</span>/{{customerData.classifiedLimitCount}}</span>
+                <span v-else><span class="item-bold">
+                  {{customerData.restClassifiedCount}}</span>/{{customerData.classifiedLimitCount}}
+                </span>
               </div>
               <div class="item">
                 <span class="item-label1">剩余监控债务人数</span>：
                 <span v-if="!customerData.isObligorLimit">不限</span>
-                <span v-else><span class="item-bold">{{customerData.restObligorCount}}</span>/{{customerData.obligorLimitCount}}</span>
+                <span v-else><span class="item-bold">
+                  {{customerData.restObligorCount}}</span>/{{customerData.obligorLimitCount}}
+                </span>
               </div>
             </div>
             <div class="linkAddress">
@@ -53,7 +63,11 @@
                 color="#296DD3"
                 :key="index">
                 <div>
-                  <span>{{`${acountList[index]}次续签起止日期：${activity.start || "-"} 至 ${activity.end || "-"}`}}</span>
+                  <span>
+                    {{
+                      `${acountList[index]}次续签起止日期：${activity.start || "-"} 至 ${activity.end || "-"}`
+                    }}
+                  </span>
                   <span class="open" @click="showContractMessage" v-if="contractRecord.length > 3 && index === contractList.length - 1">
                     <span v-if="showStatus === 'close'">展开<i class="el-icon-arrow-down" style="margin-left: 7px;"></i></span>
                     <span v-else>收起<i class="el-icon-arrow-up" style="margin-left: 7px;"></i></span>
@@ -235,10 +249,11 @@
 </template>
 
 <script>
-import AdminApi from "@/server/api/admin";
+import AdminApi from '@/server/api/admin';
+
 export default {
-  name: "CustomerDetail",
-  nameComment: "机构详情",
+  name: 'CustomerDetail',
+  nameComment: '机构详情',
   components: {
 
   },
@@ -246,7 +261,7 @@ export default {
     return {
       loading: false, // 整页loading
       customerData: {
-        name: "",
+        name: '',
         id: 0,
         // 账号数
         isAccountLimit: 0, // 是否限制 0：否  1：是
@@ -268,15 +283,14 @@ export default {
         isSubOrgLimit: 0,
         subOrgLimitCount: 0,
         restSubOrgCount: 0,
-
         type: 0,
-		    url: "cmbc.yczcjk.com",
+        url: 'cmbc.yczcjk.com',
       },
       contractShowIndex: 3,
       delayShowIndex: 3,
-      showStatus: "close",
-      delayShowStatus: "close",
-      acountList: ["首", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"],
+      showStatus: 'close',
+      delayShowStatus: 'close',
+      acountList: ['首', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
       contractRecord: [
       ],
       delayRecord: [
@@ -284,96 +298,96 @@ export default {
       scrollShow: false,
       accountPage: 1,
       accountTotal: 0,
-      searchValue: "",
+      searchValue: '',
       subOrgData: [],
       accountData: [],
       treeData: [],
       defaultProps: {
-        children: "subOrg",
-        label: "name",
+        children: 'subOrg',
+        label: 'name',
       },
-      activeCustonerName: "",
+      activeCustonerName: '',
       isHasOrg: true, // 是否有子机构
     };
   },
   computed: {
-    title () {
-      return `顶级合作机构：${this.customerData.name} (ID：${this.customerData.id})`
+    title() {
+      return `顶级合作机构：${this.customerData.name} (ID：${this.customerData.id})`;
     },
-    contractList () {
-      return this.contractRecord.filter(( item, index) => {
-        return index < this.contractShowIndex
-      })
+    contractList() {
+      return this.contractRecord.filter((item, index) => index < this.contractShowIndex);
     },
-    delayList () {
-      return this.delayRecord.filter(( item, index) => {
-        return index < this.delayShowIndex
-      })
-    }
+    delayList() {
+      return this.delayRecord.filter((item, index) => index < this.delayShowIndex);
+    },
   },
   created() {
-    document.title = "顶级机构详情页";
+    document.title = '顶级机构详情页';
     // 从路由获取id 调用接口获取机构详情数据
-    let {id} = this.$route.params
-    this.getOrgDetailData(id, "init")
+    const { id } = this.$route.params;
+    this.getOrgDetailData(id, 'init');
   },
   methods: {
     // 获取页面机构详情数据
-    getOrgDetailData (id, type = "") {
+    getOrgDetailData(id, type = '') {
       AdminApi.orgDetail(id).then((res) => {
-        let {code, data, message} = res.data
+        const { code, data, message } = res.data;
         if (code === 200) {
           // 进行赋值
-          let {contractRecord, delayRecord, tree, ...customerData} = data
-          this.customerData = customerData
-          contractRecord.length && (this.contractRecord = contractRecord)
-          delayRecord.length && (this.delayRecord = delayRecord)
-          type && (this.activeCustonerName = tree.name)
-          this.treeData = [tree]
-          type && (this.subOrgData = tree.subOrg)
-          type && this.getAccountData(id)
+          const {
+            contractRecord, delayRecord, tree, ...customerData
+          } = data;
+          this.customerData = customerData;
+          if (contractRecord.length) this.contractRecord = contractRecord;
+          if (delayRecord.length) this.delayRecord = delayRecord;
+          if (type) this.activeCustonerName = tree.name;
+          this.treeData = [tree];
+          if (type) {
+            this.subOrgData = tree.subOrg;
+            this.getAccountData(id);
+          }
         } else {
           this.$message.error(message);
         }
-      })
+      });
     },
 
     // 获取本级账号数据
-    getAccountData (id) {
+    getAccountData(id) {
       AdminApi.detailSubOrg(id).then((res) => {
-        let {code, data, message} = res.data
+        const { code, data, message } = res.data;
         if (code === 200) {
-          this.accountData = data.users
+          this.accountData = data.users;
         } else {
-          this.$message.error(message)
+          this.$message.error(message);
         }
-      })
+      });
     },
     // 展开收起
-    showContractMessage () {
-      this.contractShowIndex = this.showStatus === "open" ? 3 : this.contractRecord.length
-      this.showStatus = this.contractShowIndex === 3 ? "close" : "open"
+    showContractMessage() {
+      this.contractShowIndex = this.showStatus === 'open' ? 3 : this.contractRecord.length;
+      this.showStatus = this.contractShowIndex === 3 ? 'close' : 'open';
     },
-    showdelayMessage () {
-      this.delayShowIndex = this.delayShowStatus === "open" ? 3 : this.delayRecord.length
-      this.delayShowStatus = this.delayShowIndex === 3 ? "close" : "open"
+    showdelayMessage() {
+      this.delayShowIndex = this.delayShowStatus === 'open' ? 3 : this.delayRecord.length;
+      this.delayShowStatus = this.delayShowIndex === 3 ? 'close' : 'open';
     },
 
     // 固钉状态改变
-    affixChange (val) {
-      this.scrollShow = val
+    affixChange(val) {
+      this.scrollShow = val;
     },
 
     // 子机构列表
-    handleSubOrgDelete () {},
-    handleSubOrgEdit () {},
-    accountPageChange () {},
-    treeClick (obj) {
-      let {name, id, subOrg} = obj
-      this.activeCustonerName = name
-      this.getAccountData(id)
-      this.isHasOrg = Boolean(subOrg.length)
-      this.subOrgData = subOrg
+    handleSubOrgDelete() {},
+    handleSubOrgEdit() {},
+    accountPageChange() {},
+    treeClick(obj) {
+      const { name, id, subOrg } = obj;
+      this.activeCustonerName = name;
+      this.getAccountData(id);
+      this.isHasOrg = Boolean(subOrg.length);
+      this.subOrgData = subOrg;
     },
   },
 };
