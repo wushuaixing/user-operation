@@ -37,7 +37,7 @@ export const adminRoutes = [
         component: () => import("@/views/account-management"),
       },
       {
-        path: "/customerManagement/:customerName?/:id?",
+        path: "/customerManagement/:id?",
         name: "CustomerManagement",
         component: () => import("@/views/customer-management"),
       },
@@ -51,8 +51,9 @@ export const adminRoutes = [
   {
     path: "/customerDetail/:id",
     name: "customerDetail",
-    component: () => import("@/views/customer-management/component/CustomerDetail"),
-  }
+    component: () =>
+      import("@/views/customer-management/component/CustomerDetail"),
+  },
 ];
 
 export const ruleProcess = (_this) => {
@@ -103,4 +104,3 @@ export const userMenu = [
     key: "DocumentSearch",
   },
 ];
-

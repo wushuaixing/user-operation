@@ -23,6 +23,7 @@
         style="margin-bottom: 11px"
       >
         <el-input
+          
           v-model="rulesForm.name"
           autocomplete="off"
           maxlength="100"
@@ -83,6 +84,7 @@
           v-model="rulesForm.parentId"
           placeholder="请选择上级机构ID"
           v-if="!isAdd"
+          filterable
         >
           <el-option
             v-for="item in parentOrg"
@@ -341,11 +343,17 @@ export default {
       return startTime.valueOf() > _endTime;
     },
     disabledEndDate(endTime) {
-      const startTime = this.isAdd ? this.rulesForm.start : this.endTime;
+      const { start } = this.rulesForm;
+      const _date = (i) => new Date(i).valueOf() || 0;
+      const _maxTime = Math.max(_date(start), _date(this.endTime));
+      const startTime = this.isAdd ? _date(start) : _maxTime;
       if (!endTime || !startTime) return false;
-      const _startTime = new Date(startTime).valueOf() - 86400000;
+      const _startTime = startTime - 86400000;
       return endTime.valueOf() <= _startTime;
     },
+    timeChange () {
+      document.querySelector('.inputName').querySelector('input').focus()
+    }
   },
   computed: {
     // 上级机构名称(随上级机构Id联动)
@@ -356,11 +364,10 @@ export default {
     },
     // 是否延期或续签 (随合同结束日期 || 机构类型 联动)
     isContractTypeDisplay() {
-      const { type } = this.rulesForm;
       const isOvertime =
         new Date(this.rulesForm.end).valueOf() >
         new Date(this.endTime).valueOf();
-      return !this.isAdd && isOvertime && type === 1;
+      return !this.isAdd && isOvertime && this.disabledType === 1;
     },
   },
 };
