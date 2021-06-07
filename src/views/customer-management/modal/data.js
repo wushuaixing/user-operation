@@ -335,7 +335,7 @@ const rulesForm = {
   id: '',
   name: '',
   type: 1, // 机构类型
-  contractType: 1, // 签约类型
+  contractType: 0, // 签约类型
   start: undefined, // 合同起始日期
   end: undefined, // 合同结束日期
   parentId: '', // 上级机构id

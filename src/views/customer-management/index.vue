@@ -213,7 +213,7 @@
                   <el-divider direction="vertical"></el-divider>
                   <el-button
                     type="text"
-                    @click.stop="handleAction(scope.row, 'logs')"
+                    @click.stop="handleAction(scope.row)"
                     >操作日志
                   </el-button>
                 </template>
@@ -499,7 +499,11 @@ export default {
     },
     // 操作日志
     handleAction(params = {}) {
-      console.log(params);
+      const { name, id } = params;
+      this.$router.push({
+        path: '/OperationLog',
+        query: { name, id },
+      });
     },
 
     // 点击一行跳转详情页

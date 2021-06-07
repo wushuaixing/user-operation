@@ -128,4 +128,27 @@ const customerColumn = [
   },
 ];
 
-export { accountManagementColumn, taskAssignColumn, customerColumn };
+// 操作日志列表
+const operationColumn = [
+  {
+    prop: 'time',
+    label: '操作时间',
+    width: '290',
+    class: 'time',
+  },
+  {
+    prop: 'operator',
+    label: '操作人',
+    width: '256',
+    class: 'operator',
+  },
+  {
+    prop: 'title',
+    label: '操作模块',
+    width: '288',
+    class: 'title',
+  },
+];
+export {
+  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn,
+};
