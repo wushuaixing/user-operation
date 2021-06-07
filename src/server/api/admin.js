@@ -76,7 +76,10 @@ const AdminApi = {
   orgListDomain: () => axios.get('/api/admin/organization/listDomain'),
 
   // 操作日志
-  orgListOrgLog: (params) => axios.post('/admin/organization/listOrgLog', clearEmpty(params)),
+  orgListOrgLog: (params) => axios.post('/api/admin/organization/listOrgLog', clearEmpty(params)),
+
+  // 操作日志-操作人列表
+  operatorList: () => axios.get('/api/admin/organization/operatorList'),
 
   // 机构权限查询
   orgPermission: (id) => axios.get(`/api/admin/organization/permission?id=${id}`),

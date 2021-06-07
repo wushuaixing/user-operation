@@ -137,6 +137,58 @@ const orgType = {
   试用: 0,
 };
 
+// 操作日志-操作模块
+const operaModuleList = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '创建顶级合作机构',
+    value: 1,
+  },
+  {
+    label: '编辑机构名称',
+    value: 2,
+  },
+  {
+    label: '修改机构类型',
+    value: 3,
+  },
+  {
+    label: '修改合同起止日期',
+    value: 4,
+  },
+  {
+    label: '修改上级机构',
+    value: 5,
+  },
+  {
+    label: '修改画像查询次数',
+    value: 6,
+  },
+  {
+    label: '修改分类搜索次数',
+    value: 7,
+  },
+  {
+    label: '修改监控债务人数',
+    value: 8,
+  },
+  {
+    label: '修改配置子机构数',
+    value: 9,
+  },
+  {
+    label: '修改配置账号数',
+    value: 10,
+  },
+  {
+    label: '修改资产监控权限',
+    value: 11,
+  },
+];
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -147,4 +199,5 @@ export {
   taskAssignTabs,
   topOrgStatus,
   orgType,
+  operaModuleList,
 };

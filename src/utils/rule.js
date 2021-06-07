@@ -53,6 +53,11 @@ export const adminRoutes = [
     name: 'customerDetail',
     component: () => import('@/views/customer-management/component/CustomerDetail.vue'),
   },
+  {
+    path: '/operationLog',
+    name: 'OperationLog',
+    component: () => import('@/views/customer-management/component/operation-log.vue'),
+  },
 ];
 
 export const ruleProcess = (_this) => {
