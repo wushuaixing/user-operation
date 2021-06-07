@@ -1,7 +1,7 @@
 <template>
   <div class="yc-newpage-contaner">
     <section class="main-wrapper operation-log-wrapper">
-      <BreadCrumb :text="`操作日志${name}`" />
+      <BreadCrumb :text="`操作日志-${name}`" />
       <div class="query-content">
         <el-form :inline="true" :model="params" class="query-form" ref="formRef">
           <el-form-item label="操作人：" prop="uid">
@@ -81,8 +81,9 @@
             :key="item.class"
             :class-name="item.class"
           />
-          <el-table-column label="操作">
+          <el-table-column label="操作内容">
             <template #default="scope">
+              <span>别测试-待联调-</span>
               <span>{{scope.row.before}}</span>
               <span>{{scope.row.after}}</span>
             </template>
