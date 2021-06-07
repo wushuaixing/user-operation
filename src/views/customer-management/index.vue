@@ -500,10 +500,11 @@ export default {
     },
     // 操作日志
     handleAction(params = {}) {
-      const { name, id } = params;
+      const { name, id, type } = params;
+      const text = type ? '正式' : '试用';
       const routerData = this.$router.resolve({
         path: '/OperationLog',
-        query: { name, id },
+        query: { name: `${name}（${text}）`, id },
       });
       window.open(routerData.href, '_blank');
     },

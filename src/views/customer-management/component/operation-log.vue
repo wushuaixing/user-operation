@@ -81,7 +81,7 @@
             :key="item.class"
             :class-name="item.class"
           />
-          <el-table-column label="操作内容">
+          <el-table-column label="操作内容" width="556px">
             <template #default="scope">
               <span :style="{display:show(scope.row).display}">{{show(scope.row).before}}</span>
               <span v-if=" show(scope.row).after && (show(scope.row).display !=='block')" style="margin: 0 8px">
@@ -104,7 +104,7 @@
           :total="total"
         />
       </div>
-    </section>>
+    </section>
   </div>
 </template>
 
@@ -196,6 +196,7 @@ export default {
     // 清空搜索条件
     resetParams() {
       this.$refs.formRef.resetFields();
+      this.page = 1;
       this.getList();
     },
     // 换页
@@ -284,7 +285,14 @@ export default {
       }
     }
     .table-content{
-      padding: 20px;
+      padding: 16px 20px 20px;
+      .el-table__body-wrapper{
+          .el-table__body{
+            td{
+              padding: 15px 0 !important;
+            }
+          }
+      }
     }
   }
 </style>
