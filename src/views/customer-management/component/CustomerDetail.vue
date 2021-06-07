@@ -102,24 +102,40 @@
               客户使用机构
             </div>
             <div class="customer-tree">
-              <el-input
-                placeholder="请输入内容"
-                v-model="searchValue">
-                <template #prefix>
-                  <i class="el-input__icon el-icon-search"></i>
-                </template>
-              </el-input>
+              <el-select
+                style="width: 100%"
+                id="org-select"
+                v-model="searchValue"
+                filterable
+                remote
+                placeholder="请输入机构名称"
+                :remote-method="handleSearch"
+                @change="setTree"
+              >
+                <el-option
+                  v-for="item in searchList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+              <div class="tree-title">
+                <span>ID</span>
+                <span>机构名称</span>
+              </div>
               <el-tree
+                ref="orgTree"
                 :data="treeData"
                 node-key="id"
+                highlight-current
                 @node-click="treeClick"
                 default-expand-all
                 :props="defaultProps"
                 :expand-on-click-node="false">
                 <template #default="{ node }">
                   <span class="custom-tree-node">
-                    <span class="node-id">{{node.id}}</span>
-                    <span>{{ node.label }}</span>
+                    <span class="node-id">{{node.key}}</span>
+                    <span class="node-name">{{ node.label }}</span>
                   </span>
                 </template>
               </el-tree>
@@ -132,11 +148,21 @@
             <div class="list" v-if="isHasOrg">
               <div class="list-header">
                 <span class="title">子机构列表</span>
-                <el-button type="primary" icon="el-icon-plus">创建子机构</el-button>
+                <el-button
+                  type="primary"
+                  icon="el-icon-plus"
+                  v-if="(customerData.isSubOrgLimit && customerData.restSubOrgCount > 0) || !customerData.isSubOrgLimit"
+                  @click="handleAction({}, 'org', 'add')"
+                >创建子机构</el-button>
               </div>
               <el-table
                 :data="subOrgData"
+                class="list-table"
                 style="width: 100%">
+                <template #empty>
+                  <img src="../../../assets/img/no_data.png" alt="" />
+                  <p>暂无数据</p>
+                </template>
                 <el-table-column
                   prop="id"
                   label="ID">
@@ -154,14 +180,14 @@
                   <template #default="scope">
                     <el-button
                       type="text"
-                      @click="handleSubOrgDelete(scope.row)"
+                      @click="handleDelete(scope.row, 'org')"
                     >
                       删除
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
-                      @click="handleSubOrgEdit(scope.row)"
+                      @click="handleAction(scope.row, 'org', 'edit')"
                       >编辑
                     </el-button>
                   </template>
@@ -171,25 +197,35 @@
             <div class="list">
               <div class="list-header">
                 <span class="title">本级机构账号</span>
-                <el-button type="primary" icon="el-icon-plus">创建本级机构</el-button>
+                <el-button
+                  type="primary"
+                  icon="el-icon-plus"
+                  v-if="(customerData.isAccountLimit && customerData.restAccountCount > 0) || !customerData.isAccountLimit"
+                  @click="handleAction({}, 'account', 'add')"
+                >创建本级账号</el-button>
               </div>
               <el-table
                 :data="accountData"
+                class="list-table"
                 style="width: 100%">
+                <template #empty>
+                  <img src="../../../assets/img/no_data.png" alt="" />
+                  <p>暂无数据</p>
+                </template>
                 <el-table-column
                   prop="phone"
-                  width="120"
+                  width="140"
                   label="账号">
                 </el-table-column>
                 <el-table-column
                   prop="name"
-                  width="120"
+                  width="110"
                   label="姓名"
                   >
                 </el-table-column>
                 <el-table-column
-                  prop="role"
-                  width="120"
+                  prop="roleName"
+                  width="110"
                   label="角色">
                 </el-table-column>
                 <el-table-column
@@ -207,20 +243,20 @@
                   <template #default="scope">
                     <el-button
                       type="text"
-                      @click="handleSubOrgDelete(scope.row)"
+                      @click="handleDelete(scope.row, 'account')"
                     >
                       删除
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
-                      @click="handleSubOrgEdit(scope.row)"
+                      @click="handleAction(scope.row, 'account', 'edit')"
                       >编辑
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
-                      @click="handleSubOrgDelete(scope.row)"
+                      @click="handleDelete(scope.row, 'reset')"
                     >
                       重置密码
                     </el-button>
@@ -241,6 +277,12 @@
                 :total="accountTotal"
               />
             </div>
+            <OrgAccountModal
+              ref="OrgAccountModal"
+              :roleList="roleList"
+              :modalObj="modalObj"
+              @afterAction="afterAction"
+            ></OrgAccountModal>
           </div>
         </div>
       </el-affix>
@@ -250,16 +292,20 @@
 
 <script>
 import AdminApi from '@/server/api/admin';
+import OrgAccountModal from '@/views/customer-management/modal/OrgAccountModal.vue';
+import $modalConfirm from '@/utils/better-el';
 
 export default {
   name: 'CustomerDetail',
   nameComment: '机构详情',
   components: {
-
+    OrgAccountModal,
   },
   data() {
     return {
       loading: false, // 整页loading
+      activeOrgId: 0, // 当前选择的机构id 初始时是顶级机构id
+      activeLevel: 0, // 当前机构层级
       customerData: {
         name: '',
         id: 0,
@@ -298,7 +344,9 @@ export default {
       scrollShow: false,
       accountPage: 1,
       accountTotal: 0,
-      searchValue: '',
+      searchValue: '', // 树搜索字段
+      searchList: [], // 模糊查询出来的数组
+      selectType: '1',
       subOrgData: [],
       accountData: [],
       treeData: [],
@@ -308,6 +356,7 @@ export default {
       },
       activeCustonerName: '',
       isHasOrg: true, // 是否有子机构
+      roleList: [], // 角色列表 modal中创建编辑账号使用
     };
   },
   computed: {
@@ -320,12 +369,30 @@ export default {
     delayList() {
       return this.delayRecord.filter((item, index) => index < this.delayShowIndex);
     },
+    modalObj() {
+      return {
+        restAccountCount: this.customerData.restAccountCount,
+        level: this.activeLevel,
+        restSubOrgCount: this.customerData.restSubOrgCount,
+        id: this.activeOrgId,
+      };
+    },
   },
   created() {
     document.title = '顶级机构详情页';
     // 从路由获取id 调用接口获取机构详情数据
     const { id } = this.$route.params;
+    this.activeOrgId = id;
     this.getOrgDetailData(id, 'init');
+    // 获取角色列表
+    AdminApi.getSimpleListRole().then((res) => {
+      const { code, message, data } = res.data || {};
+      if (code === 200) {
+        this.roleList = data;
+      } else {
+        console.log(message);
+      }
+    });
   },
   methods: {
     // 获取页面机构详情数据
@@ -340,11 +407,16 @@ export default {
           this.customerData = customerData;
           if (contractRecord.length) this.contractRecord = contractRecord;
           if (delayRecord.length) this.delayRecord = delayRecord;
-          if (type) this.activeCustonerName = tree.name;
           this.treeData = [tree];
-          if (type) {
+          if (type === 'init') {
+            this.activeCustonerName = tree.name;
             this.subOrgData = tree.subOrg;
             this.getAccountData(id);
+            const { setCurrentKey } = this.$refs.orgTree;
+            setCurrentKey(id);
+          }
+          if (type === 'org') {
+            this.filterTreeNode(this.treeData, this.activeOrgId);
           }
         } else {
           this.$message.error(message);
@@ -357,7 +429,10 @@ export default {
       AdminApi.detailSubOrg(id).then((res) => {
         const { code, data, message } = res.data;
         if (code === 200) {
-          this.accountData = data.users;
+          this.accountData = data.users.map((item) => {
+            const name = item.role === '196' ? '查询用户' : '管理员用户';
+            return { ...item, roleName: name };
+          });
         } else {
           this.$message.error(message);
         }
@@ -378,16 +453,103 @@ export default {
       this.scrollShow = val;
     },
 
-    // 子机构列表
-    handleSubOrgDelete() {},
-    handleSubOrgEdit() {},
+    handleDelete(row, type) {
+      const params = {
+        id: row.id,
+      };
+      let title = '';
+      let text = '';
+      let api = null;
+      if (type === 'org') {
+        title = `确认删除机构${row.name}?`;
+        text = '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认';
+        api = AdminApi.detailDelSubOrg(params);
+      } else if (type === 'account') {
+        title = `确认删除${row.name}的账号`;
+        text = '点击确定，选中的账号将被删除，请再次确认';
+        api = AdminApi.detailDelOrgUser(params);
+      } else {
+        title = '确认重置密码';
+        text = '点击确定，密码将被重置为账号后6位';
+        api = AdminApi.detailResetPwd(params);
+      }
+      $modalConfirm({ text, title }).then(() => {
+        api.then((res) => {
+          const { code, message } = res.data || {};
+          if (code === 200) {
+            this.$message.success(message);
+            if (type !== 'reset') {
+              this.afterAction();
+            }
+          } else {
+            this.$message.error(message);
+          }
+        });
+      });
+    },
+    // 编辑 新增
+    handleAction(row, modelType, type) {
+      // modelType= org account     type= add edit
+      this.$refs.OrgAccountModal.open(type, modelType, row);
+    },
     accountPageChange() {},
+    // 树节点搜索
+    handleSearch(value) {
+      // treeData 树节点中模糊搜索输入字段
+      this.searchList = [];
+      this.filterTree(this.treeData, value);
+    },
+    filterTree(list, value) {
+      list.forEach((item) => {
+        if (item.subOrg.length) {
+          this.filterTree(item.subOrg, value);
+        }
+        if (item.name.indexOf(value) > -1) {
+          this.searchList.push(item);
+        }
+      });
+    },
+    // 设置树节点高亮
+    setTree(val) {
+      const node = this.searchList.filter((item) => item.id === val);
+      this.treeClick(node[0]);
+      const { setCurrentKey } = this.$refs.orgTree;
+      setCurrentKey(val);
+    },
+    // 树节点点击
     treeClick(obj) {
-      const { name, id, subOrg } = obj;
+      const {
+        name, id, subOrg, level,
+      } = obj;
+      this.activeOrgId = id;
+      this.activeLevel = level;
       this.activeCustonerName = name;
       this.getAccountData(id);
-      this.isHasOrg = Boolean(subOrg.length);
+      this.searchValue = '';
+      this.isHasOrg = (level - 2) < 5;
       this.subOrgData = subOrg;
+    },
+    // 新增，编辑结束刷新页面
+    afterAction() {
+      // 重新获取机构详情数据
+      const { id } = this.$route.params;
+      this.getOrgDetailData(id, 'org');
+      // 根据当前选中的子机构进行 树的选中
+      const { setCurrentKey } = this.$refs.orgTree;
+      setCurrentKey(this.activeOrgId);
+      // 根据选中的树节点加载 子机构列表数据
+      // 加载本级账号表格数据
+      this.getAccountData(this.activeOrgId);
+    },
+    filterTreeNode(list, value) {
+      list.forEach((item) => {
+        if (item.subOrg.length) {
+          this.filterTreeNode(item.subOrg, value);
+        }
+        if (item.id === value) {
+          this.subOrgData = item.subOrg;
+        }
+      });
     },
   },
 };
@@ -496,16 +658,35 @@ export default {
       .customer-tree /deep/ {
         padding: 20px;
         position: relative;
+        .tree-title {
+          padding: 12px 0 12px 20px;
+          font-size: 14px;
+          line-height: 14px;
+          font-weight: 600;
+          color: #4E5566;
+          span:first-child {
+            margin-right: 46px;
+          }
+        }
         .el-tree-node__content {
           .custom-tree-node {
             .node-id {
               position: absolute;
               left: 20px;
+              font-size: 14px;
+              color: #20242E;
+            }
+            .node-name {
+              color: #20242E;
+              font-size: 14px;
             }
           }
         }
+        .el-tree-node__content:nth-of-type(2n) {
+          background: #F6F7FA !important;
+        }
         .el-tree-node__content > .el-tree-node__expand-icon {
-          margin-left: 45px !important;
+          margin-left: 58px !important;
         }
       }
     }
@@ -521,6 +702,7 @@ export default {
           align-items: center;
           position: relative;
           margin-bottom: 18px;
+          height: 32px;
           .title {
             font-size: 16px;
             color: #20242E;
@@ -536,6 +718,11 @@ export default {
             top: 6px;
             left: 0;
             background: #296DD3;
+          }
+        }
+        :deep(.list-table){
+          .el-table__empty-text {
+            padding: 36px 0;
           }
         }
       }

@@ -13,7 +13,6 @@ const rsaEncrypt = (str) => {
   });
   return encrypted.toString();
 };
-
 /**
  * 加密password字段
  * @param info
