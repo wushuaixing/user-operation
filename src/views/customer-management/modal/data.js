@@ -31,11 +31,6 @@ const rulesFormOptions = {
       message: '请选择上级机构ID',
       trigger: 'change',
     },
-    parentName: {
-      required: true,
-      message: '上级机构名称不允许为空',
-      trigger: 'change',
-    },
     isPortraitLimit: {
       required: true,
       message: '请选择限制画像查询次数',
@@ -335,7 +330,7 @@ const rulesForm = {
   id: '',
   name: '',
   type: 1, // 机构类型
-  contractType: 1, // 签约类型
+  contractType: 0, // 签约类型
   start: undefined, // 合同起始日期
   end: undefined, // 合同结束日期
   parentId: '', // 上级机构id

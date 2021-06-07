@@ -71,8 +71,8 @@
         prop="contractType"
       >
         <el-radio-group v-model="rulesForm.contractType" size="medium">
-          <el-radio :label="1">延期</el-radio>
-          <el-radio :label="2">签约</el-radio>
+          <el-radio :label="2">延期</el-radio>
+          <el-radio :label="1">签约</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item
@@ -153,7 +153,7 @@
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
-              >{{ item.title }}</el-checkbox
+              >{{ item.title }}：</el-checkbox
             >
             <el-checkbox-group
               class="zcjk-rules-box-item-moduleList"
