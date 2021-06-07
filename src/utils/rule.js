@@ -58,6 +58,11 @@ export const adminRoutes = [
     name: 'OperationLog',
     component: () => import('@/views/customer-management/component/operation-log.vue'),
   },
+  {
+    path: '/operationRecord',
+    name: 'OperationRecord',
+    component: () => import('@/views/customer-management/component/OperationRecord.vue'),
+  },
 ];
 
 export const ruleProcess = (_this) => {

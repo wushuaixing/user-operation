@@ -46,7 +46,7 @@ const AdminApi = {
   detailAddSubOrg: (params) => axios.post('/api/admin/organization/detail/addSubOrg', params),
 
   // 详情-客户使用机构名称修改
-  detailEditName: (params) => axios.post('/admin/organization/detail/changeName', params),
+  detailEditName: (params) => axios.post('/api/admin/organization/detail/changeName', params),
 
   // 详情-编辑本级账号
   detailEditOrgUser: (params) => axios.post('/api/admin/organization/detail/changeOrgUser', params),
@@ -61,7 +61,7 @@ const AdminApi = {
   detailDelSubOrg: (params) => axios.post('/api/admin/organization/detail/deleteSubOrg', params),
 
   // 详情-机构用户操作记录
-  detailOrgUserLog: (params) => axios.post('/admin/organization/detail/orgUserLog', clearEmpty(params)),
+  detailOrgUserLog: (params) => axios.post('/api/admin/organization/detail/orgUserLog', clearEmpty(params)),
 
   // 详情-重置密码
   detailResetPwd: (params) => axios.post('/api/admin/organization/detail/resetPassword', params),
@@ -97,6 +97,12 @@ const AdminApi = {
 
   // 机构名称模糊查询
   simpleListOrg: (key) => axios.get(`/api/admin/organization/simpleListOrg?key=${key}`),
+
+  // 账号模糊搜索
+  simpleUser: (params) => axios.get(`/api/admin/organization/detail/simpleListUser?${queryApi(params)}`),
+
+  // 账号搜索
+  searchUser: (key) => axios.get(`/api/admin/organization/detail/searchUser?id=${key}`),
 };
 
 export default AdminApi;

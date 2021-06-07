@@ -8,13 +8,18 @@
     <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="145px">
       <template v-if="this.modalType === 'org'">
         <el-form-item label="机构名称：" prop="name">
-          <el-input v-model="orgForm.name" style="width: 300px;" maxlength="100"></el-input>
+          <el-input
+            v-model="orgForm.name"
+            style="width: 300px;"
+            maxlength="100"
+            placeholder="请输入机构名称"
+          ></el-input>
         </el-form-item>
         <el-form-item label="机构层级：" v-if="type === 'add'">
-          <span>{{modalObj.level + 1}}</span>
+          <span>{{modalObj.level - 1}}</span>
         </el-form-item>
         <el-form-item label="剩余机构数：" v-if="type === 'add'">
-          <span>{{modalObj.restSubOrgCount}}</span>
+          <span>{{modalObj.isSubOrgLimit ? modalObj.restSubOrgCount : '-'}}</span>
         </el-form-item>
         <el-form-item
           label="上级机构ID："
@@ -83,8 +88,8 @@
             <el-option v-for="item in roleList" :label="item.value" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="剩余账号数：">
-          <span>{{modalObj.restAccountCount}}</span>
+        <el-form-item label="剩余账号数：" v-if="type === 'add'">
+          <span>{{modalObj.isAccountLimit ? modalObj.restAccountCount : '-'}}</span>
         </el-form-item>
       </template>
     </el-form>
@@ -168,6 +173,7 @@ export default {
       this.modalType = modalType;
       if (type === 'edit') {
         this.editObj = { ...obj };
+        this.title = `编辑：${obj.name}`;
         if (modalType === 'org') {
           this.orgForm.name = obj.name;
           this.orgForm.parentId = obj.parentId;
@@ -185,7 +191,14 @@ export default {
           this.orgForm = { ...{ name, phone, roleId } };
         }
       } else {
-        this.orgForm = Object.assign(this.orgForm, {});
+        this.orgForm = Object.assign(this.orgForm, {
+          name: '',
+          phone: '',
+          password: '',
+          parentId: '',
+          roleId: 181,
+        });
+        this.title = modalType === 'org' ? '创建子机构' : '创建本级账号';
       }
       this.visible = true;
     },
