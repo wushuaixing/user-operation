@@ -500,10 +500,11 @@ export default {
     // 操作日志
     handleAction(params = {}) {
       const { name, id } = params;
-      this.$router.push({
+      const routerData = this.$router.resolve({
         path: '/OperationLog',
         query: { name, id },
       });
+      window.open(routerData.href, '_blank');
     },
 
     // 点击一行跳转详情页
