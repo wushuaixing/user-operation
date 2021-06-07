@@ -2,7 +2,7 @@
   <el-dialog
     :title="isAdd ? '创建顶级合作机构' : '权限管理'"
     v-model="visible"
-    width="666px"
+    width="712px"
     @close="close"
     custom-class="rules-modal"
   >
@@ -23,12 +23,11 @@
         style="margin-bottom: 11px"
       >
         <el-input
-
           v-model="rulesForm.name"
           autocomplete="off"
           maxlength="100"
           placeholder="请输入机构名称"
-          style="width: 468px"
+          style="width: 514px"
           @blur="handleNameBlur"
         />
       </el-form-item>
@@ -40,26 +39,26 @@
           <el-radio :label="1">正式</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="合同起止日期：" style="margin-bottom: 10px" required>
-        <el-col :span="11">
+      <el-form-item label="合同起止日期：" :style="{ marginBottom: isContractTypeDisplay||isAdd ? '11px' : '20px' }" required>
+        <el-col :span="12">
           <el-form-item prop="start">
             <el-date-picker
               type="date"
               placeholder="开始日期"
               v-model="rulesForm.start"
-              style="width: 219px"
+              style="width: 242px"
               :disabledDate="disabledStartDate"
             />
           </el-form-item>
         </el-col>
-        <el-col class="line" :span="2" style="margin: 0 10px">-</el-col>
+        <el-col class="line" :span="2" style="margin: 0 8px">至</el-col>
         <el-col :span="11">
           <el-form-item prop="end">
             <el-date-picker
               type="date"
               placeholder="结束日期"
               v-model="rulesForm.end"
-              style="width: 219px"
+              style="width: 242px"
               :disabledDate="disabledEndDate"
             />
           </el-form-item>
@@ -69,6 +68,7 @@
         label="是否延期或续签："
         v-if="isContractTypeDisplay"
         prop="contractType"
+        style="margin-bottom: 11px"
       >
         <el-radio-group v-model="rulesForm.contractType" size="medium">
           <el-radio :label="2">延期</el-radio>
@@ -78,13 +78,14 @@
       <el-form-item
         label="上级机构ID："
         :prop="isAdd ? '' : 'parentId'"
-        :style="{ margin: isAdd ? 0 : '20px 0' }"
+        :style="{ margin: isAdd ? 0 : '10px 0 20px' }"
       >
         <el-select
           v-model="rulesForm.parentId"
           placeholder="请选择上级机构ID"
           v-if="!isAdd"
           filterable
+          style="width: 514px"
         >
           <el-option
             v-for="item in parentOrg"
@@ -107,6 +108,7 @@
           maxlength="11"
           :disabled="true"
           placeholder="请输入上级机构名称"
+          style="width: 514px"
         />
         <span v-else>{{ $filters.undefinedShow(rulesForm.parentName) }}</span>
       </el-form-item>
@@ -115,7 +117,8 @@
         :label="`${item.label}：`"
         :key="item.val"
         :prop="item.val"
-        :style="{ marginBottom: rulesForm[item.val] ? '10px' : 0 }"
+        :style="{ marginBottom: rulesForm[item.val] ? '14px' : 0 }"
+        class="radio-item"
       >
         <el-col :span="10">
           <el-radio-group v-model="rulesForm[item.val]" size="medium">
@@ -125,7 +128,7 @@
             >
           </el-radio-group>
         </el-col>
-        <el-col :span="11">
+        <el-col :span="14" style="float: right;">
           <el-form-item
             label="上限："
             label-width="70px"
@@ -137,6 +140,7 @@
               autocomplete="off"
               :min="rulesForm[item.limit] || 0"
               :max="9999999999"
+              style="width: 216px"
             />
           </el-form-item>
         </el-col>
@@ -379,8 +383,42 @@ export default {
 
 <style lang="scss">
 .rules-modal {
+  .el-dialog__body{
+    height: 720px;
+    overflow: auto;
+    position: relative;
+    //滚动条的宽度
+    &::-webkit-scrollbar {
+      width:4px;
+    }
+
+    //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
+    &::-webkit-scrollbar-track {
+      width: 4px;
+      background-color:#FFF;
+    }
+
+    //滚动条的设置
+    &::-webkit-scrollbar-thumb {
+      background-color:#B2B8C9;
+      background-clip:padding-box;
+      min-height:49px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius:5px;
+    }
+    //滚动条移上去的背景
+
+    &::-webkit-scrollbar-thumb:hover{
+      background-color:#B2B8C9;
+    }
+    &::-webkit-scrollbar-track:hover{
+      background-color:#fff;
+    }
+  }
+
   &-form {
-    padding-right: 32px;
+    padding-right: 14px;
     .el-form-item {
       &__content {
         line-height: 32px !important;
@@ -389,18 +427,29 @@ export default {
         line-height: 32px !important;
       }
     }
+    .radio-item{
+      .el-form-item__content{
+        .el-form-item{
+          &__error{
+            left: 60px ;
+          }
+        }
+      }
+    }
     .zcjk-rules-box {
-      padding: 7px 16px 16px;
+      padding: 5px 0 16px 16px;
       border-radius: 2px;
       border: 1px solid #c5c7ce;
       &-item {
+        line-height: 20px !important;
         &-moduleType {
           font-weight: bold;
+          margin: 8px 0;
         }
         .el-checkbox {
-          min-width: 82px;
-          margin-right: 20px;
+          min-width: 118px;
           line-height: 20px !important;
+          margin-right: 0;
           &__label {
             padding-left: 8px;
           }

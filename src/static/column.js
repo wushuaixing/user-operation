@@ -133,19 +133,19 @@ const operationColumn = [
   {
     prop: 'time',
     label: '操作时间',
-    width: '290',
+    width: '271',
     class: 'time',
   },
   {
     prop: 'operator',
     label: '操作人',
-    width: '256',
+    width: '186',
     class: 'operator',
   },
   {
     prop: 'title',
     label: '操作模块',
-    width: '288',
+    width: '227',
     class: 'title',
   },
 ];
