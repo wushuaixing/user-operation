@@ -31,11 +31,6 @@ const rulesFormOptions = {
       message: '请选择上级机构ID',
       trigger: 'change',
     },
-    parentName: {
-      required: true,
-      message: '上级机构名称不允许为空',
-      trigger: 'change',
-    },
     isPortraitLimit: {
       required: true,
       message: '请选择限制画像查询次数',

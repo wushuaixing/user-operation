@@ -153,7 +153,7 @@
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
-              >{{ item.title }}</el-checkbox
+              >{{ item.title }}：</el-checkbox
             >
             <el-checkbox-group
               class="zcjk-rules-box-item-moduleList"
