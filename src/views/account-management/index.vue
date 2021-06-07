@@ -114,22 +114,23 @@
   </div>
 </template>
 <script>
-import AdminApi from "@/server/api/admin";
-import { toRaw } from "vue";
-import { encryptInfo } from "@/utils/encrypt";
-import { SORTER_TYPE } from "@/utils/static";
-import { accountManagementColumn } from "@/static/column";
-import { $modalConfirm } from "@/utils/better-el";
+import AdminApi from '@/server/api/admin';
+import { toRaw } from 'vue';
+import { encryptInfo } from '@/utils/encrypt';
+import { SORTER_TYPE } from '@/utils/static';
+import { accountManagementColumn } from '@/static/column';
+import $modalConfirm from '@/utils/better-el';
+
 export default {
-  name: "index",
-  nameComment: "账号管理-运营账号",
+  name: 'index',
+  nameComment: '账号管理-运营账号',
   data() {
     return {
       page: 1,
       params: {
         num: 10,
-        sortColumn: "",
-        sortOrder: "",
+        sortColumn: '',
+        sortOrder: '',
       },
       isTriggerCurrent: false,
       total: 0,
@@ -138,26 +139,26 @@ export default {
       accountList: [],
       visible: false,
       form: {
-        name: "",
-        phone: "",
-        password: "",
+        name: '',
+        phone: '',
+        password: '',
       },
       formOptions: {
         options: {
-          labelPosition: "right",
-          labelWidth: "126px",
+          labelPosition: 'right',
+          labelWidth: '126px',
           destroyOnClose: true,
-          class: "add-account-modal",
+          class: 'add-account-modal',
         },
         rules: {
-          name: [{ required: true, message: "请输入姓名", trigger: "change" }],
+          name: [{ required: true, message: '请输入姓名', trigger: 'change' }],
           phone: [
-            { required: true, message: "请输入手机号", trigger: "change" },
-            { min: 11, message: "账号小于11位", trigger: "change" },
+            { required: true, message: '请输入手机号', trigger: 'change' },
+            { min: 11, message: '账号小于11位', trigger: 'change' },
           ],
           password: [
-            { required: true, message: "请输入密码", trigger: "change" },
-            { min: 6, message: "密码小于6位", trigger: "change" },
+            { required: true, message: '请输入密码', trigger: 'change' },
+            { min: 6, message: '密码小于6位', trigger: 'change' },
           ],
         },
       },
@@ -165,18 +166,18 @@ export default {
   },
   created() {
     this.getList();
-    document.title = "运营账号";
+    document.title = '运营账号';
   },
   methods: {
-    //翻页
+    // 翻页
     pageChange(page) {
       if (!this.isTriggerCurrent) {
-        this.page = parseInt(page);
+        this.page = parseInt(page, 10);
         this.getList();
       }
       this.isTriggerCurrent = false;
     },
-    //pageSize 改变
+    // pageSize 改变
     sizeChange(num) {
       this.params = {
         ...this.params,
@@ -186,7 +187,7 @@ export default {
       this.page = 1;
       this.getList();
     },
-    //排序
+    // 排序
     sortChange({ prop, order }) {
       this.params = {
         ...this.params,
@@ -196,15 +197,15 @@ export default {
       this.page = 1;
       this.getList();
     },
-    //重置密码 && 删除账号
+    // 重置密码 && 删除账号
     handleAction({ id, name }, action) {
-      const isDel = action === "del";
+      const isDel = action === 'del';
       const text = isDel
-        ? "点击确定，该账号将被删除并无法在用户运营平台登录"
-        : "点击确定，密码将被重置为账号后6位";
+        ? '点击确定，该账号将被删除并无法在用户运营平台登录'
+        : '点击确定，密码将被重置为账号后6位';
 
-      const title = isDel ? `确认删除${name}的账号?` : "确认重置密码?";
-      const messageText = isDel ? "删除成功" : "重置密码成功";
+      const title = isDel ? `确认删除${name}的账号?` : '确认重置密码?';
+      const messageText = isDel ? '删除成功' : '重置密码成功';
       $modalConfirm({ text, title })
         .then(() => {
           AdminApi.delUserAndResetPwd({ id }, action)
@@ -223,22 +224,18 @@ export default {
               }
             })
             .then(() => {
-              isDel && this.$store.dispatch("getNumAction");
+              if (isDel) this.$store.dispatch('getNumAction');
             });
-        })
-        .catch((err) => {
-          console.log(err);
         });
     },
-    //添加账号-密码默认为账号后六位
+    // 添加账号-密码默认为账号后六位
     handlePwd() {
-      const phone = this.form.phone;
+      const { phone } = this.form;
       if (/^\d{11}$/.test(phone)) {
-        this.form.password =
-          phone.length > 6 ? phone.substring(phone.length - 6) : phone;
+        this.form.password = phone.length > 6 ? phone.substring(phone.length - 6) : phone;
       }
     },
-    //列表数据
+    // 列表数据
     getList() {
       this.loading = true;
       const params = {
@@ -254,22 +251,22 @@ export default {
             this.total = total;
             this.page = page;
           } else {
-            this.$message.error("请求出错");
+            this.$message.error('请求出错');
           }
         })
-        .finally(() => (this.loading = false));
+        .finally(() => this.loading = false);
     },
-    //添加账号
+    // 添加账号
     onSubmit() {
-      this.$refs["addAccountForm"].validate((valid) => {
+      this.$refs.addAccountForm.validate((valid) => {
         if (valid) {
           AdminApi.addAccount(encryptInfo(toRaw(this.form))).then((res) => {
             const { code } = res.data || {};
             if (code === 5005) {
-              this.$message.warning("账号已存在");
+              this.$message.warning('账号已存在');
             } else if (code === 200) {
               this.$message.success({
-                message: "添加成功",
+                message: '添加成功',
                 duration: 1000,
                 onClose: () => {
                   this.visible = false;
@@ -277,14 +274,14 @@ export default {
                 },
               });
             } else {
-              this.$message.error("添加失败");
+              this.$message.error('添加失败');
             }
           });
         }
       });
     },
     resetForm() {
-      this.$refs["addAccountForm"].resetFields();
+      this.$refs.addAccountForm.resetFields();
     },
   },
 };

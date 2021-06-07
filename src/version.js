@@ -1,16 +1,16 @@
 /**
  * 当前版本信息
  */
-const Version = "v1.0.0";
-const BetaNumber = ".12";
-const info = `Version：${Version}${BetaNumber ? `-beta${BetaNumber}` : ""}`;
+const Version = 'v1.0.0';
+const BetaNumber = '.13';
+const info = `Version：${Version}${BetaNumber ? `-beta${BetaNumber}` : ''}`;
 window.CurrentVersions = info;
 
-if (window.location.protocol === "http:") {
+if (window.location.protocol === 'http:') {
   console.info(info);
 }
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === 'production') {
   global.console = {
     info: () => {},
     log: () => {},

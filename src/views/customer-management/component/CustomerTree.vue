@@ -55,49 +55,49 @@
 </template>
 <script>
 export default {
-  name: "CustomerTree",
+  name: 'CustomerTree',
   props: {
     activities: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     totalOrgNum: { // 总机构数
       type: Number,
-      default: 0
+      default: 0,
     },
     totalOperatedOrgNum: { // 总合作中机构数
       type: Number,
-      default: 0
+      default: 0,
     },
     activeKey: {
       type: Number,
-      default: -1
-    }
+      default: -1,
+    },
   },
   watch: {
-    activeKey (newVal) {
+    activeKey(newVal) {
       if (newVal) {
         this.activities.forEach((item, index) => {
           if (item.id === Number(newVal)) {
-            this.isActive = index
+            this.isActive = index;
           }
-        })
-        this.selectAll = false
+        });
+        this.selectAll = false;
         this.$nextTick(() => {
           // 若是选中的机构没有在视线之内，手动调整滚动条展示
-          let dom = document.getElementById("customerTree");
+          const dom = document.getElementById('customerTree');
           if (dom && dom.clientHeight > 41) {
             // 若是树的总高度不高于容器，则不做任何处理  clientHeight   scrollTop
-            let domHeight = dom.clientHeight
-            let scrollHeight = dom.scrollTop
-            let itemClientHeight = 20 + 34 * (this.isActive + 1)
+            const domHeight = dom.clientHeight;
+            const scrollHeight = dom.scrollTop;
+            const itemClientHeight = 20 + 34 * (this.isActive + 1);
             if ((itemClientHeight < scrollHeight) || (itemClientHeight > (domHeight + scrollHeight))) {
-              dom.scrollTop = itemClientHeight - 50
+              dom.scrollTop = itemClientHeight - 50;
             }
           }
-        })
+        });
       }
-    }
+    },
   },
   data() {
     return {
@@ -110,24 +110,24 @@ export default {
     setText(item) {
       return `(${item.operatedOrgNum}/${item.orgNum})`;
     },
-    setStatusAll () {
+    setStatusAll() {
       this.selectAll = true;
       this.isActive = -1;
-      let dom = document.getElementById("customerTree")
-      dom.scrollTop = 0
+      const dom = document.getElementById('customerTree');
+      dom.scrollTop = 0;
     },
     // 点击选中某一项
     handleSelect(val, index, item) {
-      if (val === "all") {
+      if (val === 'all') {
         this.selectAll = true;
         this.isActive = -1;
-        let dom = document.getElementById("customerTree")
-        dom.scrollTop = 0
-        this.$emit("handleClick", 'all', {});
+        const dom = document.getElementById('customerTree');
+        dom.scrollTop = 0;
+        this.$emit('handleClick', 'all', {});
       } else {
         this.selectAll = false;
         this.isActive = index;
-        this.$emit("handleClick", '', item);
+        this.$emit('handleClick', '', item);
       }
     },
   },
@@ -164,7 +164,7 @@ export default {
       .itemText {
         &-ellipsis {
           display: inline-block;
-          max-width: 214px;
+          max-width: 210px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;

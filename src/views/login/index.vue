@@ -112,47 +112,47 @@
 </template>
 
 <script>
-import { toRaw } from "vue";
-import LoginApi from "@/server/api/login";
-import { encryptInfo } from "@/utils/encrypt";
-import { clearEmpty } from "@/utils";
-import { ruleProcess } from "@/utils/rule";
+import { toRaw } from 'vue';
+import LoginApi from '@/server/api/login';
+import { encryptInfo } from '@/utils/encrypt';
+import { clearEmpty } from '@/utils';
+import { ruleProcess } from '@/utils/rule';
 
 export default {
-  name: "login",
-  nameComment: "登录",
+  name: 'login',
+  nameComment: '登录',
   data() {
     return {
-      picCodeImg: "",
+      picCodeImg: '',
       errorCount: 0,
       loading: false,
       isLocal: false,
       params: {
-        username: "",
-        password: "",
-        picCode: "",
+        username: '',
+        password: '',
+        picCode: '',
       },
       rules: {
         username: [
-          { required: true, message: "请输入账号", trigger: "change" },
-          { min: 11, message: "账号小于11位", trigger: "change" },
+          { required: true, message: '请输入账号', trigger: 'change' },
+          { min: 11, message: '账号小于11位', trigger: 'change' },
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "change" },
+          { required: true, message: '请输入密码', trigger: 'change' },
         ],
         picCode: [
-          { required: true, message: "请输入验证码", trigger: "change" },
+          { required: true, message: '请输入验证码', trigger: 'change' },
         ],
       },
     };
   },
   created() {
-    document.title = "用户运营平台";
+    document.title = '用户运营平台';
     this.isLocal = /localhost/.test(window.location.host);
   },
   methods: {
     onSubmit() {
-      this.$refs["loginForm"].validate((valid) => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
           const params = clearEmpty(encryptInfo(toRaw(this.params)));
@@ -169,7 +169,11 @@ export default {
                   this.errorCount = 4;
                   this.toRefreshImg();
                 };
-                picCode ? this.login(params) : f();
+                if (picCode) {
+                  this.login(params);
+                } else {
+                  f();
+                }
               } else {
                 this.login(params);
               }
@@ -181,17 +185,17 @@ export default {
     login(params) {
       const err = (text) => this.$message.error(text);
       const defaultErr = ({ errorCount }) => {
-        err("账号或密码错误");
+        err('账号或密码错误');
         this.errorCount = errorCount;
         if (this.errorCount > 3) this.toRefreshImg();
       };
       const suc = ({ groupId, token, name }) => {
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", groupId);
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', groupId);
         ruleProcess(this);
         this.$router.push({
-          name: "Index",
-          params: { info: "success", name, groupId },
+          name: 'Index',
+          params: { info: 'success', name, groupId },
         });
       };
       LoginApi.login(params)
@@ -201,11 +205,11 @@ export default {
           } = res;
           switch (code) {
             case 5004:
-              err("验证码错误");
+              err('验证码错误');
               this.toRefreshImg();
               break;
             case 5006:
-              err("账号不存在");
+              err('账号不存在');
               break;
             case 200:
               suc(data || {});
@@ -233,8 +237,8 @@ export default {
     onFill(flag) {
       this.params = {
         ...this.params,
-        username: flag ? "12345678910" : "15225645956",
-        password: flag ? "678910" : "123456a",
+        username: flag ? '12345678910' : '15225645956',
+        password: flag ? '678910' : '123456a',
       };
     },
   },

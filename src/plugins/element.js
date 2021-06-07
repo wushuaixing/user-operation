@@ -40,16 +40,18 @@ import {
   ElRadioGroup,
   ElRadio,
   ElCheckboxGroup,
-} from "element-plus";
+} from 'element-plus';
 
-["success", "warning", "info", "error"].forEach((type) => {
+['success', 'warning', 'info', 'error'].forEach((type) => {
   ElMessage[type] = (options) => {
-    if (typeof options === "string") {
+    if (typeof options === 'string') {
+      // eslint-disable-next-line no-param-reassign
       options = {
         message: options,
         type,
       };
     } else {
+      // eslint-disable-next-line no-param-reassign
       options.type = type;
     }
     return ElMessage({ ...options, offset: 340 });

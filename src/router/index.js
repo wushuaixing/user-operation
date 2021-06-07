@@ -1,17 +1,17 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { adminRoutes, normalRoutes } from "@/utils/rule";
+import { createRouter, createWebHistory } from 'vue-router';
+import { adminRoutes, normalRoutes } from '@/utils/rule';
 
-const role = localStorage.getItem("role");
+const role = localStorage.getItem('role');
 
 const routes = [
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/login/index"),
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/login/index.vue'),
   },
   {
-    path: "/:pathMatch(.*)",
-    redirect: "/index",
+    path: '/:pathMatch(.*)',
+    redirect: '/index',
   },
 ];
 
@@ -20,7 +20,7 @@ const router = createRouter({
   routes,
 });
 
-const list = role === "204" ? normalRoutes : adminRoutes ;
+const list = role === '204' ? normalRoutes : adminRoutes;
 list.forEach((i) => router.addRoute(i));
 
 export default router;

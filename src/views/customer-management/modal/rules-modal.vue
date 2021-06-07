@@ -14,7 +14,7 @@
     >
       <el-form-item label="ID：" v-if="!isAdd" style="margin: -8px 0 10px">
         <div>
-          {{ $filters._show(rulesForm.id) }}
+          {{ $filters.undefinedShow(rulesForm.id) }}
         </div>
       </el-form-item>
       <el-form-item
@@ -23,7 +23,7 @@
         style="margin-bottom: 11px"
       >
         <el-input
-          
+
           v-model="rulesForm.name"
           autocomplete="off"
           maxlength="100"
@@ -71,8 +71,8 @@
         prop="contractType"
       >
         <el-radio-group v-model="rulesForm.contractType" size="medium">
-          <el-radio :label="1">延期</el-radio>
-          <el-radio :label="2">签约</el-radio>
+          <el-radio :label="2">延期</el-radio>
+          <el-radio :label="1">签约</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item
@@ -93,7 +93,7 @@
             :key="item.id"
           />
         </el-select>
-        <span v-else>{{ $filters._show(rulesForm.parentId) }}</span>
+        <span v-else>{{ $filters.undefinedShow(rulesForm.parentId) }}</span>
       </el-form-item>
       <el-form-item
         label="上级机构名称："
@@ -108,7 +108,7 @@
           :disabled="true"
           placeholder="请输入上级机构名称"
         />
-        <span v-else>{{ $filters._show(rulesForm.parentName) }}</span>
+        <span v-else>{{ $filters.undefinedShow(rulesForm.parentName) }}</span>
       </el-form-item>
       <el-form-item
         v-for="item in rulesFormOptions.itemsRaido"
@@ -153,7 +153,7 @@
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
-              >{{ item.title }}</el-checkbox
+              >{{ item.title }}：</el-checkbox
             >
             <el-checkbox-group
               class="zcjk-rules-box-item-moduleList"
@@ -181,13 +181,14 @@
 </template>
 
 <script>
-import AdminApi from "@/server/api/admin";
-import { rulesFormOptions, rulesForm, checkList } from "./data";
-import { dateUtils, clone } from "@/utils";
+import AdminApi from '@/server/api/admin';
+import { dateUtils, clone } from '@/utils';
+import { rulesFormOptions, rulesForm, checkList } from './data';
+
 export default {
-  name: "rules-modal",
-  nameComment: "客户管理-权限管理弹窗",
-  emits: ["getData"],
+  name: 'rules-modal',
+  nameComment: '客户管理-权限管理弹窗',
+  emits: ['getData'],
   props: {
     formData: {
       type: Object,
@@ -199,8 +200,8 @@ export default {
     return {
       visible: false,
       isAdd: false,
-      disabledType: "",
-      endTime: "",
+      disabledType: '',
+      endTime: '',
       parentOrg: [],
       rulesForm,
       checkList: clone(checkList),
@@ -220,13 +221,15 @@ export default {
         };
       } else {
         const { permissions = [], ...rest } = params;
-        const { id, type, end, start } = rest;
+        const {
+          id, type, end, start,
+        } = rest;
         this.disabledType = type;
         this.endTime = end;
         this.getCheckList(permissions);
         this.rulesForm = {
           ...rest,
-          start: start ? new Date(start) : "",
+          start: start ? new Date(start) : '',
           end: new Date(end),
         };
         AdminApi.selectParentOrgList(id).then((res) => {
@@ -234,7 +237,7 @@ export default {
           if (code === 200) {
             this.parentOrg = data;
           } else {
-            this.$message.error("请求错误");
+            this.$message.error('请求错误');
           }
         });
       }
@@ -243,16 +246,16 @@ export default {
     },
     // 弹窗关闭
     close() {
-      this.$refs["rulesForm"].resetFields();
+      this.$refs.rulesForm.resetFields();
       this.rulesForm = rulesForm;
       this.checkList = clone(checkList);
     },
     // 提交
     onsubmit() {
-      this.$refs["rulesForm"].validate((valid) => {
+      this.$refs.rulesForm.validate((valid) => {
         if (valid) {
           const permissions = this.getPermission();
-          const _time = (val) => dateUtils.formatStandardDate(val);
+          const time = (val) => dateUtils.formatStandardDate(val);
           const {
             end,
             start,
@@ -268,15 +271,15 @@ export default {
           const params = {
             ...this.rulesForm,
             permissions,
-            end: _time(end),
-            start: _time(start),
+            end: time(end),
+            start: time(start),
             portraitLimitCount: isPortraitLimit ? portraitLimitCount : 0,
             obligorLimitCount: isObligorLimit ? obligorLimitCount : 0,
             subOrgLimitCount: isSubOrgLimit ? subOrgLimitCount : 0,
             accountLimitCount: isAccountLimit ? accountLimitCount : 0,
           };
-          const sign = this.isAdd ? "add" : "edit";
-          const text = this.isAdd ? "顶级合作机构创建成功" : "修改成功";
+          const sign = this.isAdd ? 'add' : 'edit';
+          const text = this.isAdd ? '顶级合作机构创建成功' : '修改成功';
           AdminApi.addAndEditRules(params, sign).then((res) => {
             const { code, message } = res.data || {};
             if (code === 200) {
@@ -284,7 +287,7 @@ export default {
                 message: text,
                 onClose: () => {
                   this.visible = false;
-                  this.$emit("getData");
+                  this.$emit('getData');
                 },
               });
             } else {
@@ -297,22 +300,26 @@ export default {
 
     // 提交时处理 权限数组
     getPermission() {
-      let arr = [];
-      for (let key in this.checkList) {
-        let obj = {};
+      const arr = [];
+      Object.keys(this.checkList).forEach((key) => {
+        const obj = {};
         obj.moduleName = key;
         obj.permission = this.checkList[key].checkedData;
         arr.push(obj);
-      }
+      });
+      // for (const key in this.checkList) {
+      //   const obj = {};
+      //   obj.moduleName = key;
+      //   obj.permission = this.checkList[key].checkedData;
+      //   arr.push(obj);
+      // }
       return arr;
     },
     // 回显时处理 权限数组
     getCheckList(arr = []) {
       arr.forEach((i) => {
         const list = i.permission || [];
-        this.checkList[i.moduleName].checkedData = list.map((j) =>
-          j.toString()
-        );
+        this.checkList[i.moduleName].checkedData = list.map((j) => j.toString());
         this.handleCheckedItemChange(list, i.moduleName);
       });
     },
@@ -324,36 +331,34 @@ export default {
     },
     // 权限模块-单选
     handleCheckedItemChange(val, key) {
-      let count = val.length;
-      this.checkList[key].checkAll =
-        count === this.checkList[key].options.length;
-      this.checkList[key].isIndeterminate =
-        count > 0 && count < this.checkList[key].options.length;
+      const count = val.length;
+      this.checkList[key].checkAll = count === this.checkList[key].options.length;
+      this.checkList[key].isIndeterminate = count > 0 && count < this.checkList[key].options.length;
     },
     // 姓名失焦去除所有空格
     handleNameBlur() {
       const { name } = this.rulesForm;
-      this.rulesForm.name = name.replace(/\s+/g, "");
+      this.rulesForm.name = name.replace(/\s+/g, '');
     },
     // 时间控件做前后限制
     disabledStartDate(startTime) {
       const endTime = this.rulesForm.end;
       if (!startTime || !endTime) return false;
-      const _endTime = new Date(endTime).valueOf();
-      return startTime.valueOf() > _endTime;
+      const dynamicEndTime = new Date(endTime).valueOf();
+      return startTime.valueOf() > dynamicEndTime;
     },
     disabledEndDate(endTime) {
       const { start } = this.rulesForm;
-      const _date = (i) => new Date(i).valueOf() || 0;
-      const _maxTime = Math.max(_date(start), _date(this.endTime));
-      const startTime = this.isAdd ? _date(start) : _maxTime;
+      const dateFn = (i) => new Date(i).valueOf() || 0;
+      const maxTime = Math.max(dateFn(start), dateFn(this.endTime));
+      const startTime = this.isAdd ? dateFn(start) : maxTime;
       if (!endTime || !startTime) return false;
-      const _startTime = startTime - 86400000;
-      return endTime.valueOf() <= _startTime;
+      const dynamicTime = startTime - 86400000;
+      return endTime.valueOf() <= dynamicTime;
     },
-    timeChange () {
-      document.querySelector('.inputName').querySelector('input').focus()
-    }
+    timeChange() {
+      document.querySelector('.inputName').querySelector('input').focus();
+    },
   },
   computed: {
     // 上级机构名称(随上级机构Id联动)
@@ -364,9 +369,8 @@ export default {
     },
     // 是否延期或续签 (随合同结束日期 || 机构类型 联动)
     isContractTypeDisplay() {
-      const isOvertime =
-        new Date(this.rulesForm.end).valueOf() >
-        new Date(this.endTime).valueOf();
+      const isOvertime = new Date(this.rulesForm.end).valueOf()
+        > new Date(this.endTime).valueOf();
       return !this.isAdd && isOvertime && this.disabledType === 1;
     },
   },
