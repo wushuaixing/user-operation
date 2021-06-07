@@ -110,6 +110,7 @@ import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
 import { operaModuleList } from '@/utils/static';
 import { operationColumn } from '@/static/column';
+import { dateUtils } from '@/utils';
 
 export default {
   name: 'operation-log',
@@ -159,8 +160,12 @@ export default {
       });
     },
     getList() {
+      const time = (val) => dateUtils.formatStandardDate(val);
+      const { end, start, ...rest } = toRaw(this.params);
       const params = {
-        ...toRaw(this.params),
+        ...rest,
+        end: time(end),
+        start: time(start),
         page: this.page,
       };
       AdminApi.orgListOrgLog(params).then((res) => {
@@ -171,7 +176,6 @@ export default {
           this.data = list.map((i) => ({ ...i, title: f(i) }));
           this.page = page;
           this.total = total;
-          console.log(this.data);
         } else {
           this.$message.error('请求出错');
         }
