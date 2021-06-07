@@ -6,7 +6,7 @@
         <i class="iconfont iconbianji2 editI" v-if="editable" @click="showEdit"></i>
       </div>
       <div v-else>
-        <el-input style="width: 300px" v-model="editValue"></el-input>
+        <el-input style="width: 300px" v-model="editValue" @change="(val) => editValue = val.replace(/\s+/g, '')"></el-input>
         <el-button type="primary" style="margin-left: 32px" @click="save"
           >保存</el-button
         >
@@ -57,10 +57,9 @@ export default {
     showEdit() {
       this.editStatus = true;
       // eslint-disable-next-line prefer-destructuring
-      this.editValue = this.text.split('（')[0];
+      this.editValue = this.text.split('（ID：')[0];
     },
     save() {
-      this.editStatus = false;
       // 将输入框的值返回 做保存处理
       this.$emit('saveName', this.editValue);
     },

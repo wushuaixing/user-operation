@@ -84,6 +84,7 @@
       </div>
       <div class="main-content-right">
         <BreadCrumb
+          ref="BreadCrumb"
           :text="title"
           :editable="editable"
           :btnText="!editable ? '创建域名机构' : '创建顶级合作机构'"
@@ -95,7 +96,7 @@
               <div class="customer-detail-left">
                 <div class="link">
                   <span>二级域名:</span>
-                  <a :href="`http://www.${customerObj.subDomain}`" target='_blank'>{{customerObj.subDomain}}</a>
+                  <a :href="`https://www.${customerObj.subDomain}.yczcjk.com`" target='_blank'>{{customerObj.subDomain}}</a>
                 </div>
                 <div class="link">
                   <span>创建时间:</span>
@@ -249,6 +250,7 @@
                 autocomplete="off"
                 maxlength="100"
                 placeholder="请输入二级域名"
+                @change="(val) => addOrgForm.subDomain = val.replace(/\s+/g, '')"
               >
               </el-input>
             </el-form-item>
@@ -258,7 +260,7 @@
                 autocomplete="off"
                 maxlength="100"
                 placeholder="请输入机构名称"
-                @blur="setName"
+                @change="(val) => addOrgForm.name = val.replace(/\s+/g, '')"
               ></el-input>
             </el-form-item>
           </el-form>
@@ -500,10 +502,11 @@ export default {
     },
     // 操作日志
     handleAction(params = {}) {
-      const { name, id } = params;
+      const { name, id, type } = params;
+      const text = type ? '正式' : '试用';
       const routerData = this.$router.resolve({
         path: '/OperationLog',
-        query: { name, id },
+        query: { name: `${name}（${text}）`, id },
       });
       window.open(routerData.href, '_blank');
     },
@@ -590,10 +593,6 @@ export default {
       this.$refs.CustomerTree.handleSelect('all');
       // 赋值currentQueryParams对象
       this.currentQueryParams = { ...this.queryParams };
-    },
-    setName() {
-      const { name } = this.addOrgForm;
-      this.addOrgForm.name = name.replace(/\s+/g, '');
     },
     // 域名机构创建
     handleAddOrg() {
@@ -696,7 +695,22 @@ export default {
 
     // 保存顶级机构名称
     saveName(name) {
-      console.log(name);
+      const params = {
+        id: this.queryParams.orgId,
+        value: name,
+      };
+      AdminApi.detailEditName(params).then((res) => {
+        const { code, message } = res.data || {};
+        if (code === 200) {
+          this.$message.success('机构名称修改成功');
+          this.$refs.BreadCrumb.editStatus = false;
+          // 刷新数据
+          this.getCuntomerTreeData();
+          this.getList();
+        } else {
+          this.$message.error(message);
+        }
+      });
     },
 
     // 日期控件做前后限制

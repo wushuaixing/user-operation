@@ -160,7 +160,7 @@ const operaModuleList = [
     value: 4,
   },
   {
-    label: '修改上级机构',
+    label: '修改上级机构ID',
     value: 5,
   },
   {
@@ -189,6 +189,17 @@ const operaModuleList = [
   },
 ];
 
+// 客户详情 -操作记录
+const operationType = {
+  0: '全部',
+  1: '登录',
+  2: '退出登录',
+  3: '导入债务人',
+  4: '删除业务',
+  5: '开启推送',
+  6: '关闭推送',
+};
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -200,4 +211,5 @@ export {
   topOrgStatus,
   orgType,
   operaModuleList,
+  operationType,
 };
