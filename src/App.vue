@@ -29,6 +29,11 @@ export default {
     background-color: #fff;
     width: 1280px;
     min-height: 94vh;
+    .yc-bread-crumb{
+      .title{
+        color: #20242E;
+      }
+    }
   }
 }
 </style>

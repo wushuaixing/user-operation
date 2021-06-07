@@ -81,11 +81,15 @@
             :key="item.class"
             :class-name="item.class"
           />
-          <el-table-column label="操作内容">
+          <el-table-column label="操作内容" width="556px">
             <template #default="scope">
-              <span>别测试-待联调-</span>
-              <span>{{scope.row.before}}</span>
-              <span>{{scope.row.after}}</span>
+              <span :style="{display:show(scope.row).display}">{{show(scope.row).before}}</span>
+              <span v-if=" show(scope.row).after && (show(scope.row).display !=='block')" style="margin: 0 8px">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#iconjiantou"></use>
+                </svg>
+              </span>
+              <span :style="{display:show(scope.row).display}">{{show(scope.row).after}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -100,7 +104,7 @@
           :total="total"
         />
       </div>
-    </section>>
+    </section>
   </div>
 </template>
 
@@ -110,6 +114,8 @@ import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
 import { operaModuleList } from '@/utils/static';
 import { operationColumn } from '@/static/column';
+import { dateUtils } from '@/utils';
+import { zcjkRules } from '../modal/data';
 
 export default {
   name: 'operation-log',
@@ -139,7 +145,7 @@ export default {
   },
 
   created() {
-    document.title = '客户管理';
+    document.title = '操作日志';
     const {
       query: { name, id },
     } = this.$route;
@@ -152,15 +158,21 @@ export default {
       this.operatorList();
       this.getList();
     },
+    // 操作人
     operatorList() {
       AdminApi.operatorList().then((res) => {
         const { data } = res.data || {};
         this.userList = [{ id: '', value: '全部' }, ...data];
       });
     },
+    // 列表
     getList() {
+      const time = (val) => dateUtils.formatStandardDate(val);
+      const { end, start, ...rest } = toRaw(this.params);
       const params = {
-        ...toRaw(this.params),
+        ...rest,
+        end: time(end),
+        start: time(start),
         page: this.page,
       };
       AdminApi.orgListOrgLog(params).then((res) => {
@@ -171,20 +183,23 @@ export default {
           this.data = list.map((i) => ({ ...i, title: f(i) }));
           this.page = page;
           this.total = total;
-          console.log(this.data);
         } else {
           this.$message.error('请求出错');
         }
       });
     },
+    // 搜索
     handleSearch() {
       this.page = 1;
       this.getList();
     },
+    // 清空搜索条件
     resetParams() {
       this.$refs.formRef.resetFields();
+      this.page = 1;
       this.getList();
     },
+    // 换页
     pageChange(page) {
       if (!this.isTriggerCurrent) {
         this.page = parseInt(page, 10);
@@ -192,6 +207,7 @@ export default {
       }
       this.isTriggerCurrent = false;
     },
+    // 切换pageSize
     sizeChange(num) {
       this.params = {
         ...this.params,
@@ -214,6 +230,34 @@ export default {
       const startTime = new Date(start).valueOf();
       const dynamicTime = startTime - 86400000;
       return endTime.valueOf() <= dynamicTime;
+    },
+    // 操作内容展示
+    show(params = {}) {
+      const { title, before, after } = toRaw(params);
+      let type = this.operaModuleList.find((i) => i.label === title).value;
+      if ([6, 7, 8, 9, 10].includes(type)) type = 6;
+      let obj = { before, after, display: 'inline' };
+      const suffixNum = (i) => (i === '-1' ? '不限' : `${i}次`);
+      const sufficRules = (text, flag) => {
+        const fn = (str = '') => str.split(',').map((i) => (zcjkRules.find((j) => j.val === i) || {}).label).join();
+        const str = fn(text);
+        const action = flag ? '【新增权限】' : '【取消权限】';
+        return str ? `${action}${str}` : '';
+      };
+      const sufficType = (i) => (Number(i) ? '正式' : '试用');
+      switch (type) {
+        case 3:
+          obj = { before: sufficType(before), after: sufficType(after), display: 'inline' };
+          break;
+        case 6:
+          obj = { before: suffixNum(before), after: suffixNum(after), display: 'inline' };
+          break;
+        case 11:
+          obj = { before: sufficRules(before, false), after: sufficRules(after, true), display: 'block' };
+          break;
+        default: break;
+      }
+      return obj;
     },
   },
 };
@@ -241,7 +285,14 @@ export default {
       }
     }
     .table-content{
-      padding: 20px;
+      padding: 16px 20px 20px;
+      .el-table__body-wrapper{
+          .el-table__body{
+            td{
+              padding: 15px 0 !important;
+            }
+          }
+      }
     }
   }
 </style>

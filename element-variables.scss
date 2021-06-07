@@ -165,6 +165,9 @@ $--table-header-background-color: #EDEFF3 !default;
 $--table-header-font-color: #4E5566 !default;
 $--table-row-hover-background-color: $--background-color-base !default;
 .el-table{
+  //&::before{
+  //  content: none !important;
+  //}
   .cell{
     padding-left: 20px !important;
   }

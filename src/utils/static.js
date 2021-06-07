@@ -160,7 +160,7 @@ const operaModuleList = [
     value: 4,
   },
   {
-    label: '修改上级机构',
+    label: '修改上级机构ID',
     value: 5,
   },
   {
