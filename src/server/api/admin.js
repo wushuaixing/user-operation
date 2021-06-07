@@ -40,34 +40,34 @@ const AdminApi = {
   orgDetail: (id) => axios.get(`/api/admin/organization/detail?id=${id}`),
 
   // 详情-创建本级账号
-  detailAddOrgUser: (params) => axios.post('/admin/organization/detail/addOrgUser', params),
+  detailAddOrgUser: (params) => axios.post('/api/admin/organization/detail/addOrgUser', params),
 
   // 详情-创建子机构
-  detailAddSubOrg: (params) => axios.post('/admin/organization/detail/addSubOrg', params),
+  detailAddSubOrg: (params) => axios.post('/api/admin/organization/detail/addSubOrg', params),
 
   // 详情-客户使用机构名称修改
   detailEditName: (params) => axios.post('/admin/organization/detail/changeName', params),
 
   // 详情-编辑本级账号
-  detailEditOrgUser: (params) => axios.post('/admin/organization/detail/changeOrgUser', params),
+  detailEditOrgUser: (params) => axios.post('/api/admin/organization/detail/changeOrgUser', params),
 
   // 详情-编辑子机构
-  detailChangeSubOrg: (params) => axios.post('/admin/organization/detail/changeSubOrg', params),
+  detailChangeSubOrg: (params) => axios.post('/api/admin/organization/detail/changeSubOrg', params),
 
   // 详情-删除本级账号
-  detailDelOrgUser: (params) => axios.post('/admin/organization/detail/deleteOrgUser', params),
+  detailDelOrgUser: (params) => axios.post('/api/admin/organization/detail/deleteOrgUser', params),
 
   // 详情-删除子机构
-  detailDelSubOrg: (params) => axios.post('/admin/organization/detail/deleteSubOrg', params),
+  detailDelSubOrg: (params) => axios.post('/api/admin/organization/detail/deleteSubOrg', params),
 
   // 详情-机构用户操作记录
   detailOrgUserLog: (params) => axios.post('/admin/organization/detail/orgUserLog', clearEmpty(params)),
 
   // 详情-重置密码
-  detailResetPwd: (params) => axios.post('/admin/organization/detail/resetPassword', params),
+  detailResetPwd: (params) => axios.post('/api/admin/organization/detail/resetPassword', params),
 
   // 详情-本级账号-角色查询
-  getSimpleListRole: () => axios.get('/admin/organization/detail/simpleListRole'),
+  getSimpleListRole: () => axios.get('/api/admin/organization/detail/simpleListRole'),
 
   // 详情-客户使用机构详情
   detailSubOrg: (id) => axios.get(`/api/admin/organization/detail/subOrg?id=${id}`),

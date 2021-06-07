@@ -164,7 +164,7 @@ export default {
       .itemText {
         &-ellipsis {
           display: inline-block;
-          max-width: 214px;
+          max-width: 210px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;

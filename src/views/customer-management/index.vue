@@ -258,6 +258,7 @@
                 autocomplete="off"
                 maxlength="100"
                 placeholder="请输入机构名称"
+                @blur="setName"
               ></el-input>
             </el-form-item>
           </el-form>
@@ -590,7 +591,11 @@ export default {
       // 赋值currentQueryParams对象
       this.currentQueryParams = { ...this.queryParams };
     },
-    // 域名机构切换
+    setName() {
+      const { name } = this.addOrgForm;
+      this.addOrgForm.name = name.replace(/\s+/g, '');
+    },
+    // 域名机构创建
     handleAddOrg() {
       this.$refs.addOrgForm.validate((valid) => {
         if (valid) {
