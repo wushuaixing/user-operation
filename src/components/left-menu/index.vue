@@ -57,21 +57,22 @@
 </template>
 
 <script>
-import { userMenu, adminMenu } from "../../utils/rule";
+import { userMenu, adminMenu } from '../../utils/rule';
+
 export default {
-  name: "index",
-  nameComment: "左侧导航栏",
+  name: 'index',
+  nameComment: '左侧导航栏',
   data() {
     return {
       userMenu,
       adminMenu,
-      roleName: "",
+      roleName: '',
     };
   },
   props: {
     role: {
       type: String,
-      default: "",
+      default: '',
     },
   },
 };

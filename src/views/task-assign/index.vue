@@ -218,13 +218,14 @@
 </template>
 
 <script>
-import { SORTER_TYPE, taskAssignTabs } from "@/utils/static";
-import { taskAssignColumn } from "@/static/column";
-import AdminApi from "@/server/api/admin";
-import { toRaw } from "vue";
+import { SORTER_TYPE, taskAssignTabs } from '@/utils/static';
+import { taskAssignColumn } from '@/static/column';
+import AdminApi from '@/server/api/admin';
+import { toRaw } from 'vue';
+
 export default {
-  name: "index",
-  nameComment: "顶级机构分配",
+  name: 'index',
+  nameComment: '顶级机构分配',
   data() {
     return {
       visible: false,
@@ -233,7 +234,7 @@ export default {
       column: taskAssignColumn,
       isTriggerCurrent: false,
       isChecked: false,
-      tabKey: "1",
+      tabKey: '1',
       tableData: [],
       userList: [],
       multipleSelection: [],
@@ -241,25 +242,25 @@ export default {
       total: 0,
       loading: false,
       params: {
-        sortColumn: "",
-        sortOrder: "",
+        sortColumn: '',
+        sortOrder: '',
         num: 10,
       },
       queryParams: {
-        orgName: "",
-        uid: "",
+        orgName: '',
+        uid: '',
       },
       queryOption: {},
       modalParams: {
         idList: [],
-        uid: "",
+        uid: '',
       },
       topOrgNameList: [],
     };
   },
   created() {
     this.getData();
-    document.title = "顶级机构分配";
+    document.title = '顶级机构分配';
   },
   methods: {
     getData() {
@@ -269,7 +270,7 @@ export default {
     simpleUserList() {
       AdminApi.simpleUserList().then((res) => {
         const { data } = res.data || {};
-        this.userList = [{ id: "", value: "全部" }, ...data];
+        this.userList = [{ id: '', value: '全部' }, ...data];
       });
     },
     getList() {
@@ -284,19 +285,20 @@ export default {
           const { code, data } = res.data || {};
           if (code === 200) {
             const { list, page, total } = data || {};
-            this.tableData = list.map((i) => ({ ...i, type: "正式" }));
+            this.tableData = list.map((i) => ({ ...i, type: '正式' }));
             this.total = total;
             this.page = page;
           } else {
-            this.$message.error("请求出错");
+            this.$message.error('请求出错');
           }
         })
         .then(() => {
-          this.$store.dispatch("getNumAction");
+          this.$store.dispatch('getNumAction');
         })
+        // eslint-disable-next-line no-return-assign
         .finally(() => (this.loading = false));
     },
-    //排序
+    // 排序
     handleSortChange({ prop, order }) {
       this.isChecked = false;
       const { clearSelection } = this.$refs.multipleTable;
@@ -309,15 +311,15 @@ export default {
       };
       this.getList();
     },
-    //翻页
+    // 翻页
     pageChange(page) {
       if (!this.isTriggerCurrent) {
-        this.page = parseInt(page);
+        this.page = parseInt(page, 10);
         this.getList();
       }
       this.isTriggerCurrent = false;
     },
-    //pageSize 改变
+    // pageSize 改变
     sizeChange(num) {
       this.params = {
         ...this.params,
@@ -328,7 +330,7 @@ export default {
       this.getList();
     },
 
-    //tab切换 && 清空搜索条件
+    // tab切换 && 清空搜索条件
     resetOptions(flag = false) {
       this.page = 1;
       this.isChecked = false;
@@ -337,21 +339,21 @@ export default {
       clearSort();
       if (!flag) {
         this.queryParams = {
-          orgName: "",
-          uid: "",
+          orgName: '',
+          uid: '',
         };
       }
       this.queryOption = { ...this.queryParams };
       this.getList();
     },
-    //（取消）批量管理
+    // （取消）批量管理
     handleBatchCheck(isChecked) {
       this.isChecked = isChecked;
       if (!isChecked) this.$refs.multipleTable.clearSelection();
     },
-    //（重新）分配弹窗开启
+    // （重新）分配弹窗开启
     handleOpenModal(sign, val) {
-      if (sign === "single") {
+      if (sign === 'single') {
         this.isChecked = false;
         this.$refs.multipleTable.clearSelection();
         this.visible = true;
@@ -362,24 +364,22 @@ export default {
           uid,
         };
         this.modalParams.idList = [id];
+      } else if ((this.multipleSelection || []).length) {
+        this.visible = true;
+        this.modalParams.idList = this.multipleSelection.map((i) => i.id);
+        const list = this.multipleSelection.map((i) => i.orgName);
+        this.topOrgNameList = list.slice(0, 5);
       } else {
-        if ((this.multipleSelection || []).length) {
-          this.visible = true;
-          this.modalParams.idList = this.multipleSelection.map((i) => i.id);
-          const list = this.multipleSelection.map((i) => i.orgName);
-          this.topOrgNameList = list.slice(0, 5);
-        } else {
-          this.$message.warning("未选中数据");
-        }
+        this.$message.warning('未选中数据');
       }
     },
-    //（重新）分配弹窗关闭
+    // （重新）分配弹窗关闭
     handleCloseModal() {
       this.visible = false;
       this.toggle = true;
       this.modalParams = {
         idList: [],
-        uid: "",
+        uid: '',
       };
     },
     onsubmit() {
@@ -390,7 +390,7 @@ export default {
           const { code } = res.data || {};
           if (code === 200) {
             this.$message.success({
-              message: "分配成功",
+              message: '分配成功',
               duration: 1000,
               onClose: () => {
                 this.visible = false;
@@ -401,11 +401,11 @@ export default {
             });
             this.visible = false;
           } else {
-            this.$message.error("请求出错");
+            this.$message.error('请求出错');
           }
         });
       } else {
-        this.$message.warning("请选择机构负责人");
+        this.$message.warning('请选择机构负责人');
       }
     },
     handleToggle() {

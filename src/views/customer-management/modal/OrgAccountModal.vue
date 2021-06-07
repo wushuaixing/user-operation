@@ -1,68 +1,246 @@
 <template>
-  <a-modal
+  <el-dialog
     :title="title"
     v-model="visible"
     width="500px"
     @close="close"
-    custom-class="org-modal"
   >
-    <a-form :model="orgForm" :rules="rules" ref="orgForm" label-width="145px">
-      <el-form-item label="域名机构" prop="name">
-        <el-input v-model="orgForm.name"></el-input>
-      </el-form-item>
-      <el-form-item label="机构层级">
-        <span>{{level}}</span>
-      </el-form-item>
-      <el-form-item label="剩余机构数">
-        <span>{{restSubOrgCount}}</span>
-      </el-form-item>
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="orgForm.name"></el-input>
-      </el-form-item>
-      <el-form-item label="账号" prop="phone">
-        <el-input v-model="orgForm.phone"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input v-model="orgForm.password"></el-input>
-      </el-form-item>
-      <el-form-item label="角色" prop="roleId">
-        <el-select v-model="orgForm.roleId" placeholder="请选择角色">
-          <el-option v-for="item in roleList" :label="item.label" :value="item.id" :key="item.id"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="剩余账号数">
-        <span></span>
-      </el-form-item>
-    </a-form>
-  </a-modal>
+    <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="145px">
+      <template v-if="this.modalType === 'org'">
+        <el-form-item label="机构名称：" prop="name">
+          <el-input v-model="orgForm.name" style="width: 300px;" maxlength="100"></el-input>
+        </el-form-item>
+        <el-form-item label="机构层级：" v-if="type === 'add'">
+          <span>{{modalObj.level + 1}}</span>
+        </el-form-item>
+        <el-form-item label="剩余机构数：" v-if="type === 'add'">
+          <span>{{modalObj.restSubOrgCount}}</span>
+        </el-form-item>
+        <el-form-item
+          label="上级机构ID："
+          prop="parentId"
+          v-if="type === 'edit'"
+        >
+          <el-select
+            v-model="orgForm.parentId"
+            style="width: 300px"
+            placeholder="请选择上级机构ID"
+            filterable
+          >
+            <el-option
+              v-for="item in parentOrg"
+              :label="item.id"
+              :value="item.id"
+              :key="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="上级机构名称："
+          prop="parentName"
+          v-if="type === 'edit'"
+        >
+          <el-input
+            :modelValue="dynamicParentName"
+            autocomplete="off"
+            :disabled="true"
+            style="width: 300px"
+            placeholder="请输入上级机构名称"
+          />
+        </el-form-item>
+      </template>
+      <template v-else>
+        <el-form-item label="账号：" v-if="type === 'edit'">
+          <span>{{orgForm.phone}}</span>
+        </el-form-item>
+        <el-form-item label="姓名：" prop="name">
+          <el-input v-model="orgForm.name" style="width: 300px;" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="账号：" prop="phone" v-if="type === 'add'">
+          <el-input
+            v-model="orgForm.phone"
+            style="width: 300px;"
+            autocomplete="off"
+            maxlength="11"
+            @change="(value) => (orgForm.phone = value.replace(/\D/g, ''))"
+            placeholder="请输入手机号"
+            @blur="handlePwd"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="密码：" prop="password" v-if="type === 'add'">
+          <el-input
+            v-model="orgForm.password"
+            style="width: 300px;"
+            placeholder="请输入密码"
+            autocomplete="off"
+            maxlength="20"
+            @change="(value) => (orgForm.password = value.replace(/[\W_]/g, ''))"
+            show-password
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="角色：" prop="roleId">
+          <el-select v-model="orgForm.roleId" placeholder="请选择角色" style="width: 300px;">
+            <el-option v-for="item in roleList" :label="item.value" :value="item.id" :key="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="剩余账号数：">
+          <span>{{modalObj.restAccountCount}}</span>
+        </el-form-item>
+      </template>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="close">取 消</el-button>
+        <el-button type="primary" @click="onsubmit">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 <script>
+import AdminApi from '@/server/api/admin';
+import { toRaw } from 'vue';
+import { encryptInfo } from '@/utils/encrypt';
+
 export default {
-  name: "OrgAccountModal",
-  nameComment: "顶级机构详情页-子机构创建编辑-本级账号创建编辑",
+  name: 'OrgAccountModal',
+  nameComment: '顶级机构详情页-子机构创建编辑-本级账号创建编辑',
   props: {
     roleList: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
+    modalObj: {
+      type: Object,
+      default: () => {},
+    },
   },
-  data () {
+  data() {
     return {
       visible: false,
-      type: "add",
-      title: "创建",
-      orgForm: {},
-    }
+      type: 'add', // 操作类型 add edit
+      modalType: '', // 弹窗是操作子机构还是账号 org account
+      editObj: {}, // 编辑的对象
+      title: '创建',
+      parentOrg: [],
+      orgForm: {
+        name: '',
+        phone: '',
+        password: '',
+        parentId: '',
+        roleId: '',
+      },
+      rules: {
+        name: [
+          { required: true, message: this.modalType === 'org' ? '机构名称不允许为空' : '请输入姓名', trigger: 'blur' },
+        ],
+        parentId: [
+          { required: true, message: '上级机构ID不允许为空', trigger: 'blur' },
+        ],
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          {
+            min: 11, max: 11, message: '账号小于11位', trigger: 'blur',
+          },
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            min: 6, max: 20, message: '密码小于6位', trigger: 'blur',
+          },
+        ],
+        roleId: [
+          { required: true, message: '请选择角色', trigger: 'change' },
+        ],
+      },
+    };
+  },
+  computed: {
+    // 上级机构名称(随上级机构Id联动)
+    dynamicParentName() {
+      const { parentId } = this.orgForm;
+      return ((this.parentOrg || []).filter((i) => i.id === parentId)[0] || {})
+        .value;
+    },
   },
   methods: {
-    open () {
-      this.visible = true
+    open(type, modalType, obj) {
+      this.type = type;
+      this.modalType = modalType;
+      if (type === 'edit') {
+        this.editObj = { ...obj };
+        if (modalType === 'org') {
+          this.orgForm.name = obj.name;
+          this.orgForm.parentId = obj.parentId;
+          AdminApi.selectParentOrgList(obj.id).then((res) => {
+            const { code, data = [] } = res.data || {};
+            if (code === 200) {
+              this.parentOrg = data;
+            } else {
+              this.$message.error('请求错误');
+            }
+          });
+        } else {
+          const { name, phone } = obj;
+          const roleId = Number(obj.role);
+          this.orgForm = { ...{ name, phone, roleId } };
+        }
+      } else {
+        this.orgForm = Object.assign(this.orgForm, {});
+      }
+      this.visible = true;
     },
-    close () {
-      this.visible = false
-    }
-  }
-}
+    // 添加账号-密码默认为账号后六位
+    handlePwd() {
+      const { phone } = this.orgForm;
+      if (phone.length === 11) {
+        this.orgForm.password = phone.substring(phone.length - 6);
+      }
+    },
+    close() {
+      this.$refs.orgForm.resetFields();
+      this.visible = false;
+    },
+    api(params) {
+      // eslint-disable-next-line no-nested-ternary
+      return this.modalType === 'org' ? (
+        this.type === 'add' ? AdminApi.detailAddSubOrg(params) : AdminApi.detailChangeSubOrg(params)
+      ) : (
+        this.type === 'add' ? AdminApi.detailAddOrgUser(params) : AdminApi.detailEditOrgUser(params)
+      );
+    },
+    onsubmit() {
+      this.$refs.orgForm.validate((valid) => {
+        if (valid) {
+          let params = toRaw(this.orgForm);
+          if (this.type === 'add') {
+            if (this.modalType === 'org') {
+              // 机构新增
+              params.parentId = this.modalObj.id;
+            } else {
+              // 账号新增
+              params.orgId = this.modalObj.id;
+              params = encryptInfo(params);
+            }
+          } else {
+            // 编辑
+            params.id = this.editObj.id;
+          }
+          this.api(params).then((res) => {
+            const { code, message } = res.data;
+            if (code === 200) {
+              this.$message.success('success');
+              this.$emit('afterAction');
+              // 关闭弹窗 刷新页面
+              this.visible = false;
+            } else {
+              this.$message.warning(message);
+            }
+          });
+        }
+      });
+    },
+  },
+};
 </script>
 <style>
 </style>

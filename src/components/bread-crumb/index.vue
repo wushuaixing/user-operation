@@ -26,11 +26,11 @@
 
 <script>
 export default {
-  name: "BreadCrumb",
+  name: 'BreadCrumb',
   props: {
     text: {
       type: String,
-      default: "",
+      default: '',
     },
     editable: {
       type: Boolean,
@@ -38,7 +38,7 @@ export default {
     },
     btnText: {
       type: String,
-      default: "",
+      default: '',
     },
     handleClick: {
       type: Function,
@@ -47,21 +47,22 @@ export default {
   },
   data() {
     return {
-      editValue: "",
+      editValue: '',
       editStatus: false,
-      childMessage: "子组件",
+      childMessage: '子组件',
     };
   },
   mounted() {},
   methods: {
     showEdit() {
       this.editStatus = true;
-      this.editValue = this.text.split('（')[0]
+      // eslint-disable-next-line prefer-destructuring
+      this.editValue = this.text.split('（')[0];
     },
     save() {
       this.editStatus = false;
       // 将输入框的值返回 做保存处理
-      this.$emit('saveName', this.editValue)
+      this.$emit('saveName', this.editValue);
     },
     cancel() {
       this.editStatus = false;

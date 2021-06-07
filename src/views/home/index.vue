@@ -17,18 +17,18 @@
 </template>
 
 <script>
-import TopMenu from "@/components/top-menu";
-import LeftMenu from "@/components/left-menu";
-import LoginApi from "@/server/api/login";
+import TopMenu from '@/components/top-menu/index.vue';
+import LeftMenu from '@/components/left-menu/index.vue';
+import LoginApi from '@/server/api/login';
 
 export default {
-  name: "Home",
+  name: 'Home',
   data() {
     return {
-      name: "",
+      name: '',
       loading: false,
-      roleName: "",
-      toBeAllocatedNum:0,
+      roleName: '',
+      toBeAllocatedNum: 0,
     };
   },
   components: {
@@ -39,9 +39,9 @@ export default {
     const {
       params: { info, name, groupId },
     } = this.$route;
-    this.$store.dispatch("getNumAction");
-    if (info === "success") {
-      this.$message.success("登录成功");
+    this.$store.dispatch('getNumAction');
+    if (info === 'success') {
+      this.$message.success('登录成功');
       this.name = name;
       this.roleName = groupId;
     } else {
@@ -50,13 +50,14 @@ export default {
         const {
           data: { code, data },
         } = res;
+        // eslint-disable-next-line no-shadow
         const { name, groupId } = data || {};
         if (code === 200) {
           this.name = name;
           this.loading = false;
           this.roleName = groupId;
         } else {
-          this.$router.push("/login");
+          this.$router.push('/login');
         }
       });
     }

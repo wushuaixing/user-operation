@@ -64,7 +64,7 @@
       <el-table :data="dataList" style="width: 100%" v-loading="loading">
         <el-table-column label="发布日期" width="180">
           <template #default="scope">
-            {{ $filters._show(scope.row.publishTime) }}
+            {{ $filters.undefinedShow(scope.row.publishTime) }}
           </template>
         </el-table-column>
         <el-table-column label="标题" width="180">
@@ -85,7 +85,7 @@
         </el-table-column>
         <el-table-column label="案号" width="180">
           <template #default="scope">
-            {{ $filters._show(scope.row.ah) }}
+            {{ $filters.undefinedShow(scope.row.ah) }}
           </template>
         </el-table-column>
         <el-table-column label="相关人员" width="180">
@@ -97,24 +97,24 @@
               placement="top"
             >
               <div class="yc-ellipsis">
-                {{ $filters._show(scope.row.appellors) }}
+                {{ $filters.undefinedShow(scope.row.appellors) }}
               </div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="法院" width="180">
           <template #default="scope">
-            {{ $filters._show(scope.row.court) }}
+            {{ $filters.undefinedShow(scope.row.court) }}
           </template>
         </el-table-column>
         <el-table-column label="案由" width="180">
           <template #default="scope">
-            {{ $filters._show(scope.row.reason) }}
+            {{ $filters.undefinedShow(scope.row.reason) }}
           </template>
         </el-table-column>
         <el-table-column label="案件类型" width="180">
           <template #default="scope">
-            {{ $filters._show(scope.row.caseType) }}
+            {{ $filters.undefinedShow(scope.row.caseType) }}
           </template>
         </el-table-column>
       </el-table>
@@ -132,16 +132,16 @@
 </template>
 
 <script>
-import BreadCrumb from "@/components/bread-crumb";
-import { toRaw } from "vue";
-import CommonApi from "@/server/api/common";
-import clearIcon from "@/assets/img/records_del.jpg";
-import clearHoverIcon from "@/assets/img/records_del_hover.jpg";
+import BreadCrumb from '@/components/bread-crumb/index.vue';
+import { toRaw } from 'vue';
+import CommonApi from '@/server/api/common';
+import clearIcon from '@/assets/img/records_del.jpg';
+import clearHoverIcon from '@/assets/img/records_del_hover.jpg';
 
-let storage = window.localStorage;
+const storage = window.localStorage;
 export default {
-  name: "documentSearch",
-  nameComment: "文书搜索",
+  name: 'documentSearch',
+  nameComment: '文书搜索',
   // TODO uncultivated
   data() {
     return {
@@ -149,10 +149,10 @@ export default {
       clearIcon,
       clearHoverIcon,
       params: {
-        content: "",
-        ah: "",
-        court: "",
-        url: "",
+        content: '',
+        ah: '',
+        court: '',
+        url: '',
       },
       dataList: [],
       recordsList: [],
@@ -163,7 +163,7 @@ export default {
         const { wenshuId, wid } = params;
         const { content } = this.params;
         return `/documentDetail/${wenshuId}/${wid}/${
-          content ? content : "content"
+          content || 'content'
         }`;
       },
     };
@@ -172,23 +172,23 @@ export default {
     BreadCrumb,
   },
   created() {
-    const records = JSON.parse(storage.getItem("records")) || [];
+    const records = JSON.parse(storage.getItem('records')) || [];
     this.recordsList = records;
-    document.title = "文书搜索";
+    document.title = '文书搜索';
   },
   methods: {
     onSubmit() {
       const params = toRaw(this.params);
-      const t = (str = "", flag) =>
-        flag ? str.trim() : str.trim().replace(/\s+/g, " ");
+      const t = (str = '', flag) => (flag ? str.trim() : str.trim().replace(/\s+/g, ' '));
       Object.keys(params).forEach(
-        (key) => (params[key] = t(params[key], key !== "content"))
+        (key) => (params[key] = t(params[key], key !== 'content')),
       );
       const { content } = params;
-      let records = JSON.parse(storage.getItem("records")) || [];
+      const records = JSON.parse(storage.getItem('records')) || [];
+      // eslint-disable-next-line no-unused-expressions
       t(content) && records.unshift(t(content));
       const uniqueRecords = [...new Set(records)];
-      storage.setItem("records", JSON.stringify(uniqueRecords.slice(0, 9)));
+      storage.setItem('records', JSON.stringify(uniqueRecords.slice(0, 9)));
       this.params = {
         ...params,
       };
@@ -204,28 +204,30 @@ export default {
       this.loading = true;
       CommonApi.documentSearch(params)
         .then((res) => {
-          const { data, code, page, total } = res.data || {};
+          const {
+            data, code, page, total,
+          } = res.data || {};
           if (code === 200) {
             this.total = total;
             this.page = page;
             this.dataList = data;
           } else {
-            this.$message.warning("请求出错");
+            this.$message.warning('请求出错');
           }
         })
         .finally((this.loading = false));
     },
     resetForm() {
       this.params = {
-        content: "",
-        ah: "",
-        court: "",
-        url: "",
+        content: '',
+        ah: '',
+        court: '',
+        url: '',
       };
       this.getTableList();
     },
     pageChange(page) {
-      this.page = parseInt(page);
+      this.page = parseInt(page, 10);
       this.getTableList();
     },
     handleFill(content) {
@@ -236,7 +238,7 @@ export default {
       this.getTableList();
     },
     clearRecords() {
-      storage.removeItem("records");
+      storage.removeItem('records');
       this.iconHover = false;
       this.recordsList = [];
     },
