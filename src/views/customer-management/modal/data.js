@@ -326,6 +326,7 @@ const rulesFormOptions = {
     },
   ],
 };
+const zcjkRules = rulesFormOptions.itemsChecked.map((i) => i.children).flat(Infinity);
 const rulesForm = {
   id: '',
   name: '',
@@ -421,4 +422,6 @@ const checkList = {
   },
 };
 
-export { rulesFormOptions, rulesForm, checkList };
+export {
+  rulesFormOptions, rulesForm, checkList, zcjkRules,
+};
