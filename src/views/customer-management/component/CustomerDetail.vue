@@ -13,8 +13,11 @@
               <div class="item">
                 <span class="item-label">剩余账号数</span>：
                 <span v-if="!customerData.isAccountLimit">不限</span>
-                <span v-else><span class="item-bold">
-                  {{customerData.restAccountCount}}</span>/{{customerData.accountLimitCount}}
+                <span v-else>
+                  <span class="item-bold">
+                  {{customerData.restAccountCount}}
+                  </span>/
+                  {{customerData.accountLimitCount}}
                 </span>
               </div>
               <div class="item">
@@ -51,7 +54,7 @@
             <div class="linkAddress">
               <div class="item">
                 <span class="item-label">域名网址</span>：
-                <a>{{customerData.url}}</a>
+                <a :href="`https://www.${customerData.url}.yczcjk.com`" target='_blank'>{{customerData.url}}</a>
               </div>
             </div>
           </div>
@@ -64,9 +67,7 @@
                 :key="index">
                 <div>
                   <span>
-                    {{
-                      `${acountList[index]}次续签起止日期：${activity.start || "-"} 至 ${activity.end || "-"}`
-                    }}
+                    {{activity.text}}
                   </span>
                   <span class="open" @click="showContractMessage" v-if="contractRecord.length > 3 && index === contractList.length - 1">
                     <span v-if="showStatus === 'close'">展开<i class="el-icon-arrow-down" style="margin-left: 7px;"></i></span>
@@ -84,7 +85,7 @@
                 color="#296DD3"
                 :key="index">
                 <div>
-                  <span>{{`次延长时长：${activity.time}日`}}</span>
+                  <span>{{activity.text}}</span>
                   <span class="open" @click="showdelayMessage" v-if="delayRecord.length > 3 && index === delayList.length - 1">
                     <span v-if="delayShowStatus === 'close'">展开<i class="el-icon-arrow-down" style="margin-left: 7px;"></i></span>
                     <span v-else>收起<i class="el-icon-arrow-up" style="margin-left: 7px;"></i></span>
@@ -102,8 +103,14 @@
               客户使用机构
             </div>
             <div class="customer-tree">
+              <el-select @change="searchTypeChange" v-model="searchType" style="width: 90px">
+                <el-option v-for="item in typeList"
+                           :value="item.value"
+                           :key="item.value"
+                           :label="item.label"></el-option>
+              </el-select>
               <el-select
-                style="width: 100%"
+                style="width: calc(100% - 90px)"
                 id="org-select"
                 v-model="searchValue"
                 filterable
@@ -115,7 +122,7 @@
                 <el-option
                   v-for="item in searchList"
                   :key="item.id"
-                  :label="item.name"
+                  :label="searchType === 'org' ? item.name : `${item.phone}（${item.name}）`"
                   :value="item.id">
                 </el-option>
               </el-select>
@@ -143,15 +150,41 @@
           </div>
           <div class="yc-customer-content-list" :class="{scroll: scrollShow}">
             <div class="module-title">
-              {{activeCustonerName}}
+              <template v-if="!editable">
+                <span>{{activeCustonerName}}</span>
+                <span class="mark" v-if="activeLevel === 2">顶级合作机构</span>
+                <i class="iconfont iconbianji2 editI" @click="() => editable = true"></i>
+              </template>
+              <template v-else>
+                <el-input
+                  style="width: 300px;"
+                  v-model="activeCustonerName"
+                  maxlength="100"
+                  @change="(val) => activeCustonerName = val.replace(/\s+/g, '')"
+                ></el-input>
+                <el-button type="primary" style="margin-left: 32px" @click="save">保存</el-button>
+                <el-button @click="() => editable = false">取消</el-button>
+              </template>
             </div>
-            <div class="list" v-if="isHasOrg">
+            <div class="list" v-if="activeLevel < 8">
               <div class="list-header">
                 <span class="title">子机构列表</span>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="剩余子机构数为0，不能再创建"
+                  placement="top"
+                  v-if="(customerData.isSubOrgLimit && customerData.restSubOrgCount <= 0)"
+                >
+                  <el-button
+                    type="primary"
+                    icon="el-icon-plus"
+                  >创建子机构</el-button>
+                </el-tooltip>
                 <el-button
+                  v-else
                   type="primary"
                   icon="el-icon-plus"
-                  v-if="(customerData.isSubOrgLimit && customerData.restSubOrgCount > 0) || !customerData.isSubOrgLimit"
                   @click="handleAction({}, 'org', 'add')"
                 >创建子机构</el-button>
               </div>
@@ -197,10 +230,23 @@
             <div class="list">
               <div class="list-header">
                 <span class="title">本级机构账号</span>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="剩余账号数为0，不能再创建"
+                  placement="top"
+                  v-if="(customerData.isAccountLimit && customerData.restAccountCount <= 0)"
+                >
+                  <el-button
+                    type="primary"
+                    icon="el-icon-plus"
+                    :disabled="true"
+                  >创建本级账号</el-button>
+                </el-tooltip>
                 <el-button
+                  v-else
                   type="primary"
                   icon="el-icon-plus"
-                  v-if="(customerData.isAccountLimit && customerData.restAccountCount > 0) || !customerData.isAccountLimit"
                   @click="handleAction({}, 'account', 'add')"
                 >创建本级账号</el-button>
               </div>
@@ -263,19 +309,12 @@
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
-                      @click="handleSubOrgEdit(scope.row)"
+                      @click="handleToRecord(scope.row)"
                       >操作记录
                     </el-button>
                   </template>
                 </el-table-column>
               </el-table>
-              <el-pagination
-                @current-change="accountPageChange"
-                background
-                :current-page="accountPage"
-                layout="total, prev, pager, next, jumper"
-                :total="accountTotal"
-              />
             </div>
             <OrgAccountModal
               ref="OrgAccountModal"
@@ -306,6 +345,7 @@ export default {
       loading: false, // 整页loading
       activeOrgId: 0, // 当前选择的机构id 初始时是顶级机构id
       activeLevel: 0, // 当前机构层级
+      searchType: 'org',
       customerData: {
         name: '',
         id: 0,
@@ -342,8 +382,6 @@ export default {
       delayRecord: [
       ],
       scrollShow: false,
-      accountPage: 1,
-      accountTotal: 0,
       searchValue: '', // 树搜索字段
       searchList: [], // 模糊查询出来的数组
       selectType: '1',
@@ -357,6 +395,15 @@ export default {
       activeCustonerName: '',
       isHasOrg: true, // 是否有子机构
       roleList: [], // 角色列表 modal中创建编辑账号使用
+      saveName: '',
+      editable: false,
+      typeList: [{
+        value: 'org',
+        label: '机构',
+      }, {
+        value: 'account',
+        label: '账号',
+      }],
     };
   },
   computed: {
@@ -371,8 +418,10 @@ export default {
     },
     modalObj() {
       return {
+        isAccountLimit: this.customerData.isAccountLimit,
         restAccountCount: this.customerData.restAccountCount,
         level: this.activeLevel,
+        isSubOrgLimit: this.customerData.isSubOrgLimit,
         restSubOrgCount: this.customerData.restSubOrgCount,
         id: this.activeOrgId,
       };
@@ -405,15 +454,20 @@ export default {
             contractRecord, delayRecord, tree, ...customerData
           } = data;
           this.customerData = customerData;
-          if (contractRecord.length) this.contractRecord = contractRecord;
-          if (delayRecord.length) this.delayRecord = delayRecord;
+          if (contractRecord.length) this.contractRecord = this.setRecord(contractRecord, 'qy');
+          if (delayRecord.length) this.delayRecord = this.setRecord(delayRecord, 'yq');
+          tree.name += '（顶级合作机构）';
           this.treeData = [tree];
           if (type === 'init') {
             this.activeCustonerName = tree.name;
+            this.activeLevel = tree.level;
+            this.activeOrgId = tree.id;
             this.subOrgData = tree.subOrg;
             this.getAccountData(id);
-            const { setCurrentKey } = this.$refs.orgTree;
-            setCurrentKey(id);
+            this.$nextTick(() => {
+              const { setCurrentKey } = this.$refs.orgTree;
+              setCurrentKey(id);
+            });
           }
           if (type === 'org') {
             this.filterTreeNode(this.treeData, this.activeOrgId);
@@ -422,6 +476,19 @@ export default {
           this.$message.error(message);
         }
       });
+    },
+
+    // 设置签约记录 延期记录
+    setRecord(list, type) {
+      return type === 'qy'
+        ? list.map((item, index) => {
+          const text = `${this.acountList[index]}次${index ? '续签' : '签约'}起止日期：${item.start || '-'} 至 ${item.end || '-'}`;
+          return Object.assign(item, { text });
+        }).reverse()
+        : list.map((item, index) => {
+          const text = `${this.acountList[index + 1]}次延期时长：${item}日`;
+          return Object.assign(item, { text });
+        }).reverse();
     },
 
     // 获取本级账号数据
@@ -452,7 +519,10 @@ export default {
     affixChange(val) {
       this.scrollShow = val;
     },
-
+    // 跳转
+    linkTo(url) {
+      window.open(`${url}.yczcjk.com`, '_blank');
+    },
     handleDelete(row, type) {
       const params = {
         id: row.id,
@@ -492,12 +562,28 @@ export default {
       // modelType= org account     type= add edit
       this.$refs.OrgAccountModal.open(type, modelType, row);
     },
-    accountPageChange() {},
     // 树节点搜索
     handleSearch(value) {
-      // treeData 树节点中模糊搜索输入字段
-      this.searchList = [];
-      this.filterTree(this.treeData, value);
+      if (this.searchType === 'org') {
+        // treeData 树节点中模糊搜索输入字段
+        this.searchList = [];
+        this.filterTree(this.treeData, value);
+      } else {
+        const { id } = this.$route.params;
+        const params = {
+          mobile: value.replace(/\s+/g, ''),
+          orgId: id,
+        };
+        AdminApi.simpleUser(params).then((res) => {
+          const { code, data, message } = res.data || {};
+          if (code === 200) {
+            // 赋值下拉框
+            this.searchList = data;
+          } else {
+            this.$message.error(message);
+          }
+        });
+      }
     },
     filterTree(list, value) {
       list.forEach((item) => {
@@ -511,8 +597,26 @@ export default {
     },
     // 设置树节点高亮
     setTree(val) {
-      const node = this.searchList.filter((item) => item.id === val);
-      this.treeClick(node[0]);
+      if (this.searchType === 'org') {
+        const node = this.searchList.filter((item) => item.id === val);
+        this.treeClick(node[0]);
+      } else {
+        AdminApi.searchUser(val).then((res) => {
+          const { code, data, message } = res.data || {};
+          if (code === 200) {
+            const { orgId, user } = data;
+            const name = user.role === '196' ? '查询用户' : '管理员用户';
+            this.accountData = [Object.assign(user, { roleName: name })];
+            // 根据当前选中的子机构进行 树的选中
+            this.$nextTick(() => {
+              const { setCurrentKey } = this.$refs.orgTree;
+              setCurrentKey(orgId);
+            });
+          } else {
+            this.$message.error(message);
+          }
+        });
+      }
       const { setCurrentKey } = this.$refs.orgTree;
       setCurrentKey(val);
     },
@@ -525,8 +629,6 @@ export default {
       this.activeLevel = level;
       this.activeCustonerName = name;
       this.getAccountData(id);
-      this.searchValue = '';
-      this.isHasOrg = (level - 2) < 5;
       this.subOrgData = subOrg;
     },
     // 新增，编辑结束刷新页面
@@ -535,8 +637,10 @@ export default {
       const { id } = this.$route.params;
       this.getOrgDetailData(id, 'org');
       // 根据当前选中的子机构进行 树的选中
-      const { setCurrentKey } = this.$refs.orgTree;
-      setCurrentKey(this.activeOrgId);
+      this.$nextTick(() => {
+        const { setCurrentKey } = this.$refs.orgTree;
+        setCurrentKey(this.activeOrgId);
+      });
       // 根据选中的树节点加载 子机构列表数据
       // 加载本级账号表格数据
       this.getAccountData(this.activeOrgId);
@@ -550,6 +654,37 @@ export default {
           this.subOrgData = item.subOrg;
         }
       });
+    },
+    // 机构名称编辑
+    save() {
+      const params = {
+        id: this.activeOrgId,
+        value: this.activeCustonerName,
+      };
+      AdminApi.detailEditName(params).then((res) => {
+        const { code, message } = res.data || {};
+        if (code === 200) {
+          this.$message.success('机构名称修改成功');
+          this.editable = false;
+          // 刷新数据
+          this.afterAction();
+        } else {
+          this.$message.error(message);
+        }
+      });
+    },
+    // 操作日志
+    handleToRecord(params = {}) {
+      const { name, id } = params;
+      const routerData = this.$router.resolve({
+        path: '/operationRecord',
+        query: { name, id },
+      });
+      window.open(routerData.href, '_blank');
+    },
+    searchTypeChange() {
+      this.searchValue = '';
+      this.searchList = [];
     },
   },
 };
@@ -612,7 +747,6 @@ export default {
         }
       }
       &-timeline {
-        width: 33%;
         font-size: 14px;
         color: #20242E;
         line-height: 14px;
@@ -645,6 +779,12 @@ export default {
           }
         }
       }
+      .time1 {
+        width: 38%;
+      }
+      .time2 {
+        width: 28%;
+      }
     }
   }
   .yc-customer-content {
@@ -655,30 +795,40 @@ export default {
     &-customerTree {
       width: 420px;
       background: #FFFFFF;
-      .customer-tree /deep/ {
+      :deep(.customer-tree) {
         padding: 20px;
         position: relative;
+        :deep(#tree-select) {
+          .el-input-group__prepend {
+            height: 32px;
+          }
+        }
         .tree-title {
           padding: 12px 0 12px 20px;
           font-size: 14px;
           line-height: 14px;
           font-weight: 600;
           color: #4E5566;
+          background: #EDEFF3;
+          margin-top: 16px;
           span:first-child {
             margin-right: 46px;
           }
         }
         .el-tree-node__content {
+          height: 38px;
           .custom-tree-node {
             .node-id {
               position: absolute;
               left: 20px;
               font-size: 14px;
               color: #20242E;
+              margin-top: 2px;
             }
             .node-name {
               color: #20242E;
               font-size: 14px;
+              line-height: 14px;
             }
           }
         }
@@ -687,6 +837,15 @@ export default {
         }
         .el-tree-node__content > .el-tree-node__expand-icon {
           margin-left: 58px !important;
+        }
+        .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+          background-color: unset;
+          .custom-tree-node {
+            .node-name {
+              color: #296DD3 !important;
+              font-weight: 600;
+            }
+          }
         }
       }
     }
@@ -741,6 +900,22 @@ export default {
       display: flex;
       align-items: center;
       border-bottom: 1px solid #E2E4E9;
+      .mark {
+        color: #FF871C;
+        line-height: 12px;
+        font-size: 12px;
+        background: #FFEDE6;
+        border-radius: 2px;
+        padding: 5px 8px;
+        margin-left: 8px;
+        font-weight: 500;
+      }
+      .editI {
+        font-size: 20px;
+        color: #296DD3;
+        cursor: pointer;
+        margin-left: 10px;
+      }
     }
   }
 }
