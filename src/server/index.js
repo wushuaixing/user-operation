@@ -52,24 +52,8 @@ axios.interceptors.response.use(
 );
 
 const http = {
-  post: '',
-  get: '',
-};
-
-http.post = function (api, data, obj = {}) {
-  return new Promise((resolve) => {
-    axios.post(api, data, obj).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
-http.get = function (api, data) {
-  return new Promise((resolve) => {
-    axios.get(api, data).then((res) => {
-      resolve(res);
-    });
-  });
+  post: (api, data, obj = {}) => axios.post(api, data, obj),
+  get: (api, data) => axios.get(api, data),
 };
 
 /* =========  常规请求   ========= */

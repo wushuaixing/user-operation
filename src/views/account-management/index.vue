@@ -200,20 +200,23 @@ export default {
     // 重置密码 && 删除账号
     handleAction({ id, name }, action) {
       const isDel = action === 'del';
-      const text = isDel
-        ? '点击确定，该账号将被删除并无法在用户运营平台登录'
-        : '点击确定，密码将被重置为账号后6位';
-
-      const title = isDel ? `确认删除${name}的账号?` : '确认重置密码?';
-      const messageText = isDel ? '删除成功' : '重置密码成功';
-      $modalConfirm({ text, title })
+      const info = isDel ? {
+        text: '点击确定，该账号将被删除并无法在用户运营平台登录',
+        title: `确认删除${name}的账号?`,
+        messageText: '删除成功',
+      } : {
+        text: '点击确定，密码将被重置为账号后6位',
+        title: '确认重置密码?',
+        messageText: '重置密码成功',
+      };
+      $modalConfirm(info)
         .then(() => {
           AdminApi.delUserAndResetPwd({ id }, action)
             .then((res) => {
               const { code } = res.data || {};
               if (code === 200) {
                 this.$message.success({
-                  message: messageText,
+                  message: info.messageText,
                   duration: 1000,
                   onClose: () => {
                     this.getList();
@@ -222,8 +225,6 @@ export default {
               } else {
                 this.$message.error(res.data.message);
               }
-            })
-            .then(() => {
               if (isDel) this.$store.dispatch('getNumAction');
             });
         });
@@ -231,9 +232,7 @@ export default {
     // 添加账号-密码默认为账号后六位
     handlePwd() {
       const { phone } = this.form;
-      if (/^\d{11}$/.test(phone)) {
-        this.form.password = phone.length > 6 ? phone.substring(phone.length - 6) : phone;
-      }
+      if (/^\d{11}$/.test(phone)) this.form.password = phone.substring(5);
     },
     // 列表数据
     getList() {
