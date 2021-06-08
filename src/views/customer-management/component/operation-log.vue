@@ -3,9 +3,9 @@
     <section class="main-wrapper operation-log-wrapper">
       <BreadCrumb :text="`操作日志-${name}`" />
       <div class="query-content">
-        <el-form :inline="true" :model="params" class="query-form" ref="formRef">
+        <el-form :inline="true" :model="queryParams" class="query-form" ref="formRef">
           <el-form-item label="操作人：" prop="uid">
-            <el-select v-model="params.uid" style="width: 94px">
+            <el-select v-model="queryParams.uid" style="width: 94px">
               <el-option
                 v-for="item in userList"
                 :key="item.id"
@@ -16,7 +16,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="操作模块：" prop="title">
-            <el-select v-model="params.title" style="width: 162px">
+            <el-select v-model="queryParams.title" style="width: 162px">
               <el-option
                 v-for="item in operaModuleList"
                 :key="item.value"
@@ -30,7 +30,7 @@
             <el-date-picker
               type="date"
               placeholder="开始日期"
-              v-model="params.start"
+              v-model="queryParams.start"
               style="width: 140px"
               :disabledDate="disabledStartDate" />
           </el-form-item>
@@ -38,7 +38,7 @@
             <el-date-picker
               type="date"
               placeholder="结束日期"
-              v-model="params.end"
+              v-model="queryParams.end"
               style="width: 140px"
               :disabledDate="disabledEndDate"
             />
@@ -46,14 +46,14 @@
           <el-form-item class="btn-group">
             <el-button
               type="primary"
-              @click="handleSearch"
+              @click="handleAction(true)"
               class="button-first"
               style="padding: 0 21px"
             >搜索</el-button
             >
             <el-button
               type="primary"
-              @click="resetParams"
+              @click="handleAction(false)"
               class="button-fourth"
               style="padding: 0 11px"
             >清空搜索条件</el-button
@@ -124,19 +124,22 @@ export default {
   },
   data() {
     return {
-      name: '',
       total: 0,
       page: 1,
+      name: '',
       loading: false,
       isTriggerCurrent: false,
       params: {
         id: '',
+        num: 10,
+      },
+      queryParams: {
         title: '',
         end: '',
         start: '',
         uid: '',
-        num: 10,
       },
+      queryOptions: {},
       data: [],
       userList: [],
       operaModuleList,
@@ -150,7 +153,10 @@ export default {
       query: { name, id },
     } = this.$route;
     this.name = name;
-    this.params.id = id;
+    this.params = {
+      id,
+      num: 10,
+    };
     this.getData();
   },
   methods: {
@@ -168,9 +174,10 @@ export default {
     // 列表
     getList() {
       const time = (val) => dateUtils.formatStandardDate(val);
-      const { end, start, ...rest } = toRaw(this.params);
+      const { end, start, ...rest } = toRaw(this.queryOptions);
       const params = {
         ...rest,
+        ...this.params,
         end: time(end),
         start: time(start),
         page: this.page,
@@ -188,14 +195,10 @@ export default {
         }
       });
     },
-    // 搜索
-    handleSearch() {
-      this.page = 1;
-      this.getList();
-    },
-    // 清空搜索条件
-    resetParams() {
-      this.$refs.formRef.resetFields();
+    // 搜索 & 清空搜索条件
+    handleAction(isSearch = false) {
+      if (!isSearch) this.$refs.formRef.resetFields();
+      this.queryOptions = { ...this.queryParams };
       this.page = 1;
       this.getList();
     },
@@ -219,13 +222,13 @@ export default {
     },
     // 时间控件做前后限制
     disabledStartDate(startTime) {
-      const endTime = this.params.end;
-      if (!startTime || !endTime) return false;
-      const dynamicEndTime = new Date(endTime).valueOf();
+      const { end } = this.queryParams;
+      if (!startTime || !end) return false;
+      const dynamicEndTime = new Date(end).valueOf();
       return startTime.valueOf() > dynamicEndTime;
     },
     disabledEndDate(endTime) {
-      const { start } = this.params;
+      const { start } = this.queryParams;
       if (!endTime || !start) return false;
       const startTime = new Date(start).valueOf();
       const dynamicTime = startTime - 86400000;
