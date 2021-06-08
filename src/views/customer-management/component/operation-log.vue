@@ -235,9 +235,10 @@ export default {
     show(params = {}) {
       const { title, before, after } = toRaw(params);
       let type = this.operaModuleList.find((i) => i.label === title).value;
-      if ([6, 7, 8, 9, 10].includes(type)) type = 6;
+      if ([6, 7].includes(type)) type = 6;
+      if ([8, 9, 10].includes(type)) type = 8;
       let obj = { before, after, display: 'inline' };
-      const suffixNum = (i) => (i === '-1' ? '不限' : `${i}次`);
+      const suffixNum = (i, unit) => (i === '-1' ? '不限' : `${i}${unit}`);
       const sufficRules = (text, flag) => {
         const fn = (str = '') => str.split(',').map((i) => (zcjkRules.find((j) => j.val === i) || {}).label).join();
         const str = fn(text);
@@ -250,7 +251,10 @@ export default {
           obj = { before: sufficType(before), after: sufficType(after), display: 'inline' };
           break;
         case 6:
-          obj = { before: suffixNum(before), after: suffixNum(after), display: 'inline' };
+          obj = { before: suffixNum(before, '次'), after: suffixNum(after, '次'), display: 'inline' };
+          break;
+        case 8:
+          obj = { before: suffixNum(before, '个'), after: suffixNum(after, '个'), display: 'inline' };
           break;
         case 11:
           obj = { before: sufficRules(before, false), after: sufficRules(after, true), display: 'block' };
