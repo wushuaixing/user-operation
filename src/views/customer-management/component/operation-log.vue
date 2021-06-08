@@ -29,7 +29,7 @@
           <el-form-item label="操作时间："   prop="start" style="margin-right: 0">
             <el-date-picker
               type="date"
-              placeholder="开始日期"
+              placeholder="开始时间"
               v-model="queryParams.start"
               style="width: 140px"
               :disabledDate="disabledStartDate" />
@@ -37,7 +37,7 @@
           <el-form-item label="至"   prop="end" class="time-end">
             <el-date-picker
               type="date"
-              placeholder="结束日期"
+              placeholder="结束时间"
               v-model="queryParams.end"
               style="width: 140px"
               :disabledDate="disabledEndDate"
