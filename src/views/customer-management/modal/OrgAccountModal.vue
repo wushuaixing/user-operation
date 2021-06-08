@@ -11,8 +11,10 @@
           <el-input
             v-model="orgForm.name"
             style="width: 300px;"
+            autocomplete="off"
             maxlength="100"
             placeholder="请输入机构名称"
+            @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
           ></el-input>
         </el-form-item>
         <el-form-item label="机构层级：" v-if="type === 'add'">
@@ -59,7 +61,13 @@
           <span>{{orgForm.phone}}</span>
         </el-form-item>
         <el-form-item label="姓名：" prop="name">
-          <el-input v-model="orgForm.name" style="width: 300px;" placeholder="请输入姓名"></el-input>
+          <el-input
+            v-model="orgForm.name"
+            style="width: 300px;"
+            autocomplete="off"
+            placeholder="请输入姓名"
+            @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
+          ></el-input>
         </el-form-item>
         <el-form-item label="账号：" prop="phone" v-if="type === 'add'">
           <el-input

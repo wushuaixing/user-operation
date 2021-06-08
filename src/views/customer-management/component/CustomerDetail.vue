@@ -8,14 +8,14 @@
             <div class="useDetail-left">
               <div class="item">
                 <span class="item-label">机构类型</span>：
-                <span>{{customerData.type ? "正式" : "适用"}}</span>
+                <span>{{customerData.type ? "正式" : "试用"}}</span>
               </div>
               <div class="item">
                 <span class="item-label">剩余账号数</span>：
                 <span v-if="!customerData.isAccountLimit">不限</span>
                 <span v-else>
                   <span class="item-bold">
-                  {{customerData.restAccountCount}}
+                  {{checkNum(customerData.restAccountCount, customerData.accountLimitCount)}}
                   </span>/
                   {{customerData.accountLimitCount}}
                 </span>
@@ -23,8 +23,11 @@
               <div class="item">
                 <span class="item-label">剩余子机构数</span>：
                 <span v-if="!customerData.isSubOrgLimit">不限</span>
-                <span v-else><span class="item-bold">
-                  {{customerData.restSubOrgCount}}</span>/{{customerData.subOrgLimitCount}}
+                <span v-else>
+                  <span class="item-bold">
+                  {{checkNum(customerData.restSubOrgCount, customerData.subOrgLimitCount)}}
+                  </span>/
+                  {{customerData.subOrgLimitCount}}
                 </span>
               </div>
             </div>
@@ -32,22 +35,31 @@
               <div class="item">
                 <span class="item-label1">剩余画像查询次数</span>：
                 <span v-if="!customerData.isPortraitLimit">不限</span>
-                <span v-else><span class="item-bold">
-                  {{customerData.restPortraitCount}}</span>/{{customerData.portraitLimitCount}}
+                <span v-else>
+                  <span class="item-bold">
+                  {{checkNum(customerData.restPortraitCountl, customerData.portraitLimitCount)}}
+                  </span>/
+                  {{customerData.portraitLimitCount}}
                 </span>
               </div>
               <div class="item">
                 <span class="item-label1">剩余分类搜索次数</span>：
                 <span v-if="!customerData.isClassifiedLimit">不限</span>
-                <span v-else><span class="item-bold">
-                  {{customerData.restClassifiedCount}}</span>/{{customerData.classifiedLimitCount}}
+                <span v-else>
+                  <span class="item-bold">
+                  {{checkNum(customerData.restClassifiedCount, customerData.classifiedLimitCount)}}
+                  </span>/
+                  {{customerData.classifiedLimitCount}}
                 </span>
               </div>
               <div class="item">
                 <span class="item-label1">剩余监控债务人数</span>：
                 <span v-if="!customerData.isObligorLimit">不限</span>
-                <span v-else><span class="item-bold">
-                  {{customerData.restObligorCount}}</span>/{{customerData.obligorLimitCount}}
+                <span v-else>
+                  <span class="item-bold">
+                  {{checkNum(customerData.restObligorCount, customerData.obligorLimitCount)}}
+                  </span>/
+                  {{customerData.obligorLimitCount}}
                 </span>
               </div>
             </div>
@@ -58,7 +70,7 @@
               </div>
             </div>
           </div>
-          <div class="customer-message-timeline time1" v-if="contractRecord.length">
+          <div class="customer-message-timeline time1" v-if="customerData.type && contractRecord.length">
             <span>签约记录：</span>
             <el-timeline class="timeline">
               <el-timeline-item
@@ -122,8 +134,9 @@
                 <el-option
                   v-for="item in searchList"
                   :key="item.id"
-                  :label="searchType === 'org' ? item.name : `${item.phone}（${item.name}）`"
+                  :label="searchType === 'org' ? item.name : item.phone"
                   :value="item.id">
+                  <span v-if="searchType !== 'org'">{{`${item.phone}（${item.name}）`}}</span>
                 </el-option>
               </el-select>
               <div class="tree-title">
@@ -142,7 +155,9 @@
                 <template #default="{ node }">
                   <span class="custom-tree-node">
                     <span class="node-id">{{node.key}}</span>
-                    <span class="node-name">{{ node.label }}</span>
+                    <span class="node-name">{{ node.label }}
+                      <span v-if="node.level === 1">（顶级合作机构）</span>
+                    </span>
                   </span>
                 </template>
               </el-tree>
@@ -176,10 +191,13 @@
                   placement="top"
                   v-if="(customerData.isSubOrgLimit && customerData.restSubOrgCount <= 0)"
                 >
-                  <el-button
-                    type="primary"
-                    icon="el-icon-plus"
-                  >创建子机构</el-button>
+                  <span>
+                    <el-button
+                      type="primary"
+                      icon="el-icon-plus"
+                      :disabled="true"
+                    >创建子机构</el-button>
+                  </span>
                 </el-tooltip>
                 <el-button
                   v-else
@@ -237,11 +255,13 @@
                   placement="top"
                   v-if="(customerData.isAccountLimit && customerData.restAccountCount <= 0)"
                 >
-                  <el-button
-                    type="primary"
-                    icon="el-icon-plus"
-                    :disabled="true"
-                  >创建本级账号</el-button>
+                  <span>
+                    <el-button
+                      type="primary"
+                      icon="el-icon-plus"
+                      :disabled="true"
+                    >创建本级账号</el-button>
+                  </span>
                 </el-tooltip>
                 <el-button
                   v-else
@@ -428,7 +448,6 @@ export default {
     },
   },
   created() {
-    document.title = '顶级机构详情页';
     // 从路由获取id 调用接口获取机构详情数据
     const { id } = this.$route.params;
     this.activeOrgId = id;
@@ -456,18 +475,16 @@ export default {
           this.customerData = customerData;
           if (contractRecord.length) this.contractRecord = this.setRecord(contractRecord, 'qy');
           if (delayRecord.length) this.delayRecord = this.setRecord(delayRecord, 'yq');
-          tree.name += '（顶级合作机构）';
           this.treeData = [tree];
+          document.title = tree.name;
           if (type === 'init') {
             this.activeCustonerName = tree.name;
             this.activeLevel = tree.level;
             this.activeOrgId = tree.id;
             this.subOrgData = tree.subOrg;
             this.getAccountData(id);
-            this.$nextTick(() => {
-              const { setCurrentKey } = this.$refs.orgTree;
-              setCurrentKey(id);
-            });
+            this.filterTree(this.treeData, '');
+            this.hightlight(id);
           }
           if (type === 'org') {
             this.filterTreeNode(this.treeData, this.activeOrgId);
@@ -477,7 +494,12 @@ export default {
         }
       });
     },
-
+    // 判断 限制 数字小于0取0 大于限制数等于限制数
+    checkNum(rest, limit) {
+      if (rest < 0) return 0;
+      if (rest > limit) return limit;
+      return rest;
+    },
     // 设置签约记录 延期记录
     setRecord(list, type) {
       return type === 'qy'
@@ -497,8 +519,9 @@ export default {
         const { code, data, message } = res.data;
         if (code === 200) {
           this.accountData = data.users.map((item) => {
-            const name = item.role === '196' ? '查询用户' : '管理员用户';
-            return { ...item, roleName: name };
+            const roleName = item.role === '196' ? '查询用户' : '管理员用户';
+            const time = item.time || '-';
+            return { ...item, roleName, time };
           });
         } else {
           this.$message.error(message);
@@ -527,23 +550,28 @@ export default {
       const params = {
         id: row.id,
       };
-      let title = '';
-      let text = '';
-      let api = null;
+      let obj = {};
       if (type === 'org') {
-        title = `确认删除机构${row.name}?`;
-        text = '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认';
-        api = AdminApi.detailDelSubOrg(params);
+        obj = {
+          title: `确认删除客户使用${this.acountList[row.level - 1]}级机构${row.name}?`,
+          text: '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认',
+          api: AdminApi.detailDelSubOrg(params),
+        };
       } else if (type === 'account') {
-        title = `确认删除${row.name}的账号`;
-        text = '点击确定，选中的账号将被删除，请再次确认';
-        api = AdminApi.detailDelOrgUser(params);
+        obj = {
+          title: `确认删除${row.name}的账号`,
+          text: '点击确定，选中的账号将被删除，请再次确认',
+          api: AdminApi.detailDelOrgUser(params),
+        };
       } else {
-        title = '确认重置密码';
-        text = '点击确定，密码将被重置为账号后6位';
-        api = AdminApi.detailResetPwd(params);
+        obj = {
+          title: '确认重置密码',
+          text: '点击确定，密码将被重置为账号后6位',
+          api: AdminApi.detailResetPwd(params),
+        };
       }
-      $modalConfirm({ text, title }).then(() => {
+      const { api, ...info } = obj;
+      $modalConfirm(info).then(() => {
         api.then((res) => {
           const { code, message } = res.data || {};
           if (code === 200) {
@@ -555,6 +583,8 @@ export default {
             this.$message.error(message);
           }
         });
+      }).catch(() => {
+
       });
     },
     // 编辑 新增
@@ -597,28 +627,40 @@ export default {
     },
     // 设置树节点高亮
     setTree(val) {
+      // 机构搜索
       if (this.searchType === 'org') {
         const node = this.searchList.filter((item) => item.id === val);
         this.treeClick(node[0]);
+        this.hightlight(val);
       } else {
+        // 账号搜索
         AdminApi.searchUser(val).then((res) => {
           const { code, data, message } = res.data || {};
           if (code === 200) {
             const { orgId, user } = data;
-            const name = user.role === '196' ? '查询用户' : '管理员用户';
-            this.accountData = [Object.assign(user, { roleName: name })];
+            const obj = {
+              roleName: user.role === '196' ? '查询用户' : '管理员用户',
+              time: user.time || '-',
+            };
+            // 子机构赋值
+            this.filterTreeNode(this.treeData, orgId);
+            // 账号列表赋值
+            this.accountData = [Object.assign(user, obj)];
             // 根据当前选中的子机构进行 树的选中
-            this.$nextTick(() => {
-              const { setCurrentKey } = this.$refs.orgTree;
-              setCurrentKey(orgId);
-            });
+            this.hightlight(orgId);
           } else {
             this.$message.error(message);
           }
         });
       }
-      const { setCurrentKey } = this.$refs.orgTree;
-      setCurrentKey(val);
+    },
+    // 高亮树节点
+    hightlight(id) {
+      // 根据当前选中的子机构进行 树的选中
+      this.$nextTick(() => {
+        const { setCurrentKey } = this.$refs.orgTree;
+        setCurrentKey(id);
+      });
     },
     // 树节点点击
     treeClick(obj) {
@@ -637,10 +679,7 @@ export default {
       const { id } = this.$route.params;
       this.getOrgDetailData(id, 'org');
       // 根据当前选中的子机构进行 树的选中
-      this.$nextTick(() => {
-        const { setCurrentKey } = this.$refs.orgTree;
-        setCurrentKey(this.activeOrgId);
-      });
+      this.hightlight(this.activeOrgId);
       // 根据选中的树节点加载 子机构列表数据
       // 加载本级账号表格数据
       this.getAccountData(this.activeOrgId);
@@ -685,6 +724,7 @@ export default {
     searchTypeChange() {
       this.searchValue = '';
       this.searchList = [];
+      if (this.searchType === 'org') this.filterTree(this.treeData, '');
     },
   },
 };
