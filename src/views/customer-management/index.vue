@@ -372,6 +372,7 @@ export default {
     this.getCuntomerTreeData();
     // 查询机构 使得2查询框默认展示搜索数据
     this.getOrgList('');
+    document.title = '客户管理';
   },
   mounted() {
     // 点击浏览器刷新时，响应 对带参做处理
