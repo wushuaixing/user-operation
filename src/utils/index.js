@@ -22,9 +22,6 @@ const clearEmpty = (obj) => {
 const queryApi = (searchParams) => {
   const params = clearEmpty(searchParams) || {};
   let urlPlus = '';
-  // for (const key in params) {
-  //   urlPlus = `${urlPlus + key}=${params[key]}&`;
-  // }
   Object.keys(params).forEach((key) => {
     urlPlus = `${urlPlus + key}=${params[key]}&`;
   });
@@ -40,30 +37,6 @@ const dateUtils = {
       || timeStamp === null
       ? timeStamp
       : moment(timeStamp).format('YYYY-MM-DD');
-  },
-  // 获取当日日期
-  getTodayDate(ifmoment = false) {
-    return ifmoment ? moment() : moment().format('YYYY-MM-DD');
-  },
-  formatMomentToStandardDate(m) {
-    return m.format('YYYY-MM-DD');
-  },
-  // 补全日期 arr
-  formatDateComplete(arr) {
-    // 如果是纯数字
-    if (typeof arr.join('') === 'number' && !Number.isNaN(arr.join(''))) {
-      return arr.join('').substring(0, 8);
-    }
-    const temp = arr.map((text, i) => {
-      if (text.length === 1 && i !== 0) {
-        return `0${text}`;
-      }
-      if (text.length > 2 && i > 0) {
-        return text.substring(0, 2);
-      }
-      return text;
-    });
-    return temp.join('').substring(0, 8);
   },
 };
 
