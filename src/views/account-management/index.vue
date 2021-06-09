@@ -60,7 +60,6 @@
       :page-size="params.num"
       layout="total,sizes, prev, pager, next, jumper"
       :total="total"
-      @next-click="nextClick"
     />
     <el-dialog
       title="添加账号"
@@ -170,12 +169,8 @@ export default {
     document.title = '运营账号';
   },
   methods: {
-    nextClick() {
-      console.log(1);
-    },
     // 翻页
     pageChange(page) {
-      alert(page);
       if (!this.isTriggerCurrent) {
         this.page = parseInt(page, 10);
         this.getList();
