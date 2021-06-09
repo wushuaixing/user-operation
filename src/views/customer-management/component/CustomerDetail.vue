@@ -1,6 +1,6 @@
 <template>
   <div class="yc-newpage-contaner">
-    <section class="main-content" v-loading="loading">
+    <div class="main-content" v-loading="loading">
       <div class="yc-customer-header">
         <div class="customer-name">{{title}}</div>
         <div class="customer-message">
@@ -115,30 +115,33 @@
               客户使用机构
             </div>
             <div class="customer-tree">
-              <el-select @change="searchTypeChange" v-model="searchType" style="width: 90px">
-                <el-option v-for="item in typeList"
-                           :value="item.value"
-                           :key="item.value"
-                           :label="item.label"></el-option>
-              </el-select>
-              <el-select
-                style="width: calc(100% - 90px)"
-                id="org-select"
-                v-model="searchValue"
-                filterable
-                remote
-                placeholder="请输入机构名称"
-                :remote-method="handleSearch"
-                @change="setTree"
-              >
-                <el-option
-                  v-for="item in searchList"
-                  :key="item.id"
-                  :label="searchType === 'org' ? item.name : item.phone"
-                  :value="item.id">
-                  <span v-if="searchType !== 'org'">{{`${item.phone}（${item.name}）`}}</span>
-                </el-option>
-              </el-select>
+              <div class="customer-tree-select">
+                <div class="divider"></div>
+                <el-select @change="searchTypeChange" v-model="searchType" style="width: 90px">
+                  <el-option v-for="item in typeList"
+                             :value="item.value"
+                             :key="item.value"
+                             :label="item.label"></el-option>
+                </el-select>
+                <el-select
+                  style="width: calc(100% - 90px)"
+                  id="org-select"
+                  v-model="searchValue"
+                  filterable
+                  remote
+                  placeholder="请输入机构名称"
+                  :remote-method="handleSearch"
+                  @change="setTree"
+                >
+                  <el-option
+                    v-for="item in searchList"
+                    :key="item.id"
+                    :label="searchType === 'org' ? item.name : item.phone"
+                    :value="item.id">
+                    <span v-if="searchType !== 'org'">{{`${item.phone}（${item.name}）`}}</span>
+                  </el-option>
+                </el-select>
+              </div>
               <div class="tree-title">
                 <span>ID</span>
                 <span>机构名称</span>
@@ -202,6 +205,7 @@
                 <el-button
                   v-else
                   type="primary"
+                  class="button-first"
                   icon="el-icon-plus"
                   @click="handleAction({}, 'org', 'add')"
                 >创建子机构</el-button>
@@ -225,7 +229,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="accountNum"
-                  label="总账号数">
+                  label="账号数">
                 </el-table-column>
                 <el-table-column label="操作">
                   <template #default="scope">
@@ -266,6 +270,7 @@
                 <el-button
                   v-else
                   type="primary"
+                  class="button-first"
                   icon="el-icon-plus"
                   @click="handleAction({}, 'account', 'add')"
                 >创建本级账号</el-button>
@@ -345,7 +350,7 @@
           </div>
         </div>
       </el-affix>
-    </section>
+    </div>
   </div>
 </template>
 
@@ -462,6 +467,9 @@ export default {
       }
     });
   },
+  updated() {
+    this.setTreeColor();
+  },
   methods: {
     // 获取页面机构详情数据
     getOrgDetailData(id, type = '') {
@@ -493,6 +501,17 @@ export default {
           this.$message.error(message);
         }
       });
+    },
+    setTreeColor() {
+      const content = document.getElementsByClassName('el-tree-node__content');
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < content.length; i++) {
+        if (i % 2 === 0) {
+          content[i].style.background = '#F6F7FA';
+        } else {
+          content[i].style.background = '';
+        }
+      }
     },
     // 判断 限制 数字小于0取0 大于限制数等于限制数
     checkNum(rest, limit) {
@@ -555,18 +574,21 @@ export default {
         obj = {
           title: `确认删除客户使用${this.acountList[row.level - 1]}级机构${row.name}?`,
           text: '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认',
+          color: '#F93535',
           api: AdminApi.detailDelSubOrg(params),
         };
       } else if (type === 'account') {
         obj = {
           title: `确认删除${row.name}的账号`,
           text: '点击确定，选中的账号将被删除，请再次确认',
+          color: '#F93535',
           api: AdminApi.detailDelOrgUser(params),
         };
       } else {
         obj = {
           title: '确认重置密码',
           text: '点击确定，密码将被重置为账号后6位',
+          color: '#4E5566',
           api: AdminApi.detailResetPwd(params),
         };
       }
@@ -735,6 +757,7 @@ export default {
   width: 1400px;
   margin: 20px auto;
   min-height: 94vh;
+  overflow-x: hidden;
   .yc-customer-header {
     min-height: 146px;
     background: #FFFFFF;
@@ -838,6 +861,23 @@ export default {
       :deep(.customer-tree) {
         padding: 20px;
         position: relative;
+        &-select {
+          border: 1px solid #C5C7CE;
+          border-radius: 2px;
+          position: relative;
+          .el-input__inner {
+            border: none;
+          }
+          .divider {
+            position: absolute;
+            top: 8px;
+            left: 90px;
+            height: 16px;
+            width: 1px;
+            background-color: #C5C7CE;
+            z-index: 2;
+          }
+        }
         :deep(#tree-select) {
           .el-input-group__prepend {
             height: 32px;

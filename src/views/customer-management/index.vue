@@ -3,7 +3,7 @@
     <div class="query-content">
       <el-form :inline="true" :model="queryParams" class="query-form">
         <div>
-          <el-form-item label="机构名称：" style="width: 300px">
+          <el-form-item label="机构名称：">
           <el-select
             id="org-select"
             v-model="queryParams.orgId"
@@ -63,9 +63,15 @@
           </el-select>
         </el-form-item>
         </div>
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button type="primary" @click="handleClear"
+        <el-form-item class="query-button">
+          <el-button type="primary"
+                     @click="handleQuery"
+                     class="button-first"
+          >搜索</el-button>
+          <el-button
+            type="primary"
+            @click="handleClear"
+            class="button-fourth"
             >清空搜索条件</el-button
           >
         </el-form-item>
@@ -203,7 +209,7 @@
                         v-if="scope.row.isExpire">已过期</span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作">
+              <el-table-column label="操作" width="200px">
                 <template #default="scope">
                   <el-button
                     type="text"
@@ -772,30 +778,43 @@ export default {
   .query-content {
     background: #fff;
     margin-bottom: 20px;
+    border-top: 1px solid #E2E4E9;
     .query-form{
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       .el-form-item {
-        margin: 22px 10px 22px;
+        margin: 22px 10px 22px 20px;
         .query-time {
           width: 130px;
           input {
             padding-right: 15px;
           }
         }
+        .el-form-item__content {
+          .el-select {
+            .el-input__inner {
+              padding: 0 12px;
+            }
+          }
+        }
+      }
+      .query-button {
+        margin-right: 20px;
       }
     }
   }
   .main-content {
     display: flex;
+    margin: 20px;
     &-left {
       min-height: 79vh;
       background: #fff;
       width: 300px;
+      min-width: 300px;
       margin-right: 20px;
-      padding: 20px;
+      padding: 20px 10px 20px 20px;
     }
     &-right {
       flex: 1 !important;
