@@ -87,7 +87,7 @@ const customerColumn = [
     prop: 'id',
     label: 'ID',
     sort: false,
-    width: 110,
+    width: 100,
   },
   {
     prop: 'name',
@@ -98,20 +98,17 @@ const customerColumn = [
     prop: 'typeName',
     label: '机构类型',
     sort: false,
-    width: 100,
   },
   {
     prop: 'subOrgNum',
     label: '全部子机构数',
     align: 'center',
     sort: false,
-    width: 120,
   },
   {
     prop: 'accountNum',
     label: '总账号数',
     align: 'center',
-    width: 100,
     sort: false,
   },
   {
