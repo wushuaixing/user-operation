@@ -76,6 +76,7 @@ export default {
   background-color: #f0f2f5;
   padding: 0;
   .yc-main-wrapper {
+    overflow: auto;
     .yc-container {
       padding: 20px;
       background: #fff;
