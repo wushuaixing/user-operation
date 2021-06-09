@@ -3,7 +3,7 @@ const accountManagementColumn = [
   {
     prop: 'id',
     label: 'ID',
-    width: '190',
+    width: '17.3%',
     sort: false,
     align: 'left',
     class: 'id',
@@ -11,7 +11,7 @@ const accountManagementColumn = [
   {
     prop: 'phone',
     label: '账号',
-    width: '256',
+    width: '15.8%',
     sort: false,
     align: 'left',
     class: 'phone',
@@ -19,7 +19,7 @@ const accountManagementColumn = [
   {
     prop: 'name',
     label: '姓名',
-    width: '188',
+    width: '11.6%',
     sort: false,
     align: 'left',
     class: 'name',
@@ -27,7 +27,7 @@ const accountManagementColumn = [
   {
     prop: 'orgNum',
     label: '负责顶级机构数',
-    width: '262',
+    width: '16.1%',
     sort: 'custom',
     align: 'center',
     class: 'org-num',
@@ -35,7 +35,7 @@ const accountManagementColumn = [
   {
     prop: 'obligorNum',
     label: '债务人数',
-    width: '320',
+    width: '19.7%',
     sort: 'custom',
     align: 'center',
     class: 'obligor-num',
