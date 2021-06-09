@@ -5,6 +5,7 @@
     width="712px"
     @close="close"
     custom-class="rules-modal"
+    destroy-on-close
   >
     <el-form
       :model="rulesForm"
@@ -387,6 +388,7 @@ export default {
 
 <style lang="scss">
 .rules-modal {
+  margin-top: 5vh !important;
   .el-dialog__body{
     height: 720px;
     overflow: auto;
