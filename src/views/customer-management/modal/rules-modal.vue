@@ -387,6 +387,7 @@ export default {
 
 <style lang="scss">
 .rules-modal {
+  margin-top: 5vh !important;
   .el-dialog__body{
     height: 720px;
     overflow: auto;
