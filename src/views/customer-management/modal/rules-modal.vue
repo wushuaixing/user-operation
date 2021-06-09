@@ -48,6 +48,8 @@
               v-model="rulesForm.start"
               style="width: 242px"
               :disabledDate="disabledStartDate"
+              popper-class="data-picker"
+              :append-to-body="false"
             />
           </el-form-item>
         </el-col>
@@ -60,6 +62,8 @@
               v-model="rulesForm.end"
               style="width: 242px"
               :disabledDate="disabledEndDate"
+              popper-class="data-picker"
+              :append-to-body="false"
             />
           </el-form-item>
         </el-col>
@@ -157,7 +161,7 @@
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
-              >{{ item.title }}：</el-checkbox
+              >{{ item.title }}</el-checkbox
             >
             <el-checkbox-group
               class="zcjk-rules-box-item-moduleList"
@@ -413,15 +417,39 @@ export default {
       background-color:#B2B8C9;
     }
     &::-webkit-scrollbar-track:hover{
-      background-color:#fff;
+      background-color:#E2E4E9;
     }
   }
 
   &-form {
-    padding-right: 14px;
+    padding-right: 28px;
     .el-form-item {
       &__content {
         line-height: 32px !important;
+        .el-date-editor{
+          .el-input__inner{
+            padding: 0 30px 0 30px ;
+          }
+        }
+        .is-disabled{
+          .el-radio__label{
+            color: #7D8699;
+          }
+          .el-radio__input{
+            .el-radio__inner{
+              background:#EEF1F7;
+              border-color: #C5C7CE;
+            }
+          }
+          .el-input__inner{
+            background:#EEF1F7;
+            border-color: #C5C7CE;
+            color:#7D8699;
+          }
+        }
+        .el-input__inner{
+          padding: 0 30px 0 12px ;
+        }
       }
       &__label {
         line-height: 32px !important;
@@ -445,6 +473,9 @@ export default {
         &-moduleType {
           font-weight: bold;
           margin: 8px 0;
+          .el-checkbox__label{
+              color: #20242E!important;
+          }
         }
         .el-checkbox {
           min-width: 118px;
@@ -456,12 +487,19 @@ export default {
         }
         &-moduleList {
           padding-left: 22px;
+          .el-checkbox__label{
+            color: #4E5566!important;
+          }
         }
       }
     }
   }
   .el-dialog__body {
     padding-top: 24px !important;
+    position: relative;
   }
+}
+.data-picker{
+  //z-index: 2010 !important;
 }
 </style>

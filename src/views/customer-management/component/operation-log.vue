@@ -29,7 +29,7 @@
           <el-form-item label="操作时间："   prop="start" style="margin-right: 0">
             <el-date-picker
               type="date"
-              placeholder="开始日期"
+              placeholder="开始时间"
               v-model="queryParams.start"
               style="width: 140px"
               :disabledDate="disabledStartDate" />
@@ -37,7 +37,7 @@
           <el-form-item label="至"   prop="end" class="time-end">
             <el-date-picker
               type="date"
-              placeholder="结束日期"
+              placeholder="结束时间"
               v-model="queryParams.end"
               style="width: 140px"
               :disabledDate="disabledEndDate"
@@ -83,13 +83,33 @@
           />
           <el-table-column label="操作内容" width="556px">
             <template #default="scope">
-              <span :style="{display:show(scope.row).display}">{{show(scope.row).before}}</span>
-              <span v-if=" show(scope.row).after && (show(scope.row).display !=='block')" style="margin: 0 8px">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#iconjiantou"></use>
-                </svg>
-              </span>
-              <span :style="{display:show(scope.row).display}">{{show(scope.row).after}}</span>
+                <template v-if="!show(scope.row).isRules">
+                  <span>{{show(scope.row).before}}</span>
+                  <span v-if=" show(scope.row).after" style="margin: 0 8px">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#iconjiantou"></use>
+                    </svg>
+                  </span>
+                  <span>{{show(scope.row).after}}</span>
+                </template>
+                <template v-else>
+                    <ul class="zcjk-rules-box">
+                      <template v-for="(item,index) in Object.keys(show(scope.row))" :key="index">
+                        <li v-if="show(scope.row)[item].length">
+                          <div>{{item === 'before'?'取消权限':'新增权限'}}：</div>
+                          <div>
+                            <p v-for="itemChild in show(scope.row)[item]" :key="itemChild.title">
+                              【{{itemChild.title}}:
+                              <span v-for="(childItem,index) in itemChild.child" :key="childItem">
+                              {{childItem}}
+                              {{index === itemChild.child.length-1 ? null:'、'}}
+                              </span>】
+                            </p>
+                          </div>
+                        </li>
+                      </template>
+                    </ul>
+                </template>
             </template>
           </el-table-column>
         </el-table>
@@ -148,11 +168,12 @@ export default {
   },
 
   created() {
-    document.title = '操作日志';
     const {
-      query: { name, id },
+      query: { name, id, type },
     } = this.$route;
-    this.name = name;
+    const text = type ? '正式' : '试用';
+    this.name = `${name}(${text})`;
+    document.title = `【操作日志】${name}`;
     this.params = {
       id,
       num: 10,
@@ -242,25 +263,30 @@ export default {
       if ([8, 9, 10].includes(type)) type = 8;
       let obj = { before, after, display: 'inline' };
       const suffixNum = (i, unit) => (i === '-1' ? '不限' : `${i}${unit}`);
-      const sufficRules = (text, flag) => {
-        const fn = (str = '') => str.split(',').map((i) => (zcjkRules.find((j) => j.val === i) || {}).label).join();
-        const str = fn(text);
-        const action = flag ? '【新增权限】' : '【取消权限】';
-        return str ? `${action}${str}` : '';
+      const sufficRules = (text) => {
+        const str = text.split(',');
+        const fn = (arr) => arr.filter((i) => str.indexOf(i) > -1);
+        let data = [];
+        zcjkRules.forEach((i) => {
+          const arr = i.children.map((c) => c.val);
+          // eslint-disable-next-line no-param-reassign
+          data = [...data, { title: i.title, child: fn(arr).map((d) => d = i.children.find((k) => k.val === d).label) }];
+        });
+        return data.filter((i) => i.child.length);
       };
       const sufficType = (i) => (Number(i) ? '正式' : '试用');
       switch (type) {
         case 3:
-          obj = { before: sufficType(before), after: sufficType(after), display: 'inline' };
+          obj = { before: sufficType(before), after: sufficType(after) };
           break;
         case 6:
-          obj = { before: suffixNum(before, '次'), after: suffixNum(after, '次'), display: 'inline' };
+          obj = { before: suffixNum(before, '次'), after: suffixNum(after, '次') };
           break;
         case 8:
-          obj = { before: suffixNum(before, '个'), after: suffixNum(after, '个'), display: 'inline' };
+          obj = { before: suffixNum(before, '个'), after: suffixNum(after, '个') };
           break;
         case 11:
-          obj = { before: sufficRules(before, false), after: sufficRules(after, true), display: 'block' };
+          obj = { before: sufficRules(before), after: sufficRules(after), isRules: true };
           break;
         default: break;
       }
@@ -299,6 +325,21 @@ export default {
               padding: 15px 0 !important;
             }
           }
+      }
+      .zcjk-rules-box{
+        li{
+          display: flex;
+          div{
+            &:first-child{
+              min-width: 70px;
+              font-weight: bold;
+            }
+            &:last-child{
+              display: flex;
+              flex-wrap: wrap;
+            }
+          }
+        }
       }
     }
   }

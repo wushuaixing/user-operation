@@ -326,7 +326,7 @@ const rulesFormOptions = {
     },
   ],
 };
-const zcjkRules = rulesFormOptions.itemsChecked.map((i) => i.children).flat(Infinity);
+const zcjkRules = rulesFormOptions.itemsChecked;
 const rulesForm = {
   id: '',
   name: '',
