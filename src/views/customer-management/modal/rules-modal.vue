@@ -5,6 +5,7 @@
     width="712px"
     @close="close"
     custom-class="rules-modal"
+    destroy-on-close
   >
     <el-form
       :model="rulesForm"
