@@ -75,12 +75,12 @@ export default {
   overflow: auto;
   background-color: #f0f2f5;
   padding: 0;
-
   .yc-main-wrapper {
     .yc-container {
       padding: 20px;
       background: #fff;
       min-height: 83vh;
+      min-width: 1400px;
     }
   }
 }
