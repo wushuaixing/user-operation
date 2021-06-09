@@ -122,11 +122,11 @@ export default {
   },
 
   created() {
-    document.title = '客户管理';
     const {
       query: { name, id },
     } = this.$route;
     this.name = name;
+    document.title = name;
     this.params.id = id;
     this.getData();
   },

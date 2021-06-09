@@ -13,7 +13,7 @@
         <el-button @click="cancel">取消</el-button>
       </div>
       <div class="action-btn" v-if="btnText">
-        <el-button type="primary" icon="el-icon-plus" @click="$emit('handleClick')">{{
+        <el-button type="primary" icon="el-icon-plus" class="button-first" @click="$emit('handleClick')">{{
           btnText
         }}</el-button>
       </div>
@@ -70,7 +70,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .yc-bread-crumb {
   min-height: 58px;
   padding: 0 20px;

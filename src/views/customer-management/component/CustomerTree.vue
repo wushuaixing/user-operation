@@ -8,7 +8,7 @@
         class="titleText"
         :class="{ active: selectAll }"
         @click="handleSelect('all')"
-        >{{`全部机构(${totalOperatedOrgNum}/${totalOrgNum})`}}</span
+        >{{`全部机构（${totalOperatedOrgNum}/${totalOrgNum}）`}}</span
       >
       <el-tooltip
         class="item"
@@ -47,7 +47,7 @@
         <!-- 竖线 -->
         <div
           class="itemV"
-          :style="index ? '' : 'height: 20px;top:-9px;'"
+          :style="index ? '' : 'height: 18px;top:0px;'"
         ></div>
       </div>
     </div>
@@ -108,7 +108,7 @@ export default {
   methods: {
     // 设置文字+数字
     setText(item) {
-      return `(${item.operatedOrgNum}/${item.orgNum})`;
+      return `（${item.operatedOrgNum}/${item.orgNum}）`;
     },
     setStatusAll() {
       this.selectAll = true;
@@ -136,7 +136,7 @@ export default {
 <style lang="scss" scoped>
 .customer-tree {
   width: 100%;
-  max-height: 84vh;
+  max-height: 89vh;
   overflow-y: auto;
   &-title {
     font-size: 16px;
@@ -155,21 +155,27 @@ export default {
     font-size: 14px;
     // line-height: 14px;
     cursor: pointer;
-    margin-top: 21px;
+    margin-top: 10px;
     color: #20242e;
     &-item {
-      margin-top: 20px;
       position: relative;
-      padding-left: 28px;
+      height: 34px;
+      line-height: 34px;
+      padding-left: 16px;
       .itemText {
+        display: block;
+        padding-left: 10px;
         &-ellipsis {
           display: inline-block;
-          max-width: 210px;
+          max-width: 213px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
           vertical-align: top;
         }
+      }
+      .itemText:hover {
+        background-color: #EEF1F7;
       }
       .active {
         color: #296dd3;
@@ -179,7 +185,7 @@ export default {
         background: #c5c7ce;
         width: 8px;
         height: 1px;
-        top: 10px;
+        top: 16px;
         left: 8px;
       }
       .activeS {
@@ -190,7 +196,7 @@ export default {
         background: #c5c7ce;
         width: 1px;
         height: 39px;
-        top: -28px;
+        top: -22px;
         left: 7px;
       }
     }
@@ -198,5 +204,33 @@ export default {
       margin-top: 0;
     }
   }
+}
+//滚动条的宽度
+.customer-tree::-webkit-scrollbar {
+  width:4px;
+}
+
+//外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
+.customer-tree::-webkit-scrollbar-track {
+  width: 4px;
+  background-color:#FFF;
+}
+
+//滚动条的设置
+.customer-tree::-webkit-scrollbar-thumb {
+  background-color:#B2B8C9;
+  background-clip:padding-box;
+  min-height:49px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius:5px;
+}
+//滚动条移上去的背景
+
+.customer-tree::-webkit-scrollbar-thumb:hover{
+  background-color:#B2B8C9;
+}
+.customer-tree::-webkit-scrollbar-track:hover{
+  background-color:#fff;
 }
 </style>

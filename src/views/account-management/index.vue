@@ -288,6 +288,7 @@ export default {
 <style lang="scss">
 .account-management-container {
   padding-top: 16px !important;
+  margin: 20px;
   nav {
     display: flex;
     justify-content: space-between;
