@@ -429,6 +429,7 @@ export default {
 <style lang="scss">
 .task-assign-container {
   padding-top: 6px !important;
+  margin: 20px;
   .table-content {
     &-btn {
       padding: 1px 0 12px 0;

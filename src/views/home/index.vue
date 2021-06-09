@@ -74,6 +74,7 @@ export default {
 .el-main {
   overflow: auto;
   background-color: #f0f2f5;
+  padding: 0;
 
   .yc-main-wrapper {
     .yc-container {

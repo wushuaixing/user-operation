@@ -1,18 +1,28 @@
 <template>
   <el-dialog
-    :title="title"
     v-model="visible"
     width="500px"
     @close="close"
+    :lock-scroll="false"
   >
+    <template #title>
+      <span class="dialog-title">
+        <span class="title">{{title}}</span>
+        <span class="level mark" v-if="type === 'edit' && modalType === 'org'">一级</span>
+        <span class="role mark" v-if="type === 'edit' && modalType === 'account'" :style="roleTitle">
+          {{editObj.roleName}}</span>
+      </span>
+    </template>
     <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="145px">
       <template v-if="this.modalType === 'org'">
         <el-form-item label="机构名称：" prop="name">
           <el-input
             v-model="orgForm.name"
             style="width: 300px;"
+            autocomplete="off"
             maxlength="100"
             placeholder="请输入机构名称"
+            @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
           ></el-input>
         </el-form-item>
         <el-form-item label="机构层级：" v-if="type === 'add'">
@@ -59,7 +69,13 @@
           <span>{{orgForm.phone}}</span>
         </el-form-item>
         <el-form-item label="姓名：" prop="name">
-          <el-input v-model="orgForm.name" style="width: 300px;" placeholder="请输入姓名"></el-input>
+          <el-input
+            v-model="orgForm.name"
+            style="width: 300px;"
+            autocomplete="off"
+            placeholder="请输入姓名"
+            @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
+          ></el-input>
         </el-form-item>
         <el-form-item label="账号：" prop="phone" v-if="type === 'add'">
           <el-input
@@ -166,6 +182,17 @@ export default {
       return ((this.parentOrg || []).filter((i) => i.id === parentId)[0] || {})
         .value;
     },
+    roleTitle() {
+      return this.editObj.role === '181'
+        ? {
+          background: '#E7F1FF',
+          color: '#296DD3',
+        }
+        : {
+          background: '#DAF5EB',
+          color: '#1BBA7C',
+        };
+    },
   },
   methods: {
     open(type, modalType, obj) {
@@ -255,5 +282,33 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="scss">
+  .dialog-title {
+    display: flex;
+    .title {
+      font-weight: 600;
+      color: #20242E;
+      font-size: 16px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+    }
+    .level {
+      color: #FF871C;
+      border-radius: 2px;
+      border: 1px solid #FF871C;
+    }
+    .role {
+      color: #296DD3;
+      background: #E7F1FF;
+      border-radius: 2px;
+    }
+    .mark {
+      display: block;
+      font-size: 12px;
+      line-height: 12px;
+      padding: 5px 8px;
+      margin-left: 8px;
+    }
+  }
 </style>
