@@ -16,14 +16,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #20242e;
   height: 100vh;
-  min-width: 1400px;
 }
 
 .yc-newpage-contaner {
   background-color: #edeff3;
   min-height: 100%;
   overflow: hidden;
-
+  min-width: 1400px;
   .main-wrapper {
     margin: 20px auto;
     background-color: #fff;
