@@ -16,7 +16,7 @@
         content="合作中机构数/总机构数"
         placement="top"
       >
-        <img src="../../../assets/img/icon.png" style="vertical-align: bottom;margin-left:13px;"/>
+        <img src="../../../assets/img/icon.png" style="vertical-align: bottom;margin-left:2px;"/>
       </el-tooltip>
     </div>
     <div class="customer-tree-content">
@@ -37,7 +37,7 @@
             </el-tooltip>
             <span v-else>{{item.name}}</span>
           </div>
-          {{ setText(item) }}</span
+          {{setText(item)}}</span
         >
         <!-- 横线 -->
         <div
