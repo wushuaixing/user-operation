@@ -207,7 +207,7 @@
                 <template #default="scope" v-if="item.prop === 'name'">
                   <span>{{ scope.row.name }}
                     <span class="iconfont iconyiguoqi"
-                          style="font-size: 14px;color: #F93535;margin-left: 10px"
+                          style="font-size: 14px;color: #F93535;margin-left: 4px"
                           v-if="scope.row.isExpire"
                     ></span></span>
                 </template>
@@ -843,8 +843,8 @@ export default {
       .customer-detail {
         display: flex;
         justify-content: space-between;
-        padding-top: 12px;
-        padding-bottom: 21px;
+        padding-top: 8px;
+        padding-bottom: 16px;
         &-left {
           width: calc(100% - 450px);
           font-size: 14px;
@@ -907,7 +907,7 @@ export default {
         }
       }
       .table-content {
-        padding: 20px;
+        padding: 20px 20px 40px;
         &-btn {
           margin-bottom: 12px;
           .total-tips {

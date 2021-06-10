@@ -77,7 +77,7 @@
         </el-form-item>
       </template>
       <template v-else>
-        <el-form-item label="账号：" v-if="type === 'edit'" class="no-bottom">
+        <el-form-item label="账号：" v-if="type === 'edit'" style="margin-bottom: 12px;">
           <span>{{orgForm.phone}}</span>
         </el-form-item>
         <el-form-item label="姓名：" prop="name" class="need-bottom">
@@ -108,10 +108,10 @@
             autocomplete="off"
             maxlength="20"
             @change="(value) => (orgForm.password = value.replace(/[\W_]/g, ''))"
-            show-password
+            type="password"
           ></el-input>
         </el-form-item>
-        <el-form-item label="角色：" prop="roleId" class="need-bottom">
+        <el-form-item label="角色：" prop="roleId" style="margin-bottom: 15px">
           <el-select v-model="orgForm.roleId" placeholder="请选择角色" style="width: 300px;">
             <el-option v-for="item in roleList" :label="item.value" :value="item.id" :key="item.id"></el-option>
           </el-select>
@@ -330,7 +330,7 @@ export default {
       }
     }
     .el-dialog__body {
-      padding: 32px 0 !important;
+      padding: 32px 0 24px !important;
     }
     &-form {
       .el-form-item__label {
