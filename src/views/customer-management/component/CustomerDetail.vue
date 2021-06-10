@@ -37,7 +37,7 @@
                 <span v-if="!customerData.isPortraitLimit">不限</span>
                 <span v-else>
                   <span class="item-bold">
-                  {{checkNum(customerData.restPortraitCountl, customerData.portraitLimitCount)}}
+                  {{checkNum(customerData.restPortraitCount, customerData.portraitLimitCount)}}
                   </span>/
                   {{customerData.portraitLimitCount}}
                 </span>
@@ -497,7 +497,7 @@ export default {
             this.activeOrgId = tree.id;
             this.subOrgData = tree.subOrg.reverse();
             this.getAccountData(id);
-            this.filterTree(this.treeData, '');
+            this.filterTree(this.treeData[0], '');
             this.hightlight(id);
           }
           if (type === 'org') {
@@ -578,21 +578,21 @@ export default {
       let obj = {};
       if (type === 'org') {
         obj = {
-          title: `确认删除客户使用${this.acountList[row.level - 2]}级机构${row.name}?`,
+          title: `确认删除客户使用${this.acountList[row.level - 2]}级机构${row.name}？`,
           text: '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认',
           color: '#F93535',
           api: () => AdminApi.detailDelSubOrg(params),
         };
       } else if (type === 'account') {
         obj = {
-          title: `确认删除${row.name}的账号`,
+          title: `确认删除${row.name}的账号？`,
           text: '点击确定，选中的账号将被删除，请再次确认',
           color: '#F93535',
           api: () => AdminApi.detailDelOrgUser(params),
         };
       } else {
         obj = {
-          title: '确认重置密码',
+          title: '确认重置密码？',
           text: '点击确定，密码将被重置为账号后6位',
           color: '#4E5566',
           api: () => AdminApi.detailResetPwd(params),
@@ -627,7 +627,7 @@ export default {
       if (this.searchType === 'org') {
         // treeData 树节点中模糊搜索输入字段
         this.searchList = [];
-        this.filterTree(this.treeData, value);
+        this.filterTree(this.treeData[0], value);
       } else {
         const { id } = this.$route.params;
         const params = {
@@ -645,15 +645,12 @@ export default {
         });
       }
     },
-    filterTree(list, value) {
-      list.forEach((item) => {
-        if (item.subOrg.length) {
-          this.filterTree(item.subOrg, value);
-        }
-        if (item.name.indexOf(value) > -1) {
-          this.searchList.push(item);
-        }
-      });
+    // 遍历树 深度
+    filterTree(node, value) {
+      if (node.name.indexOf(value) > -1) this.searchList.push(node);
+      if (node.subOrg.length) {
+        node.subOrg.forEach((item) => this.filterTree(item, value));
+      }
     },
     // 设置树节点高亮
     setTree(val) {
@@ -702,6 +699,12 @@ export default {
       this.activeCustonerName = name;
       this.getAccountData(id);
       this.subOrgData = subOrg.reverse();
+      // 需要对搜索框做回填
+      if (this.searchType !== 'org') {
+        this.searchType = 'org';
+        this.filterTree(this.treeData[0], '');
+      }
+      this.searchValue = id;
     },
     // 新增，编辑结束刷新页面
     afterAction() {
@@ -752,7 +755,7 @@ export default {
     searchTypeChange() {
       this.searchValue = '';
       this.searchList = [];
-      if (this.searchType === 'org') this.filterTree(this.treeData, '');
+      if (this.searchType === 'org') this.filterTree(this.treeData[0], '');
     },
   },
 };
