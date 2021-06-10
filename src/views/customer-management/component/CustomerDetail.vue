@@ -598,7 +598,7 @@ export default {
       const { api, ...info } = obj;
       $modalConfirm(info)
         .then(() => {
-          api.then((res) => {
+          api().then((res) => {
             const { code, message } = res.data || {};
             if (code === 200) {
               this.$message.success(message);

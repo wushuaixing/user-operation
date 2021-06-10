@@ -57,7 +57,12 @@
     "rules": {
       "linebreak-style": 0,
       "no-return-assign": 1,
-      "max-len" : ["error", {"code" : 300}]
+      "max-len": [
+        "error",
+        {
+          "code": 300
+        }
+      ]
     }
   },
   "browserslist": [
