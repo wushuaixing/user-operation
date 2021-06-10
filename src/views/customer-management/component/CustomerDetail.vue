@@ -939,7 +939,7 @@ export default {
       margin-left: 20px;
       background: #FFFFFF;
       .list {
-        padding: 15px 20px;
+        padding: 18px 20px;
         &-header {
           display: flex;
           justify-content: space-between;
@@ -999,7 +999,7 @@ export default {
         font-size: 20px;
         color: #296DD3;
         cursor: pointer;
-        margin-left: 10px;
+        margin-left: 13px;
       }
     }
   }
