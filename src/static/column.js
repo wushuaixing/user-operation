@@ -87,21 +87,24 @@ const customerColumn = [
     prop: 'id',
     label: 'ID',
     sort: false,
-    width: 100,
+    width: '8%',
   },
   {
     prop: 'name',
     label: '顶级合作机构名称',
+    width: '21%',
     sort: false,
   },
   {
     prop: 'typeName',
     label: '机构类型',
     sort: false,
+    width: '8%',
   },
   {
     prop: 'subOrgNum',
     label: '全部子机构数',
+    width: '11%',
     align: 'center',
     sort: false,
   },
@@ -109,19 +112,20 @@ const customerColumn = [
     prop: 'accountNum',
     label: '总账号数',
     align: 'center',
+    width: '9%',
     sort: false,
   },
   {
     prop: 'startTime',
     label: '合同开始日期',
     sort: 'custom',
-    width: 140,
+    width: '12%',
   },
   {
     prop: 'endTime',
     label: '合同结束日期',
     sort: 'custom',
-    width: 140,
+    width: '12%',
   },
 ];
 
