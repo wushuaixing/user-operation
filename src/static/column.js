@@ -3,7 +3,7 @@ const accountManagementColumn = [
   {
     prop: 'id',
     label: 'ID',
-    width: '190',
+    width: '17.3%',
     sort: false,
     align: 'left',
     class: 'id',
@@ -11,7 +11,7 @@ const accountManagementColumn = [
   {
     prop: 'phone',
     label: '账号',
-    width: '256',
+    width: '15.8%',
     sort: false,
     align: 'left',
     class: 'phone',
@@ -19,7 +19,7 @@ const accountManagementColumn = [
   {
     prop: 'name',
     label: '姓名',
-    width: '188',
+    width: '11.6%',
     sort: false,
     align: 'left',
     class: 'name',
@@ -27,7 +27,7 @@ const accountManagementColumn = [
   {
     prop: 'orgNum',
     label: '负责顶级机构数',
-    width: '262',
+    width: '16.1%',
     sort: 'custom',
     align: 'center',
     class: 'org-num',
@@ -35,7 +35,7 @@ const accountManagementColumn = [
   {
     prop: 'obligorNum',
     label: '债务人数',
-    width: '320',
+    width: '19.7%',
     sort: 'custom',
     align: 'center',
     class: 'obligor-num',
@@ -87,21 +87,24 @@ const customerColumn = [
     prop: 'id',
     label: 'ID',
     sort: false,
-    width: 100,
+    width: '8%',
   },
   {
     prop: 'name',
     label: '顶级合作机构名称',
+    width: '21%',
     sort: false,
   },
   {
     prop: 'typeName',
     label: '机构类型',
     sort: false,
+    width: '8%',
   },
   {
     prop: 'subOrgNum',
     label: '全部子机构数',
+    width: '11%',
     align: 'center',
     sort: false,
   },
@@ -109,19 +112,20 @@ const customerColumn = [
     prop: 'accountNum',
     label: '总账号数',
     align: 'center',
+    width: '9%',
     sort: false,
   },
   {
     prop: 'startTime',
     label: '合同开始日期',
     sort: 'custom',
-    width: 140,
+    width: '12%',
   },
   {
     prop: 'endTime',
     label: '合同结束日期',
     sort: 'custom',
-    width: 140,
+    width: '12%',
   },
 ];
 

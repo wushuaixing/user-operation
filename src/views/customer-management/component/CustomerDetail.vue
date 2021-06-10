@@ -66,7 +66,7 @@
             <div class="linkAddress">
               <div class="item">
                 <span class="item-label">域名网址</span>：
-                <a :href="`https://www.${customerData.url}.yczcjk.com`" target='_blank'>{{customerData.url}}</a>
+                <a :href="`https://www.${customerData.url}.yczcjk.com`" target='_blank'>{{customerData.url + '.yczcjk.com'}}</a>
               </div>
             </div>
           </div>
@@ -129,7 +129,7 @@
                   v-model="searchValue"
                   filterable
                   remote
-                  placeholder="请输入机构名称"
+                  :placeholder="searchType === 'org' ? '请输入机构名称' : '请输入11位账号'"
                   :remote-method="handleSearch"
                   @change="setTree"
                 >
@@ -170,7 +170,11 @@
             <div class="module-title">
               <template v-if="!editable">
                 <span>{{activeCustonerName}}</span>
-                <span class="mark" v-if="activeLevel === 2">顶级合作机构</span>
+                <span class="mark" v-if="activeLevel === 2">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icondingjihezuojigou"></use>
+                  </svg>
+                  顶级合作机构</span>
                 <i class="iconfont iconbianji2 editI" @click="() => editable = true"></i>
               </template>
               <template v-else>
@@ -486,6 +490,7 @@ export default {
           this.treeData = [tree];
           document.title = tree.name;
           if (type === 'init') {
+            // 若是初始化
             this.activeCustonerName = tree.name;
             this.activeLevel = tree.level;
             this.activeOrgId = tree.id;
@@ -502,6 +507,7 @@ export default {
         }
       });
     },
+    // 设置树结构斑马纹
     setTreeColor() {
       const content = document.getElementsByClassName('el-tree-node__content');
       // eslint-disable-next-line no-plusplus
@@ -561,10 +567,7 @@ export default {
     affixChange(val) {
       this.scrollShow = val;
     },
-    // 跳转
-    linkTo(url) {
-      window.open(`${url}.yczcjk.com`, '_blank');
-    },
+
     handleDelete(row, type) {
       const params = {
         id: row.id,
@@ -575,39 +578,41 @@ export default {
           title: `确认删除客户使用${this.acountList[row.level - 1]}级机构${row.name}?`,
           text: '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认',
           color: '#F93535',
-          api: AdminApi.detailDelSubOrg(params),
+          api: () => AdminApi.detailDelSubOrg(params),
         };
       } else if (type === 'account') {
         obj = {
           title: `确认删除${row.name}的账号`,
           text: '点击确定，选中的账号将被删除，请再次确认',
           color: '#F93535',
-          api: AdminApi.detailDelOrgUser(params),
+          api: () => AdminApi.detailDelOrgUser(params),
         };
       } else {
         obj = {
           title: '确认重置密码',
           text: '点击确定，密码将被重置为账号后6位',
           color: '#4E5566',
-          api: AdminApi.detailResetPwd(params),
+          api: () => AdminApi.detailResetPwd(params),
         };
       }
       const { api, ...info } = obj;
-      $modalConfirm(info).then(() => {
-        api.then((res) => {
-          const { code, message } = res.data || {};
-          if (code === 200) {
-            this.$message.success(message);
-            if (type !== 'reset') {
-              this.afterAction();
+      $modalConfirm(info)
+        .then(() => {
+          api.then((res) => {
+            const { code, message } = res.data || {};
+            if (code === 200) {
+              this.$message.success(message);
+              if (type !== 'reset') {
+                this.afterAction();
+              }
+            } else {
+              this.$message.error(message);
             }
-          } else {
-            this.$message.error(message);
-          }
+          });
+        })
+        .catch(() => {
+          console.log('取消了');
         });
-      }).catch(() => {
-
-      });
     },
     // 编辑 新增
     handleAction(row, modelType, type) {

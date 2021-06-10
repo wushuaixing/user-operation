@@ -1,5 +1,5 @@
 <template>
-  <div class="customer-tree" id="customerTree">
+  <div class="customer-tree" id="customerTree" :style="'max-height:' + heightStyle">
     <div class="customer-tree-title">
       <svg class="icon" aria-hidden="true" style="font-size: 20px;">
         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
@@ -73,6 +73,10 @@ export default {
       type: Number,
       default: -1,
     },
+    heightStyle: {
+      type: String,
+      default: '',
+    },
   },
   watch: {
     activeKey(newVal) {
@@ -136,7 +140,6 @@ export default {
 <style lang="scss" scoped>
 .customer-tree {
   width: 100%;
-  max-height: 89vh;
   overflow-y: auto;
   &-title {
     font-size: 16px;

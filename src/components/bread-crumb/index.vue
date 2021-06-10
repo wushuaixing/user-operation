@@ -6,7 +6,10 @@
         <i class="iconfont iconbianji2 editI" v-if="editable" @click="showEdit"></i>
       </div>
       <div v-else>
-        <el-input style="width: 300px" v-model="editValue" @change="(val) => editValue = val.replace(/\s+/g, '')"></el-input>
+        <el-input style="width: 300px"
+                  v-model="editValue"
+                  maxlength="100"
+                  @change="(val) => editValue = val.replace(/\s+/g, '')"></el-input>
         <el-button type="primary" style="margin-left: 32px" @click="save"
           >保存</el-button
         >

@@ -252,7 +252,7 @@ export default {
   background: url("../../assets/img/login-bg.jpg") center no-repeat;
   background-size:cover;
   overflow: auto;
-
+  min-width: 1400px;
   .content {
     padding-top: 130px;
     width: 1160px;

@@ -85,6 +85,7 @@
           :totalOperatedOrgNum="totalOperatedOrgNum"
           :activities="activities"
           :activeKey="activeKey"
+          :heightStyle="heightStyle"
           @handleClick="customerTreeClick"
         ></CustomerTree>
       </div>
@@ -129,7 +130,7 @@
             </div>
           </template>
         </BreadCrumb>
-        <div class="table-content">
+        <div class="table-content" id="main-content-right">
           <div class="table-content-btn">
             <el-button
               type="primary"
@@ -199,17 +200,19 @@
                 :prop="item.prop"
                 :label="item.label"
                 :sortable="item.sort"
-                :width="item.width"
+                :min-width="item.width"
                 :align="item.align"
                 :key="item.label"
               >
                 <template #default="scope" v-if="item.prop === 'name'">
-                  <span>{{ scope.row.name }}</span>
-                  <span style="color: #F93535;font-size: 12px;line-height: 12px;border: 1px solid #F93535;margin-left: 10px;border-radius: 3px;padding: 2px 3px;display: inline-block;"
-                        v-if="scope.row.isExpire">已过期</span>
+                  <span>{{ scope.row.name }}
+                    <span class="iconfont iconyiguoqi"
+                          style="font-size: 14px;color: #F93535;margin-left: 10px"
+                          v-if="scope.row.isExpire"
+                    ></span></span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="200px">
+              <el-table-column label="操作" min-width="19%">
                 <template #default="scope">
                   <el-button
                     type="text"
@@ -372,6 +375,7 @@ export default {
           ],
         },
       },
+      heightStyle: '89vh',
     };
   },
   created() {
@@ -423,7 +427,7 @@ export default {
       this.getList();
     },
     // 获取列表数据
-    getList(type) {
+    getList(type = '') {
       console.log(toRaw(this.queryParams));
       // 处理搜索条件参数
       const params = {
@@ -450,6 +454,7 @@ export default {
             });
             this.total = total;
             this.page = page;
+            this.setTreeMinHeight();
             // 若不是全部机构 则赋值机构详情 customerObj
             const { detail } = data;
             if (detail && Object.keys(detail).length > 0) {
@@ -499,8 +504,17 @@ export default {
     // 页数改变
     sizeChange(size) {
       console.log(size);
+      this.page = 1;
       this.pageSize = size;
+      // 页数变化之后 改变左侧树的min-height
       this.getList('page');
+    },
+    setTreeMinHeight() {
+      this.$nextTick(() => {
+        const dom = document.getElementById('main-content-right');
+        const height = dom.clientHeight >= 772 ? dom.clientHeight : 772;
+        this.heightStyle = `${height}px`;
+      });
     },
     // （取消）批量管理
     handleBatchCheck(isChecked) {
@@ -682,6 +696,7 @@ export default {
     customerTreeClick(val, obj) {
       // 改变路由后带参 以便刷新获取id和name做逻辑操作
       let url = '/customerManagement';
+      this.$refs.BreadCrumb.editStatus = false;
       if (val && val === 'all') {
         this.queryParams.orgId = '';
         url += '/all';
@@ -774,6 +789,7 @@ export default {
 
 <style lang="scss">
 .customer-management-container {
+  min-width: 1470px;
   background-color: #f0f2f5 !important;
   .query-content {
     background: #fff;

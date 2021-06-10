@@ -4,18 +4,28 @@
     width="500px"
     @close="close"
     :lock-scroll="false"
+    custom-class="org-account-modal"
   >
     <template #title>
       <span class="dialog-title">
         <span class="title">{{title}}</span>
         <span class="level mark" v-if="type === 'edit' && modalType === 'org'">一级</span>
         <span class="role mark" v-if="type === 'edit' && modalType === 'account'" :style="roleTitle">
+          <svg class="icon" aria-hidden="true" style="font-size: 14px;" v-if="editObj.roleName === '管理员用户'">
+            <use xlink:href="#iconguanliyuanyonghu"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" style="font-size: 14px;" v-else>
+            <use xlink:href="#iconchaxunyonghu"></use>
+          </svg>
           {{editObj.roleName}}</span>
       </span>
     </template>
-    <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="145px">
+    <el-form :model="orgForm" :rules="rules" ref="orgForm" label-width="145px" class="org-account-modal-form">
       <template v-if="this.modalType === 'org'">
-        <el-form-item label="机构名称：" prop="name">
+        <el-form-item
+          label="机构名称："
+          prop="name"
+          :style="'margin-bottom:' + (type === 'add' ? '15px' : '24px')">
           <el-input
             v-model="orgForm.name"
             style="width: 300px;"
@@ -25,16 +35,17 @@
             @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
           ></el-input>
         </el-form-item>
-        <el-form-item label="机构层级：" v-if="type === 'add'">
-          <span>{{modalObj.level - 1}}</span>
+        <el-form-item label="机构层级：" v-if="type === 'add'" class="no-bottom">
+          <span>{{modalObj.level - 1}}级</span>
         </el-form-item>
-        <el-form-item label="剩余机构数：" v-if="type === 'add'">
-          <span>{{modalObj.isSubOrgLimit ? modalObj.restSubOrgCount : '-'}}</span>
+        <el-form-item label="剩余机构数：" v-if="type === 'add'" class="no-bottom">
+          <span>{{modalObj.isSubOrgLimit ? modalObj.restSubOrgCount : '不限'}}</span>
         </el-form-item>
         <el-form-item
           label="上级机构ID："
           prop="parentId"
           v-if="type === 'edit'"
+          class="need-bottom"
         >
           <el-select
             v-model="orgForm.parentId"
@@ -54,6 +65,7 @@
           label="上级机构名称："
           prop="parentName"
           v-if="type === 'edit'"
+          class="need-bottom"
         >
           <el-input
             :modelValue="dynamicParentName"
@@ -65,10 +77,10 @@
         </el-form-item>
       </template>
       <template v-else>
-        <el-form-item label="账号：" v-if="type === 'edit'">
+        <el-form-item label="账号：" v-if="type === 'edit'" class="no-bottom">
           <span>{{orgForm.phone}}</span>
         </el-form-item>
-        <el-form-item label="姓名：" prop="name">
+        <el-form-item label="姓名：" prop="name" class="need-bottom">
           <el-input
             v-model="orgForm.name"
             style="width: 300px;"
@@ -77,7 +89,7 @@
             @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
           ></el-input>
         </el-form-item>
-        <el-form-item label="账号：" prop="phone" v-if="type === 'add'">
+        <el-form-item label="账号：" prop="phone" v-if="type === 'add'" class="need-bottom">
           <el-input
             v-model="orgForm.phone"
             style="width: 300px;"
@@ -88,7 +100,7 @@
             @blur="handlePwd"
           ></el-input>
         </el-form-item>
-        <el-form-item label="密码：" prop="password" v-if="type === 'add'">
+        <el-form-item label="密码：" prop="password" v-if="type === 'add'" class="need-bottom">
           <el-input
             v-model="orgForm.password"
             style="width: 300px;"
@@ -99,13 +111,13 @@
             show-password
           ></el-input>
         </el-form-item>
-        <el-form-item label="角色：" prop="roleId">
+        <el-form-item label="角色：" prop="roleId" class="need-bottom">
           <el-select v-model="orgForm.roleId" placeholder="请选择角色" style="width: 300px;">
             <el-option v-for="item in roleList" :label="item.value" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="剩余账号数：" v-if="type === 'add'">
-          <span>{{modalObj.isAccountLimit ? modalObj.restAccountCount : '-'}}</span>
+        <el-form-item label="剩余账号数：" v-if="type === 'add'" class="no-bottom">
+          <span>{{modalObj.isAccountLimit ? modalObj.restAccountCount : '不限'}}</span>
         </el-form-item>
       </template>
     </el-form>
@@ -240,40 +252,45 @@ export default {
       this.$refs.orgForm.resetFields();
       this.visible = false;
     },
-    api(params) {
-      // eslint-disable-next-line no-nested-ternary
-      return this.modalType === 'org' ? (
-        this.type === 'add' ? AdminApi.detailAddSubOrg(params) : AdminApi.detailChangeSubOrg(params)
-      ) : (
-        this.type === 'add' ? AdminApi.detailAddOrgUser(params) : AdminApi.detailEditOrgUser(params)
-      );
-    },
     onsubmit() {
       this.$refs.orgForm.validate((valid) => {
         if (valid) {
           let params = toRaw(this.orgForm);
+          let api;
+          let message = '';
           if (this.type === 'add') {
             if (this.modalType === 'org') {
               // 机构新增
               params.parentId = this.modalObj.id;
+              api = () => AdminApi.detailAddSubOrg(params);
+              message = '机构创建成功';
             } else {
               // 账号新增
               params.orgId = this.modalObj.id;
               params = encryptInfo(params);
+              api = () => AdminApi.detailAddOrgUser(params);
+              message = '账号创建成功';
             }
           } else {
             // 编辑
             params.id = this.editObj.id;
+            if (this.modalType === 'org') {
+              api = () => AdminApi.detailChangeSubOrg(params);
+              message = '机构编辑成功';
+            } else {
+              api = () => AdminApi.detailEditOrgUser(params);
+              message = '账号编辑成功';
+            }
           }
-          this.api(params).then((res) => {
-            const { code, message } = res.data;
+          api.then((res) => {
+            const { code, msg } = res.data;
             if (code === 200) {
-              this.$message.success('success');
+              this.$message.success(message);
               this.$emit('afterAction');
               // 关闭弹窗 刷新页面
               this.visible = false;
             } else {
-              this.$message.warning(message);
+              this.$message.warning(msg);
             }
           });
         }
@@ -283,32 +300,51 @@ export default {
 };
 </script>
 <style lang="scss">
-  .dialog-title {
-    display: flex;
-    .title {
-      font-weight: 600;
-      color: #20242E;
-      font-size: 16px;
-      line-height: 16px;
+  .org-account-modal {
+    .dialog-title {
       display: flex;
-      align-items: center;
+      .title {
+        font-weight: 600;
+        color: #20242E;
+        font-size: 16px;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+      }
+      .level {
+        color: #FF871C;
+        border-radius: 2px;
+        border: 1px solid #FF871C;
+      }
+      .role {
+        color: #296DD3;
+        background: #E7F1FF;
+        border-radius: 2px;
+      }
+      .mark {
+        display: block;
+        font-size: 12px;
+        line-height: 12px;
+        padding: 5px 8px;
+        margin-left: 8px;
+      }
     }
-    .level {
-      color: #FF871C;
-      border-radius: 2px;
-      border: 1px solid #FF871C;
+    .el-dialog__body {
+      padding: 32px 0 !important;
     }
-    .role {
-      color: #296DD3;
-      background: #E7F1FF;
-      border-radius: 2px;
-    }
-    .mark {
-      display: block;
-      font-size: 12px;
-      line-height: 12px;
-      padding: 5px 8px;
-      margin-left: 8px;
+    &-form {
+      .el-form-item__label {
+        line-height: 32px !important;
+      }
+      .el-form-item__content {
+        line-height: 32px !important;
+      }
+      .need-bottom {
+        margin-bottom: 24px;
+      }
+      .no-bottom {
+        margin-bottom: 6px;
+      }
     }
   }
 </style>

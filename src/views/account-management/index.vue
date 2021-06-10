@@ -26,13 +26,13 @@
         :prop="item.prop"
         :label="item.label"
         :sortable="item.sort"
-        :width="item.width"
+        :min-width="item.width"
         :key="item.class"
         :align="item.align"
         :class-name="item.class"
       >
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" min-width="25%">
         <template #default="scope">
           <el-button
             type="text"
