@@ -801,14 +801,18 @@ export default {
       justify-content: space-between;
       flex-wrap: wrap;
       .el-form-item {
-        margin: 22px 10px 22px 20px;
+        margin: 20px 10px 20px 20px;
         .query-time {
           width: 130px;
           input {
             padding-right: 15px;
           }
         }
+        .el-form-item__label {
+          line-height: 32px !important;
+        }
         .el-form-item__content {
+          line-height: 32px !important;
           .el-select {
             .el-input__inner {
               padding: 0 12px;
@@ -905,7 +909,7 @@ export default {
       .table-content {
         padding: 20px;
         &-btn {
-          margin-bottom: 20px;
+          margin-bottom: 12px;
           .total-tips {
             font-size: 14px;
             padding-left: 20px;

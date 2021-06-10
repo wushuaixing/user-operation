@@ -282,7 +282,7 @@ export default {
               message = '账号编辑成功';
             }
           }
-          api.then((res) => {
+          api().then((res) => {
             const { code, msg } = res.data;
             if (code === 200) {
               this.$message.success(message);
