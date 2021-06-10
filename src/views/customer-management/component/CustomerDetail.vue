@@ -349,6 +349,7 @@
               ref="OrgAccountModal"
               :roleList="roleList"
               :modalObj="modalObj"
+              :acountList="acountList"
               @afterAction="afterAction"
             ></OrgAccountModal>
           </div>
@@ -494,13 +495,15 @@ export default {
             this.activeCustonerName = tree.name;
             this.activeLevel = tree.level;
             this.activeOrgId = tree.id;
-            this.subOrgData = tree.subOrg;
+            this.subOrgData = tree.subOrg.reverse();
             this.getAccountData(id);
             this.filterTree(this.treeData, '');
             this.hightlight(id);
           }
           if (type === 'org') {
             this.filterTreeNode(this.treeData, this.activeOrgId);
+            // 根据当前选中的子机构进行 树的选中
+            this.hightlight(this.activeOrgId);
           }
         } else {
           this.$message.error(message);
@@ -575,7 +578,7 @@ export default {
       let obj = {};
       if (type === 'org') {
         obj = {
-          title: `确认删除客户使用${this.acountList[row.level - 1]}级机构${row.name}?`,
+          title: `确认删除客户使用${this.acountList[row.level - 2]}级机构${row.name}?`,
           text: '点击确定，该机构及其子机构都将被删除，被删除机构下的账号和业务也一并删除，无法恢复，请再次确认',
           color: '#F93535',
           api: () => AdminApi.detailDelSubOrg(params),
@@ -698,15 +701,13 @@ export default {
       this.activeLevel = level;
       this.activeCustonerName = name;
       this.getAccountData(id);
-      this.subOrgData = subOrg;
+      this.subOrgData = subOrg.reverse();
     },
     // 新增，编辑结束刷新页面
     afterAction() {
       // 重新获取机构详情数据
       const { id } = this.$route.params;
       this.getOrgDetailData(id, 'org');
-      // 根据当前选中的子机构进行 树的选中
-      this.hightlight(this.activeOrgId);
       // 根据选中的树节点加载 子机构列表数据
       // 加载本级账号表格数据
       this.getAccountData(this.activeOrgId);
@@ -717,7 +718,7 @@ export default {
           this.filterTreeNode(item.subOrg, value);
         }
         if (item.id === value) {
-          this.subOrgData = item.subOrg;
+          this.subOrgData = item.subOrg.reverse();
         }
       });
     },
