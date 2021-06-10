@@ -160,6 +160,7 @@
         v-model="visible"
         @close="handleCloseModal"
         width="500px"
+        destroy-on-close
       >
         <ul>
           <li>
