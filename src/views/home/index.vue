@@ -39,11 +39,11 @@ export default {
     const {
       params: { info, name, groupId },
     } = this.$route;
-    this.$store.dispatch('getNumAction');
     if (info === 'success') {
       this.$message.success('登录成功');
       this.name = name;
       this.roleName = groupId;
+      if (groupId !== '204') this.$store.dispatch('getNumAction');
     } else {
       this.loading = true;
       LoginApi.getUserInfo().then((res) => {
@@ -56,6 +56,7 @@ export default {
           this.name = name;
           this.loading = false;
           this.roleName = groupId;
+          if (groupId !== '204') this.$store.dispatch('getNumAction');
         } else {
           this.$router.push('/login');
         }
