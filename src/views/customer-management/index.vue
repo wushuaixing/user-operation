@@ -12,6 +12,7 @@
             placeholder="请输入机构名称"
             :remote-method="remoteMethod"
             @change="setCustomerName"
+            @blur="getOrgList('')"
             >
             <el-option
               v-for="item in customerOptions"
@@ -751,16 +752,17 @@ export default {
     },
 
     remoteMethod(val) {
-      if (this.selectTimer) {
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }
-      this.selectTimer = setTimeout(() => {
-        // 调用接口查询
-        this.getOrgList(val);
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }, 300);
+      // if (this.selectTimer) {
+      //   clearTimeout(this.selectTimer);
+      //   this.selectTimer = null;
+      // }
+      // this.selectTimer = setTimeout(() => {
+      //   // 调用接口查询
+      //   this.getOrgList(val);
+      //   clearTimeout(this.selectTimer);
+      //   this.selectTimer = null;
+      // }, 300);
+      this.getOrgList(val);
     },
 
     // 查询机构数据
@@ -771,6 +773,9 @@ export default {
         const { code, data } = res.data || {};
         if (code === 200) {
           this.customerOptions = data;
+          // if (!data.length) {
+          //   this.setCustomerName();
+          // }
         } else {
           this.$message.error(res.message);
         }
