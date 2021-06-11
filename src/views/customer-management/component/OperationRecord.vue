@@ -18,7 +18,7 @@
           <el-form-item label="操作时间："   prop="start" style="margin-right: 0">
             <el-date-picker
               type="date"
-              placeholder="开始日期"
+              placeholder="开始时间"
               v-model="params.start"
               style="width: 140px"
               :disabledDate="disabledStartDate" />
@@ -26,7 +26,7 @@
           <el-form-item label="至"   prop="end" class="time-end">
             <el-date-picker
               type="date"
-              placeholder="结束日期"
+              placeholder="结束时间"
               v-model="params.end"
               style="width: 140px"
               :disabledDate="disabledEndDate"
@@ -126,7 +126,7 @@ export default {
       query: { name, id },
     } = this.$route;
     this.name = name;
-    document.title = name;
+    document.title = `【操作记录】${name}`;
     this.params.id = id;
     this.getData();
   },
