@@ -233,6 +233,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="accountNum"
+                  align="center"
                   label="账号数">
                 </el-table-column>
                 <el-table-column label="操作">
@@ -294,7 +295,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="name"
-                  width="110"
+                  width="170"
                   label="姓名"
                   >
                 </el-table-column>
@@ -307,6 +308,7 @@
                   prop="num"
                   width="120"
                   label="导入债务人数"
+                  align="center"
                   >
                 </el-table-column>
                 <el-table-column
@@ -314,7 +316,7 @@
                   width="120"
                   label="上次登录时间">
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" class-name="action-column">
                   <template #default="scope">
                     <el-button
                       type="text"
@@ -969,6 +971,11 @@ export default {
           }
         }
         :deep(.list-table){
+          .action-column{
+            .el-divider--vertical{
+              margin: 0 6px !important;
+            }
+          }
           .el-table__empty-text {
             padding: 36px 0;
           }
