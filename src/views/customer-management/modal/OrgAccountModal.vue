@@ -9,7 +9,7 @@
     <template #title>
       <span class="dialog-title">
         <span class="title">{{title}}</span>
-        <span class="level mark" v-if="type === 'edit' && modalType === 'org'">{{`${acountList[editObj.level - 2]}级`}}</span>
+        <span class="level mark" v-if="type === 'edit' && modalType === 'org'" style="font-weight: normal">{{`${acountList[editObj.level - 2]}级`}}</span>
         <span class="role mark" v-if="type === 'edit' && modalType === 'account'" :style="roleTitle">
           <svg class="icon" aria-hidden="true" style="font-size: 14px;" v-if="editObj.roleName === '管理员用户'">
             <use xlink:href="#iconguanliyuanyonghu"></use>

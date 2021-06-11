@@ -433,22 +433,6 @@ export default {
             padding: 0 30px 0 30px ;
           }
         }
-        .is-disabled{
-          .el-radio__label{
-            color: #7D8699;
-          }
-          .el-radio__input{
-            .el-radio__inner{
-              background:#EEF1F7;
-              border-color: #C5C7CE;
-            }
-          }
-          .el-input__inner{
-            background:#EEF1F7;
-            border-color: #C5C7CE;
-            color:#7D8699;
-          }
-        }
         .el-input__inner{
           padding: 0 30px 0 12px ;
         }
