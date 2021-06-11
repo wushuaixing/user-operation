@@ -9,7 +9,7 @@
     <template #title>
       <span class="dialog-title">
         <span class="title">{{title}}</span>
-        <span class="level mark" v-if="type === 'edit' && modalType === 'org'">一级</span>
+        <span class="level mark" v-if="type === 'edit' && modalType === 'org'">{{`${acountList[editObj.level - 2]}级`}}</span>
         <span class="role mark" v-if="type === 'edit' && modalType === 'account'" :style="roleTitle">
           <svg class="icon" aria-hidden="true" style="font-size: 14px;" v-if="editObj.roleName === '管理员用户'">
             <use xlink:href="#iconguanliyuanyonghu"></use>
@@ -25,7 +25,8 @@
         <el-form-item
           label="机构名称："
           prop="name"
-          :style="'margin-bottom:' + (type === 'add' ? '15px' : '24px')">
+          :style="'margin-bottom:' + (type === 'add' ? '15px' : '24px')"
+        >
           <el-input
             v-model="orgForm.name"
             style="width: 300px;"
@@ -77,7 +78,7 @@
         </el-form-item>
       </template>
       <template v-else>
-        <el-form-item label="账号：" v-if="type === 'edit'" class="no-bottom">
+        <el-form-item label="账号：" v-if="type === 'edit'" style="margin-bottom: 12px;">
           <span>{{orgForm.phone}}</span>
         </el-form-item>
         <el-form-item label="姓名：" prop="name" class="need-bottom">
@@ -85,6 +86,7 @@
             v-model="orgForm.name"
             style="width: 300px;"
             autocomplete="off"
+            maxlength="100"
             placeholder="请输入姓名"
             @change="(val) => orgForm.name = val.replace(/\s+/g, '')"
           ></el-input>
@@ -102,16 +104,17 @@
         </el-form-item>
         <el-form-item label="密码：" prop="password" v-if="type === 'add'" class="need-bottom">
           <el-input
+            ref="accountPwd"
             v-model="orgForm.password"
             style="width: 300px;"
-            placeholder="请输入密码"
+            placeholder="密码默认为账号后六位"
             autocomplete="off"
             maxlength="20"
             @change="(value) => (orgForm.password = value.replace(/[\W_]/g, ''))"
-            show-password
+            type="password"
           ></el-input>
         </el-form-item>
-        <el-form-item label="角色：" prop="roleId" class="need-bottom">
+        <el-form-item label="角色：" prop="roleId" style="margin-bottom: 15px">
           <el-select v-model="orgForm.roleId" placeholder="请选择角色" style="width: 300px;">
             <el-option v-for="item in roleList" :label="item.value" :value="item.id" :key="item.id"></el-option>
           </el-select>
@@ -146,6 +149,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    acountList: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -163,9 +170,6 @@ export default {
         roleId: '',
       },
       rules: {
-        name: [
-          { required: true, message: this.modalType === 'org' ? '机构名称不允许为空' : '请输入姓名', trigger: 'blur' },
-        ],
         parentId: [
           { required: true, message: '上级机构ID不允许为空', trigger: 'blur' },
         ],
@@ -210,6 +214,10 @@ export default {
     open(type, modalType, obj) {
       this.type = type;
       this.modalType = modalType;
+      const ruleName = [
+        { required: true, message: this.modalType === 'org' ? '请输入机构名称' : '请输入姓名', trigger: 'blur' },
+      ];
+      this.rules = Object.assign(this.rules, { name: ruleName });
       if (type === 'edit') {
         this.editObj = { ...obj };
         this.title = `编辑：${obj.name}`;
@@ -246,6 +254,7 @@ export default {
       const { phone } = this.orgForm;
       if (phone.length === 11) {
         this.orgForm.password = phone.substring(phone.length - 6);
+        this.$refs.orgForm.clearValidate('password');
       }
     },
     close() {
@@ -257,40 +266,42 @@ export default {
         if (valid) {
           let params = toRaw(this.orgForm);
           let api;
-          let message = '';
+          let messageTip = '';
           if (this.type === 'add') {
             if (this.modalType === 'org') {
               // 机构新增
               params.parentId = this.modalObj.id;
               api = () => AdminApi.detailAddSubOrg(params);
-              message = '机构创建成功';
+              messageTip = '机构创建成功';
             } else {
               // 账号新增
               params.orgId = this.modalObj.id;
               params = encryptInfo(params);
               api = () => AdminApi.detailAddOrgUser(params);
-              message = '账号创建成功';
+              messageTip = '账号创建成功';
             }
           } else {
             // 编辑
             params.id = this.editObj.id;
             if (this.modalType === 'org') {
               api = () => AdminApi.detailChangeSubOrg(params);
-              message = '机构编辑成功';
+              messageTip = '机构编辑成功';
             } else {
               api = () => AdminApi.detailEditOrgUser(params);
-              message = '账号编辑成功';
+              messageTip = '账号编辑成功';
             }
           }
           api().then((res) => {
-            const { code, msg } = res.data;
+            const { code, message } = res.data;
             if (code === 200) {
-              this.$message.success(message);
+              this.$message.success(messageTip);
               this.$emit('afterAction');
               // 关闭弹窗 刷新页面
               this.visible = false;
+            } else if (code === 5005) {
+              this.$message.warning('账号已存在');
             } else {
-              this.$message.warning(msg);
+              this.$message.error(message);
             }
           });
         }
@@ -330,7 +341,7 @@ export default {
       }
     }
     .el-dialog__body {
-      padding: 32px 0 !important;
+      padding: 32px 0 24px !important;
     }
     &-form {
       .el-form-item__label {

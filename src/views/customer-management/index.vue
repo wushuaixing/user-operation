@@ -12,6 +12,7 @@
             placeholder="请输入机构名称"
             :remote-method="remoteMethod"
             @change="setCustomerName"
+            @blur="getOrgList('')"
             >
             <el-option
               v-for="item in customerOptions"
@@ -207,7 +208,7 @@
                 <template #default="scope" v-if="item.prop === 'name'">
                   <span>{{ scope.row.name }}
                     <span class="iconfont iconyiguoqi"
-                          style="font-size: 14px;color: #F93535;margin-left: 10px"
+                          style="font-size: 14px;color: #F93535;margin-left: 4px"
                           v-if="scope.row.isExpire"
                     ></span></span>
                 </template>
@@ -751,16 +752,17 @@ export default {
     },
 
     remoteMethod(val) {
-      if (this.selectTimer) {
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }
-      this.selectTimer = setTimeout(() => {
-        // 调用接口查询
-        this.getOrgList(val);
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }, 300);
+      // if (this.selectTimer) {
+      //   clearTimeout(this.selectTimer);
+      //   this.selectTimer = null;
+      // }
+      // this.selectTimer = setTimeout(() => {
+      //   // 调用接口查询
+      //   this.getOrgList(val);
+      //   clearTimeout(this.selectTimer);
+      //   this.selectTimer = null;
+      // }, 300);
+      this.getOrgList(val);
     },
 
     // 查询机构数据
@@ -771,6 +773,9 @@ export default {
         const { code, data } = res.data || {};
         if (code === 200) {
           this.customerOptions = data;
+          // if (!data.length) {
+          //   this.setCustomerName();
+          // }
         } else {
           this.$message.error(res.message);
         }
@@ -843,8 +848,8 @@ export default {
       .customer-detail {
         display: flex;
         justify-content: space-between;
-        padding-top: 12px;
-        padding-bottom: 21px;
+        padding-top: 8px;
+        padding-bottom: 16px;
         &-left {
           width: calc(100% - 450px);
           font-size: 14px;
@@ -907,7 +912,7 @@ export default {
         }
       }
       .table-content {
-        padding: 20px;
+        padding: 20px 20px 40px;
         &-btn {
           margin-bottom: 12px;
           .total-tips {
