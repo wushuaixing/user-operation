@@ -104,7 +104,7 @@
               <div class="customer-detail-left">
                 <div class="link">
                   <span>二级域名:</span>
-                  <a :href="`https://www.${customerObj.subDomain}.yczcjk.com`" target='_blank'>{{customerObj.subDomain}}</a>
+                  <a :href="`https://www.${customerObj.subDomain}.yczcjk.com`" target='_blank' class="button-link">{{customerObj.subDomain}}</a>
                 </div>
                 <div class="link">
                   <span>创建时间:</span>
@@ -182,7 +182,6 @@
               style="width: 100%"
               @selection-change="(val) => (this.multipleSelection = val)"
               @sort-change="handleSortChange"
-              @row-click="rowClick"
               v-loading="loading"
               :row-key="(val) => val.id"
             >
@@ -208,7 +207,7 @@
                 <template #default="scope" v-if="item.prop === 'name'">
                   <span>{{ scope.row.name }}
                     <span class="iconfont iconyiguoqi"
-                          style="font-size: 14px;color: #F93535;margin-left: 4px"
+                          style="font-size: 17px;color: #F93535;margin-left: 4px"
                           v-if="scope.row.isExpire"
                     ></span></span>
                 </template>
@@ -217,6 +216,15 @@
                 <template #default="scope">
                   <el-button
                     type="text"
+                    class="button-link"
+                    @click.stop="toDetail(scope.row)"
+                  >
+                    详情
+                  </el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button
+                    type="text"
+                    class="button-link"
                     @click.stop="showModal('edit',scope.row)"
                   >
                     权限管理
@@ -224,6 +232,7 @@
                   <el-divider direction="vertical"></el-divider>
                   <el-button
                     type="text"
+                    class="button-link"
                     @click.stop="handleAction(scope.row)"
                     >操作日志
                   </el-button>
@@ -533,7 +542,7 @@ export default {
     },
 
     // 点击一行跳转详情页
-    rowClick(row) {
+    toDetail(row) {
       const { id } = row;
       window.open(`/customerDetail/${id}`, '_blank');
     },
@@ -698,6 +707,7 @@ export default {
       // 改变路由后带参 以便刷新获取id和name做逻辑操作
       let url = '/customerManagement';
       this.$refs.BreadCrumb.editStatus = false;
+      this.page = 1;
       if (val && val === 'all') {
         this.queryParams.orgId = '';
         url += '/all';
@@ -786,7 +796,6 @@ export default {
 
     // 查询完之后给多选框下拉列表赋值
     setCustomerName() {
-      this.getOrgList('');
     },
   },
 };

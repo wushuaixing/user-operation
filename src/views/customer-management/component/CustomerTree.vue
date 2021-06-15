@@ -182,6 +182,7 @@ export default {
       }
       .active {
         color: #296dd3;
+        font-weight: bold;
       }
       .itemS {
         position: absolute;

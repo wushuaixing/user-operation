@@ -51,7 +51,7 @@ export const adminRoutes = [
   {
     path: '/customerDetail/:id',
     name: 'customerDetail',
-    component: () => import('@/views/customer-management/component/CustomerDetail.vue'),
+    component: () => import('@/views/customer-management/component/customer-detail.vue'),
   },
   {
     path: '/operationLog',
@@ -61,7 +61,7 @@ export const adminRoutes = [
   {
     path: '/operationRecord',
     name: 'OperationRecord',
-    component: () => import('@/views/customer-management/component/OperationRecord.vue'),
+    component: () => import('@/views/customer-management/component/operation-record.vue'),
   },
 ];
 
