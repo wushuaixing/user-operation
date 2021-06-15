@@ -120,6 +120,21 @@ $--input-height: 32px !default;
 $--input-border-color: $--border-color-base !default;
 $--input-border-radius: 2px !default;
 $--input-hover-border: #296DD3 !default;
+
+.is-disabled{
+  .el-radio__label{
+    color: #7D8699 !important;
+  }
+  .el-radio__inner{
+    background:#EEF1F7 !important;
+    border-color: #C5C7CE !important;
+  }
+  .el-input__inner{
+    background:#EEF1F7 !important;
+    border-color: #C5C7CE !important;
+    color:#7D8699 !important;
+  }
+}
 .el-input__inner:focus{
   box-shadow: 0px 0px 4px 0px rgba(1, 106, 169, 0.46);
 }

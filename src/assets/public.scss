@@ -47,20 +47,20 @@ a{
 .yc-confirm-modal{
   &-title{
     display: flex;
-    align-items: center;
     font-size: 16px;
     color: #20242E;
     font-weight: bold;
     img{
       width: 24px;
+      height: 25px;
       margin-right: 13px;
       position: relative;
-      top: 1px;
+      top: -1px;
     }
   }
   &-body{
-    margin-top: 10px;
-    line-height: 14px;
+    margin-top: 5px;
+    line-height: 21px;
     color: #4E5566;
     padding-left: 38px;
   }
