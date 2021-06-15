@@ -18,7 +18,7 @@
           <el-form-item label="操作模块：" prop="title">
             <el-select v-model="queryParams.title" style="width: 162px">
               <el-option
-                v-for="item in operaModuleList"
+                v-for="item in OPERA_MODULE_LIST"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -133,7 +133,7 @@
 import BreadCrumb from '@/components/bread-crumb/index.vue';
 import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
-import { operaModuleList } from '@/utils/static';
+import { OPERA_MODULE_LIST } from '@/static';
 import { operationColumn } from '@/static/column';
 import { dateUtils } from '@/utils';
 import { zcjkRules } from '../modal/data';
@@ -163,7 +163,7 @@ export default {
       queryOptions: {},
       data: [],
       userList: [],
-      operaModuleList,
+      OPERA_MODULE_LIST,
       column: operationColumn,
     };
   },
@@ -208,7 +208,7 @@ export default {
         const { code, data } = res.data || {};
         if (code === 200) {
           const { list = [], page, total } = data || {};
-          const f = (j) => this.operaModuleList.find((i) => i.value === j.title).label;
+          const f = (j) => this.OPERA_MODULE_LIST.find((i) => i.value === j.title).label;
           this.data = list.map((i) => ({ ...i, title: f(i) }));
           this.page = page;
           this.total = total;
@@ -259,10 +259,10 @@ export default {
     // 操作内容展示
     show(params = {}) {
       const { title, before, after } = toRaw(params);
-      let type = this.operaModuleList.find((i) => i.label === title).value;
+      let type = this.OPERA_MODULE_LIST.find((i) => i.label === title).value;
       if ([6, 7].includes(type)) type = 6;
       if ([8, 9, 10].includes(type)) type = 8;
-      let obj = { before, after, display: 'inline' };
+      let obj = { before, after };
       const suffixNum = (i, unit) => (i === '-1' ? '不限' : `${i}${unit}`);
       const sufficRules = (text) => {
         const str = text.split(',');

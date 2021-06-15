@@ -7,9 +7,9 @@
           <el-form-item label="操作类型：" prop="title">
             <el-select v-model="params.type" style="width: 162px">
               <el-option
-                v-for="item in Object.keys(operationType)"
+                v-for="item in Object.keys(OPERATION_TYPE)"
                 :key="item"
-                :label="operationType[item]"
+                :label="OPERATION_TYPE[item]"
                 :value="item"
               >
               </el-option>
@@ -91,7 +91,7 @@
 import BreadCrumb from '@/components/bread-crumb/index.vue';
 import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
-import { operationType } from '@/utils/static';
+import { OPERATION_TYPE } from '@/static';
 import { operationColumn } from '@/static/column';
 import { dateUtils } from '@/utils';
 
@@ -121,7 +121,7 @@ export default {
       },
       data: [],
       userList: [],
-      operationType,
+      OPERATION_TYPE,
       column: operationColumn,
     };
   },
@@ -154,7 +154,7 @@ export default {
           const { list = [], page, total } = data || {};
           // 处理操作类型
           this.data = list.map((item) => {
-            const typeName = this.operationType[item.type];
+            const typeName = this.OPERATION_TYPE[item.type];
             return Object.assign(item, { typeName });
           });
           this.otherParams.page = page;

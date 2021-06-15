@@ -121,7 +121,8 @@
                   <el-option v-for="item in typeList"
                              :value="item.value"
                              :key="item.value"
-                             :label="item.label"></el-option>
+                             :label="item.label">
+                  </el-option>
                 </el-select>
                 <el-select
                   style="width: calc(100% - 90px)"

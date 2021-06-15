@@ -44,9 +44,9 @@
         <el-form-item label="顶级合作机构状态：">
           <el-select v-model="queryParams.status" style="width: 162px" @change="statusChange">
             <el-option
-              v-for="item in Object.keys(topOrgStatus)"
+              v-for="item in Object.keys(TOP_ORG_STATUS)"
               :key="item"
-              :label="topOrgStatus[item]"
+              :label="TOP_ORG_STATUS[item]"
               :value="item"
             >
             </el-option>
@@ -301,7 +301,7 @@
 </template>
 
 <script>
-import { topOrgStatus, orgType, CUSTOMER_LIST } from '@/utils/static';
+import { TOP_ORG_STATUS, orgType, CUSTOMER_LIST } from '@/static';
 import BreadCrumb from '@/components/bread-crumb/index.vue';
 import { customerColumn } from '@/static/column';
 import { toRaw } from 'vue';
@@ -338,7 +338,7 @@ export default {
       customerOptions: [], // 搜索框中的机构列表
       selectTimer: null,
       title: '全部',
-      topOrgStatus,
+      TOP_ORG_STATUS,
       orgType,
       tableData: [],
       multipleSelection: [],

@@ -15,12 +15,12 @@ export const normalRoutes = [
   {
     path: '/documentSearch',
     name: 'documentSearch',
-    component: () => import('@/views/document-search/index.vue'),
+    component: () => import('@/views/document/serch/index.vue'),
   },
   {
     path: '/documentDetail/:wenshuId/:wid/:content',
     name: 'documentDetail',
-    component: () => import('@/views/document-detail/index.vue'),
+    component: () => import('@/views/document/detail/index.vue'),
   },
 ];
 

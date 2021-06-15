@@ -1,0 +1,400 @@
+/* element-plus 样式修改 */
+$--color-primary: #296DD3;
+
+$--color-success: #1BBA7C !default;
+
+$--color-warning: #ff871c !default;
+
+$--color-danger: #F93535 !default;
+
+$--color-info: #909399 !default;
+
+$--color-text-regular: #20242E !default;
+
+$--color-text-placeholder: #B2B8C9 !default;
+
+$--border-color-base: #C5C7CE !default;
+$--background-color-base: #EFF5FF !default;
+
+$--font-size-base: 14px !default;
+$--font-size-large: 16px !default;
+$--link-color: $--color-primary;
+$--link-hover-color: blue;
+
+/* Button
+-------------------------- */
+$--button-border-radius: 2px !default;
+$--button-font-size: $--font-size-base !default;
+$--button-padding-vertical: 8px !default;
+$--button-hover-tint-percent: 0% !default;
+$--button-active-shade-percent: 0% !default;
+.el-button{
+  font-weight: normal !important;
+}
+.el-button + .el-button{
+  margin-left: 12px !important;
+}
+@mixin btn-first{
+  border: none;
+  background-color: #296DD3;
+  &:hover{
+    background: #2E7BED !important;
+  }
+  &:active{
+    background: #2460BA !important;
+  }
+}
+@mixin btn-second{
+  border: 1px solid #296DD3 !important;
+  background-color: #EFF5FF !important;
+  color: #296DD3 !important;
+  &:hover{
+    border: none;
+    color: #fff !important;
+    background: #2E7BED !important;
+  }
+  &:active{
+    color: #fff !important;
+    background: #2460BA !important;
+  }
+}
+@mixin btn-third{
+  border: 1px solid #296DD3 !important;
+  background-color: #fff !important;
+  color: #296DD3 !important;
+  &:hover{
+    background: #EFF5FF !important;
+  }
+  &:active{
+    background: #EFF5FF !important;
+    box-shadow: 0px 0px 4px 0px rgba(41, 109, 211, 0.53);
+  }
+}
+@mixin btn-fourth{
+  border: 1px solid #C5C7CE !important;
+  background-color: #fff !important;
+  color: #20242E !important;
+  &:hover{
+    border: 1px solid #296dd3 !important;
+    color: #296dd3 !important;
+  }
+  &:active{
+    color: #296dd3 !important;
+    box-shadow: 0px 0px 4px 0px rgba(41, 109, 211, 0.53);
+  }
+}
+@mixin btn-link{
+  color: #296DD3 !important;
+  &:hover{
+    color: #2E7BED !important;
+    text-decoration: underline;
+  }
+  &:active{
+    color: #2460BA !important;
+  }
+}
+.button{
+  //一级按钮
+  &-first{
+    @include btn-first;
+  }
+  //二级按钮
+  &-second{
+    @include btn-second;
+  }
+  //三级按钮
+  &-third{
+    @include btn-third;
+  }
+  //四级按钮
+  &-fourth{
+    @include btn-fourth;
+  }
+  &-link{
+    @include btn-link;
+  }
+}
+/* Input
+-------------------------- */
+$--input-height: 32px !default;
+$--input-border-color: $--border-color-base !default;
+$--input-border-radius: 2px !default;
+$--input-hover-border: #296DD3 !default;
+
+.is-disabled{
+  .el-radio__label{
+    color: #7D8699 !important;
+  }
+  .el-radio__inner{
+    background:#EEF1F7 !important;
+    border-color: #C5C7CE !important;
+  }
+  .el-input__inner{
+    background:#EEF1F7 !important;
+    border-color: #C5C7CE !important;
+    color:#7D8699 !important;
+  }
+}
+.el-input__inner:focus{
+  box-shadow: 0px 0px 4px 0px rgba(1, 106, 169, 0.46);
+}
+.passward-item {
+  .el-input__suffix {
+    display: none;
+  }
+}
+
+.el-select{
+  .el-input__suffix{
+    .el-input__icon{
+      color: #7D8699 !important;
+    }
+  }
+}
+/* Tabs
+-------------------------- */
+.el-tabs{
+  &__item{
+    font-size: 16px !important;
+    color: #20242E !important;
+    height: 46px !important;
+    line-height: 46px !important;
+    &:hover{
+      color: #296DD3 !important;
+    }
+  }
+  &__nav-wrap::after{
+    height: 1px !important;
+    background-color: #e2e4e9 !important;
+  }
+  .is-active{
+    color: #296DD3 !important;
+    font-weight: bold;
+  }
+}
+
+/* Table
+-------------------------- */
+$--table-border-color: #e2e4e9 !default;
+$--table-header-background-color: #EDEFF3 !default;
+$--table-header-font-color: #4E5566 !default;
+$--table-row-hover-background-color: $--background-color-base !default;
+.el-table{
+  //&::before{
+  //  content: none !important;
+  //}
+  .cell{
+    padding-left: 20px !important;
+  }
+  tr{
+    th,td{
+      padding: 11px 0 ;
+      box-sizing: border-box;
+    }
+    .is-sortable{
+      .cell{
+        &:hover{
+          color: #296DD3 !important;
+        }
+
+      }
+    }
+  }
+  thead{
+    th{
+      border-bottom: none !important;
+      &:first-child{
+        border-radius: 2px 0 0 0;
+      }
+      &:last-child{
+        border-radius: 0 2px 0 0;
+      }
+    }
+  }
+  &__empty-text{
+    line-height: 36px !important;
+    padding: 120px 0;
+  }
+}
+
+/* Pagination
+-------------------------- */
+$--pagination-font-size: 12px !default;
+$--pagination-border-radius: 2px !default;
+$--pagination-background-color: #fff !important;
+
+.el-pagination {
+  text-align: right;
+  margin-top: 30px;
+  &__total{
+    color: #7C8598 !important;
+    margin-right: 8px !important;
+  }
+  .el-pager{
+    .number{
+      border: 1px solid #C5C7CE;
+      color: $--color-text-regular;
+      font-weight: normal !important;
+      margin: 0 4px !important;
+      &:hover{
+        border: 1px solid #2E7BED !important;
+      }
+    }
+    .active{
+      color: #2E7BED !important;
+      border: 1px solid #2E7BED !important;
+    }
+  }
+  button{
+    border: 1px solid #C5C7CE !important;
+    margin: 0 4px !important;
+  }
+  &__jump{
+    margin-left: 8px !important;
+    .el-input__inner{
+      width: 50px !important;
+    }
+  }
+  &__sizes{
+    margin-right: 3px !important;
+    position: relative;
+    top: -1px;
+    .el-input{
+      width: 82px !important;
+    }
+    .el-select{
+      .el-input__suffix-inner{
+        .el-input__icon{
+          color: #20242E !important;
+        }
+      }
+    }
+  }
+}
+
+/* Menu
+--------------------------*/
+$--menu-item-hover-fill: red !default;
+
+
+/* Dropdown
+-------------------------- */
+$--dropdown-menuItem-hover-fill: #EFF5FF !default;
+$--dropdown-menu-box-shadow: 0px 1px 6px 0px rgba(0, 16, 43, 0.17) !default;
+/* Dialog
+-------------------------- */
+$--dialog-title-font-size: 16px !default;
+$--dialog-padding-primary: 0px !default;
+.el-dialog__header{
+  font-weight: bold;
+  height: 56px;
+  border-bottom: 1px solid #e2e4e9;
+  display: flex;
+  align-items: center;
+  padding:0 0 0 20px !important;
+  .el-dialog__headerbtn{
+     top: 13px;
+     right: 13px;
+     font-size: 24px;
+  }
+  .el-dialog__title{
+    color: #20242E !important;
+  }
+}
+
+.el-dialog__body{
+  padding: 28px 0 0 0 !important;
+  .el-form{
+    .el-form-item{
+      &__error{
+        left: 17px;
+        padding-top: 0px;
+      }
+    }
+  }
+}
+
+@mixin modal-footer-btn{
+  width: 72px;
+  border-radius: 2px !important;
+  &:first-child{
+    @include btn-fourth;
+  }
+  &:last-child{
+    @include btn-first;
+    margin-left: 12px;
+  }
+}
+
+
+.el-dialog__footer{
+  border-top: 1px solid #e2e4e9;
+  padding: 20px 20px 20px 0 !important;
+  .el-button{
+    @include  modal-footer-btn;
+  }
+}
+
+/* Message
+-------------------------- */
+$--message-min-width: 172px !default;
+$--message-padding: 16px 32px !default;
+$--msgbox-width: 440px !default;
+.el-message{
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15) !important;
+  background-color: #fff !important;
+  border: none !important;
+  p{
+    color: #20242E !important;
+    font-size: 16px;
+    line-height: 18px;
+  }
+  &__icon{
+    font-size: 19px;
+    margin-right: 8px !important;
+    position: relative;
+    top: 1px;
+  }
+  &-box{
+    position: relative;
+    top: -20vh !important;
+    &__content{
+      padding: 32px 32px 40px 32px !important;
+    }
+    &__btns{
+      padding: 0 32px 22px 0 !important;
+      .el-button{
+        @include  modal-footer-btn;
+        font-size: 14px !important;
+      }
+    }
+  }
+}
+
+/* Divider
+--------------------------*/
+.el-divider--vertical{
+  margin: 0 12px !important;
+  background-color: #e2e4e9 !important;
+}
+
+/* Form
+--------------------------*/
+.el-form-item{
+  &__label{
+    padding: 0px !important;
+  }
+}
+
+/* Timeline
+--------------------------*/
+$--timeline-node-size-normal: 12px !default;
+$--timeline-node-size-large: 14px !default;
+$--timeline-node-color: gray !default;
+.el-timeline-item{
+  padding-bottom: 5px !important;
+}
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-plus/lib/theme-chalk/fonts';
+
+@import "../../node_modules/element-plus/packages/theme-chalk/src/index";
