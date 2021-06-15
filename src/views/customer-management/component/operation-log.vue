@@ -262,7 +262,7 @@ export default {
       let type = this.OPERA_MODULE_LIST.find((i) => i.label === title).value;
       if ([6, 7].includes(type)) type = 6;
       if ([8, 9, 10].includes(type)) type = 8;
-      let obj = { before, after, display: 'inline' };
+      let obj = { before, after };
       const suffixNum = (i, unit) => (i === '-1' ? '不限' : `${i}${unit}`);
       const sufficRules = (text) => {
         const str = text.split(',');
