@@ -203,10 +203,12 @@ export default {
         ? {
           background: '#E7F1FF',
           color: '#296DD3',
+          fontWeight: 'normal',
         }
         : {
           background: '#DAF5EB',
           color: '#1BBA7C',
+          fontWeight: 'normal',
         };
     },
   },
