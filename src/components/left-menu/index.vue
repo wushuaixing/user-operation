@@ -33,7 +33,7 @@
           v-else
           :key="item.key"
           :index="item.path"
-          :route="{ path: item.path, query: {id: ''} }"
+          :route="{ path: item.path }"
         >
           <i :class="item.icon"></i>
           <template #title

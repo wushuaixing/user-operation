@@ -316,12 +316,6 @@ export default {
         obj.permission = this.checkList[key].checkedData;
         arr.push(obj);
       });
-      // for (const key in this.checkList) {
-      //   const obj = {};
-      //   obj.moduleName = key;
-      //   obj.permission = this.checkList[key].checkedData;
-      //   arr.push(obj);
-      // }
       return arr;
     },
     // 回显时处理 权限数组
@@ -364,9 +358,6 @@ export default {
       if (!endTime || !startTime) return false;
       const dynamicTime = startTime - 86400000;
       return endTime.valueOf() <= dynamicTime;
-    },
-    timeChange() {
-      document.querySelector('.inputName').querySelector('input').focus();
     },
   },
   computed: {

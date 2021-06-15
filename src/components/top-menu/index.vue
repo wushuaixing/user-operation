@@ -191,7 +191,6 @@ export default {
       $modalConfirm({ title: '确认要退出登录吗?' })
         .then(() => {
           LoginApi.loginOut();
-          localStorage.clear();
           this.$router.push('/login');
         })
         .catch((err) => {

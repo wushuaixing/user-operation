@@ -151,6 +151,7 @@
           :page-size="params.num"
           layout="total,sizes, prev, pager, next, jumper"
           :total="total"
+          :key="page"
         />
       </div>
     </div>
@@ -219,7 +220,8 @@
 </template>
 
 <script>
-import { SORTER_TYPE, taskAssignTabs } from '@/utils/static';
+import { SORTER_TYPE } from '@/static';
+import { taskAssignTabs } from '@/static/fn';
 import { taskAssignColumn } from '@/static/column';
 import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';

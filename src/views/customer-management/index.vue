@@ -44,9 +44,9 @@
         <el-form-item label="顶级合作机构状态：">
           <el-select v-model="queryParams.status" style="width: 162px" @change="statusChange">
             <el-option
-              v-for="item in Object.keys(topOrgStatus)"
+              v-for="item in Object.keys(TOP_ORG_STATUS)"
               :key="item"
-              :label="topOrgStatus[item]"
+              :label="TOP_ORG_STATUS[item]"
               :value="item"
             >
             </el-option>
@@ -182,7 +182,6 @@
               style="width: 100%"
               @selection-change="(val) => (this.multipleSelection = val)"
               @sort-change="handleSortChange"
-              @row-click="rowClick"
               v-loading="loading"
               :row-key="(val) => val.id"
             >
@@ -215,6 +214,14 @@
               </el-table-column>
               <el-table-column label="操作" min-width="19%">
                 <template #default="scope">
+                  <el-button
+                    type="text"
+                    class="button-link"
+                    @click.stop="toDetail(scope.row)"
+                  >
+                    详情
+                  </el-button>
+                  <el-divider direction="vertical"></el-divider>
                   <el-button
                     type="text"
                     class="button-link"
@@ -295,7 +302,7 @@
 </template>
 
 <script>
-import { topOrgStatus, orgType, CUSTOMER_LIST } from '@/utils/static';
+import { TOP_ORG_STATUS, orgType, CUSTOMER_LIST } from '@/static';
 import BreadCrumb from '@/components/bread-crumb/index.vue';
 import { customerColumn } from '@/static/column';
 import { toRaw } from 'vue';
@@ -332,7 +339,7 @@ export default {
       customerOptions: [], // 搜索框中的机构列表
       selectTimer: null,
       title: '全部',
-      topOrgStatus,
+      TOP_ORG_STATUS,
       orgType,
       tableData: [],
       multipleSelection: [],
@@ -544,7 +551,7 @@ export default {
     },
 
     // 点击一行跳转详情页
-    rowClick(row) {
+    toDetail(row) {
       const { id } = row;
       window.open(`/customerDetail/${id}`, '_blank');
     },

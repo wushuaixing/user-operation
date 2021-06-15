@@ -88,41 +88,7 @@ const ACTION_TYPE = [
   },
 ];
 
-const dataAuditTabs = (matchNum, noReadNum) => [
-  {
-    label: `结构化匹配(${matchNum})`,
-    name: '0',
-  },
-  {
-    label: '全文匹配',
-    name: '1',
-  },
-  {
-    label: '已推送',
-    name: '2',
-  },
-  {
-    label: '不推送',
-    name: '3',
-  },
-  {
-    label: `客户未读(${noReadNum})`,
-    name: '4',
-  },
-];
-
-const taskAssignTabs = (toBeAllocatedNum) => [
-  {
-    label: `待分配机构(${toBeAllocatedNum})`,
-    name: '1',
-  },
-  {
-    label: ' 已分配机构 ',
-    name: '2',
-  },
-];
-
-const topOrgStatus = {
+const TOP_ORG_STATUS = {
   0: '全部',
   1: '合作中',
   2: '已过期',
@@ -130,7 +96,7 @@ const topOrgStatus = {
   4: '已过期（两月内）',
 };
 
-// 机构类型
+// 机构类型 TODO eslint
 const orgType = {
   全部: -1,
   正式: 1,
@@ -138,7 +104,7 @@ const orgType = {
 };
 
 // 操作日志-操作模块
-const operaModuleList = [
+const OPERA_MODULE_LIST = [
   {
     label: '全部',
     value: '',
@@ -190,7 +156,7 @@ const operaModuleList = [
 ];
 
 // 客户详情 -操作记录
-const operationType = {
+const OPERATION_TYPE = {
   0: '全部',
   1: '登录',
   2: '退出登录',
@@ -206,10 +172,8 @@ export {
   AUCTION_STATUS,
   DEBTORES_TYPE,
   ACTION_TYPE,
-  dataAuditTabs,
-  taskAssignTabs,
-  topOrgStatus,
+  TOP_ORG_STATUS,
   orgType,
-  operaModuleList,
-  operationType,
+  OPERA_MODULE_LIST,
+  OPERATION_TYPE,
 };

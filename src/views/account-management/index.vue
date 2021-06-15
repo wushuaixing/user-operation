@@ -60,6 +60,7 @@
       :page-size="params.num"
       layout="total,sizes, prev, pager, next, jumper"
       :total="total"
+      :key="page"
     />
     <el-dialog
       title="添加账号"
@@ -117,7 +118,7 @@
 import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
 import { encryptInfo } from '@/utils/encrypt';
-import { SORTER_TYPE } from '@/utils/static';
+import { SORTER_TYPE } from '@/static';
 import { accountManagementColumn } from '@/static/column';
 import $modalConfirm from '@/utils/better-el';
 
