@@ -182,7 +182,6 @@
               style="width: 100%"
               @selection-change="(val) => (this.multipleSelection = val)"
               @sort-change="handleSortChange"
-              @row-click="rowClick"
               v-loading="loading"
               :row-key="(val) => val.id"
             >
@@ -215,6 +214,14 @@
               </el-table-column>
               <el-table-column label="操作" min-width="19%">
                 <template #default="scope">
+                  <el-button
+                    type="text"
+                    class="button-link"
+                    @click.stop="toDetail(scope.row)"
+                  >
+                    详情
+                  </el-button>
+                  <el-divider direction="vertical"></el-divider>
                   <el-button
                     type="text"
                     class="button-link"
@@ -535,7 +542,7 @@ export default {
     },
 
     // 点击一行跳转详情页
-    rowClick(row) {
+    toDetail(row) {
       const { id } = row;
       window.open(`/customerDetail/${id}`, '_blank');
     },
