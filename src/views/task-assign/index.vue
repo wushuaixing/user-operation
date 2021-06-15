@@ -151,6 +151,7 @@
           :page-size="params.num"
           layout="total,sizes, prev, pager, next, jumper"
           :total="total"
+          :key="page"
         />
       </div>
     </div>
