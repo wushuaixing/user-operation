@@ -834,7 +834,7 @@ export default {
         color: #20242E;
         line-height: 14px;
         position: relative;
-        .timeline /deep/ {
+        :deep(.timeline) {
           display: inline-grid;
           .open {
             font-size: 14px;
