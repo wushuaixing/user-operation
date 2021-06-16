@@ -294,8 +294,6 @@ export default {
           } else {
             this.$message.error('请求出错');
           }
-        })
-        .then(() => {
           this.$store.dispatch('getNumAction');
         })
         // eslint-disable-next-line no-return-assign
