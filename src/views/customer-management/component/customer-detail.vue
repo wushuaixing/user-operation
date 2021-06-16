@@ -487,7 +487,6 @@ export default {
         const { code, data, message } = res.data;
         if (code === 200) {
           // 进行赋值
-          console.log(data, '-----');
           const {
             contractRecord, delayRecord, tree, ...customerData
           } = data;
@@ -495,15 +494,16 @@ export default {
           if (contractRecord.length) this.contractRecord = this.setRecord(contractRecord, 'qy');
           if (delayRecord.length) this.delayRecord = this.setRecord(delayRecord, 'yq');
           this.treeData = [tree];
-          console.log(res.data, this.treeData, 'lalala');
-          this.$forceUpdate();
           document.title = tree.name;
           if (type === 'init') {
             // 若是初始化
-            this.activeCustonerName = tree.name;
-            this.activeLevel = tree.level;
-            this.activeOrgId = tree.id;
-            this.subOrgData = tree.subOrg.reverse();
+            const {
+              name, level, id: ID, subOrg,
+            } = tree;
+            this.activeCustonerName = name;
+            this.activeLevel = level;
+            this.activeOrgId = ID;
+            this.subOrgData = [...subOrg].reverse();
             this.getAccountData(id);
             this.filterTree(this.treeData[0], '');
             this.hightlight(id);
