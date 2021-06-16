@@ -117,7 +117,10 @@
             <div class="customer-tree">
               <div class="customer-tree-select">
                 <div class="divider"></div>
-                <el-select @change="searchTypeChange" v-model="searchType" style="width: 90px">
+                <el-select @change="searchTypeChange"
+                           v-model="searchType"
+                           style="width: 90px"
+                           class="customer-tree-select-type">
                   <el-option v-for="item in typeList"
                              :value="item.value"
                              :key="item.value"
@@ -129,9 +132,8 @@
                   id="org-select"
                   v-model="searchValue"
                   filterable
-                  remote
                   :placeholder="searchType === 'org' ? '请输入机构名称' : '请输入11位账号'"
-                  :remote-method="handleSearch"
+                  @input="handleSearch"
                   @change="setTree"
                 >
                   <el-option
@@ -485,6 +487,7 @@ export default {
         const { code, data, message } = res.data;
         if (code === 200) {
           // 进行赋值
+          console.log(data, '-----');
           const {
             contractRecord, delayRecord, tree, ...customerData
           } = data;
@@ -631,7 +634,7 @@ export default {
     },
     // 树节点搜索
     handleSearch(value) {
-      const searchKey = value.replace(/\s+/g, '');
+      const searchKey = value.target.value.replace(/\s+/g, '');
       if (this.searchType === 'org') {
         // treeData 树节点中模糊搜索输入字段
         this.searchList = [];
@@ -831,7 +834,7 @@ export default {
         color: #20242E;
         line-height: 14px;
         position: relative;
-        .timeline /deep/ {
+        :deep(.timeline) {
           display: inline-grid;
           .open {
             font-size: 14px;
@@ -894,6 +897,28 @@ export default {
             background-color: #C5C7CE;
             z-index: 2;
           }
+          &-type {
+            i.el-select__caret {
+              /*很关键：将默认的select选择框样式清除*/
+              appearance:none;
+              -moz-appearance:none;
+              -webkit-appearance:none;
+              /*自定义图片*/
+              background: url("../../../assets/img/arrowSelect.png") no-repeat scroll center center transparent;
+              /*自定义图片的大小*/
+              background-size: 10px 5px;
+            }
+            .el-select__caret {
+              transform: rotateZ(0deg);
+            }
+            .el-select__caret.is-reverse {
+              transform: rotateZ(180deg);
+            }
+            /*将小箭头的样式去去掉*/
+            .el-icon-arrow-up:before {
+              content: '';
+            }
+          }
         }
         :deep(#tree-select) {
           .el-input-group__prepend {
@@ -949,6 +974,7 @@ export default {
     &-list {
       width: 960px;
       margin-left: 20px;
+      padding-bottom: 22px;
       background: #FFFFFF;
       .list {
         padding: 18px 20px;
@@ -975,6 +1001,9 @@ export default {
             left: 0;
             background: #296DD3;
           }
+        }
+        .el-table::before {
+          height: 0 !important;
         }
         :deep(.list-table){
           .action-column{
