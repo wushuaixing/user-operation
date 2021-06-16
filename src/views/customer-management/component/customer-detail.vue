@@ -276,6 +276,7 @@ export default {
   data() {
     return {
       loading: false, // 整页loading
+      expandedKeys: [],
       activeOrgId: 0, // 当前选择的机构id 初始时是顶级机构id
       activeLevel: 0, // 当前机构层级
       searchType: 'org',
@@ -291,6 +292,7 @@ export default {
         children: 'subOrg',
         label: 'name',
       },
+      acountList: ['首', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
       activeCustonerName: '',
       isHasOrg: true, // 是否有子机构
       roleList: [], // 角色列表 modal中创建编辑账号使用
