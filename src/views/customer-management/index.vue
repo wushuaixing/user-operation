@@ -189,6 +189,7 @@ export default {
     getData() {
       this.getCuntomerTreeData();
       this.getList();
+      this.$refs.query.getOrgList('');
     },
     // 获取列表数据
     getList(type = '') {
@@ -387,6 +388,7 @@ export default {
     },
     afterAdd() {
       this.getCuntomerTreeData();
+      this.$refs.query.getOrgList('');
     },
     // 保存顶级机构名称
     saveName(name) {
