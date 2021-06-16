@@ -11,7 +11,6 @@ const $modalConfirm = (params = {}) => {
     ]),
     (text && h('div', { class: 'yc-confirm-modal-body', style: { color } }, text)),
   ]);
-  console.log(html);
   return ElMessageBox({
     message: html,
     title: null,
