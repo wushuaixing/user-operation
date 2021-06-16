@@ -7,10 +7,10 @@
           <el-select
             id="org-select"
             v-model="queryParams.orgId"
+            style="width: 220px"
             filterable
-            remote
             placeholder="请输入机构名称"
-            :remote-method="remoteMethod"
+            @input="remoteMethod"
             @change="setCustomerName"
             @blur="getOrgList('')"
             >
@@ -44,9 +44,9 @@
         <el-form-item label="顶级合作机构状态：">
           <el-select v-model="queryParams.status" style="width: 162px" @change="statusChange">
             <el-option
-              v-for="item in Object.keys(topOrgStatus)"
+              v-for="item in Object.keys(TOP_ORG_STATUS)"
               :key="item"
-              :label="topOrgStatus[item]"
+              :label="TOP_ORG_STATUS[item]"
               :value="item"
             >
             </el-option>
@@ -243,6 +243,7 @@
               @current-change="pageChange"
               @size-change="sizeChange"
               background
+              :key="page"
               :current-page="page"
               :page-sizes="[10, 20, 30, 40, 50]"
               :page-size="pageSize"
@@ -301,7 +302,7 @@
 </template>
 
 <script>
-import { topOrgStatus, orgType, CUSTOMER_LIST } from '@/utils/static';
+import { TOP_ORG_STATUS, orgType, CUSTOMER_LIST } from '@/static';
 import BreadCrumb from '@/components/bread-crumb/index.vue';
 import { customerColumn } from '@/static/column';
 import { toRaw } from 'vue';
@@ -338,7 +339,7 @@ export default {
       customerOptions: [], // 搜索框中的机构列表
       selectTimer: null,
       title: '全部',
-      topOrgStatus,
+      TOP_ORG_STATUS,
       orgType,
       tableData: [],
       multipleSelection: [],
@@ -407,10 +408,16 @@ export default {
     // 给机构搜索select框添加最大输入长度
     const dom = document.getElementById('org-select');
     dom.setAttribute('maxLength', 100);
+    const that = this;
+    window.onfocus = function () {
+      // 刷新数据
+      that.getList();
+    };
   },
   watch: {
     $route(to) {
       // 对路由变化作出响应...
+      if (to.path === '/login') return;
       const { id } = to.params;
       if (id) {
         if (id !== 'all') {
@@ -473,8 +480,10 @@ export default {
               this.title = `${detail.domainName}（ID：${detail.domainId}）`;
               this.activeKey = detail.domainId;
             } else {
-              this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`;
-              this.editable = false;
+              this.$nextTick(() => {
+                this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`;
+                this.editable = false;
+              });
             }
           } else {
             this.$message.error('请求出错');
@@ -762,17 +771,17 @@ export default {
     },
 
     remoteMethod(val) {
-      // if (this.selectTimer) {
-      //   clearTimeout(this.selectTimer);
-      //   this.selectTimer = null;
-      // }
-      // this.selectTimer = setTimeout(() => {
-      //   // 调用接口查询
-      //   this.getOrgList(val);
-      //   clearTimeout(this.selectTimer);
-      //   this.selectTimer = null;
-      // }, 300);
-      this.getOrgList(val);
+      if (this.selectTimer) {
+        clearTimeout(this.selectTimer);
+        this.selectTimer = null;
+      }
+      this.selectTimer = setTimeout(() => {
+        // 调用接口查询
+        this.getOrgList(val.target.value);
+        clearTimeout(this.selectTimer);
+        this.selectTimer = null;
+      }, 300);
+      // this.getOrgList(val);
     },
 
     // 查询机构数据
@@ -829,7 +838,7 @@ export default {
           line-height: 32px !important;
           .el-select {
             .el-input__inner {
-              padding: 0 12px;
+              padding: 0 25px 0 12px;
             }
           }
         }

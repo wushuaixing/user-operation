@@ -9,7 +9,7 @@ const rulesFormOptions = {
     name: {
       required: true,
       message: '机构名称不允许为空',
-      trigger: 'blur',
+      trigger: 'change',
     },
     type: {
       required: true,

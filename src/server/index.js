@@ -35,6 +35,7 @@ axios.interceptors.response.use(
         return response;
       }
     }
+    console.log(response, 'response');
     // 成功请求到数据
     return response;
   },

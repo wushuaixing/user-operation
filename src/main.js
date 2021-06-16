@@ -9,9 +9,7 @@ import router from './router';
 import store from './store';
 import './assets/font/iconfont';
 import './version';
-import '../element-variables.scss';
 import './assets/public.scss';
-import './assets/font/iconfont.css';
 
 const app = createApp(App);
 

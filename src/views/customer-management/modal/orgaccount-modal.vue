@@ -142,6 +142,7 @@ import { encryptInfo } from '@/utils/encrypt';
 export default {
   name: 'OrgAccountModal',
   nameComment: '顶级机构详情页-子机构创建编辑-本级账号创建编辑',
+  emits: ['afterAction'],
   props: {
     roleList: {
       type: Array,

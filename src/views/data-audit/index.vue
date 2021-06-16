@@ -175,8 +175,8 @@ import {
   AUCTION_STATUS,
   DEBTORES_TYPE,
   ACTION_TYPE,
-  dataAuditTabs,
-} from '@/utils/static';
+} from '@/static';
+import { dataAuditTabs } from '@/static/fn';
 
 export default {
   name: 'dataAudit',
