@@ -1,17 +1,17 @@
 import WarningIcon from '@/assets/img/warn-icon.png';
 import { ElMessageBox } from 'element-plus';
+import { h } from 'vue';
 
 const $modalConfirm = (params = {}) => {
   const { text, title, color = '#4E5566' } = params;
-  const html = (
-    <div class="yc-confirm-modal">
-      <div class="yc-confirm-modal-title">
-        <img src={WarningIcon} alt="" />
-        <span>{title}</span>
-      </div>
-      {text && <div className="yc-confirm-modal-body" style={{ color }}>{text}</div>}
-    </div>
-  );
+  const html = h('div', { class: 'yc-confirm-modal' }, [
+    h('div', { class: 'yc-confirm-modal-title' }, [
+      h('img', { src: WarningIcon }),
+      h('span', title),
+    ]),
+    (text && h('div', { class: 'yc-confirm-modal-body', style: { color } }, text)),
+  ]);
+  console.log(html);
   return ElMessageBox({
     message: html,
     title: null,
