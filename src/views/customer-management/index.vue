@@ -236,7 +236,9 @@ export default {
             this.$message.error('请求出错');
           }
         })
-        .finally(() => this.$refs.listTable.loading = false);
+        .finally(() => {
+          if (this.$refs.listTable) this.$refs.listTable.loading = false;
+        });
     },
     // 获取左侧树 数据
     getCuntomerTreeData() {
@@ -265,8 +267,10 @@ export default {
     setTreeMinHeight() {
       this.$nextTick(() => {
         const dom = document.getElementById('main-content-right');
-        const height = dom.clientHeight >= 772 ? dom.clientHeight : 772;
-        this.heightStyle = `${height}px`;
+        if (dom && dom.clientHeight) {
+          const height = dom.clientHeight >= 772 ? dom.clientHeight : 772;
+          this.heightStyle = `${height}px`;
+        }
       });
     },
     // 搜索
@@ -410,7 +414,7 @@ export default {
 
 <style lang="scss">
 .customer-management-container {
-  min-width: 1470px;
+  min-width: 1500px;
   background-color: #f0f2f5 !important;
   .query-content {
     background: #fff;
