@@ -1,82 +1,11 @@
 <template>
   <div class="customer-management-container">
     <div class="query-content">
-      <el-form :inline="true" :model="queryParams" class="query-form">
-        <div>
-          <el-form-item label="机构名称：">
-          <el-select
-            id="org-select"
-            v-model="queryParams.orgId"
-            style="width: 220px"
-            filterable
-            placeholder="请输入机构名称"
-            @input="remoteMethod"
-            @change="setCustomerName"
-            @blur="getOrgList('')"
-            >
-            <el-option
-              v-for="item in customerOptions"
-              :key="item.id"
-              :label="item.value"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="合同结束日期：">
-          <el-date-picker
-            class="query-time"
-            v-model="queryParams.start"
-            type="date"
-            @change="endTimeChange"
-            :disabledDate="disabledStartDate"
-            placeholder="开始日期">
-          </el-date-picker>
-          <span style="margin:0 6px;">至</span>
-          <el-date-picker
-            class="query-time"
-            v-model="queryParams.end"
-            type="date"
-            @change="endTimeChange"
-            :disabledDate="disabledEndDate"
-            placeholder="结束日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="顶级合作机构状态：">
-          <el-select v-model="queryParams.status" style="width: 162px" @change="statusChange">
-            <el-option
-              v-for="item in Object.keys(TOP_ORG_STATUS)"
-              :key="item"
-              :label="TOP_ORG_STATUS[item]"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="机构类型：">
-          <el-select v-model="queryParams.type" style="width: 94px">
-            <el-option
-              v-for="item in Object.keys(orgType)"
-              :key="orgType[item]"
-              :label="item"
-              :value="orgType[item]"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        </div>
-        <el-form-item class="query-button">
-          <el-button type="primary"
-                     @click="handleQuery"
-                     class="button-first"
-          >搜索</el-button>
-          <el-button
-            type="primary"
-            @click="handleClear"
-            class="button-fourth"
-            >清空搜索条件</el-button
-          >
-        </el-form-item>
-      </el-form>
+      <Query
+        ref="query"
+        @handleQuery="handleQuery"
+        @handleClear="handleClear"
+      ></Query>
     </div>
     <div class="main-content">
       <div class="main-content-left">
@@ -132,165 +61,18 @@
           </template>
         </BreadCrumb>
         <div class="table-content" id="main-content-right">
-          <div class="table-content-btn">
-            <el-button
-              type="primary"
-              v-if="!isChecked"
-              @click="handleBatchCheck(true)"
-              class="button-third"
-              icon="iconfont iconyonghuyunying-piliangguanli"
-              style="padding: 0 11px"
-            >
-              批量管理
-            </el-button>
-            <el-button
-              type="primary"
-              v-if="!isChecked"
-              @click="handleExport('all')"
-              class="button-third"
-              icon="iconfont iconyonghuyunying-daochu"
-              style="padding: 0 11px"
-            >
-              一键导出
-            </el-button>
-            <el-button
-              type="primary"
-              v-if="isChecked"
-              @click="handleBatchCheck(false)"
-              class="button-second"
-              style="padding: 0 12px;"
-              >取消批量管理</el-button
-            >
-            <el-button
-              @click="handleExport()"
-              class="button-fourth"
-              v-show="isChecked"
-            >导出
-            </el-button>
-            <span v-if="(multipleSelection || []).length" class="total-tips">
-              <svg class="icon" aria-hidden="true" style="margin-right: 3px;font-size: 16px;position: relative;top: 1px">
-                <use xlink:href="#iconxuanzhongshuju"></use>
-              </svg>
-              已选中 <b>{{ (multipleSelection || []).length }}</b> 条数据
-            </span>
-          </div>
-          <div class="table-contend-body">
-            <el-table
-              ref="multipleTable"
-              :data="tableData"
-              tooltip-effect="dark"
-              style="width: 100%"
-              @selection-change="(val) => (this.multipleSelection = val)"
-              @sort-change="handleSortChange"
-              v-loading="loading"
-              :row-key="(val) => val.id"
-            >
-              <template #empty>
-                <img src="../../assets/img/no_data.png" alt="" />
-                <p>暂无数据</p>
-              </template>
-              <el-table-column
-                type="selection"
-                v-if="isChecked"
-                width="55"
-                :reserve-selection="true"
-              />
-              <el-table-column
-                v-for="item in column"
-                :prop="item.prop"
-                :label="item.label"
-                :sortable="item.sort"
-                :min-width="item.width"
-                :align="item.align"
-                :key="item.label"
-              >
-                <template #default="scope" v-if="item.prop === 'name'">
-                  <span>{{ scope.row.name }}
-                    <span class="iconfont iconyiguoqi"
-                          style="font-size: 17px;color: #F93535;margin-left: 4px"
-                          v-if="scope.row.isExpire"
-                    ></span></span>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" min-width="19%">
-                <template #default="scope">
-                  <el-button
-                    type="text"
-                    class="button-link"
-                    @click.stop="toDetail(scope.row)"
-                  >
-                    详情
-                  </el-button>
-                  <el-divider direction="vertical"></el-divider>
-                  <el-button
-                    type="text"
-                    class="button-link"
-                    @click.stop="showModal('edit',scope.row)"
-                  >
-                    权限管理
-                  </el-button>
-                  <el-divider direction="vertical"></el-divider>
-                  <el-button
-                    type="text"
-                    class="button-link"
-                    @click.stop="handleAction(scope.row)"
-                    >操作日志
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-pagination
-              @current-change="pageChange"
-              @size-change="sizeChange"
-              background
-              :key="page"
-              :current-page="page"
-              :page-sizes="[10, 20, 30, 40, 50]"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-            />
-          </div>
+          <Table ref="listTable"
+                 :tableData="tableData"
+                 @pageOrSizeChange="pageOrSizeChange"
+                 @handleExport="handleExport"
+                 @handleSortChange="handleSortChange"
+                 @showModal="showModal"
+          ></Table>
         </div>
-        <el-dialog
-          title="创建域名机构"
-          v-model="addOrgVisible"
-          @close="resetAddOrgForm"
-          width="500px"
-        >
-          <el-form
-            :model="addOrgForm"
-            ref="addOrgForm"
-            v-bind="addOrgFormOptions.options"
-            :rules="addOrgFormOptions.rules"
-          >
-            <el-form-item label="二级域名：" prop="subDomain">
-              <el-input
-                v-model="addOrgForm.subDomain"
-                autocomplete="off"
-                maxlength="100"
-                placeholder="请输入二级域名"
-                @change="(val) => addOrgForm.subDomain = val.replace(/\s+/g, '')"
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="机构名称：" prop="name">
-              <el-input
-                v-model="addOrgForm.name"
-                autocomplete="off"
-                maxlength="100"
-                placeholder="请输入机构名称"
-                @change="(val) => addOrgForm.name = val.replace(/\s+/g, '')"
-              ></el-input>
-            </el-form-item>
-          </el-form>
-          <template #footer>
-            <span class="dialog-footer">
-              <el-button @click="addOrgVisible = false">取 消</el-button>
-              <el-button type="primary" @click="handleAddOrg">确 定</el-button>
-            </span>
-          </template>
-        </el-dialog>
+        <OrgAddModal
+          ref="OrgAddModal"
+          @afterAdd="afterAdd"
+        ></OrgAddModal>
         <RulesModal
           ref="RulesModal"
           :formData="rulesForm"
@@ -302,15 +84,17 @@
 </template>
 
 <script>
-import { TOP_ORG_STATUS, orgType, CUSTOMER_LIST } from '@/static';
+import { CUSTOMER_LIST } from '@/static';
 import BreadCrumb from '@/components/bread-crumb/index.vue';
-import { customerColumn } from '@/static/column';
 import { toRaw } from 'vue';
 import AdminApi from '@/server/api/admin';
 import RulesModal from '@/views/customer-management/modal/rules-modal.vue';
 import $modalConfirm from '@/utils/better-el';
 import { dateUtils, fileDownload } from '@/utils';
-import CustomerTree from './component/CustomerTree.vue';
+import CustomerTree from '@/views/customer-management/list/customer-tree.vue';
+import Query from '@/views/customer-management/list/query.vue';
+import Table from '@/views/customer-management/list/table.vue';
+import OrgAddModal from '@/views/customer-management/modal/orgAdd-modal.vue';
 
 export default {
   name: 'customerManagement',
@@ -319,16 +103,12 @@ export default {
     RulesModal,
     BreadCrumb,
     CustomerTree,
+    Query,
+    Table,
+    OrgAddModal,
   },
   data() {
     return {
-      queryParams: {
-        orgId: '',
-        status: '0',
-        type: -1,
-        start: undefined,
-        end: undefined,
-      },
       currentQueryParams: {
         orgId: '',
         status: '0',
@@ -336,19 +116,8 @@ export default {
         start: undefined,
         end: undefined,
       },
-      customerOptions: [], // 搜索框中的机构列表
-      selectTimer: null,
-      title: '全部',
-      TOP_ORG_STATUS,
-      orgType,
       tableData: [],
-      multipleSelection: [],
-      loading: false,
-      isChecked: false,
-      column: customerColumn,
-      page: 1,
-      pageSize: 10,
-      total: 0,
+      title: '全部',
       isActive: 0,
       activities: [], // 域名机构列表
       totalOrgNum: 0, // 总机构数
@@ -364,35 +133,13 @@ export default {
         domainId: '',
         domainName: '',
       },
-      addOrgVisible: false,
-      addOrgForm: {
-        subDomain: '',
-        name: '',
-      },
       rulesForm: {},
-      addOrgFormOptions: {
-        options: {
-          labelPosition: 'right',
-          labelWidth: '120px',
-          destroyOnClose: true,
-          class: 'add-org-modal',
-        },
-        rules: {
-          subDomain: [
-            { required: true, message: '二级域名不允许为空', trigger: 'change' },
-          ],
-          name: [
-            { required: true, message: '机构名称不允许为空', trigger: 'change' },
-          ],
-        },
-      },
       heightStyle: '89vh',
     };
   },
   created() {
     this.getCuntomerTreeData();
     // 查询机构 使得2查询框默认展示搜索数据
-    this.getOrgList('');
     document.title = '客户管理';
   },
   mounted() {
@@ -400,7 +147,8 @@ export default {
     this.$nextTick(() => {
       const { id } = this.$route.params;
       if (id && id !== 'all') {
-        this.queryParams.orgId = Number(id);
+        const { setOrgId } = this.$refs.query;
+        setOrgId(Number(id));
         this.currentQueryParams.orgId = Number(id);
       }
       this.getList();
@@ -419,22 +167,21 @@ export default {
       // 对路由变化作出响应...
       if (to.path === '/login') return;
       const { id } = to.params;
+      const { setOrgId, getOrgList } = this.$refs.query;
       if (id) {
         if (id !== 'all') {
-          this.queryParams.orgId = Number(id);
+          setOrgId(Number(id));
         }
       } else {
-        this.queryParams.orgId = '';
+        setOrgId('');
         this.$refs.CustomerTree.setStatusAll();
       }
-      this.getOrgList('');
+      getOrgList('');
       this.getList();
     },
-    isChecked(newVal) {
-      // isChecked字段变为false时，清空选中的数组
-      if (!newVal) {
-        this.multipleSelection = [];
-        this.$refs.multipleTable.clearSelection();
+    totalOperatedOrgNum(val) {
+      if (val && !this.editable) {
+        this.title = `全部机构（${this.totalOperatedOrgNum}/${this.totalOrgNum}）`;
       }
     },
   },
@@ -445,32 +192,32 @@ export default {
     },
     // 获取列表数据
     getList(type = '') {
-      console.log(toRaw(this.queryParams));
       // 处理搜索条件参数
+      const { queryParams } = this.$refs.query;
+      const { page, pageSize, setPageData } = this.$refs.listTable;
       const params = {
-        ...toRaw(type ? this.currentQueryParams : this.queryParams),
-        page: this.page,
-        num: this.pageSize,
+        ...toRaw(type ? this.currentQueryParams : queryParams),
+        page,
+        num: pageSize,
       };
       if (params.start) params.start = dateUtils.formatStandardDate(params.start);
       if (params.end) params.end = dateUtils.formatStandardDate(params.end);
       if (params.type === -1) {
         delete params.type;
       }
-      this.loading = true;
+      this.$refs.listTable.loading = true;
       AdminApi.searchOrg(params)
         .then((res) => {
           const { code, data } = res.data || {};
           if (code === 200) {
-            const { list, page, total } = data.result || {};
+            const { list, page: _page, total } = data.result || {};
             // 需要对返回的数据进行空处理，变为"-"
             this.tableData = list.map((item) => {
               const typeName = item.type ? '正式' : '试用';
               const startTime = item.startTime || '-';
               return Object.assign(item, { typeName, startTime });
             });
-            this.total = total;
-            this.page = page;
+            setPageData(_page, total);
             this.setTreeMinHeight();
             // 若不是全部机构 则赋值机构详情 customerObj
             const { detail } = data;
@@ -489,7 +236,7 @@ export default {
             this.$message.error('请求出错');
           }
         })
-        .finally(() => this.loading = false);
+        .finally(() => this.$refs.listTable.loading = false);
     },
     // 获取左侧树 数据
     getCuntomerTreeData() {
@@ -505,9 +252,6 @@ export default {
     },
     // 排序
     handleSortChange({ prop, order }) {
-      this.isChecked = false;
-      // this.multipleSelection = []
-      this.page = 1;
       const sort = {
         sortColumn: CUSTOMER_LIST[prop],
         sortOrder: CUSTOMER_LIST[order],
@@ -515,17 +259,7 @@ export default {
       this.currentQueryParams = Object.assign(this.currentQueryParams, sort);
       this.getList('sort');
     },
-    // 翻页
-    pageChange(page) {
-      this.page = parseInt(page, 10);
-      this.getList('page');
-    },
-    // 页数改变
-    sizeChange(size) {
-      console.log(size);
-      this.page = 1;
-      this.pageSize = size;
-      // 页数变化之后 改变左侧树的min-height
+    pageOrSizeChange() {
       this.getList('page');
     },
     setTreeMinHeight() {
@@ -535,75 +269,14 @@ export default {
         this.heightStyle = `${height}px`;
       });
     },
-    // （取消）批量管理
-    handleBatchCheck(isChecked) {
-      this.isChecked = isChecked;
-      // if (!isChecked) this.$refs.multipleTable.clearSelection();
-    },
-    // 操作日志
-    handleAction(params = {}) {
-      const { name, id, type } = params;
-      const routerData = this.$router.resolve({
-        path: '/OperationLog',
-        query: { name, id, type },
-      });
-      window.open(routerData.href, '_blank');
-    },
-
-    // 点击一行跳转详情页
-    toDetail(row) {
-      const { id } = row;
-      window.open(`/customerDetail/${id}`, '_blank');
-    },
-
-    // 机构状态改变 结束日期改变
-    statusChange(val) {
-      const nowDate = new Date();
-      switch (val) {
-        case '1': {
-          // 开始日期赋值当天 结束日期置空
-          this.queryParams.end = undefined;
-          this.queryParams.start = nowDate;
-          break;
-        }
-        case '2': {
-          // 开始日期置空 结束日期赋值昨天
-          this.queryParams.start = undefined;
-          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000);
-          break;
-        }
-        case '3': {
-          // 开始日期今天 结束日期：今天+两个月
-          this.queryParams.start = new Date();
-          nowDate.setMonth(nowDate.getMonth() + 2);
-          this.queryParams.end = nowDate;
-          break;
-        }
-        case '4': {
-          // 开始日期：昨天-两个月  结束日期：昨天
-          this.queryParams.end = new Date(nowDate.getTime() - 24 * 3600 * 1000);
-          const date = new Date(nowDate.getTime() - 24 * 3600 * 1000);
-          date.setMonth(date.getMonth() - 2);
-          this.queryParams.start = date;
-          break;
-        }
-        default:
-          break;
-      }
-    },
-    endTimeChange() {
-      this.queryParams.status = '0';
-    },
-
     // 搜索
     handleQuery() {
-      this.page = 1;
-      this.isChecked = false;
-      const { clearSort } = this.$refs.multipleTable;
-      clearSort();
+      const { searchBefore } = this.$refs.listTable;
+      searchBefore();
       // 赋值currentQueryParams对象
-      this.currentQueryParams = { ...this.queryParams };
-      let url = this.queryParams.orgId ? `/${this.queryParams.orgId}` : '/all';
+      const { queryParams } = this.$refs.query;
+      this.currentQueryParams = { ...queryParams };
+      let url = queryParams.orgId ? `/${queryParams.orgId}` : '/all';
       url = `/customerManagement${url}`;
       if (this.isOrgIdChange(url)) {
         this.$router.push(url);
@@ -618,52 +291,32 @@ export default {
     },
     // 清空搜索条件
     handleClear() {
-      this.page = 1;
-      this.isChecked = false;
-      const { clearSort } = this.$refs.multipleTable;
-      clearSort();
-      this.queryParams = {
-        orgId: '',
-        status: '0',
-        type: -1,
-        start: undefined,
-        end: undefined,
-      };
+      const { searchBefore } = this.$refs.listTable;
+      searchBefore();
       this.$refs.CustomerTree.handleSelect('all');
       // 赋值currentQueryParams对象
-      this.currentQueryParams = { ...this.queryParams };
-    },
-    // 域名机构创建
-    handleAddOrg() {
-      this.$refs.addOrgForm.validate((valid) => {
-        if (valid) {
-          console.log(toRaw(this.addOrgForm));
-          AdminApi.addDomain(this.addOrgForm).then((res) => {
-            const { code, message } = res.data;
-            if (code === 200) {
-              this.$message.success('域名机构创建成功');
-              // 关闭弹窗 刷新左侧树
-              this.addOrgVisible = false;
-              this.getCuntomerTreeData();
-            } else {
-              this.$message.warning(message);
-            }
-          });
-        }
-      });
+      const { queryParams } = this.$refs.query;
+      this.currentQueryParams = { ...queryParams };
     },
 
     handleExport(type) {
-      if (!type && !this.multipleSelection.length) {
+      const { page, multipleSelection } = this.$refs.listTable;
+      if (!type && !multipleSelection.length) {
         this.$message.warning('未选中数据');
         return;
       }
-      const text = type ? '点击确定，将为您导出所有信息' : '点击确定，将为您导出选中的所有信息';
-      const title = type ? '确认导出所有信息吗？' : '确认导出选中的所有信息吗？';
+      const info = type ? {
+        text: '点击确定，将为您导出所有信息',
+        title: '确认导出所有信息吗？',
+      } : {
+        text: '点击确定，将为您导出选中的所有信息',
+        title: '确认导出选中的所有信息吗？',
+      };
+      const { queryParams } = this.$refs.query;
       const params = {
         condition: {
-          ...toRaw(this.queryParams),
-          page: this.page,
+          ...toRaw(queryParams),
+          page,
         },
         idList: [],
       };
@@ -674,9 +327,9 @@ export default {
         delete params.condition.type;
       }
       // 处理选中的id
-      params.idList = type ? [] : this.multipleSelection.map((item) => item.id);
-      $modalConfirm({ text, title }).then(() => {
-        this.isChecked = false;
+      params.idList = type ? [] : multipleSelection.map((item) => item.id);
+      $modalConfirm(info).then(() => {
+        this.$refs.listTable.isChecked = false;
         AdminApi.orgExport(params).then((res) => {
           const { status } = res;
           if (status === 200) {
@@ -689,12 +342,8 @@ export default {
         console.log(err);
       });
     },
-    resetAddOrgForm() {
-      this.$refs.addOrgForm.resetFields();
-    },
     // 打开弹窗 域名机构以及顶级机构创建
     showModal(sign, params = {}) {
-      this.isChecked = false;
       if (sign === 'edit') {
         const { id } = params;
         AdminApi.orgPermission(id).then((res) => {
@@ -708,7 +357,7 @@ export default {
       } else if (this.editable) {
         this.$refs.RulesModal.open(toRaw(this.customerObj), true);
       } else {
-        this.addOrgVisible = true;
+        this.$refs.OrgAddModal.addOrgVisible = true;
       }
     },
     // 左侧树点击事件
@@ -716,28 +365,30 @@ export default {
       // 改变路由后带参 以便刷新获取id和name做逻辑操作
       let url = '/customerManagement';
       this.$refs.BreadCrumb.editStatus = false;
-      this.page = 1;
+      const { setOrgId, queryParams } = this.$refs.query;
       if (val && val === 'all') {
-        this.queryParams.orgId = '';
+        setOrgId('');
         url += '/all';
       } else {
-        this.queryParams.orgId = obj.id;
+        setOrgId(obj.id);
         url += `/${obj.id}`;
       }
-      this.currentQueryParams = { ...this.queryParams };
-      this.isChecked = false;
-      this.$refs.multipleTable.clearSort();
+      this.currentQueryParams = { ...queryParams };
+      this.$refs.listTable.searchBefore();
       if (this.isOrgIdChange(url)) {
         this.$router.push(url);
       } else {
         this.getList();
       }
     },
-
+    afterAdd() {
+      this.getCuntomerTreeData();
+    },
     // 保存顶级机构名称
     saveName(name) {
+      const { queryParams } = this.$refs.query;
       const params = {
-        id: this.queryParams.orgId,
+        id: queryParams.orgId,
         value: name,
       };
       AdminApi.detailEditName(params).then((res) => {
@@ -753,59 +404,6 @@ export default {
         }
       });
     },
-
-    // 日期控件做前后限制
-    disabledStartDate(startTime) {
-      if (this.queryParams.end) {
-        const time = dateUtils.formatStandardDate(this.queryParams.end);
-        return startTime.getTime() > new Date(`${time} 00:00:00`).getTime();
-      }
-      return false;
-    },
-    disabledEndDate(endTime) {
-      if (this.queryParams.start) {
-        const time = dateUtils.formatStandardDate(this.queryParams.start);
-        return endTime.getTime() < new Date(`${time} 00:00:00`).getTime();
-      }
-      return false;
-    },
-
-    remoteMethod(val) {
-      if (this.selectTimer) {
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }
-      this.selectTimer = setTimeout(() => {
-        // 调用接口查询
-        this.getOrgList(val.target.value);
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }, 300);
-      // this.getOrgList(val);
-    },
-
-    // 查询机构数据
-    getOrgList(val) {
-      // 去除字符串中的空格
-      const field = val.replace(/\s/g, '');
-      AdminApi.simpleListOrg(field).then((res) => {
-        const { code, data } = res.data || {};
-        if (code === 200) {
-          this.customerOptions = data;
-          // if (!data.length) {
-          //   this.setCustomerName();
-          // }
-        } else {
-          this.$message.error(res.message);
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
-    },
-
-    // 查询完之后给多选框下拉列表赋值
-    setCustomerName() {
-    },
   },
 };
 </script>
@@ -818,35 +416,6 @@ export default {
     background: #fff;
     margin-bottom: 20px;
     border-top: 1px solid #E2E4E9;
-    .query-form{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      .el-form-item {
-        margin: 20px 10px 20px 20px;
-        .query-time {
-          width: 130px;
-          input {
-            padding-right: 15px;
-          }
-        }
-        .el-form-item__label {
-          line-height: 32px !important;
-        }
-        .el-form-item__content {
-          line-height: 32px !important;
-          .el-select {
-            .el-input__inner {
-              padding: 0 25px 0 12px;
-            }
-          }
-        }
-      }
-      .query-button {
-        margin-right: 20px;
-      }
-    }
   }
   .main-content {
     display: flex;
