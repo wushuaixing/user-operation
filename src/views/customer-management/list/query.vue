@@ -9,8 +9,6 @@
             style="width: 220px"
             filterable
             placeholder="请输入机构名称"
-            @input="remoteMethod"
-            @blur="getOrgList('')"
           >
             <el-option
               v-for="item in customerOptions"
@@ -102,6 +100,9 @@ export default {
     this.getOrgList('');
   },
   methods: {
+    handleChange(value) {
+      console.log(value);
+    },
     setOrgId(id) {
       this.queryParams.orgId = id;
     },
@@ -119,18 +120,6 @@ export default {
       };
       this.$emit('handleClear');
     },
-    remoteMethod(val) {
-      if (this.selectTimer) {
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }
-      this.selectTimer = setTimeout(() => {
-        // 调用接口查询
-        this.getOrgList(val.target.value);
-        clearTimeout(this.selectTimer);
-        this.selectTimer = null;
-      }, 300);
-    },
     // 查询机构数据
     getOrgList(val) {
       // 去除字符串中的空格
@@ -139,9 +128,6 @@ export default {
         const { code, data } = res.data || {};
         if (code === 200) {
           this.customerOptions = data;
-          // if (!data.length) {
-          //   this.setCustomerName();
-          // }
         } else {
           this.$message.error(res.message);
         }

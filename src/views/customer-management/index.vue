@@ -33,7 +33,7 @@
               <div class="customer-detail-left">
                 <div class="link">
                   <span>二级域名:</span>
-                  <a :href="`https://www.${customerObj.subDomain}.yczcjk.com`" target='_blank' class="button-link">{{customerObj.subDomain}}</a>
+                  <a :href="`https://${customerObj.subDomain}.yczcjk.com`" target='_blank' class="button-link">{{customerObj.subDomain}}</a>
                 </div>
                 <div class="link">
                   <span>创建时间:</span>
@@ -189,6 +189,7 @@ export default {
     getData() {
       this.getCuntomerTreeData();
       this.getList();
+      this.$refs.query.getOrgList('');
     },
     // 获取列表数据
     getList(type = '') {
@@ -236,7 +237,9 @@ export default {
             this.$message.error('请求出错');
           }
         })
-        .finally(() => this.$refs.listTable.loading = false);
+        .finally(() => {
+          if (this.$refs.listTable) this.$refs.listTable.loading = false;
+        });
     },
     // 获取左侧树 数据
     getCuntomerTreeData() {
@@ -265,8 +268,10 @@ export default {
     setTreeMinHeight() {
       this.$nextTick(() => {
         const dom = document.getElementById('main-content-right');
-        const height = dom.clientHeight >= 772 ? dom.clientHeight : 772;
-        this.heightStyle = `${height}px`;
+        if (dom && dom.clientHeight) {
+          const height = dom.clientHeight >= 772 ? dom.clientHeight : 772;
+          this.heightStyle = `${height}px`;
+        }
       });
     },
     // 搜索
@@ -383,6 +388,7 @@ export default {
     },
     afterAdd() {
       this.getCuntomerTreeData();
+      this.$refs.query.getOrgList('');
     },
     // 保存顶级机构名称
     saveName(name) {
@@ -410,7 +416,7 @@ export default {
 
 <style lang="scss">
 .customer-management-container {
-  min-width: 1470px;
+  min-width: 1500px;
   background-color: #f0f2f5 !important;
   .query-content {
     background: #fff;

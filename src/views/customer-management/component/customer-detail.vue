@@ -559,7 +559,7 @@ export default {
           this.filterTreeNode(item.subOrg, value);
         }
         if (item.id === value) {
-          this.subOrgData = item.subOrg.reverse();
+          this.subOrgData = [...item.subOrg].reverse();
         }
       });
     },
