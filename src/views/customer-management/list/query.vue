@@ -51,10 +51,10 @@
         <el-form-item label="机构类型：">
           <el-select v-model="queryParams.type" style="width: 94px">
             <el-option
-              v-for="item in Object.keys(orgType)"
-              :key="orgType[item]"
-              :label="item"
-              :value="orgType[item]"
+              v-for="item in orgType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>

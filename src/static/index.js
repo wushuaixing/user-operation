@@ -97,11 +97,20 @@ const TOP_ORG_STATUS = {
 };
 
 // 机构类型 TODO eslint
-const orgType = {
-  全部: -1,
-  正式: 1,
-  试用: 0,
-};
+const orgType = [
+  {
+    label: '全部',
+    value: -1,
+  },
+  {
+    label: '正式',
+    value: 1,
+  },
+  {
+    label: '试用',
+    value: 0,
+  },
+];
 
 // 操作日志-操作模块
 const OPERA_MODULE_LIST = [
