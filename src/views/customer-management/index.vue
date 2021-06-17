@@ -109,13 +109,9 @@ export default {
   },
   data() {
     return {
-      currentQueryParams: {
-        orgId: '',
-        status: '0',
-        type: -1,
-        start: undefined,
-        end: undefined,
-      },
+      currentQueryParams: {},
+      // 搜索条件
+      params: {},
       tableData: [],
       title: '全部',
       isActive: 0,
@@ -146,11 +142,11 @@ export default {
     // 点击浏览器刷新时，响应 对带参做处理
     this.$nextTick(() => {
       const { id } = this.$route.params;
+      const { setOrgId, queryParams } = this.$refs.query;
       if (id && id !== 'all') {
-        const { setOrgId } = this.$refs.query;
         setOrgId(Number(id));
-        this.currentQueryParams.orgId = Number(id);
       }
+      this.params = { ...queryParams };
       this.getList();
     });
     // 给机构搜索select框添加最大输入长度
@@ -168,7 +164,7 @@ export default {
       // 对路由变化作出响应...
       if (to.path === '/login') return;
       const { id } = to.params;
-      const { setOrgId, getOrgList } = this.$refs.query;
+      const { setOrgId, getOrgList, queryParams } = this.$refs.query;
       if (id) {
         if (id !== 'all') {
           setOrgId(Number(id));
@@ -178,6 +174,7 @@ export default {
         this.$refs.CustomerTree.setStatusAll();
       }
       getOrgList('');
+      this.params = { ...queryParams };
       this.getList();
     },
     totalOperatedOrgNum(val) {
@@ -193,12 +190,13 @@ export default {
       this.$refs.query.getOrgList('');
     },
     // 获取列表数据
-    getList(type = '') {
+    getList() {
       // 处理搜索条件参数
-      const { queryParams } = this.$refs.query;
+      // const { queryParams } = this.$refs.query;
       const { page, pageSize, setPageData } = this.$refs.listTable;
       const params = {
-        ...toRaw(type ? this.currentQueryParams : queryParams),
+        // ...toRaw(type ? this.currentQueryParams : queryParams),
+        ...toRaw(this.params),
         page,
         num: pageSize,
       };
@@ -260,11 +258,11 @@ export default {
         sortColumn: CUSTOMER_LIST[prop],
         sortOrder: CUSTOMER_LIST[order],
       };
-      this.currentQueryParams = Object.assign(this.currentQueryParams, sort);
-      this.getList('sort');
+      this.params = Object.assign(this.params, sort);
+      this.getList();
     },
     pageOrSizeChange() {
-      this.getList('page');
+      this.getList();
     },
     setTreeMinHeight() {
       this.$nextTick(() => {
@@ -281,7 +279,7 @@ export default {
       searchBefore();
       // 赋值currentQueryParams对象
       const { queryParams } = this.$refs.query;
-      this.currentQueryParams = { ...queryParams };
+      this.params = { ...queryParams };
       let url = queryParams.orgId ? `/${queryParams.orgId}` : '/all';
       url = `/customerManagement${url}`;
       if (this.isOrgIdChange(url)) {
@@ -302,7 +300,7 @@ export default {
       this.$refs.CustomerTree.handleSelect('all');
       // 赋值currentQueryParams对象
       const { queryParams } = this.$refs.query;
-      this.currentQueryParams = { ...queryParams };
+      this.params = { ...queryParams };
     },
 
     handleExport(type) {
@@ -318,10 +316,9 @@ export default {
         text: '点击确定，将为您导出选中的所有信息',
         title: '确认导出选中的所有信息吗？',
       };
-      const { queryParams } = this.$refs.query;
       const params = {
         condition: {
-          ...toRaw(queryParams),
+          ...toRaw(this.params),
           page,
         },
         idList: [],
@@ -379,7 +376,7 @@ export default {
         setOrgId(obj.id);
         url += `/${obj.id}`;
       }
-      this.currentQueryParams = { ...queryParams };
+      this.params = { ...queryParams };
       this.$refs.listTable.searchBefore();
       if (this.isOrgIdChange(url)) {
         this.$router.push(url);
