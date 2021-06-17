@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true" :model="queryParams" class="query-form">
+    <el-form :inline="true" :model="queryParams" class="query-form-list">
       <div>
         <el-form-item label="机构名称：">
           <el-select
@@ -192,7 +192,7 @@ export default {
 };
 </script>
 <style lang="scss">
-  .query-form{
+  .query-form-list{
     display: flex;
     align-items: center;
     justify-content: space-between;
