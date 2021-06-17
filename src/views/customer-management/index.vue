@@ -160,6 +160,7 @@ export default {
     window.onfocus = function () {
       // 刷新数据
       that.getList();
+      if (that.$refs.query) that.$refs.query.getOrgList('');
     };
   },
   watch: {
