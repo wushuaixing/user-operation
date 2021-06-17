@@ -33,7 +33,7 @@
               <div class="customer-detail-left">
                 <div class="link">
                   <span>二级域名:</span>
-                  <a :href="`https://www.${customerObj.subDomain}.yczcjk.com`" target='_blank' class="button-link">{{customerObj.subDomain}}</a>
+                  <a :href="`https://${customerObj.subDomain}.yczcjk.com`" target='_blank' class="button-link">{{customerObj.subDomain}}</a>
                 </div>
                 <div class="link">
                   <span>创建时间:</span>
