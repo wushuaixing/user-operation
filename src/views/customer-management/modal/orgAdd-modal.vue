@@ -17,7 +17,7 @@
           autocomplete="off"
           maxlength="100"
           placeholder="请输入二级域名"
-          @change="(val) => addOrgForm.subDomain = val.replace(/\s+/g, '')"
+          @input="(val) => addOrgForm.subDomain = val.replace(/[^a-zA-Z]/g, '')"
         >
         </el-input>
       </el-form-item>
