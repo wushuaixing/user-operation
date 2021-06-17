@@ -351,6 +351,9 @@ export default {
           this.$refs.Header.setData(customerData);
           this.treeData = [tree];
           document.title = tree.name;
+          this.$nextTick(() => {
+            this.setTreeColor();
+          });
           if (type === 'init') {
             // 若是初始化
             const {
@@ -382,9 +385,9 @@ export default {
       // eslint-disable-next-line no-plusplus
       for (let i = 0; i < content.length; i++) {
         if (i % 2 === 0) {
-          content[i].style.background = '#F6F7FA';
+          content[i].style.backgroundColor = '#F6F7FA';
         } else {
-          content[i].style.background = '';
+          content[i].style.backgroundColor = '';
         }
       }
     },
