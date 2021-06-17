@@ -403,6 +403,7 @@ export default {
           this.$message.success('机构名称修改成功');
           this.$refs.BreadCrumb.editStatus = false;
           // 刷新数据
+          this.$refs.query.getOrgList('');
           this.getCuntomerTreeData();
           this.getList();
         } else {
