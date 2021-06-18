@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true" :model="queryParams" class="query-form">
+    <el-form :inline="true" :model="queryParams" class="query-form-list">
       <div>
         <el-form-item label="机构名称：">
           <el-select
@@ -51,10 +51,10 @@
         <el-form-item label="机构类型：">
           <el-select v-model="queryParams.type" style="width: 94px">
             <el-option
-              v-for="item in Object.keys(orgType)"
-              :key="orgType[item]"
-              :label="item"
-              :value="orgType[item]"
+              v-for="item in orgType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>
@@ -192,7 +192,7 @@ export default {
 };
 </script>
 <style lang="scss">
-  .query-form{
+  .query-form-list{
     display: flex;
     align-items: center;
     justify-content: space-between;
