@@ -1,14 +1,14 @@
 <template>
   <div class="yc-aside-container">
     <el-menu
-      :default-active="$route.path.replace(/^\/([^\/]*).*$/, '/$1')"
+      :default-active="getDefaultActive()"
       :default-openeds="['/index']"
       class="el-aside-menu"
       background-color="#19283F"
       text-color="#fff"
-      router
       active-text-color="#fff"
       :unique-opened="true"
+      @select="handleSelect"
     >
       <template
         v-for="item in role === '204' ? userMenu : adminMenu"
@@ -23,7 +23,6 @@
             v-for="childItem in item.child"
             :key="childItem.key"
             :index="childItem.path"
-            :route="{ path: childItem.path }"
           >
             <i v-if="childItem.icon" :class="childItem.icon"></i>
             <template #title>{{ childItem.text }}</template>
@@ -33,7 +32,6 @@
           v-else
           :key="item.key"
           :index="item.path"
-          :route="{ path: item.path }"
         >
           <i :class="item.icon"></i>
           <template #title
@@ -73,6 +71,19 @@ export default {
     role: {
       type: String,
       default: '',
+    },
+  },
+  methods: {
+    getDefaultActive() {
+      const { path } = this.$route;
+      return path.replace(/^\/([^/]*).*$/, '/$1');
+    },
+    handleSelect(index) {
+      if (index.includes('documentSearch')) {
+        window.open(index, '_blank');
+      } else {
+        this.$router.push(index);
+      }
     },
   },
 };

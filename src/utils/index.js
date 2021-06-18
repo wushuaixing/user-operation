@@ -94,6 +94,14 @@ const clone = (obj) => {
   return o;
 };
 
+const floatFormat = (str) => {
+  const num = parseFloat(str);
+  if (Number.isNaN(num) || Array.isArray(str)) return '-';
+  const result = Number(num.toFixed(2)).toLocaleString();
+  if (!result.split('.')[1]) return `${result}.00`;
+  return result;
+};
+
 export {
-  clearEmpty, queryApi, dateUtils, fileDownload, clone,
+  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat,
 };

@@ -8,6 +8,11 @@ export const normalRoutes = [
       {
         path: '/index',
         name: 'Index',
+        component: () => import('@/views/my-org'),
+      },
+      {
+        path: '/dataAudit',
+        name: 'dataAudit',
         component: () => import('@/views/data-audit/index.vue'),
       },
     ],
@@ -101,9 +106,15 @@ export const adminMenu = [
 
 export const userMenu = [
   {
-    text: '数据审核',
-    icon: 'el-icon-picture-outline-round',
+    text: '我的机构',
+    icon: 'el-icon-present',
     path: '/index',
+    key: 'MyOrg',
+  },
+  {
+    text: '审核管理',
+    icon: 'el-icon-picture-outline-round',
+    path: '/dataAudit',
     key: 'DataAudit',
   },
   {
