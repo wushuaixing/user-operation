@@ -96,6 +96,26 @@ const TOP_ORG_STATUS = {
   4: '已过期（两月内）',
 };
 
+const COLLATERAL_TYPE = {
+  0: '未知',
+  1: '有抵押',
+  2: '无抵押',
+};
+const HOUSE_TYPE = {
+  0: '未知',
+  1: '商用',
+  2: '住宅',
+  3: '工业',
+};
+const DOCUMENTFIND_STATUS = {
+  0: '未找到文书',
+  1: '找到文书',
+};
+
+const WSINATTACH_STATUS = {
+  0: '否',
+  1: '是',
+};
 // 机构类型
 const orgType = [
   {
@@ -207,5 +227,10 @@ export {
   TOP_ORG_STATUS,
   orgType,
   OPERA_MODULE_LIST,
-  OPERATION_TYPE, DOCUMENT_DETAIL,
+  OPERATION_TYPE,
+  DOCUMENT_DETAIL,
+  COLLATERAL_TYPE,
+  HOUSE_TYPE,
+  DOCUMENTFIND_STATUS,
+  WSINATTACH_STATUS,
 };

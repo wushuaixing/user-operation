@@ -23,6 +23,11 @@ export const normalRoutes = [
     component: () => import('@/views/document/serch/index.vue'),
   },
   {
+    path: '/structureCheck',
+    name: 'structureCheck',
+    component: () => import('@/views/other-detail/check/index'),
+  },
+  {
     path: '/documentDetail',
     name: 'documentDetail',
     component: () => import('@/views/document/detail/index.vue'),
@@ -121,6 +126,6 @@ export const userMenu = [
     text: '文书搜索',
     icon: 'el-icon-present',
     path: '/documentSearch',
-    key: 'DocumentSearch',
+    key: 'documentSearch',
   },
 ];

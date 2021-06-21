@@ -98,8 +98,8 @@ const floatFormat = (str) => {
   const num = parseFloat(str);
   if (Number.isNaN(num) || Array.isArray(str)) return '-';
   const result = Number(num.toFixed(2)).toLocaleString();
-  if (!result.split('.')[1]) return `${result}.00`;
-  return result;
+  if (!result.split('.')[1]) return `${result}.00 元`;
+  return `${result} 元`;
 };
 
 export {

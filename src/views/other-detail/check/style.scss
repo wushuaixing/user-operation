@@ -1,0 +1,58 @@
+.structure-check-wrapper{
+  .main-content{
+    padding: 20px;
+    &-top{
+      display: flex;
+      flex-wrap: wrap;
+      position: relative;
+      .action-button{
+        position: absolute;
+        right: 0;
+        padding: 0 21px;
+      }
+    }
+    .part{
+      line-height: 20px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      h4{
+        font-weight: bold;
+        border-left: 3px solid #296DD3;
+        padding-left: 8px;
+        margin-bottom: 16px;
+        font-size: 16px;
+      }
+      ul{
+        li{
+          display: flex;
+          margin-bottom: 8px;
+          div{
+            &:first-child{
+              min-width: 114px;
+              text-align: right;
+            }
+            &:last-child{
+              p{
+                margin-bottom: 3px;
+              }
+            }
+            .area-field{
+              display: inline-block;
+              margin-top: -5px;
+            }
+          }
+        }
+        .title{
+          font-size: 16px;
+        }
+        .remark{
+          div{
+            &:last-child{
+              color: #F93535;
+            }
+          }
+        }
+      }
+    }
+  }
+}
