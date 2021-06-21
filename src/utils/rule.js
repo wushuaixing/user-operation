@@ -23,7 +23,7 @@ export const normalRoutes = [
     component: () => import('@/views/document/serch/index.vue'),
   },
   {
-    path: '/documentDetail/:wenshuId/:wid/:content',
+    path: '/documentDetail',
     name: 'documentDetail',
     component: () => import('@/views/document/detail/index.vue'),
   },

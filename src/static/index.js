@@ -96,7 +96,7 @@ const TOP_ORG_STATUS = {
   4: '已过期（两月内）',
 };
 
-// 机构类型 TODO eslint
+// 机构类型
 const orgType = [
   {
     label: '全部',
@@ -175,6 +175,29 @@ const OPERATION_TYPE = {
   6: '关闭推送',
 };
 
+const DOCUMENT_DETAIL = [
+  {
+    label: '审理法院',
+    key: 'court',
+  },
+  {
+    label: '案件类型',
+    key: 'caseType',
+  },
+  {
+    label: '案由',
+    key: 'reason',
+  },
+  {
+    label: '审理程序',
+    key: 'trialRound',
+  },
+  {
+    label: '裁判日期',
+    key: 'trialDate',
+  },
+];
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -184,5 +207,5 @@ export {
   TOP_ORG_STATUS,
   orgType,
   OPERA_MODULE_LIST,
-  OPERATION_TYPE,
+  OPERATION_TYPE, DOCUMENT_DETAIL,
 };

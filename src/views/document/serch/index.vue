@@ -2,18 +2,19 @@
   <div class="yc-newpage-contaner">
     <section class="main-wrapper document-search-wrapper">
       <BreadCrumb text="文书搜索" />
-      <el-form :inline="true" :model="params" class="query-form">
-        <el-form-item label="全文：" class="content-input">
-          <el-input
-            v-model="params.content"
-            placeholder="姓名、公司、地址关键词等"
-            style="width: 100%"
-            @keyup.enter="onSubmit"
-          ></el-input>
-        </el-form-item>
-        <div class="records" v-if="recordsList.length">
-          <span class="title">最近搜索：</span>
-          <div class="records-box">
+      <div class="main-content">
+        <div class="query-content">
+          <el-form :inline="true" :model="params" class="query-form" ref="queryForm">
+            <el-form-item label="全文：" class="content-input" prop="content">
+              <el-input
+                v-model="params.content"
+                placeholder="姓名、公司、地址关键词等"
+                @keyup.enter="onSubmit"
+              ></el-input>
+            </el-form-item>
+            <div class="records" v-if="recordsList.length">
+              <span class="title">最近搜索：</span>
+              <div class="records-box">
             <span
               v-for="item in recordsList"
               :key="item"
@@ -21,133 +22,177 @@
             >
               {{ item }}
             </span>
-            <el-tooltip
-              effect="dark"
-              content="清空最近搜索记录"
-              placement="top"
-            >
-              <i
-                @click="clearRecords"
-                @mouseover="iconHover = true"
-                @mouseleave="iconHover = false"
-                ><img :src="iconHover ? clearHoverIcon : clearIcon" alt=""
-              /></i>
-            </el-tooltip>
-          </div>
+                <el-tooltip
+                  effect="dark"
+                  content="清空最近搜索记录"
+                  placement="top"
+                >
+                  <i
+                    @click="clearRecords"
+                    @mouseover="iconHover = true"
+                    @mouseleave="iconHover = false"
+                  ><img :src="iconHover ? clearHoverIcon : clearIcon" alt=""
+                  /></i>
+                </el-tooltip>
+              </div>
+            </div>
+            <el-form-item label="案号：" prop="ah">
+              <el-input
+                v-model="params.ah"
+                placeholder="案号"
+                @keyup.enter="onSubmit"
+              ></el-input>
+            </el-form-item >
+            <el-form-item label="法院：" prop="court">
+              <el-input
+                v-model="params.court"
+                placeholder="法院"
+                @keyup.enter="onSubmit"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="链接：" prop="url">
+              <el-input
+                v-model="params.url"
+                placeholder="文书源链接"
+                @keyup.enter="onSubmit"
+              ></el-input>
+            </el-form-item>
+            <el-form-item style="float: right">
+              <el-button type="primary" @click="onSubmit" class="button-first" style="padding: 8px 21px">搜索</el-button>
+              <el-button type="primary" @click="resetForm" class="button-fourth" style="padding: 8px 11px">清空搜索条件</el-button>
+            </el-form-item>
+          </el-form>
         </div>
-        <el-form-item label="案号：">
-          <el-input
-            v-model="params.ah"
-            placeholder="案号"
-            @keyup.enter="onSubmit"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="法院：">
-          <el-input
-            v-model="params.court"
-            placeholder="法院"
-            @keyup.enter="onSubmit"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="链接：">
-          <el-input
-            v-model="params.url"
-            placeholder="文书源链接"
-            @keyup.enter="onSubmit"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">搜索</el-button>
-          <el-button type="primary" @click="resetForm">清空搜索条件</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table :data="dataList" style="width: 100%" v-loading="loading">
-        <el-table-column label="发布日期" width="180">
-          <template #default="scope">
-            {{ $filters.undefinedShow(scope.row.publishTime) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="标题" width="180">
-          <template #default="scope">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="scope.row.title"
-              placement="top"
-            >
-              <div class="yc-ellipsis">
-                <router-link :to="toDetail(scope.row)">
-                  {{ scope.row.title }}
-                </router-link>
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column label="案号" width="180">
-          <template #default="scope">
-            {{ $filters.undefinedShow(scope.row.ah) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="相关人员" width="180">
-          <template #default="scope">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="scope.row.appellors"
-              placement="top"
-            >
-              <div class="yc-ellipsis">
-                {{ $filters.undefinedShow(scope.row.appellors) }}
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column label="法院" width="180">
-          <template #default="scope">
-            {{ $filters.undefinedShow(scope.row.court) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="案由" width="180">
-          <template #default="scope">
-            {{ $filters.undefinedShow(scope.row.reason) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="案件类型" width="180">
-          <template #default="scope">
-            {{ $filters.undefinedShow(scope.row.caseType) }}
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        @current-change="pageChange"
-        background
-        :current-page="page"
-        layout="total, prev, pager, next, jumper"
-        :total="total > 10000 ? 10000 : total"
-        hide-on-single-page
-      >
-      </el-pagination>
+        <div class="table-content">
+          <el-table :data="dataList" style="width: 100%" v-loading="loading"  :row-key="({wenshuId,wid}) => `${wenshuId}${wid}`">
+            <template #empty>
+              <img src="../../../assets/img/no_data.png" alt="" />
+              <p>暂无数据</p>
+            </template>
+            <el-table-column label="发布日期" min-width="9.8%">
+              <template #default="scope">
+                {{ $filters.undefinedShow(scope.row.publishTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="标题" min-width="22%">
+              <template #default="scope">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="scope.row.title"
+                  placement="top"
+                  :disabled="(scope.row.title||'').length<35"
+                >
+                  <div class="yc-ellipsis">
+                    <span @click="toDetail(scope.row)" class="button-link">
+                      {{ scope.row.title }}
+                    </span>
+                  </div>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column label="案号" min-width="17.7%">
+              <template #default="scope">
+                {{ $filters.undefinedShow(scope.row.ah) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="相关人员" min-width="19.3%">
+              <template #default="scope">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="scope.row.appellors"
+                  placement="top"
+                  :disabled="(scope.row.appellors||'').length<26"
+                >
+                  <div class="yc-ellipsis">
+                    {{ $filters.undefinedShow(scope.row.appellors) }}
+                  </div>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column label="法院" min-width="16.1%">
+              <template #default="scope">
+                {{ $filters.undefinedShow(scope.row.court) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="案由" min-width="8.1%">
+              <template #default="scope">
+                {{ $filters.undefinedShow(scope.row.reason) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="案件类型" min-width="8.1%">
+              <template #default="scope">
+                {{ $filters.undefinedShow(scope.row.caseType) }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <el-pagination
+          @current-change="pageChange"
+          background
+          :current-page="page"
+          layout="total, prev, pager, next, jumper"
+          :total="total > 10000 ? 10000 : total"
+          hide-on-single-page
+          :key="page"
+        >
+        </el-pagination>
+      </div>
     </section>
   </div>
 </template>
 
 <script>
 import BreadCrumb from '@/components/bread-crumb/index.vue';
-import { toRaw } from 'vue';
+import {
+  reactive, toRaw, toRefs, onMounted, getCurrentInstance,
+} from 'vue';
 import CommonApi from '@/server/api/common';
 import clearIcon from '@/assets/img/records_del.jpg';
 import clearHoverIcon from '@/assets/img/records_del_hover.jpg';
+import { clearEmpty } from '@/utils';
 
 const storage = window.localStorage;
+// 最近搜索模块 data & methods
+const recordModule = (state) => {
+  const recordState = reactive({
+    clearIcon,
+    clearHoverIcon,
+    recordsList: [],
+    iconHover: false,
+  });
+
+  const clearRecords = () => {
+    storage.removeItem('records');
+    recordState.iconHover = false;
+    recordState.recordsList = [];
+  };
+
+  const saveStorage = () => {
+    const { content } = state.params;
+    const records = JSON.parse(storage.getItem('records')) || [];
+    // eslint-disable-next-line no-unused-expressions
+    content && records.unshift(content);
+    const uniqueRecords = [...new Set(records)];
+    storage.setItem('records', JSON.stringify(uniqueRecords.slice(0, 9)));
+    recordState.recordsList = uniqueRecords;
+  };
+
+  return { recordState, clearRecords, saveStorage };
+};
+
 export default {
   name: 'documentSearch',
   nameComment: '文书搜索',
-  // TODO uncultivated
-  data() {
-    return {
+  components: {
+    BreadCrumb,
+  },
+  setup() {
+    const { ctx } = getCurrentInstance();
+
+    const state = reactive({
       page: 1,
-      clearIcon,
-      clearHoverIcon,
       params: {
         content: '',
         ah: '',
@@ -155,114 +200,130 @@ export default {
         url: '',
       },
       dataList: [],
-      recordsList: [],
       total: 0,
       loading: false,
-      iconHover: false,
-      toDetail: (params) => {
-        const { wenshuId, wid } = params;
-        const { content } = this.params;
-        return `/documentDetail/${wenshuId}/${wid}/${
-          content || 'content'
-        }`;
-      },
+    });
+
+    const { recordState, clearRecords, saveStorage } = recordModule(state);
+
+    const toDetail = (params = {}) => {
+      const { wenshuId, wid } = params;
+      const filterParams = toRaw(state.params);
+      Object.keys(filterParams).forEach((i) => {
+        filterParams[i] = filterParams[i].replace('%', '');
+      });
+      const routerData = ctx.$router.resolve({
+        path: '/documentDetail',
+        query: { wenshuId, wid, ...clearEmpty(filterParams) },
+      });
+      window.open(routerData.href, '_blank');
     };
-  },
-  components: {
-    BreadCrumb,
-  },
-  created() {
-    const records = JSON.parse(storage.getItem('records')) || [];
-    this.recordsList = records;
-    document.title = '文书搜索';
-  },
-  methods: {
-    onSubmit() {
-      const params = toRaw(this.params);
-      const t = (str = '', flag) => (flag ? str.trim() : str.trim().replace(/\s+/g, ' '));
-      Object.keys(params).forEach(
-        (key) => (params[key] = t(params[key], key !== 'content')),
-      );
-      const { content } = params;
-      const records = JSON.parse(storage.getItem('records')) || [];
-      // eslint-disable-next-line no-unused-expressions
-      t(content) && records.unshift(t(content));
-      const uniqueRecords = [...new Set(records)];
-      storage.setItem('records', JSON.stringify(uniqueRecords.slice(0, 9)));
-      this.params = {
-        ...params,
-      };
-      this.page = 1;
-      this.recordsList = uniqueRecords;
-      this.getTableList();
-    },
-    getTableList() {
+
+    const getTableList = () => {
       const params = {
-        ...toRaw(this.params),
-        page: this.page,
+        ...(state.params),
+        page: state.page,
       };
-      this.loading = true;
+      state.loading = true;
       CommonApi.documentSearch(params)
         .then((res) => {
           const {
             data, code, page, total,
           } = res.data || {};
           if (code === 200) {
-            this.total = total;
-            this.page = page;
-            this.dataList = data;
+            state.total = total;
+            state.page = page;
+            state.dataList = data || [];
           } else {
-            this.$message.warning('请求出错');
+            ctx.$message.error('请求出错');
           }
         })
-        .finally((this.loading = false));
-    },
-    resetForm() {
-      this.params = {
-        content: '',
-        ah: '',
-        court: '',
-        url: '',
-      };
-      this.getTableList();
-    },
-    pageChange(page) {
-      this.page = parseInt(page, 10);
-      this.getTableList();
-    },
-    handleFill(content) {
-      this.params = {
-        ...this.params,
+        .finally(() => state.loading = false);
+    };
+
+    const resetForm = () => {
+      ctx.$refs.queryForm.resetFields();
+      state.page = 1;
+      getTableList();
+    };
+
+    const pageChange = (page) => {
+      state.page = parseInt(page, 10);
+      getTableList();
+    };
+    // 点击最近搜索
+    const handleFill = (content = '') => {
+      state.params = {
+        ...state.params,
         content,
       };
-      this.getTableList();
-    },
-    clearRecords() {
-      storage.removeItem('records');
-      this.iconHover = false;
-      this.recordsList = [];
-    },
+      state.page = 1;
+      getTableList();
+    };
+    // 搜索
+    const onSubmit = () => {
+      const params = toRaw(state.params);
+      const t = (str = '', flag) => (flag ? str.trim() : str.replace(/\s+/g, ' '));
+      Object.keys(params).forEach(
+        (key) => (params[key] = t(params[key], key !== 'content')),
+      );
+      state.params = {
+        ...params,
+      };
+      state.page = 1;
+      saveStorage();
+      getTableList();
+    };
+
+    onMounted(() => {
+      const records = JSON.parse(storage.getItem('records')) || [];
+      recordState.recordsList = records;
+      document.title = '文书搜索';
+    });
+
+    return {
+      ...toRefs(state),
+      ...toRefs(recordState),
+      toDetail,
+      onSubmit,
+      getTableList,
+      resetForm,
+      pageChange,
+      handleFill,
+      clearRecords,
+      saveStorage,
+    };
   },
 };
+
 </script>
 
 <style lang="scss">
 .document-search-wrapper {
+  .main-content{
+    padding:0 20px 20px;
+  }
+  .yc-bread-crumb{
+    min-height: 56px;
+    &-title{
+      height: 56px;
+    }
+  }
   .query-form {
-    padding: 20px;
-
+    padding-top: 20px;
+    .el-form-item{
+      margin-bottom: 14px;
+    }
     .el-input__inner {
       width: 260px;
     }
-
     .content-input {
       width: 100%;
-
       .el-form-item__content {
         width: calc(100% - 54px);
-
         .el-input__inner {
           width: 100% !important;
+          height: 40px;
         }
       }
     }
@@ -270,33 +331,38 @@ export default {
     .records {
       display: flex;
       font-size: 12px;
-      line-height: 20px;
-      padding-left: 40px;
-
+      line-height: 18px;
+      padding:0 0 5px 40px;
+      margin-top: -2px;
       .title {
         min-width: 60px;
       }
-
       &-box {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-
         span {
           padding: 0 8px;
           background-color: #edeff3;
-          margin: 0 12px 12px 0;
+          margin: 0 11px 11px 0;
           border-radius: 2px;
           color: #4e5566;
           display: inline-block;
+          border: 1px solid #edeff3;
+          &:hover{
+            border: 1px solid #296dd3;
+            color: #296dd3;
+          }
         }
-
         img {
           width: 16px;
           margin-bottom: 6px;
         }
       }
     }
+  }
+  .table-content{
+    padding-top: 20px;
   }
 }
 </style>
