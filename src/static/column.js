@@ -160,7 +160,7 @@ const roleInfoColumn = [
     class: 'name',
   },
   {
-    prop: 'label_type',
+    prop: 'labelType',
     label: '角色',
     width: '14.1%',
     class: 'label-type',
