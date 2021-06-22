@@ -14,6 +14,16 @@ const CUSTOMER_LIST = {
   descending: 'DESC',
 };
 
+// 我的机构排序
+const MYORG_LIST = {
+  start: 'START',
+  end: 'END',
+  pushNum: 'PUSH_NUM',
+  readRate: 'READ_RATE',
+  ascending: 'ASC',
+  descending: 'DESC',
+};
+
 // 拍卖状态
 const AUCTION_STATUS = [
   {
@@ -185,4 +195,5 @@ export {
   orgType,
   OPERA_MODULE_LIST,
   OPERATION_TYPE,
+  MYORG_LIST,
 };

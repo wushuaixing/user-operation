@@ -8,7 +8,7 @@ export const normalRoutes = [
       {
         path: '/index',
         name: 'Index',
-        component: () => import('@/views/my-org'),
+        component: () => import('@/views/my-org/index.vue'),
       },
       {
         path: '/dataAudit',

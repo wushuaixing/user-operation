@@ -1,0 +1,32 @@
+.my-org-message {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  &-item {
+    .up {
+      display: flex;
+      align-items: center;
+      span {
+        color: #4E5566;
+        line-height: 14px;
+        font-size: 14px;
+        margin-left: 4px;
+      }
+    }
+    .down {
+      margin-top: 10px;
+      color: #20242E;
+      line-height: 22px;
+      font-size: 22px;
+      font-weight: 500;
+      padding-left: 22px;
+    }
+  }
+  .divider {
+    display: inline;
+    width: 1px;
+    height: 28px;
+    background-color: #E2E4E9;
+    margin: 0 20px;
+  }
+}

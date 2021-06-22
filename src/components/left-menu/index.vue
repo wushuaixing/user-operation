@@ -8,7 +8,7 @@
       text-color="#fff"
       active-text-color="#fff"
       :unique-opened="true"
-      @select="handleSelect"
+      router
     >
       <template
         v-for="item in role === '204' ? userMenu : adminMenu"
@@ -28,27 +28,29 @@
             <template #title>{{ childItem.text }}</template>
           </el-menu-item>
         </el-submenu>
-        <el-menu-item
-          v-else
-          :key="item.key"
-          :index="item.path"
-        >
-          <i :class="item.icon"></i>
-          <template #title
+        <div v-else @click="handleClick(item)">
+          <el-menu-item
+            :index="item.path"            :key="item.key"
+
+            :disabled="item.path === '/documentSearch'"
+          >
+            <i :class="item.icon"></i>
+            <template #title
             >{{ item.text }}
-            <svg
-              class="icon"
-              aria-hidden="true"
-              v-if="
+              <svg
+                class="icon"
+                aria-hidden="true"
+                v-if="
                 item.key === 'TaskAssign' &&
                 Number($store.state.toBeAllocatedNum)
               "
-              style="font-size: 16px; position: relative; top: 1px"
-            >
-              <use xlink:href="#iconfenpei"></use>
-            </svg>
-          </template>
-        </el-menu-item>
+                style="font-size: 16px; position: relative; top: 1px"
+              >
+                <use xlink:href="#iconfenpei"></use>
+              </svg>
+            </template>
+          </el-menu-item>
+        </div>
       </template>
     </el-menu>
   </div>
@@ -78,12 +80,8 @@ export default {
       const { path } = this.$route;
       return path.replace(/^\/([^/]*).*$/, '/$1');
     },
-    handleSelect(index) {
-      if (index.includes('documentSearch')) {
-        window.open(index, '_blank');
-      } else {
-        this.$router.push(index);
-      }
+    handleClick(item) {
+      if (item.path === '/documentSearch') window.open(item.path, '_blank');
     },
   },
 };
