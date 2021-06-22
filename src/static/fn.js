@@ -44,9 +44,7 @@ const partData = (params) => {
     ah, remark, buildingArea, collateral, houseType, landArea, priorityPrice, title, url, wsFindStatus, wsInAttach, wsUrl, status,
   } = params;
   const statusFn = (i = '') => (AUCTION_STATUS.slice(1).find((j) => j.value === i.toString()) || {}).label;
-  const areaFn = (text = '') => (
-    !Number(text) ? '-' : <span className='area-field'>{Number(text).toFixed(2)} m<sup>2</sup></span>
-  );
+  const areaFn = (i = '') => (!Number(i) ? '-' : Number(i).toFixed(2));
   return [
     {
       label: '基本信息',

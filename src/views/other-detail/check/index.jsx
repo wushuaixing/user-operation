@@ -1,14 +1,20 @@
-import { defineComponent, reactive } from 'vue';
+import {
+  defineComponent, reactive, toRaw,
+} from 'vue';
 import BreadCrumb from '@/components/bread-crumb/index.vue';
 import { partData } from '@/static/fn';
 import { roleInfoColumn } from '@/static/column';
 import './style.scss';
 
-const html = (params) => {
-  const { url, key, val } = params;
+const Item = (props) => {
+  const { url, key, val } = props;
   switch (key) {
     case 'title':
       return <a href={url} target='_blank'>{val}</a>;
+    case 'buildingArea':
+      return <span className='area-field'>{val} m<sup>2</sup></span>;
+    case 'landArea':
+      return <span className='area-field'>{val} m<sup>2</sup></span>;
     case 'ah':
       if (!val.length) return '-';
       return ((val || []).map((i) => <p key={i}>{i.value}</p>));
@@ -31,7 +37,7 @@ const Part = (props) => {
         list.map((i) => <li key={i.key} className={i.key}>
           <div>{i.lable}：</div>
           <div>
-            { html(i)}
+            <Item {...i}></Item>
           </div>
         </li>)
       }
@@ -43,7 +49,7 @@ export default defineComponent({
 
   setup() {
     const state = reactive({
-      ah: [{ value: '1111111111111111111' }, { value: '2222222222222222222' }, { value: '3333333333333333333' }],
+      ah: [{ val: '1111111111111111111', lable: '1' }, { val: '2222222222222222222', lable: '1' }, { val: '3333333333333333333', lable: '1' }],
       remark: '退回备注退回备注退回备注退回备注退回备注', // 退回备注
       buildingArea: 1111111.00, // 建筑面积(-1初始值)
       collateral: 0, // 抵押情况 1 无抵押 2 有抵押 0 未知
@@ -72,7 +78,8 @@ export default defineComponent({
       wsUrl: [{ value: 'aaaaaaaaaaaaaaaaaa' }, { value: 'bbbbbbbbbbbbbbbb' }, { value: 'cccccccccccccccccccc' }],
       status: 1, // 拍卖状态（1:即将开始，3:拍卖中，5:成功交易，7:失败，9:终止, 11:撤回）
     });
-    const data = partData(state);
+    console.log((toRaw(state.ah)));
+    const data = partData({ ...state });
     const { obligors } = state;
     return { data, obligors };
   },
@@ -85,7 +92,7 @@ export default defineComponent({
           <div className="main-content">
             <div className="main-content-top">
               <el-button type="primary" class="button-first action-button">退回</el-button>
-              {data.map((i) => (Part(i)))}
+              {data.map((i) => <Part {...i}></Part>)}
             </div>
             <div className="main-content-btm">
                 <div className="part">

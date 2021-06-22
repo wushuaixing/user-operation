@@ -123,9 +123,10 @@ export const userMenu = [
     key: 'DataAudit',
   },
   {
-    text: '文书搜索',
+    text: '结构化校验详情',
     icon: 'el-icon-present',
-    path: '/documentSearch',
-    key: 'documentSearch',
+    path: '/structureCheck',
+    key: 'structureCheck',
+    // key: 'documentSearch',
   },
 ];
