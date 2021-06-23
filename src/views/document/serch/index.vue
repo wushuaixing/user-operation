@@ -19,6 +19,7 @@
               v-for="item in recordsList"
               :key="item"
               @click="handleFill(item)"
+              class="cursor-pointer"
             >
               {{ item }}
             </span>
@@ -31,6 +32,7 @@
                     @click="clearRecords"
                     @mouseover="iconHover = true"
                     @mouseleave="iconHover = false"
+                    class="cursor-pointer"
                   ><img :src="iconHover ? clearHoverIcon : clearIcon" alt=""
                   /></i>
                 </el-tooltip>
@@ -84,7 +86,7 @@
                   :disabled="(scope.row.title||'').length<35"
                 >
                   <div class="yc-ellipsis">
-                    <span @click="toDetail(scope.row)" class="button-link">
+                    <span @click="toDetail(scope.row)" class="button-link cursor-pointer">
                       {{ scope.row.title }}
                     </span>
                   </div>
@@ -105,7 +107,7 @@
                   placement="top"
                   :disabled="(scope.row.appellors||'').length<26"
                 >
-                  <div class="yc-ellipsis">
+                  <div class="yc-ellipsis  cursor-pointer">
                     {{ $filters.undefinedShow(scope.row.appellors) }}
                   </div>
                 </el-tooltip>
