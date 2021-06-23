@@ -1,0 +1,115 @@
+.audit-management-container{
+  background: #f0f2f5 !important;
+  display: flex;
+  min-height: 89vh !important;
+  padding-bottom: 10px !important;
+  .content{
+    &-left{
+      width: 280px;
+      background: #fff;
+      min-height: 100%;
+      margin-right: 20px;
+      &-tree{
+        padding: 20px 0 20px 20px;
+        &-query{
+          padding-right: 20px;
+        }
+        &-tabs{
+          padding-right: 20px;
+          &-content{
+            padding: 4px ;
+            border-radius: 2px;
+            border: 1px solid #296DD3;
+            $--width116:113px;
+            .el-radio-group{
+              .el-radio-button{
+                &:first-child{
+                  .el-radio-button__inner{
+                    width:$--width116;
+                    border-radius:  2px 0 0 2px;
+                  }
+                }
+                &:last-child{
+                  .el-radio-button__inner{
+                    width:$--width116;
+                    border-radius: 0  2px 2px 0;
+                  }
+                }
+              }
+            }
+          }
+        }
+        &-list{
+          padding-top: 16px;
+          height: 72vh;
+          overflow: auto;
+          position: relative;
+          //滚动条的宽度
+          &::-webkit-scrollbar {
+            width:4px;
+          }
+
+          //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
+          &::-webkit-scrollbar-track {
+            width: 4px;
+            background-color:#FFF;
+          }
+
+          //滚动条的设置
+          &::-webkit-scrollbar-thumb {
+            background-color:#B2B8C9;
+            background-clip:padding-box;
+            min-height:49px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius:5px;
+          }
+          //滚动条移上去的背景
+
+          &::-webkit-scrollbar-thumb:hover{
+            background-color:#B2B8C9;
+          }
+          &::-webkit-scrollbar-track:hover{
+            background-color:#E2E4E9;
+          }
+          &-title{
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            line-height: 18px;
+          }
+          &-content{
+            margin: 20px 0 0 4px;
+            .el-timeline-item{
+              &__tail{
+                border-left: 1px solid #C5C7CE ;
+                left: 0;
+              }
+              &__wrapper{
+                top: -9px;
+              }
+            }
+            .active{
+              .el-timeline-item{
+                &__content{
+                  color: #296DD3;
+                }
+                &__dot{
+                  b{
+                    background: #296DD3 !important;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+      }
+    }
+    &-right{
+      flex: 1;
+      background: #fff;
+    }
+  }
+}
+

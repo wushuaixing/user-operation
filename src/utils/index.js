@@ -102,6 +102,19 @@ const floatFormat = (str) => {
   return `${result} 元`;
 };
 
+/* 获取随机字符串 */
+const ranStr = (l = 4) => {
+  const len = l || 32;
+  const $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+  /** **默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1*** */
+  const maxPos = $chars.length;
+  let pwd = '';
+  for (let i = 0; i < len; i += 1) {
+    pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+  }
+  return `_${pwd}`;
+};
+
 export {
-  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat,
+  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat, ranStr,
 };

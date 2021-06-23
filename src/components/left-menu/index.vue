@@ -1,7 +1,7 @@
 <template>
   <div class="yc-aside-container">
     <el-menu
-      :default-active="getDefaultActive()"
+      :default-active="defaultActive"
       :default-openeds="['/index']"
       class="el-aside-menu"
       background-color="#19283F"
@@ -9,6 +9,7 @@
       active-text-color="#fff"
       :unique-opened="true"
       @select="handleSelect"
+      :key="path"
     >
       <template
         v-for="item in role === '204' ? userMenu : adminMenu"
@@ -55,7 +56,8 @@
 </template>
 
 <script>
-import { userMenu, adminMenu } from '../../utils/rule';
+import { userMenu, adminMenu } from '@/utils/rule';
+import { ranStr } from '@/utils/index';
 
 export default {
   name: 'index',
@@ -65,6 +67,7 @@ export default {
       userMenu,
       adminMenu,
       roleName: '',
+      path: '',
     };
   },
   props: {
@@ -74,16 +77,19 @@ export default {
     },
   },
   methods: {
-    getDefaultActive() {
-      const { path } = this.$route;
-      return path.replace(/^\/([^/]*).*$/, '/$1');
-    },
     handleSelect(index) {
       if (index.includes('documentSearch')) {
         window.open(index, '_blank');
+        this.path = ranStr();
       } else {
         this.$router.push(index);
       }
+    },
+  },
+  computed: {
+    defaultActive() {
+      const { path } = this.$route;
+      return path.replace(/^\/([^/]*).*$/, '/$1');
     },
   },
 };
