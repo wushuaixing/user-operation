@@ -56,11 +56,11 @@ export const adminRoutes = [
         name: 'TaskAssign',
         component: () => import('@/views/task-assign/index.vue'),
       },
-      {
-        path: '/dataAudit',
-        name: 'dataAudit',
-        component: () => import('@/views/audit-management'),
-      },
+      // {
+      //   path: '/dataAudit',
+      //   name: 'dataAudit',
+      //   component: () => import('@/views/audit-management'),
+      // },
     ],
   },
   {
@@ -113,12 +113,12 @@ export const adminMenu = [
     key: 'TaskAssign',
   },
   // TODO
-  {
-    text: '审核管理',
-    icon: 'el-icon-picture-outline-round',
-    path: '/dataAudit',
-    key: 'DataAudit',
-  },
+  // {
+  //   text: '审核管理',
+  //   icon: 'el-icon-picture-outline-round',
+  //   path: '/dataAudit',
+  //   key: 'DataAudit',
+  // },
 ];
 
 export const userMenu = [
