@@ -1,7 +1,8 @@
 import {
-  defineComponent, onMounted, reactive,
+  defineComponent, reactive, ref,
 } from 'vue';
-import { dateUtils } from '@/utils';
+import { dateUtils, dateRange } from '@/utils';
+import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
 import './style.scss';
 // import MyOrgApi from '@/server/api/my-org';
 
@@ -11,8 +12,8 @@ export default defineComponent({
       obName: '', // 债务人
       obNumber: '', // 证件号
       orgName: '', // 负责人/机构名称
-      important: 0, // 匹配类型 0-模糊匹配、1-精确匹配
-      pmStatus: 0, // 拍卖状态 1:'即将开始', 3:'进行中',5:'已成交',7:'已流拍',9:'中止',11:'撤回'
+      important: '', // 匹配类型 0-模糊匹配、1-精确匹配
+      pmStatus: '', // 拍卖状态 1:'即将开始', 3:'进行中',5:'已成交',7:'已流拍',9:'中止',11:'撤回'
       title: '', // 标题
       approveTimeStart: '', // 审核开始时间 ,示例值(2021-01-01)
       approveTimeEnd: '', // 审核结束时间 ,示例值(2021-01-01)
@@ -51,8 +52,11 @@ export default defineComponent({
 
     };
 
-    onMounted(() => {
-    });
+    // 展开收起
+    const openStatus = ref(false);
+    const open = () => {
+      openStatus.value = !openStatus.value;
+    };
 
     return {
       state,
@@ -60,11 +64,13 @@ export default defineComponent({
       disabledEndDate,
       handleSearch,
       resetSearch,
+      openStatus,
+      open,
     };
   },
   render() {
     const {
-      state, disabledStartDate, disabledEndDate, handleSearch, resetSearch,
+      state, disabledStartDate, disabledEndDate, handleSearch, resetSearch, openStatus, open,
     } = this;
     return (
       <div>
@@ -98,13 +104,33 @@ export default defineComponent({
               />
             </el-form-item>
             <el-form-item label="匹配类型：">
-
+              <el-select v-model={state.important}
+                         style={{ width: '96px' }}
+                         placeholder="请选择匹配类型">
+                {
+                  IMPORTANT_TYPE.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                }
+              </el-select>
             </el-form-item>
             <el-form-item label="拍卖状态：">
-
+              <el-select v-model={state.pmStatus}
+                         style={{ width: '96px' }}
+                         placeholder="请选择拍卖状态">
+                {
+                  AUCTION_STATUS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                }
+              </el-select>
+            </el-form-item>
+            <el-form-item class="open">
+              <span onClick={open}>
+              { openStatus
+                ? <span>收起选项<i className="el-icon-arrow-up open-icon"/></span>
+                : <span>展开选项<i className="el-icon-arrow-down open-icon"/></span>
+              }
+            </span>
             </el-form-item>
           </div>
-          <div className="monitor-form-line line2">
+          <div className="monitor-form-line" v-show={openStatus}>
             <el-form-item label="标题：" style={{ marginLeft: '13px' }}>
               <el-input
                 v-model={state.title}
@@ -178,9 +204,9 @@ export default defineComponent({
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                // shortcuts={shortcuts}
-            >
-            </el-date-picker>
+                shortcuts={dateRange()}
+              >
+              </el-date-picker>
             </el-form-item>
           </div>
           <div className="monitor-form-line">
@@ -213,6 +239,13 @@ export default defineComponent({
                 </div>
               </el-form-item>
               <el-form-item label="状态：">
+                <el-select v-model={state.process}
+                           style={{ width: '96px' }}
+                           placeholder="请选择拍卖状态">
+                  {
+                    PROCESS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                  }
+                </el-select>
               </el-form-item>
             </div>
             <el-form-item>
