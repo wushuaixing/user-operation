@@ -344,6 +344,11 @@ export default {
           uid: '',
         };
       }
+      this.params = {
+        ...this.params,
+        sortColumn: '',
+        sortOrder: '',
+      };
       this.queryOption = { ...this.queryParams };
       this.getList();
     },
