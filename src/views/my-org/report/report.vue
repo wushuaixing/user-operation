@@ -209,7 +209,7 @@ export default defineComponent({
     const reportForm = reactive({
       time: '',
     });
-    const reportVisible = ref(true);
+    const reportVisible = ref(false);
     const orgId = ref(0);
 
     const open = (id) => {

@@ -30,7 +30,7 @@ const App = defineComponent({
             <span className="">{info.num1}</span>
           </div>
           <div className="down">
-            {newWeekNum}
+            {orgNum}
           </div>
         </div>
         <div className="divider"/>
@@ -42,7 +42,7 @@ const App = defineComponent({
             <span className="">{info.num2}</span>
           </div>
           <div className="down">
-            {orgNum}
+            {newWeekNum}
           </div>
         </div>
         <div className="divider"/>
@@ -61,7 +61,7 @@ const App = defineComponent({
             </el-tooltip>
           </div>
           <div className="down">
-            {totalObligorNum}
+            {willExpireNum}
           </div>
         </div>
         <div className="divider"/>
@@ -70,10 +70,10 @@ const App = defineComponent({
             <svg class="icon" aria-hidden="true" style={{ fontSize: '18px' }}>
               <use xlink:href="#iconzhaiwuren"/>
             </svg>
-            <span className="">即将过期机构数</span>
+            <span className="">监控债务人总数</span>
           </div>
           <div className="down">
-            {willExpireNum}
+            {totalObligorNum}
             <span style={{
               fontSize: '14px',
               marginLeft: '4px',

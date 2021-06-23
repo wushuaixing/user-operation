@@ -1,5 +1,5 @@
 import { defineComponent, reactive } from 'vue';
-import './query.scss';
+import './style.scss';
 import { dateUtils } from '@/utils';
 
 const query = defineComponent({

@@ -1,14 +1,53 @@
 .monitor-manage {
+  width: 1760px;
+  margin: 0 auto;
+  min-height: 96vh;
+  padding: 15px 0 20px;
   &-header {
-
+    height: 58px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    .header-title {
+      font-weight: 600;
+      color: #20242E;
+      line-height: 18px;
+      font-size: 18px;
+    }
+    .data-type {
+      display: flex;
+      align-items: center;
+      .middle {
+        color: #7D8699;
+        line-height: 14px;
+        font-size: 14px;
+        margin-left: 8px;
+      }
+      .right {
+        color: #20242E;
+        line-height: 16px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
   }
   &-body {
-    .tree-left {
-
+    min-height: 87vh;
+    margin-top: 20px;
+    display: flex;
+    .left-tree {
+      background: #fff;
+      width: 300px;
     }
     .query-data {
+      margin-left: 20px;
+      background: #fff;
+      width: 1440px;
+      padding: 20px;
       .query-area {
-
+        border-bottom: 1px solid #E2E4E9;
       }
       .data-area {
 

@@ -17,8 +17,8 @@
             v-model.trim="queryParams.name"
             placeholder="请输入机构名称"
             style="width: 220px"
-            @keyup.enter="getList"
             maxlength="100"
+            @input="(val) => queryParams.name = val.replace(/\s+/g, '')"
             clearable
           />
         </el-form-item>
@@ -155,7 +155,7 @@
             <template #default="scope">
               <el-button
                 type="text"
-                @click="handleOpenModal('single', scope.row)"
+                @click="handleOpen(scope.row)"
                 class="button-link"
               >
                 监控管理
@@ -163,7 +163,7 @@
               <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
-                @click="handleOpenModal('single', scope.row)"
+                @click="handleOpenModal(scope.row)"
                 class="button-link"
               >
                 客户报告
@@ -184,7 +184,7 @@
         />
       </div>
     </div>
-    <Report></Report>
+    <Report ref="Report"></Report>
   </div>
 </template>
 
@@ -393,6 +393,20 @@ export default {
         console.log(err);
       });
     },
+    handleOpen(row) {
+      this.isChecked = false;
+      const { id, name } = row;
+      const routerData = this.$router.resolve({
+        path: '/monitorManage',
+        query: { id, name },
+      });
+      window.open(routerData.href, '_blank');
+    },
+    handleOpenModal(row) {
+      this.isChecked = false;
+      const { open } = this.$refs.Report;
+      open(row.id);
+    },
   },
   watch: {
     tabKey() {
@@ -410,7 +424,8 @@ export default {
 
 <style lang="scss">
   .my-org {
-    padding-top: 6px !important;
+    padding-top: 0 !important;
+    padding-bottom: 40px !important;
     margin: 20px;
     &-header {
       height: 89px;

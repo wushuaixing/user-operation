@@ -27,6 +27,11 @@ export const normalRoutes = [
     name: 'documentDetail',
     component: () => import('@/views/document/detail/index.vue'),
   },
+  {
+    path: '/monitorManage',
+    name: 'monitorManage',
+    component: () => import('@/views/my-org/monitor'),
+  },
 ];
 
 export const adminRoutes = [

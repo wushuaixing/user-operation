@@ -30,9 +30,8 @@
         </el-submenu>
         <div v-else @click="handleClick(item)">
           <el-menu-item
-            :index="item.path"            :key="item.key"
-
-            :disabled="item.path === '/documentSearch'"
+            :index="item.path"
+            :key="item.key"
           >
             <i :class="item.icon"></i>
             <template #title
