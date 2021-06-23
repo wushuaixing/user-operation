@@ -96,7 +96,27 @@ const TOP_ORG_STATUS = {
   4: '已过期（两月内）',
 };
 
-// 机构类型 TODO eslint
+const COLLATERAL_TYPE = {
+  0: '未知',
+  1: '有抵押',
+  2: '无抵押',
+};
+const HOUSE_TYPE = {
+  0: '未知',
+  1: '商用',
+  2: '住宅',
+  3: '工业',
+};
+const DOCUMENTFIND_STATUS = {
+  0: '未找到文书',
+  1: '找到文书',
+};
+
+const WSINATTACH_STATUS = {
+  0: '否',
+  1: '是',
+};
+// 机构类型
 const orgType = [
   {
     label: '全部',
@@ -175,6 +195,29 @@ const OPERATION_TYPE = {
   6: '关闭推送',
 };
 
+const DOCUMENT_DETAIL = [
+  {
+    label: '审理法院',
+    key: 'court',
+  },
+  {
+    label: '案件类型',
+    key: 'caseType',
+  },
+  {
+    label: '案由',
+    key: 'reason',
+  },
+  {
+    label: '审理程序',
+    key: 'trialRound',
+  },
+  {
+    label: '裁判日期',
+    key: 'trialDate',
+  },
+];
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -185,4 +228,9 @@ export {
   orgType,
   OPERA_MODULE_LIST,
   OPERATION_TYPE,
+  DOCUMENT_DETAIL,
+  COLLATERAL_TYPE,
+  HOUSE_TYPE,
+  DOCUMENTFIND_STATUS,
+  WSINATTACH_STATUS,
 };
