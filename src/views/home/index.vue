@@ -81,7 +81,7 @@ export default {
     .yc-container {
       padding: 20px;
       background: #fff;
-      min-height: 83vh;
+      min-height: 85vh;
       min-width: 1400px;
     }
   }

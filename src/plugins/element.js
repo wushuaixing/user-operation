@@ -40,6 +40,8 @@ import {
   ElRadioGroup,
   ElRadio,
   ElCheckboxGroup,
+  ElCheckboxButton,
+  ElRadioButton,
 } from 'element-plus';
 
 ['success', 'warning', 'info', 'error'].forEach((type) => {
@@ -101,6 +103,8 @@ const list = [
   ElRadio,
   ElCheckbox,
   ElCheckboxGroup,
+  ElCheckboxButton,
+  ElRadioButton,
 ];
 
 export default (app) => {

@@ -180,9 +180,9 @@ $--table-header-background-color: #EDEFF3 !default;
 $--table-header-font-color: #4E5566 !default;
 $--table-row-hover-background-color: $--background-color-base !default;
 .el-table{
-  //&::before{
-  //  content: none !important;
-  //}
+  &::before{
+    content: none !important;
+  }
   .cell{
     padding-left: 20px !important;
   }
@@ -394,6 +394,20 @@ $--timeline-node-color: gray !default;
 .el-timeline-item{
   padding-bottom: 5px !important;
 }
+/* Tooltip
+-------------------------- */
+$--tooltip-fill: red !important;
+.el-popper{
+  &__arrow::before{
+     width: 8px !important;
+     height: 8px !important;
+     //background: rgba(0, 0, 0, 0.7) !important;
+  }
+}
+//.el-popper.is-dark{
+//  background: rgba(0, 0, 0, 0.7) !important;
+//}
+
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: '~element-plus/lib/theme-chalk/fonts';
 

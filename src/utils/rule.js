@@ -8,7 +8,12 @@ export const normalRoutes = [
       {
         path: '/index',
         name: 'Index',
-        component: () => import('@/views/data-audit/index.vue'),
+        component: () => import('@/views/my-org'),
+      },
+      {
+        path: '/dataAudit',
+        name: 'dataAudit',
+        component: () => import('@/views/audit-management'),
       },
     ],
   },
@@ -18,7 +23,12 @@ export const normalRoutes = [
     component: () => import('@/views/document/serch/index.vue'),
   },
   {
-    path: '/documentDetail/:wenshuId/:wid/:content',
+    path: '/structureCheck',
+    name: 'structureCheck',
+    component: () => import('@/views/other-detail/check/index'),
+  },
+  {
+    path: '/documentDetail',
     name: 'documentDetail',
     component: () => import('@/views/document/detail/index.vue'),
   },
@@ -46,6 +56,11 @@ export const adminRoutes = [
         name: 'TaskAssign',
         component: () => import('@/views/task-assign/index.vue'),
       },
+      // {
+      //   path: '/dataAudit',
+      //   name: 'dataAudit',
+      //   component: () => import('@/views/audit-management'),
+      // },
     ],
   },
   {
@@ -97,19 +112,38 @@ export const adminMenu = [
     path: '/taskAssign',
     key: 'TaskAssign',
   },
+  // TODO
+  // {
+  //   text: '审核管理',
+  //   icon: 'el-icon-picture-outline-round',
+  //   path: '/dataAudit',
+  //   key: 'DataAudit',
+  // },
 ];
 
 export const userMenu = [
   {
-    text: '数据审核',
-    icon: 'el-icon-picture-outline-round',
+    text: '我的机构',
+    icon: 'el-icon-present',
     path: '/index',
+    key: 'MyOrg',
+  },
+  {
+    text: '审核管理',
+    icon: 'el-icon-picture-outline-round',
+    path: '/dataAudit',
     key: 'DataAudit',
   },
   {
     text: '文书搜索',
     icon: 'el-icon-present',
     path: '/documentSearch',
-    key: 'DocumentSearch',
+    key: 'documentSearch',
   },
+  // {
+  //   text: '结构化校验详情',
+  //   icon: 'el-icon-present',
+  //   path: '/structureCheck',
+  //   key: 'structureCheck',
+  // },
 ];
