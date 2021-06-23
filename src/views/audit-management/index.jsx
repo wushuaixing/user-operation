@@ -1,64 +1,93 @@
 import {
-  defineComponent, reactive, onMounted, getCurrentInstance,
+  defineComponent, reactive, onMounted, getCurrentInstance, watch, toRaw,
 } from 'vue';
 
 import './style.scss';
-// import AdminApi from '@/server/api/admin';
+import MyOrgApi from '@/server/api/my-org';
 
-const option = [{ label: '正式', val: 0 }, { label: '试用', val: 1 }];
+const option = [{ label: '正式', val: 1 }, { label: '试用', val: 0 }];
+const selectSlots = {
+  prefix: () => <span className="iconfont iconsousuo"></span>,
+};
+const timeLineSlots = {
+  dot: () => <b style={{ width: '8px', height: '1px', background: '#C5C7CE' }}></b>,
+};
 export default defineComponent({
 
   setup() {
     const { proxy } = getCurrentInstance();
-    console.log(proxy);
     const treeState = reactive({
-      type: 0,
-      treeList: [],
+      type: 1,
+      allList: [],
       treeSelectVal: '',
-      activeKey: undefined,
+      treeList: [],
     });
-    const handleTreeItemClick = (id) => {
-      treeState.activeKey = id;
+    const tabChange = () => {
+      const { allList } = treeState;
+      treeState.treeList = allList.filter((i) => i.type === treeState.type);
+      treeState.treeSelectVal = '';
     };
-    onMounted(() => {
-      // const params = { status: '0', page: 1, num: 50 };
-      // AdminApi.searchOrg(params).then((res) => {
-      //   const { code, data } = res.data || {};
-      //   if (code === 200) {
-      //     const { result: { list } } = data || {};
-      //     treeState.treeList = list || [];
-      //   } else {
-      //     proxy.$message.error('请求出错');
-      //   }
-      // });
+    const treeItemChange = (id) => {
+      const { treeList, type } = toRaw(treeState);
+      if (!(treeList.filter((i) => i.id === id) || []).length) {
+        treeState.type = option.find((i) => i.val !== type).val;
+        tabChange();
+      }
+      treeState.treeSelectVal = id;
+    };
+    const getAllList = () => {
+      const params = { page: 1, num: 50 };
+      MyOrgApi.myOrgList({ type: 1, ...params }).then((res) => {
+        const { code, data } = res.data || {};
+        if (code === 200) {
+          const { myOrgList: { list } } = data || {};
+          treeState.allList = list.map((i) => ({ id: i.id, name: i.name, type: 1 })) || [];
+        } else {
+          proxy.$message.error('请求出错');
+        }
+      });
+      MyOrgApi.myOrgList({ type: 0, ...params }).then((res) => {
+        const { code, data } = res.data || {};
+        if (code === 200) {
+          const { myOrgList: { list } } = data || {};
+          treeState.allList = [...toRaw(treeState.allList), ...list.map((i) => ({ id: i.id, name: i.name, type: 0 }))];
+          tabChange();
+        } else {
+          proxy.$message.error('请求出错');
+        }
+      });
+    };
+    watch(() => [treeState.treeSelectVal], ([treeSelecVal], [oldTreeSelecVal]) => {
+      if (treeSelecVal !== oldTreeSelecVal && treeSelecVal) treeItemChange(treeSelecVal);
     });
-    return { treeState, handleTreeItemClick };
+    onMounted(() => {
+      getAllList();
+    });
+    return { treeState, treeItemChange, tabChange };
   },
   render() {
     const {
       treeState,
-      handleTreeItemClick,
+      treeItemChange,
+      tabChange,
     } = this;
-    const selectSlots = {
-      prefix: () => <span className="iconfont iconsousuo"></span>,
-    };
-    const timeLineSlots = {
-      dot: () => <b style={{ width: '8px', height: '1px', background: '#C5C7CE' }}></b>,
-    };
+    const type = { 0: '试用', 1: '正式' };
+    const list = this.treeState.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
+    console.log(treeState.type);
     return (
         <div className="yc-container audit-management-container">
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">
-                  <el-select v-model={treeState.treeSelectVal} filterable placeholder="请选择" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }}>
+                  <el-select v-model={treeState.treeSelectVal} filterable placeholder="请选择" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select'>
                     {
-                      treeState.treeList.map((i) => <el-option key={i.id} label={i.name} value={i.id}></el-option>)
+                      list.map((i) => <el-option key={i.id} label={i.name} value={i.id}></el-option>)
                     }
                   </el-select>
                 </div>
                 <div className="content-left-tree-tabs">
                     <div className="content-left-tree-tabs-content">
-                      <el-radio-group v-model={treeState.type}>
+                      <el-radio-group v-model={treeState.type} onChange={tabChange}>
                         {
                           option.map((i) => <el-radio-button label={i.val} key={i.val}>{ i.label}</el-radio-button>)
                         }
@@ -70,7 +99,7 @@ export default defineComponent({
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
                       </svg>
-                      <span>全部正式机构</span>
+                      <span className={!treeState.treeSelectVal ? 'active' : ''}>全部{type[treeState.type]}机构</span>
                     </div>
                     <div className='content-left-tree-list-content'>
                       <el-timeline>
@@ -79,14 +108,13 @@ export default defineComponent({
                             <el-timeline-item
                               key={i.id}
                               v-slots={timeLineSlots}
-                              onClick={() => handleTreeItemClick(i.id)}
-                              className={`${treeState.activeKey === i.id ? 'active' : ''} el-timeline-item` }
+                              onClick={() => treeItemChange(i.id)}
+                              className={`${treeState.treeSelectVal === i.id ? 'active' : ''} el-timeline-item` }
                             >
                               {i.name}
                             </el-timeline-item>))
                         }
                       </el-timeline>
-
                     </div>
                 </div>
               </div>
