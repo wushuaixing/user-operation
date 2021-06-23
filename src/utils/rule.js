@@ -8,7 +8,7 @@ export const normalRoutes = [
       {
         path: '/index',
         name: 'Index',
-        component: () => import('@/views/my-org'),
+        component: () => import('@/views/my-org/index.vue'),
       },
       {
         path: '/dataAudit',
@@ -31,6 +31,11 @@ export const normalRoutes = [
     path: '/documentDetail',
     name: 'documentDetail',
     component: () => import('@/views/document/detail/index.vue'),
+  },
+  {
+    path: '/monitorManage',
+    name: 'monitorManage',
+    component: () => import('@/views/my-org/monitor'),
   },
 ];
 

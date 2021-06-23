@@ -4,6 +4,7 @@ import './style.scss';
 
 const option = [{ label: '正式', val: 0 }, { label: '试用', val: 1 }];
 
+// eslint-disable-next-line no-unused-vars
 const App = defineComponent({
   setup() {
     const state = reactive({
@@ -68,4 +69,4 @@ const App = defineComponent({
   },
 });
 
-export default App;
+// export default App;

@@ -190,6 +190,56 @@ const roleInfoColumn = [
     class: 'notes',
   },
 ];
+
+// 我的机构列表
+const myOrgColumn = [
+  {
+    prop: 'name',
+    label: '顶级合作机构名称',
+    sort: false,
+    width: '15%',
+  },
+  {
+    prop: 'subOrgNum',
+    label: '全部子机构数',
+    align: 'center',
+    sort: false,
+    width: '15%',
+  },
+  {
+    prop: 'obligorNum',
+    label: '总债务人数',
+    align: 'center',
+    sort: false,
+    width: '10%',
+  },
+  {
+    prop: 'start',
+    label: '合同开始日期',
+    sort: 'custom',
+    width: '11%',
+  },
+  {
+    prop: 'end',
+    label: '合同结束日期',
+    sort: 'custom',
+    width: '11%',
+  },
+  {
+    prop: 'obligorNum',
+    label: '昨日推送量',
+    align: 'center',
+    sort: 'custom',
+    width: '11%',
+  },
+  {
+    prop: 'readRate',
+    label: '上周客户查看率',
+    align: 'center',
+    sort: 'custom',
+    width: '11%',
+  },
+];
 export {
-  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn, roleInfoColumn,
+  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn, roleInfoColumn, myOrgColumn,
 };

@@ -1,0 +1,33 @@
+.monitor-form {
+  &-line {
+    display: flex;
+    .el-form-item {
+      margin: 0 21px 16px 0;
+      display: flex;
+      .el-form-item__label {
+        line-height: 32px;
+      }
+      .el-form-item__content {
+        line-height: 32px;
+      }
+    }
+    .el-form-item:last-child {
+      margin: 0 0 16px 0;
+    }
+    .form-item-time {
+      display: flex;
+      .el-form-item {
+        margin: 0;
+        .el-input--suffix .el-input__inner {
+          padding-right: 9px;
+        }
+      }
+    }
+    .third-line-item {
+      display: flex;
+    }
+  }
+  &-line:last-child {
+    justify-content: space-between;
+  }
+}
