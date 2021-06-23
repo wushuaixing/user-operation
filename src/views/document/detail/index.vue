@@ -25,7 +25,7 @@
               <p
                 v-if="ellipsisBtnVisible"
                 @click="toggle = !toggle"
-                class="toggle-btn"
+                class="toggle-btn  cursor-pointer"
               >
                 {{ toggle ? "收起" : "展开" }}
               </p>
