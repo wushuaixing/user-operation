@@ -151,6 +151,46 @@ const operationColumn = [
   },
 ];
 
+// 角色信息列表
+const roleInfoColumn = [
+  {
+    prop: 'name',
+    label: '名称',
+    width: '19%',
+    class: 'name',
+  },
+  {
+    prop: 'labelType',
+    label: '角色',
+    width: '14.1%',
+    class: 'label-type',
+  },
+  {
+    prop: 'number',
+    label: '证件号',
+    width: '21.1%',
+    class: 'number',
+  },
+  {
+    prop: 'birthday',
+    label: '生日',
+    width: '14.7%',
+    class: 'birthday',
+  },
+  {
+    prop: 'gender',
+    label: '性别',
+    width: '14.8%',
+    class: 'gender',
+  },
+  {
+    prop: 'notes',
+    label: '备注',
+    width: '17.1%',
+    class: 'notes',
+  },
+];
+
 // 我的机构列表
 const myOrgColumn = [
   {
@@ -201,5 +241,5 @@ const myOrgColumn = [
   },
 ];
 export {
-  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn, myOrgColumn,
+  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn, roleInfoColumn, myOrgColumn,
 };

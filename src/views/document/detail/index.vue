@@ -25,19 +25,19 @@
               <p
                 v-if="ellipsisBtnVisible"
                 @click="toggle = !toggle"
-                class="toggle-btn"
+                class="toggle-btn  cursor-pointer"
               >
                 {{ toggle ? "收起" : "展开" }}
               </p>
             </div>
           </li>
         </ul>
-        <p class="title">源链接</p>
-        <a :href="data.url" target="_blank">
+        <p class="title" style="margin: 20px 0 12px 0">源链接</p>
+        <a :href="data.url" target="_blank" style="font-size: 12px;line-height: 16px;display: inline-block">
           {{ data.url }}
         </a>
-        <p style="text-align: right">
-          <el-button type="primary" @click="copy">复制链接</el-button>
+        <p style="text-align: right;margin-top: 18px" >
+          <el-button type="primary" @click="copys" class="button-fourth" >复制链接</el-button>
         </p>
       </div>
     </section>
@@ -47,63 +47,50 @@
 <script>
 import CommonApi from '@/server/api/common';
 import copy from 'copy-to-clipboard';
+import { DOCUMENT_DETAIL } from '@/static/index';
+import {
+  reactive, toRefs, onMounted, getCurrentInstance,
+} from 'vue';
 
 export default {
   name: 'documentDetail',
   nameComment: '文书详情',
-  // TODO uncultivated
-  data() {
-    return {
+  setup() {
+    const { proxy } = getCurrentInstance();
+    const state = reactive({
       data: {},
       ellipsisBtnVisible: false,
       toggle: false,
-      basicInfo: [
-        {
-          label: '审理法院',
-          key: 'court',
-        },
-        {
-          label: '案件类型',
-          key: 'caseType',
-        },
-        {
-          label: '案由',
-          key: 'reason',
-        },
-        {
-          label: '审理程序',
-          key: 'trialRound',
-        },
-        {
-          label: '裁判日期',
-          key: 'trialDate',
-        },
-      ],
-    };
-  },
-  created() {
-    const {
-      params: { content, wenshuId, wid },
-    } = this.$route;
-    CommonApi.wenshuDetail(wenshuId, wid, { content }).then((res) => {
-      const { code, data } = res.data || {};
-      const { title } = data || {};
-      if (code === 200) {
-        const { appellors } = data;
-        this.data = data;
-        document.title = title;
-        this.ellipsisBtnVisible = appellors && appellors.length > 32;
-      } else {
-        this.$message.error(res.data.message);
-      }
+      basicInfo: DOCUMENT_DETAIL,
     });
-  },
-  methods: {
-    copy() {
-      const { url } = this.data;
+    const copys = () => {
+      const { url } = state.data;
       copy(url);
-      this.$message.success('复制成功');
-    },
+      proxy.$message.success('复制成功');
+    };
+    onMounted(() => {
+      const {
+        query: {
+          wenshuId, wid, ah, court, url, content,
+        },
+      } = proxy.$root.$route;
+      const params = {
+        ah, court, url, content,
+      };
+      CommonApi.wenshuDetail(wenshuId, wid, params).then((res) => {
+        const { code, data } = res.data || {};
+        const { title } = data || {};
+        if (code === 200) {
+          const { appellors } = data;
+          state.data = data;
+          document.title = title;
+          state.ellipsisBtnVisible = appellors && appellors.length > 32;
+        } else {
+          proxy.$message.error(res.data.message);
+        }
+      });
+    });
+    return { ...toRefs(state), copys };
   },
 };
 </script>
@@ -112,28 +99,27 @@ export default {
 .document-detail-wrapper {
   padding: 50px 40px 40px;
   box-sizing: border-box;
-
   .container-main {
     width: 924px;
-
     header {
       p {
         margin: 20px 0 30px;
+        line-height: 16px;
+        font-size: 16px;
+        color: #7D8699;
       }
     }
-
     .html-template {
       padding-top: 30px;
     }
   }
-
   .container-right {
     z-index: 2;
     box-shadow: 0 1px 6px 0 rgba(0, 16, 43, 0.17);
     width: 236px;
     min-height: 370px;
     position: fixed;
-    top: 150px;
+    top: 156px;
     right: 0;
     margin-right: calc((100% - 1200px) / 2);
     padding: 20px;

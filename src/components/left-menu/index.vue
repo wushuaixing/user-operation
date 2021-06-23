@@ -1,14 +1,15 @@
 <template>
   <div class="yc-aside-container">
     <el-menu
-      :default-active="getDefaultActive()"
+      :default-active="defaultActive"
       :default-openeds="['/index']"
       class="el-aside-menu"
       background-color="#19283F"
       text-color="#fff"
       active-text-color="#fff"
       :unique-opened="true"
-      router
+      @select="handleSelect"
+      :key="path"
     >
       <template
         v-for="item in role === '204' ? userMenu : adminMenu"
@@ -28,35 +29,35 @@
             <template #title>{{ childItem.text }}</template>
           </el-menu-item>
         </el-submenu>
-        <div v-else @click="handleClick(item)">
-          <el-menu-item
-            :index="item.path"
-            :key="item.key"
-          >
-            <i :class="item.icon"></i>
-            <template #title
+        <el-menu-item
+          v-else
+          :key="item.key"
+          :index="item.path"
+        >
+          <i :class="item.icon"></i>
+          <template #title
             >{{ item.text }}
-              <svg
-                class="icon"
-                aria-hidden="true"
-                v-if="
+            <svg
+              class="icon"
+              aria-hidden="true"
+              v-if="
                 item.key === 'TaskAssign' &&
                 Number($store.state.toBeAllocatedNum)
               "
-                style="font-size: 16px; position: relative; top: 1px"
-              >
-                <use xlink:href="#iconfenpei"></use>
-              </svg>
-            </template>
-          </el-menu-item>
-        </div>
+              style="font-size: 16px; position: relative; top: 1px"
+            >
+              <use xlink:href="#iconfenpei"></use>
+            </svg>
+          </template>
+        </el-menu-item>
       </template>
     </el-menu>
   </div>
 </template>
 
 <script>
-import { userMenu, adminMenu } from '../../utils/rule';
+import { userMenu, adminMenu } from '@/utils/rule';
+import { ranStr } from '@/utils/index';
 
 export default {
   name: 'index',
@@ -66,6 +67,7 @@ export default {
       userMenu,
       adminMenu,
       roleName: '',
+      path: '',
     };
   },
   props: {
@@ -75,12 +77,19 @@ export default {
     },
   },
   methods: {
-    getDefaultActive() {
+    handleSelect(index) {
+      if (index.includes('documentSearch')) {
+        window.open(index, '_blank');
+        this.path = ranStr();
+      } else {
+        this.$router.push(index);
+      }
+    },
+  },
+  computed: {
+    defaultActive() {
       const { path } = this.$route;
       return path.replace(/^\/([^/]*).*$/, '/$1');
-    },
-    handleClick(item) {
-      if (item.path === '/documentSearch') window.open(item.path, '_blank');
     },
   },
 };
