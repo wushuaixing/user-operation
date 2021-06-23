@@ -56,7 +56,7 @@ export default {
   name: 'documentDetail',
   nameComment: '文书详情',
   setup() {
-    const { ctx } = getCurrentInstance();
+    const { proxy } = getCurrentInstance();
     const state = reactive({
       data: {},
       ellipsisBtnVisible: false,
@@ -66,14 +66,14 @@ export default {
     const copys = () => {
       const { url } = state.data;
       copy(url);
-      ctx.$message.success('复制成功');
+      proxy.$message.success('复制成功');
     };
     onMounted(() => {
       const {
         query: {
           wenshuId, wid, ah, court, url, content,
         },
-      } = ctx.$root.$route;
+      } = proxy.$root.$route;
       const params = {
         ah, court, url, content,
       };
@@ -86,7 +86,7 @@ export default {
           document.title = title;
           state.ellipsisBtnVisible = appellors && appellors.length > 32;
         } else {
-          ctx.$message.error(res.data.message);
+          proxy.$message.error(res.data.message);
         }
       });
     });
