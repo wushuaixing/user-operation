@@ -9,8 +9,8 @@ const option = [{ label: '正式', val: 0 }, { label: '试用', val: 1 }];
 export default defineComponent({
 
   setup() {
-    const { ctx } = getCurrentInstance();
-    console.log(ctx);
+    const { proxy } = getCurrentInstance();
+    console.log(proxy);
     const treeState = reactive({
       type: 0,
       treeList: [],
@@ -28,7 +28,7 @@ export default defineComponent({
       //     const { result: { list } } = data || {};
       //     treeState.treeList = list || [];
       //   } else {
-      //     ctx.$message.error('请求出错');
+      //     proxy.$message.error('请求出错');
       //   }
       // });
     });

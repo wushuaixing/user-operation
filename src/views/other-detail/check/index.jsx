@@ -55,7 +55,7 @@ const Part = (props, { slots }) => {
 
 export default defineComponent({
   setup() {
-    const { ctx } = getCurrentInstance();
+    const { proxy } = getCurrentInstance();
     const state = reactive({
       ah: [{ value: '1111111111111111111' }, { value: '2222222222222222222' }, { value: '3333333333333333333' }],
       remark: '退回备注退回备注退回备注退回备注退回备注', // 退回备注
@@ -87,7 +87,7 @@ export default defineComponent({
       status: 1, // 拍卖状态（1:即将开始，3:拍卖中，5:成功交易，7:失败，9:终止, 11:撤回）
     });
     const returnFn = () => {
-      ctx.$msgbox({
+      proxy.$msgbox({
         message: ModalHtml(),
         title: null,
         showClose: false,

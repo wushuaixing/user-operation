@@ -51,7 +51,7 @@ const recordModule = (state, getTableList) => {
 };
 
 const mainModule = () => {
-  const { ctx } = getCurrentInstance();
+  const { proxy } = getCurrentInstance();
   const state = reactive({
     page: 1,
     params: {
@@ -70,7 +70,7 @@ const mainModule = () => {
     Object.keys(filterParams).forEach((i) => {
       filterParams[i] = filterParams[i].replace('%', '');
     });
-    const routerData = ctx.$router.resolve({
+    const routerData = proxy.$router.resolve({
       path: '/documentDetail',
       query: { wenshuId, wid, ...clearEmpty(filterParams) },
     });
@@ -93,14 +93,14 @@ const mainModule = () => {
           state.page = page;
           state.dataList = data || [];
         } else {
-          ctx.$message.error('请求出错');
+          proxy.$message.error('请求出错');
         }
       })
       .finally(() => state.loading = false);
   };
 
   const resetForm = () => {
-    ctx.$refs.queryForm.resetFields();
+    proxy.$refs.queryForm.resetFields();
     state.page = 1;
     getTableList();
   };
