@@ -2,6 +2,7 @@
   &-line {
     display: flex;
     .el-form-item {
+      height: 32px;
       margin: 0 21px 16px 0;
       display: flex;
       .el-form-item__label {
@@ -25,6 +26,21 @@
     }
     .third-line-item {
       display: flex;
+    }
+    .open {
+      width: 108px;
+      color: #296DD3;
+      text-align: right;
+      margin-left: 23px;
+      line-height: 14px;
+      font-size: 14px;
+      cursor: pointer;
+      .el-form-item__content {
+        width: 100%;
+      }
+      .open-icon {
+        margin-left: 7px;
+      }
     }
   }
   &-line:last-child {

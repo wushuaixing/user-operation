@@ -1,5 +1,5 @@
 import {
-  defineComponent, onMounted, ref, reactive, getCurrentInstance,
+  defineComponent, onMounted, ref, reactive, getCurrentInstance, toRefs,
 } from 'vue';
 import MyOrgApi from '@/server/api/my-org';
 
@@ -13,15 +13,18 @@ export default defineComponent({
   },
   setup(props) {
     const { proxy } = getCurrentInstance();
-    let treeData = reactive([]);
+    const treeData = reactive({
+      treeData: [],
+    });
     const searchCalue = ref('');
     onMounted(() => {
       // 获取客户使用机构树
       const params = { orgId: props.orgId };
       MyOrgApi.orgTree(params).then((res) => {
-        const { code, message, data } = res;
+        const { code, message, data } = res.data;
         if (code === 200) {
-          treeData = [data];
+          const { tree } = data;
+          treeData.treeData = [tree];
         } else {
           proxy.$message.error(message);
         }
@@ -36,8 +39,8 @@ export default defineComponent({
       // 将orgId传递给查询区域
     };
     return {
+      ...toRefs(treeData),
       searchCalue,
-      treeData,
       remoteMethod,
       handleNodeClick,
     };
@@ -46,6 +49,7 @@ export default defineComponent({
     const {
       remoteMethod, searchCalue, treeData, handleNodeClick,
     } = this;
+    console.log(treeData, '323');
     return (
       <div>
         <el-select
