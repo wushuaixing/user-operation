@@ -23,10 +23,10 @@ const recordModule = (state, getTableList) => {
 
   // 存储到本地
   const saveStorage = () => {
-    const { content } = state.params;
+    const { content = '' } = state.params;
     const records = JSON.parse(storage.getItem('records')) || [];
     // eslint-disable-next-line no-unused-expressions
-    content && records.unshift(content);
+    content.trim() && records.unshift(content);
     const uniqueRecords = [...new Set(records)];
     storage.setItem('records', JSON.stringify(uniqueRecords.slice(0, 9)));
     recordState.recordsList = uniqueRecords;
