@@ -14,6 +14,16 @@ const CUSTOMER_LIST = {
   descending: 'DESC',
 };
 
+// 我的机构排序
+const MYORG_LIST = {
+  start: 'START',
+  end: 'END',
+  pushNum: 'PUSH_NUM',
+  readRate: 'READ_RATE',
+  ascending: 'ASC',
+  descending: 'DESC',
+};
+
 // 拍卖状态
 const AUCTION_STATUS = [
   {
@@ -218,6 +228,49 @@ const DOCUMENT_DETAIL = [
   },
 ];
 
+// 匹配类型
+const IMPORTANT_TYPE = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '精准匹配',
+    value: 1,
+  },
+  {
+    label: '模糊匹配',
+    value: 0,
+  },
+];
+
+const PROCESS = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '未读',
+    value: 0,
+  },
+  {
+    label: '跟进中',
+    value: 6,
+  },
+  {
+    label: '已完成',
+    value: 9,
+  },
+  {
+    label: '已忽略',
+    value: 12,
+  },
+  {
+    label: '已放弃',
+    value: 15,
+  },
+];
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -233,4 +286,7 @@ export {
   HOUSE_TYPE,
   DOCUMENTFIND_STATUS,
   WSINATTACH_STATUS,
+  MYORG_LIST,
+  IMPORTANT_TYPE,
+  PROCESS,
 };

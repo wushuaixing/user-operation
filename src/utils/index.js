@@ -115,6 +115,32 @@ const ranStr = (l = 4) => {
   return `_${pwd}`;
 };
 
+const dateRange = () => [{
+  text: '最近一个月',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - 1);
+    return [start, end];
+  })(),
+}, {
+  text: '最近三个月',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - 3);
+    return [start, end];
+  })(),
+}, {
+  text: '最近半年',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - 6);
+    return [start, end];
+  })(),
+}];
+
 export {
-  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat, ranStr,
+  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat, ranStr, dateRange,
 };

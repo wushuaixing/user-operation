@@ -1,0 +1,14 @@
+.query-form {
+  display: flex;
+  .el-form-item {
+    margin: 0 32px 12px 0;
+  }
+  .form-item-time {
+    .el-form-item {
+      margin: 0;
+      .el-input--suffix .el-input__inner {
+        padding-right: 9px;
+      }
+    }
+  }
+}
