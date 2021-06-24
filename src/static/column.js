@@ -240,6 +240,40 @@ const myOrgColumn = [
     width: '11%',
   },
 ];
+
+// 我的机构列表
+const auditColumn = [
+  {
+    prop: 'zcInfo',
+    label: '资产信息（更新时间)',
+    sort: 'custom',
+    width: '15%',
+  },
+  {
+    prop: 'org',
+    label: '客户使用机构',
+    sort: false,
+    width: '15%',
+  },
+  {
+    prop: 'ppbzInfo',
+    label: '匹配备注信息',
+    sort: false,
+    width: '10%',
+  },
+  {
+    prop: 'pmInfo',
+    label: '拍卖信息（开拍时间）',
+    sort: 'custom',
+    width: '11%',
+  },
+  {
+    prop: 'status',
+    label: '状态',
+    sort: false,
+    width: '11%',
+  },
+];
 export {
-  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn, roleInfoColumn, myOrgColumn,
+  accountManagementColumn, taskAssignColumn, customerColumn, operationColumn, roleInfoColumn, myOrgColumn, auditColumn,
 };
