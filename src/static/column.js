@@ -226,7 +226,7 @@ const myOrgColumn = [
     width: '11%',
   },
   {
-    prop: 'obligorNum',
+    prop: 'pushNum',
     label: '昨日推送量',
     align: 'center',
     sort: 'custom',

@@ -14,13 +14,29 @@ export default defineComponent({
     const headerTitle = `${name}-监控管理`;
     document.title = `【监控管理】${name}`;
     const orgId = ref(id);
+
+    // tab切换
+    const tabKey = ref(1);
+    const unReadNum = ref(0);
+    const slot = {
+      label: () => <span>{`客户未读(${unReadNum.value})`}</span>,
+    };
+    const tabChange = (val) => {
+      console.log(val, 'tab');
+    };
     return {
       headerTitle,
       orgId,
+      unReadNum,
+      tabKey,
+      tabChange,
+      slot,
     };
   },
   render() {
-    const { headerTitle, orgId } = this;
+    const {
+      headerTitle, orgId, tabKey, tabChange, slot,
+    } = this;
     return (
       <div className="yc-newpage-contaner">
         <div className="monitor-manage">
@@ -47,7 +63,13 @@ export default defineComponent({
                 <Query/>
               </div>
               <div className="data-area">
-                4
+                <div>
+                  <el-tabs v-model={tabKey} onTabClick={tabChange}>
+                    <el-tab-pane label="已推送" name="1"/>
+                    <el-tab-pane name="0" v-slots={slot}>
+                    </el-tab-pane>
+                  </el-tabs>
+                </div>
               </div>
             </div>
           </div>
