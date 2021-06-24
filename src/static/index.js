@@ -235,12 +235,43 @@ const IMPORTANT_TYPE = [
     value: '',
   },
   {
-    label: '精准匹配',
+    label: '精确匹配',
     value: 1,
   },
   {
     label: '模糊匹配',
     value: 0,
+  },
+];
+
+const PUSH_STATUS = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '未推送',
+    value: 0,
+  },
+  {
+    label: '已推送',
+    value: 1,
+  },
+  {
+    label: '不推送',
+    value: 5,
+  },
+  {
+    label: '已召回',
+    value: 2,
+  },
+  {
+    label: '已退回',
+    value: 3,
+  },
+  {
+    label: '已修改',
+    value: 4,
   },
 ];
 
@@ -289,4 +320,5 @@ export {
   MYORG_LIST,
   IMPORTANT_TYPE,
   PROCESS,
+  PUSH_STATUS,
 };
