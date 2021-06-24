@@ -275,6 +275,33 @@ const PUSH_STATUS = [
   },
 ];
 
+const PROCESS = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '未读',
+    value: 0,
+  },
+  {
+    label: '跟进中',
+    value: 6,
+  },
+  {
+    label: '已完成',
+    value: 9,
+  },
+  {
+    label: '已忽略',
+    value: 12,
+  },
+  {
+    label: '已放弃',
+    value: 15,
+  },
+];
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -292,5 +319,6 @@ export {
   WSINATTACH_STATUS,
   MYORG_LIST,
   IMPORTANT_TYPE,
+  PROCESS,
   PUSH_STATUS,
 };

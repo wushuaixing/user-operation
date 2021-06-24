@@ -12,6 +12,7 @@ export default defineComponent({
     const { proxy } = getCurrentInstance();
     const { name, id } = proxy.$root.$route.query;
     const headerTitle = `${name}-监控管理`;
+    document.title = `【监控管理】${name}`;
     const orgId = ref(id);
     return {
       headerTitle,
