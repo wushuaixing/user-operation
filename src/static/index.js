@@ -228,6 +228,53 @@ const DOCUMENT_DETAIL = [
   },
 ];
 
+// 匹配类型
+const IMPORTANT_TYPE = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '精确匹配',
+    value: 1,
+  },
+  {
+    label: '模糊匹配',
+    value: 0,
+  },
+];
+
+const PUSH_STATUS = [
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '未推送',
+    value: 0,
+  },
+  {
+    label: '已推送',
+    value: 1,
+  },
+  {
+    label: '不推送',
+    value: 5,
+  },
+  {
+    label: '已召回',
+    value: 2,
+  },
+  {
+    label: '已退回',
+    value: 3,
+  },
+  {
+    label: '已修改',
+    value: 4,
+  },
+];
+
 export {
   SORTER_TYPE,
   CUSTOMER_LIST,
@@ -244,4 +291,6 @@ export {
   DOCUMENTFIND_STATUS,
   WSINATTACH_STATUS,
   MYORG_LIST,
+  IMPORTANT_TYPE,
+  PUSH_STATUS,
 };

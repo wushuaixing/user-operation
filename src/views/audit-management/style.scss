@@ -106,12 +106,22 @@
             }
           }
         }
-
       }
     }
     &-right{
       flex: 1;
       background: #fff;
+      padding: 20px;
+      &-query{
+        .el-form-item{
+          margin: 0 20px 8px 0;
+        }
+        .time-end{
+          .el-form-item__label{
+            margin: 0 6px;
+          }
+        }
+      }
     }
   }
 }
