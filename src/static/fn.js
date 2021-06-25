@@ -38,6 +38,41 @@ const taskAssignTabs = (toBeAllocatedNum) => [
   },
 ];
 
+const auditTabs = (readNotNum, recallNum) => [
+
+  {
+    label: '结构化匹配',
+    name: '1',
+  },
+  {
+    label: '已推送',
+    name: '2',
+  },
+  {
+    label: '不推送',
+    name: '3',
+  },
+  {
+    label: `客户未读(${readNotNum})`,
+    name: '4',
+  },
+  {
+    label: `召回(${recallNum})`,
+    name: '5',
+  },
+];
+
+const monitorTabs = (unReadNum) => [
+  {
+    label: '已推送',
+    value: '1',
+  },
+  {
+    label: `客户未读(${unReadNum})`,
+    value: '0',
+  },
+];
+
 // 结构化校验-详情
 const partData = (params) => {
   const {
@@ -106,5 +141,5 @@ const partData = (params) => {
   ];
 };
 export {
-  dataAuditTabs, taskAssignTabs, partData,
+  dataAuditTabs, taskAssignTabs, partData, auditTabs, monitorTabs,
 };
