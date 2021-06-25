@@ -4,7 +4,7 @@ import {
 import { dateUtils, dateRange } from '@/utils';
 import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
 import './style.scss';
-// import MyOrgApi from '@/server/api/my-org';
+import MyOrgApi from '@/server/api/my-org';
 
 export default defineComponent({
   setup() {
@@ -27,6 +27,9 @@ export default defineComponent({
       updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       process: '', // 状态 0 未读 3 确认中（资产监控为跟进中） 6 跟进中 9 已完成 12 已忽略 15 已放弃
+
+      type: 1,
+      orgId: 3272,
     });
     // 日期控件做前后限制
     const disabledStartDate = (startTime, prop) => {
@@ -45,7 +48,9 @@ export default defineComponent({
     };
 
     const handleSearch = () => {
-      console.log(state, 'state');
+      MyOrgApi.monitorList(state).then((res) => {
+        console.log(res, 'res');
+      });
     };
 
     const resetSearch = () => {

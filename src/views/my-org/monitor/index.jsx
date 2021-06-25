@@ -1,12 +1,15 @@
 import { defineComponent, getCurrentInstance, ref } from 'vue';
+import { monitorTabs } from '@/static/fn';
 import Tree from './tree/tree';
 import Query from './query/query';
+import Table from './table/table';
 import './style.scss';
 
 export default defineComponent({
   components: {
     Tree,
     Query,
+    Table,
   },
   setup() {
     const { proxy } = getCurrentInstance();
@@ -18,9 +21,6 @@ export default defineComponent({
     // tab切换
     const tabKey = ref(1);
     const unReadNum = ref(0);
-    const slot = {
-      label: () => <span>{`客户未读(${unReadNum.value})`}</span>,
-    };
     const tabChange = (val) => {
       console.log(val, 'tab');
     };
@@ -30,13 +30,13 @@ export default defineComponent({
       unReadNum,
       tabKey,
       tabChange,
-      slot,
     };
   },
   render() {
     const {
-      headerTitle, orgId, tabKey, tabChange, slot,
+      headerTitle, orgId, tabKey, tabChange, unReadNum,
     } = this;
+
     return (
       <div className="yc-newpage-contaner">
         <div className="monitor-manage">
@@ -65,11 +65,16 @@ export default defineComponent({
               <div className="data-area">
                 <div>
                   <el-tabs v-model={tabKey} onTabClick={tabChange}>
-                    <el-tab-pane label="已推送" name="1"/>
-                    <el-tab-pane name="0" v-slots={slot}>
-                    </el-tab-pane>
+                    { monitorTabs(unReadNum).map((item) => (
+                      <el-tab-pane
+                        key={item.value}
+                        label={item.label}
+                        name={item.value}
+                      />
+                    )) }
                   </el-tabs>
                 </div>
+                <Table/>
               </div>
             </div>
           </div>
