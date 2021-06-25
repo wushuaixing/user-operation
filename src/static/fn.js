@@ -62,6 +62,17 @@ const auditTabs = (readNotNum, recallNum) => [
   },
 ];
 
+const monitorTabs = (unReadNum) => [
+  {
+    label: '已推送',
+    value: '1',
+  },
+  {
+    label: `客户未读(${unReadNum})`,
+    value: '0',
+  },
+];
+
 // 结构化校验-详情
 const partData = (params) => {
   const {
@@ -130,5 +141,5 @@ const partData = (params) => {
   ];
 };
 export {
-  dataAuditTabs, taskAssignTabs, partData, auditTabs,
+  dataAuditTabs, taskAssignTabs, partData, auditTabs, monitorTabs,
 };

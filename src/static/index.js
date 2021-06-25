@@ -36,7 +36,7 @@ const AUCTION_STATUS = [
   },
   {
     value: '3',
-    label: '进行中',
+    label: '正在进行',
   },
   {
     value: '5',

@@ -268,7 +268,8 @@ export default {
             const { list, page, total } = myOrgList || {};
             this.tableData = list.map((item) => {
               const start = item.start || '-';
-              return Object.assign(item, { start });
+              const readRate = item.readRate ? `${item.readRate.toFixed(2)}%` : 0;
+              return Object.assign(item, { start, readRate });
             });
             this.total = total;
             this.page = page;

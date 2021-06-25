@@ -1,12 +1,15 @@
 import { defineComponent, getCurrentInstance, ref } from 'vue';
+import { monitorTabs } from '@/static/fn';
 import Tree from './tree/tree';
 import Query from './query/query';
+import Table from './table/table';
 import './style.scss';
 
 export default defineComponent({
   components: {
     Tree,
     Query,
+    Table,
   },
   setup() {
     const { proxy } = getCurrentInstance();
@@ -14,13 +17,26 @@ export default defineComponent({
     const headerTitle = `${name}-监控管理`;
     document.title = `【监控管理】${name}`;
     const orgId = ref(id);
+
+    // tab切换
+    const tabKey = ref(1);
+    const unReadNum = ref(0);
+    const tabChange = (val) => {
+      console.log(val, 'tab');
+    };
     return {
       headerTitle,
       orgId,
+      unReadNum,
+      tabKey,
+      tabChange,
     };
   },
   render() {
-    const { headerTitle, orgId } = this;
+    const {
+      headerTitle, orgId, tabKey, tabChange, unReadNum,
+    } = this;
+
     return (
       <div className="yc-newpage-contaner">
         <div className="monitor-manage">
@@ -47,7 +63,18 @@ export default defineComponent({
                 <Query/>
               </div>
               <div className="data-area">
-                4
+                <div>
+                  <el-tabs v-model={tabKey} onTabClick={tabChange}>
+                    { monitorTabs(unReadNum).map((item) => (
+                      <el-tab-pane
+                        key={item.value}
+                        label={item.label}
+                        name={item.value}
+                      />
+                    )) }
+                  </el-tabs>
+                </div>
+                <Table/>
               </div>
             </div>
           </div>
