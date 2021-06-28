@@ -64,10 +64,16 @@ export default defineComponent({
 
         conSumerName: '【一级】资产保全部', // 客户使用机构
 
-        reason: '', // 审核备注&匹配备注
+        reason: [{
+          role: -1,
+          hl: ['工程质量\n\t好\n\n\t外观\n\t外墙涂料\n\n\t新旧程度\n\t成新率为85%\n\n\t物业服务\n\t无物'
+          + '业管理\n\n\t使用及维护状况\n\t较好\n\n\t小区概况\n\t小区住宅底商房地产\n\n\t特殊景观\n\t无\n\n\n（三）权益状况描述与分析\n权益状况表\n\t项目\n\t描述与分析\n\n\t用途\n\t商业用房\n\n\t规划条件\n\t商业用房\n\n\t所有权\n\t<em>王</em><em>霞</em>、蔡龙\n\n\t土地使用权\n\t<em>王</em><em'],
+          name: '王霞',
+        }], // 审核备注&匹配备注
         recallRemark: '', // 召回备注
-        approveTime: '', // 审核时间
+        approveTime: '2020-07-14', // 审核时间
         auctionId: 0, // 资产ID
+        shenHeRemark: '审核备注',
         createTime: '2020-07-14', // 匹配时间
         id: 0, //
         level: 0, // 层级 1 顶级域名机构 2 顶级虚拟机构
@@ -79,7 +85,7 @@ export default defineComponent({
         province: '河南省', // 省份名称
         start: '2020-07-14 15:48', // 开拍时间
         consultPrice: floatFormat(423423), // 评估价格
-        status: 0, // 状态 0未推送 1已推送 5不推送 2已召回 3已退回 4已修改
+        status: 1, // 状态 0未推送 1已推送 5不推送 2已召回 3已退回 4已修改
         pmStatus: 3, // 拍卖状态 1:'即将开始', 3:'进行中',5:'已成交',7:'已流拍',9:'中止',11:'撤回'
         initialPrice: floatFormat(6456654), // 起拍价格
       }],
@@ -399,7 +405,7 @@ export default defineComponent({
                   >
                     {
                       auditColumn.map((i) => (
-                        <el-table-column label={i.label} key={i.prop} min-width={i.width} className ={i.prop} v-slots={(scope) => columnHtml(scope.row)[i.prop]}/>
+                        <el-table-column label={i.label} key={i.prop} min-width={i.width} className ={i.prop} v-slots={(scope) => <div className='column-item-content'>{columnHtml(scope.row, formState.tableType)[i.prop]}</div>}/>
                       ))
                     }
                     <el-table-column label="操作" min-width='10%' v-slots={(scope) => <ColumnAction {...scope.row}/>}/>
