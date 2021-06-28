@@ -50,7 +50,12 @@
         border-bottom: 1px solid #E2E4E9;
       }
       .data-area {
-
+        .monitor-tabs {
+          .el-tabs__item {
+            height: 49px !important;
+            line-height: 55px !important;
+          }
+        }
       }
     }
   }

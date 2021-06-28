@@ -1,0 +1,16 @@
+.monitor-table {
+  .table-content-btn {
+    padding: 1px 0 12px 0;
+    .el-button + .el-button {
+      margin-left: 0px !important;
+    }
+    .total-tips {
+      font-size: 14px;
+      padding-left: 20px;
+      color: #4e5566;
+      b {
+        color: #20242e;
+      }
+    }
+  }
+}
