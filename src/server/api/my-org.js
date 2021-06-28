@@ -11,6 +11,8 @@ const MyOrgApi = {
   export: (params) => axios.post('/api/user/operate/export', clearEmpty(params), { responseType: 'blob' }),
   // 监控管理列表
   monitorList: (params) => axios.post('/api/user/operate/getMonitorList', clearEmpty(params)),
+
+  auditExport: (params) => axios.post('/api/user/operate/auditExport', clearEmpty(params), { responseType: 'blob' }),
   // 客户报告
   exportOther: (params) => axios.post('/api/user/operate/exportOther', clearEmpty(params), { responseType: 'blob' }),
   // 客户使用机构列表

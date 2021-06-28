@@ -44,3 +44,26 @@
     }
   }
 }
+.pp-title {
+  color: #20242E;
+  line-height: 14px;
+  font-size: 14px;
+  position: relative;
+}
+.pp-title::before {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 5px;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background: #20242E;
+}
+.pp-content {
+  color: #7D8699;
+  line-height: 21px;
+  font-size: 14px;
+  margin-bottom: 4px;
+  margin-top: 2px;
+}

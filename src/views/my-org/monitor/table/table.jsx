@@ -6,8 +6,10 @@ import { fileDownload, clearEmpty } from '@/utils';
 import $modalConfirm from '@/utils/better-el';
 import ZcInfo from '@/components/column-pane/zcInfo';
 import PmInfo from '@/components/column-pane/pmInfo';
+import ppbzInfo from '@/components/column-pane/ppbzInfo';
 import MyOrgApi from '@/server/api/my-org';
 import { PROCESS } from '@/static';
+import empty from '@/assets/img/no_data.png';
 import './style.scss';
 
 const width = ['20%', '35%', '35%', '10%'];
@@ -16,6 +18,7 @@ export default defineComponent({
   components: {
     ZcInfo,
     PmInfo,
+    ppbzInfo,
   },
   props: {
     tableData: Object,
@@ -25,7 +28,7 @@ export default defineComponent({
     const { proxy } = getCurrentInstance();
     const setTablePane = (row, type) => {
       if (type === 'assetInfo') return <ZcInfo data={row}/>;
-      if (type === 'remarkInfo') return <div>-</div>;
+      if (type === 'remarkInfo') return <ppbzInfo data={row}/>;
       if (type === 'auctionInfo') return <PmInfo data={row}/>;
       const status = PROCESS.filter((i) => i.value === row.process);
       return <span>{status[0].label}</span>;
@@ -38,7 +41,7 @@ export default defineComponent({
       info: {},
       idList: [],
       empty: {
-        empty: <div><img src="../../../assets/img/no_data.png" alt="" /><p>暂无数据</p></div>,
+        empty: () => <div><img src={empty} alt="" /><p>暂无数据</p></div>,
       },
     });
     const resetTable = () => {
@@ -88,7 +91,7 @@ export default defineComponent({
       $modalConfirm(multiple.info).then(() => {
         multiple.isChecked = false;
         resetTable();
-        MyOrgApi.export(paramData).then((res) => {
+        MyOrgApi.auditExport(paramData).then((res) => {
           const { code = 200, message = '' } = res;
           if (code === 200) {
             fileDownload(res);
@@ -171,6 +174,7 @@ export default defineComponent({
           onSortChange={handleSortChange}
           row-key={(val) => val.id}
           v-slots={multiple.empty}
+          row-class-name="row-class"
         >
           {
             multiple.isChecked ? <el-table-column
