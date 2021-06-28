@@ -76,21 +76,14 @@ a{
       font-weight: normal;
     }
     &__body{
-      padding: 32px !important;
+      padding-top: 0 !important;
+      .el-textarea__inner{
+        min-height: 92px !important;
+        font-family: Microsoft YaHei, PingFangSC-Regular, PingFang SC, Helvetica, Arial, sans-serif;
+      }
     }
-  }
-  &-body{
-    display: flex;
-    padding-left: 38px;
-    margin-top: 32px;
-    .label{
-      min-width: 98px !important;
-      color: #20242E;
-    }
-    .el-textarea__inner{
-      min-height: 92px !important;
-      width: 356px !important;
-      font-family: Microsoft YaHei, PingFangSC-Regular, PingFang SC, Helvetica, Arial, sans-serif;
+    &__footer{
+      border-top: none !important;
     }
   }
 }
@@ -110,4 +103,38 @@ a{
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
+}
+
+textarea{
+  resize: none !important;
+}
+
+.yc-scoll-style{
+  &::-webkit-scrollbar {
+    width:4px;
+  }
+
+  //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
+  &::-webkit-scrollbar-track {
+    width: 4px;
+    background-color:#FFF;
+  }
+
+  //滚动条的设置
+  &::-webkit-scrollbar-thumb {
+    background-color:#B2B8C9;
+    background-clip:padding-box;
+    min-height:49px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+  }
+  //滚动条移上去的背景
+
+  &::-webkit-scrollbar-thumb:hover{
+    background-color:#B2B8C9;
+  }
+  &::-webkit-scrollbar-track:hover{
+    background-color:#E2E4E9;
+  }
 }
