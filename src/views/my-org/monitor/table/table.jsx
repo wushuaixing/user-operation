@@ -1,9 +1,12 @@
 import {
-  defineComponent, getCurrentInstance, reactive,
+  defineComponent, getCurrentInstance, reactive, toRaw,
 } from 'vue';
 import { auditColumn } from '@/static/column';
+import { fileDownload, clearEmpty } from '@/utils';
+import $modalConfirm from '@/utils/better-el';
 import ZcInfo from '@/components/column-pane/zcInfo';
 import PmInfo from '@/components/column-pane/pmInfo';
+import MyOrgApi from '@/server/api/my-org';
 import { PROCESS } from '@/static';
 import './style.scss';
 
@@ -27,9 +30,12 @@ export default defineComponent({
       return <span>{status[0].label}</span>;
     };
 
+    // 批量选择
     const multiple = reactive({
       isChecked: false,
       multipleSelection: [],
+      info: {},
+      idList: [],
     });
     // 排序
     const handleSortChange = (sort) => {
@@ -40,11 +46,46 @@ export default defineComponent({
     const handleBatchCheck = (isChecked) => {
       multiple.isChecked = isChecked;
     };
-    const handleExport = (val) => {
-      console.log(val, 'val');
+    const handleExport = (type) => {
+      if (!type && !multiple.multipleSelection.length) {
+        proxy.$message.warning('未选中数据');
+        return;
+      }
+      multiple.info = type ? {
+        text: '点击确定，将为您导出所有信息',
+        title: '确认导出所有信息吗？',
+      } : {
+        text: '点击确定，将为您导出选中的所有信息',
+        title: '确认导出选中的所有信息吗？',
+      };
+      multiple.idList = type ? [] : multiple.multipleSelection.map((item) => item.id);
+      proxy.$emit('export');
     };
+    const exportAction = (param) => {
+      const paramData = {
+        condition: {
+          ...toRaw(clearEmpty(param)),
+        },
+        idList: multiple.idList,
+      };
+      console.log(paramData, multiple, '12345');
+      $modalConfirm(multiple.info).then(() => {
+        multiple.isChecked = false;
+        MyOrgApi.export(paramData).then((res) => {
+          const { code = 200, message = '' } = res;
+          if (code === 200) {
+            fileDownload(res);
+          } else {
+            proxy.$message.error(message);
+          }
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    };
+
     return {
-      setTablePane, multiple, handleBatchCheck, handleExport, handleSortChange,
+      setTablePane, multiple, handleBatchCheck, handleExport, handleSortChange, exportAction,
     };
   },
   render() {

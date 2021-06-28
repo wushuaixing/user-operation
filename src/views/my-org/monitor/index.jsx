@@ -52,9 +52,8 @@ export default defineComponent({
       num: 10,
     });
 
-    const getList = () => {
+    const setParams = () => {
       const { state } = proxy.$refs.monitorQuery;
-      tableData.loading = true;
       let params = Object.assign(state, { orgId: idData.activeId, type: tabKey });
       if (params.approveTimeEnd) params.approveTimeEnd = dateUtils.formatStandardDate(params.approveTimeEnd);
       if (params.approveTimeStart) params.approveTimeStart = dateUtils.formatStandardDate(params.approveTimeStart);
@@ -69,6 +68,12 @@ export default defineComponent({
         };
         params = Object.assign(params, time);
       }
+      return params;
+    };
+
+    const getList = () => {
+      tableData.loading = true;
+      const params = setParams();
       MyOrgApi.monitorList(params).then((res) => {
         const { code, data = {} } = res.data;
         if (code === 200) {
@@ -99,6 +104,13 @@ export default defineComponent({
       getList();
     };
 
+    const handleExport = () => {
+      // 将筛选条件传入
+      const { exportAction } = proxy.$refs.Table;
+      const params = setParams();
+      exportAction(params);
+    };
+
     return {
       headerTitle,
       idData,
@@ -109,11 +121,12 @@ export default defineComponent({
       tableData,
       resetSearch,
       handleSearch,
+      handleExport,
     };
   },
   render() {
     const {
-      headerTitle, idData, tabKey, tabChange, unReadNum, treeNodeClick, tableData, handleSearch, resetSearch,
+      headerTitle, idData, tabKey, tabChange, unReadNum, treeNodeClick, tableData, handleSearch, resetSearch, handleExport,
     } = this;
 
     return (
@@ -154,7 +167,7 @@ export default defineComponent({
                     )) }
                   </el-tabs>
                 </div>
-                <Table tableData={tableData}/>
+                <Table tableData={tableData} onExport={handleExport} ref="Table"/>
               </div>
             </div>
           </div>
