@@ -376,8 +376,9 @@ export default {
         idList: [],
       };
       // 处理查询条件
-      if (params.start) params.start = dateUtils.formatStandardDate(params.start);
-      if (params.end) params.end = dateUtils.formatStandardDate(params.end);
+      console.log(params, 'params');
+      if (params.condition.start) params.condition.start = dateUtils.formatStandardDate(params.condition.start);
+      if (params.condition.end) params.condition.end = dateUtils.formatStandardDate(params.condition.end);
       // 处理选中的id
       params.idList = type ? [] : this.multipleSelection.map((item) => item.id);
       $modalConfirm(info).then(() => {

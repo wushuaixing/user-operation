@@ -1,0 +1,28 @@
+.monitor-tree {
+  padding: 20px;
+  &-select {
+    width: 100%;
+    margin-bottom: 10px;
+    .el-input__prefix {
+      left: 9px;
+    }
+  }
+  &-tree {
+    .el-tree-node__content {
+      height: 42px;
+    }
+    .el-tree-node__children {
+      .el-tree-node__content {
+        height: 30px;
+      }
+    }
+    .el-tree-node.is-current > .el-tree-node__content {
+      background-color: unset;
+      .el-tree-node__label {
+        color: #296DD3 !important;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+}

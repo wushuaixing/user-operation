@@ -1,22 +1,43 @@
 import {
-  defineComponent, onMounted, ref, reactive, getCurrentInstance, toRefs,
+  defineComponent, onMounted, reactive, getCurrentInstance,
 } from 'vue';
 import MyOrgApi from '@/server/api/my-org';
+import './style.scss';
 
 const defaultProps = {
   children: 'subOrg',
   label: 'name',
 };
+const selectSlots = {
+  prefix: () => <span className="iconfont iconsousuo"></span>,
+};
 export default defineComponent({
   props: {
     orgId: String,
   },
+  emits: ['treeNodeClick'],
   setup(props) {
     const { proxy } = getCurrentInstance();
     const treeData = reactive({
       treeData: [],
+      searchList: [],
+      searchValue: '',
     });
-    const searchCalue = ref('');
+    // 遍历树 深度
+    const filterTree = (node, value) => {
+      if (node.name.indexOf(value) > -1) treeData.searchList.push(node);
+      if (node.subOrg.length) {
+        node.subOrg.forEach((item) => filterTree(item, value));
+      }
+    };
+    // 高亮树节点
+    const highLight = (id) => {
+      // 根据当前选中的子机构进行 树的选中
+      proxy.$nextTick(() => {
+        const { setCurrentKey } = proxy.$refs.monitorTree;
+        setCurrentKey(id);
+      });
+    };
     onMounted(() => {
       // 获取客户使用机构树
       const params = { orgId: props.orgId };
@@ -25,6 +46,9 @@ export default defineComponent({
         if (code === 200) {
           const { tree } = data;
           treeData.treeData = [tree];
+          proxy.$emit('treeNodeClick', tree.id);
+          highLight(tree.id);
+          filterTree(tree, '');
         } else {
           proxy.$message.error(message);
         }
@@ -32,42 +56,46 @@ export default defineComponent({
     });
     const remoteMethod = (val) => {
       // 搜索
-      console.log(val);
+      treeData.searchList = [];
+      filterTree(treeData.treeData[0], val);
     };
     const handleNodeClick = (node) => {
-      console.log(node);
       // 将orgId传递给查询区域
+      treeData.searchValue = node.id;
+      proxy.$emit('treeNodeClick', node.id);
     };
     return {
-      ...toRefs(treeData),
-      searchCalue,
+      treeData,
       remoteMethod,
       handleNodeClick,
     };
   },
   render() {
     const {
-      remoteMethod, searchCalue, treeData, handleNodeClick,
+      treeData, handleNodeClick,
     } = this;
-    console.log(treeData, '323');
     return (
-      <div>
+      <div className="monitor-tree">
         <el-select
-          v-model={searchCalue}
-          multiple
+          class="monitor-tree-select"
+          v-slots={selectSlots}
+          v-model={treeData.searchValue}
           filterable
-          remote
-          reserve-keyword
-          placeholder="请输入关键词"
-          remote-method={remoteMethod}>
+          placeholder="请输入机构名称">
+          {
+            treeData.searchList.map((item) => <el-option key={item.id} label={item.name} value={item.id}/>)
+          }
         </el-select>
         <el-tree
-          data={treeData}
+          class="monitor-tree-tree"
+          data={treeData.treeData}
           props={defaultProps}
+          ref="monitorTree"
+          node-key="id"
           default-expand-all
           highlight-current
           expand-on-click-node={false}
-          node-click={handleNodeClick}>
+          onNodeClick={handleNodeClick}>
         </el-tree>
       </div>
     );

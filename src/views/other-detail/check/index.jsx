@@ -1,11 +1,15 @@
 import {
-  defineComponent, getCurrentInstance, reactive, toRaw,
+  defineComponent, getCurrentInstance, onMounted, reactive, toRaw,
 } from 'vue';
 import BreadCrumb from '@/components/bread-crumb/index.vue';
-import { partData } from '@/static/fn';
+import { partData, ModalTitle } from '@/static/fn';
 import { roleInfoColumn } from '@/static/column';
-import WarningIcon from '@/assets/img/warn-icon.png';
 import './style.scss';
+
+const params = {
+  title: '确认将本条数据退回至检查人员',
+  text: '点击确定，该条数据将被退回至结构化检查人员，修改后将会重新匹配',
+};
 
 const Item = (props) => {
   const { url, key, val } = props;
@@ -26,11 +30,6 @@ const Item = (props) => {
       return val;
   }
 };
-
-const ModalHtml = () => <div className="yc-confirm-modal">
-    <div className="yc-confirm-modal-title"><img src={WarningIcon} /><span>确认将本条数据退回至检查人员?</span></div>
-    <div className="yc-confirm-modal-body" style="color: rgb(78, 85, 102);">点击确定，该条数据将被退回至结构化检查人员，修改后将会重新匹配</div>
-  </div>;
 
 const Part = (props, { slots }) => {
   const {
@@ -86,22 +85,36 @@ export default defineComponent({
       wsUrl: [{ value: 'aaaaaaaaaaaaaaaaaa' }, { value: 'bbbbbbbbbbbbbbbb' }, { value: 'cccccccccccccccccccc' }],
       status: 1, // 拍卖状态（1:即将开始，3:拍卖中，5:成功交易，7:失败，9:终止, 11:撤回）
     });
+    const modalState = reactive({
+      visible: false,
+      value: '',
+    });
     const returnFn = () => {
-      proxy.$msgbox({
-        message: ModalHtml(),
-        title: null,
-        showClose: false,
-        dangerouslyUseHTMLString: true,
-        showCancelButton: true,
-        lockScroll: false,
-      });
+      console.log(proxy);
+      modalState.visible = true;
     };
     const data = partData(toRaw(state));
+
     const { obligors } = state;
-    return { data, obligors, returnFn };
+    const handleClick = () => {
+      modalState.visible = false;
+    };
+    const modalSlots = {
+      title: null,
+      footer: () => <>
+      <el-button onClick={handleClick}>取 消</el-button>
+      <el-button type="primary" onClick={handleClick}>确定</el-button>
+      </>,
+    };
+    onMounted(() => document.title = '结构化校验/详情');
+    return {
+      data, obligors, returnFn, modalState, modalSlots,
+    };
   },
   render() {
-    const { data, obligors, returnFn } = this;
+    const {
+      data, obligors, returnFn, modalSlots, modalState,
+    } = this;
     return (
       <div className="yc-newpage-contaner">
         <section className="main-wrapper structure-check-wrapper">
@@ -123,6 +136,27 @@ export default defineComponent({
                   }
                 </el-table>
               </Part>
+            </div>
+            <div className="main-content-modal">
+              <el-dialog
+                v-model={modalState.visible}
+                width="500px"
+                destroy-on-close
+                show-close={false}
+                v-slots={modalSlots}
+                lock-scroll={false}
+              >
+                <ModalTitle {...params}/>
+                <div className="main-content-modal-body">
+                  <div className='label'>备注：</div>
+                  <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="请输入内容"
+                    v-model={modalState.value}>
+                  </el-input>
+                </div>
+              </el-dialog>
             </div>
           </div>
         </section>

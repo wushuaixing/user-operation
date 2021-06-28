@@ -24,6 +24,13 @@ const MYORG_LIST = {
   descending: 'DESC',
 };
 
+const MONITOR_LIST = {
+  auctionInfo: 'AUCTIONTIME',
+  assetInfo: 'UPDATETIME',
+  ascending: 'ASC',
+  descending: 'DESC',
+};
+
 // 拍卖状态
 const AUCTION_STATUS = [
   {
@@ -301,6 +308,57 @@ const PROCESS = [
     value: 15,
   },
 ];
+// 审核管理列表-资产信息
+const ASSETS_INFO = [
+  {
+    lable: '债 务 人',
+    key: 'obName',
+  },
+  {
+    lable: '证 件 号',
+    key: 'obNumber',
+  },
+  {
+    lable: '所在省份',
+    key: 'address',
+  },
+  {
+    lable: '负责人/机构',
+    key: 'orgName',
+  },
+  {
+    lable: '更新时间',
+    key: 'updateTime',
+  },
+];
+
+// 审核管理列表-拍卖信息
+const AUCTION_INFO = [
+  {
+    lable: '处置机关',
+    key: 'court',
+  },
+  {
+    lable: '省份名称',
+    key: 'province',
+  },
+  {
+    lable: '开拍时间',
+    key: 'start',
+  },
+  {
+    lable: '评估价格',
+    key: 'consultPrice',
+  },
+  {
+    lable: '拍卖状态',
+    key: 'pmStatus',
+  },
+  {
+    lable: '起拍价格',
+    key: 'initialPrice',
+  },
+];
 
 export {
   SORTER_TYPE,
@@ -321,4 +379,7 @@ export {
   IMPORTANT_TYPE,
   PROCESS,
   PUSH_STATUS,
+  ASSETS_INFO,
+  AUCTION_INFO,
+  MONITOR_LIST,
 };
