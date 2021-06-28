@@ -11,8 +11,8 @@ export const normalRoutes = [
         component: () => import('@/views/my-org/index.vue'),
       },
       {
-        path: '/dataAudit',
-        name: 'dataAudit',
+        path: '/auditManagement/:id?',
+        name: 'auditManagement',
         component: () => import('@/views/audit-management'),
       },
     ],
@@ -23,7 +23,7 @@ export const normalRoutes = [
     component: () => import('@/views/document/serch/index.vue'),
   },
   {
-    path: '/structureCheck',
+    path: '/structureCheck/:id',
     name: 'structureCheck',
     component: () => import('@/views/other-detail/check/index'),
   },
@@ -124,8 +124,8 @@ export const userMenu = [
   {
     text: '审核管理',
     icon: 'el-icon-picture-outline-round',
-    path: '/dataAudit',
-    key: 'DataAudit',
+    path: '/auditManagement',
+    key: 'AuditManagement',
   },
   {
     text: '文书搜索',
