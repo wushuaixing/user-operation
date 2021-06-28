@@ -29,7 +29,13 @@ export default defineComponent({
     }
     return (
       <div className="pm">
-        <div className="pm-title">{data.parsingTitle}</div>
+        <div className="pm-title">
+          <a
+            class="button-link"
+            href={data.url}
+            target='_blank'
+        >{data.parsingTitle}</a>
+        </div>
         <div className="pm-info">
           <div className="pm-info-sider left">
             <span className="pm-info-line">处置机关：<span className="pm-info-text">{data.court || '-'}</span></span>

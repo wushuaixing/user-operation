@@ -2,6 +2,7 @@ import {
   defineComponent, getCurrentInstance, ref, reactive,
 } from 'vue';
 import { monitorTabs } from '@/static/fn';
+import { MONITOR_LIST } from '@/static';
 import { dateUtils } from '@/utils';
 import MyOrgApi from '@/server/api/my-org';
 import Tree from './tree/tree';
@@ -51,10 +52,21 @@ export default defineComponent({
       total: 0,
       num: 10,
     });
+    let queryParams = reactive({});
+    const resetSort = () => {
+      const { resetTable } = proxy.$refs.Table;
+      resetTable();
+    };
 
-    const setParams = () => {
-      const { state } = proxy.$refs.monitorQuery;
-      let params = Object.assign(state, { orgId: idData.activeId, type: tabKey });
+    const setParams = (type) => {
+      let param = {};
+      if (type === 'search') {
+        const { state } = proxy.$refs.monitorQuery;
+        param = { ...state };
+      } else {
+        param = { ...queryParams };
+      }
+      let params = Object.assign(param, { orgId: idData.activeId, type: tabKey.value }, { page: tableData.page, num: tableData.num });
       if (params.approveTimeEnd) params.approveTimeEnd = dateUtils.formatStandardDate(params.approveTimeEnd);
       if (params.approveTimeStart) params.approveTimeStart = dateUtils.formatStandardDate(params.approveTimeStart);
       if (params.createTimeStart) params.createTimeStart = dateUtils.formatStandardDate(params.createTimeStart);
@@ -68,17 +80,19 @@ export default defineComponent({
         };
         params = Object.assign(params, time);
       }
-      return params;
+      return { ...params };
     };
 
-    const getList = () => {
+    const getList = (type) => {
       tableData.loading = true;
-      const params = setParams();
+      if (type) queryParams = { ...proxy.$refs.monitorQuery.state };
+      const params = setParams(type);
       MyOrgApi.monitorList(params).then((res) => {
         const { code, data = {} } = res.data;
         if (code === 200) {
-          const { list = [] } = data;
+          const { list = [], total } = data;
           tableData.data = list;
+          tableData.total = total;
         }
         tableData.loading = false;
         getTabNum(idData.activeId);
@@ -88,20 +102,26 @@ export default defineComponent({
     const treeNodeClick = (ID) => {
       // 根据节点id进行搜索，清空搜索条件
       idData.activeId = ID;
+      tabKey.value = '1';
       const { resetSearch } = proxy.$refs.monitorQuery;
       resetSearch();
     };
     const tabChange = (val) => {
       // val.props.name
       tabKey.value = val.props.name;
+      resetSort();
       getList();
     };
     // 搜索 清空搜索条件
     const resetSearch = () => {
-      getList();
+      tableData.page = 1;
+      resetSort();
+      getList('search');
     };
     const handleSearch = () => {
-      getList();
+      tableData.page = 1;
+      resetSort();
+      getList('search');
     };
 
     const handleExport = () => {
@@ -109,6 +129,26 @@ export default defineComponent({
       const { exportAction } = proxy.$refs.Table;
       const params = setParams();
       exportAction(params);
+    };
+
+    // 分页
+    const pageChange = (page) => {
+      tableData.page = page;
+      getList();
+    };
+    const sizeChange = (num) => {
+      tableData.page = 1;
+      tableData.num = num;
+      getList();
+    };
+    const sortChange = ({ prop, order }) => {
+      tableData.page = 1;
+      queryParams = {
+        ...queryParams,
+        sortColumn: MONITOR_LIST[prop],
+        sortOrder: MONITOR_LIST[order],
+      };
+      getList();
     };
 
     return {
@@ -122,11 +162,14 @@ export default defineComponent({
       resetSearch,
       handleSearch,
       handleExport,
+      pageChange,
+      sizeChange,
+      sortChange,
     };
   },
   render() {
     const {
-      headerTitle, idData, tabKey, tabChange, unReadNum, treeNodeClick, tableData, handleSearch, resetSearch, handleExport,
+      headerTitle, idData, tabKey, tabChange, unReadNum, treeNodeClick, tableData, handleSearch, resetSearch, handleExport, pageChange, sizeChange, sortChange,
     } = this;
 
     return (
@@ -167,7 +210,14 @@ export default defineComponent({
                     )) }
                   </el-tabs>
                 </div>
-                <Table tableData={tableData} onExport={handleExport} ref="Table"/>
+                <Table
+                  tableData={tableData}
+                  onExport={handleExport}
+                  ref="Table"
+                  onPageChange={pageChange}
+                  onSizeChange={sizeChange}
+                  onSortChange={sortChange}
+                />
               </div>
             </div>
           </div>

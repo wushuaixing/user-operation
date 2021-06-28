@@ -20,12 +20,13 @@ export default defineComponent({
   props: {
     tableData: Object,
   },
+  emits: ['pageChange', 'sizeChange', 'export', 'sortChange'],
   setup() {
     const { proxy } = getCurrentInstance();
     const setTablePane = (row, type) => {
-      if (type === 'zcInfo') return <ZcInfo data={row}/>;
-      if (type === 'pmInfo') return <PmInfo data={row}/>;
-      if (type === 'ppbzInfo') return <PmInfo data={row}/>;
+      if (type === 'assetInfo') return <ZcInfo data={row}/>;
+      if (type === 'remarkInfo') return <div>-</div>;
+      if (type === 'auctionInfo') return <PmInfo data={row}/>;
       const status = PROCESS.filter((i) => i.value === row.process);
       return <span>{status[0].label}</span>;
     };
@@ -36,15 +37,31 @@ export default defineComponent({
       multipleSelection: [],
       info: {},
       idList: [],
+      empty: {
+        empty: <div><img src="../../../assets/img/no_data.png" alt="" /><p>暂无数据</p></div>,
+      },
     });
+    const resetTable = () => {
+      const { clearSelection } = proxy.$refs.multipleTable;
+      clearSelection();
+      multiple.multipleSelection = [];
+    };
     // 排序
     const handleSortChange = (sort) => {
       // 排序查询
       console.log(sort, 'sort', proxy);
+      proxy.$emit('sortChange', sort);
+    };
+    const pageChange = (page) => {
+      proxy.$emit('pageChange', page);
+    };
+    const sizeChange = (num) => {
+      proxy.$emit('sizeChange', num);
     };
 
     const handleBatchCheck = (isChecked) => {
       multiple.isChecked = isChecked;
+      if (!isChecked) resetTable();
     };
     const handleExport = (type) => {
       if (!type && !multiple.multipleSelection.length) {
@@ -68,9 +85,9 @@ export default defineComponent({
         },
         idList: multiple.idList,
       };
-      console.log(paramData, multiple, '12345');
       $modalConfirm(multiple.info).then(() => {
         multiple.isChecked = false;
+        resetTable();
         MyOrgApi.export(paramData).then((res) => {
           const { code = 200, message = '' } = res;
           if (code === 200) {
@@ -85,7 +102,7 @@ export default defineComponent({
     };
 
     return {
-      setTablePane, multiple, handleBatchCheck, handleExport, handleSortChange, exportAction,
+      setTablePane, multiple, handleBatchCheck, handleExport, handleSortChange, exportAction, pageChange, sizeChange, resetTable,
     };
   },
   render() {
@@ -123,7 +140,7 @@ export default defineComponent({
           >取消批量管理
           </el-button>
           <el-button
-            onClick={handleExport}
+            onClick={() => handleExport('')}
             class="button-fourth"
             v-show={multiple.isChecked}
           >导出
@@ -152,8 +169,23 @@ export default defineComponent({
           tooltip-effect="dark"
           onSelectionChange={(val) => (multiple.multipleSelection = val)}
           onSortChange={handleSortChange}
+          row-key={(val) => val.id}
+          v-slots={multiple.empty}
         >
-          { column.map((i) => <el-table-column label={i.label} key={i.class} min-width={i.width} v-slots={(scope) => setTablePane(scope.row, i.prop)}/>)}
+          {
+            multiple.isChecked ? <el-table-column
+              type="selection"
+              width="55"
+              reserve-selection={true}
+            /> : ''
+          }
+          { column.map((i) => <el-table-column
+            label={i.label}
+            key={i.class}
+            prop={i.prop}
+            min-width={i.width}
+            sortable={i.sort}
+            v-slots={(scope) => setTablePane(scope.row, i.prop)}/>)}
         </el-table>
         <el-pagination
           onCurrentChange={pageChange}
