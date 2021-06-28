@@ -137,7 +137,7 @@ export default defineComponent({
                 </el-table>
               </Part>
             </div>
-            <div className="main-content-modal">
+            <div className="main-content-modal yc-custom-modal">
               <el-dialog
                 v-model={modalState.visible}
                 width="500px"
