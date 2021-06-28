@@ -1,5 +1,9 @@
-import { defineComponent, getCurrentInstance, ref } from 'vue';
+import {
+  defineComponent, getCurrentInstance, ref, reactive,
+} from 'vue';
 import { monitorTabs } from '@/static/fn';
+import { dateUtils } from '@/utils';
+import MyOrgApi from '@/server/api/my-org';
 import Tree from './tree/tree';
 import Query from './query/query';
 import Table from './table/table';
@@ -13,28 +17,103 @@ export default defineComponent({
   },
   setup() {
     const { proxy } = getCurrentInstance();
+    // 处理浏览器标签页标题 以及orgId
     const { name, id } = proxy.$root.$route.query;
     const headerTitle = `${name}-监控管理`;
     document.title = `【监控管理】${name}`;
-    const orgId = ref(id);
+    const idData = reactive({
+      orgId: id,
+      activeId: id,
+    });
 
     // tab切换
-    const tabKey = ref(1);
+    const tabKey = ref('1');
     const unReadNum = ref(0);
-    const tabChange = (val) => {
-      console.log(val, 'tab');
+    const getTabNum = (ID) => {
+      const params = {
+        orgId: ID,
+      };
+      MyOrgApi.readNot(params).then((res) => {
+        const { code, message, data = 0 } = res.data;
+        if (code === 200) {
+          // 赋值未读数量
+          unReadNum.value = data;
+        } else {
+          proxy.$message.error(message);
+        }
+      });
     };
+
+    const tableData = reactive({
+      data: [],
+      loading: false,
+      page: 1,
+      total: 0,
+      num: 10,
+    });
+
+    const getList = () => {
+      const { state } = proxy.$refs.monitorQuery;
+      tableData.loading = true;
+      let params = Object.assign(state, { orgId: idData.activeId, type: tabKey });
+      if (params.approveTimeEnd) params.approveTimeEnd = dateUtils.formatStandardDate(params.approveTimeEnd);
+      if (params.approveTimeStart) params.approveTimeStart = dateUtils.formatStandardDate(params.approveTimeStart);
+      if (params.createTimeStart) params.createTimeStart = dateUtils.formatStandardDate(params.createTimeStart);
+      if (params.createTimeEnd) params.createTimeEnd = dateUtils.formatStandardDate(params.createTimeEnd);
+      if (params.updateTimeStart) params.updateTimeStart = dateUtils.formatStandardDate(params.updateTimeStart);
+      if (params.updateTimeEnd) params.updateTimeEnd = dateUtils.formatStandardDate(params.updateTimeEnd);
+      if (params.start) {
+        const time = {
+          startStart: dateUtils.formatStandardDate(params.start[0]),
+          startEnd: dateUtils.formatStandardDate(params.start[1]),
+        };
+        params = Object.assign(params, time);
+      }
+      MyOrgApi.monitorList(params).then((res) => {
+        const { code, data = {} } = res.data;
+        if (code === 200) {
+          const { list = [] } = data;
+          tableData.data = list;
+        }
+        tableData.loading = false;
+        getTabNum(idData.activeId);
+      });
+    };
+    // 树节点点击  搜索
+    const treeNodeClick = (ID) => {
+      // 根据节点id进行搜索，清空搜索条件
+      idData.activeId = ID;
+      const { resetSearch } = proxy.$refs.monitorQuery;
+      resetSearch();
+    };
+    const tabChange = (val) => {
+      // val.props.name
+      tabKey.value = val.props.name;
+      getList();
+    };
+    // 搜索 清空搜索条件
+    const resetSearch = () => {
+      getList();
+    };
+    const handleSearch = () => {
+      getList();
+    };
+
     return {
       headerTitle,
-      orgId,
+      idData,
       unReadNum,
       tabKey,
       tabChange,
+      treeNodeClick,
+      tableData,
+      resetSearch,
+      handleSearch,
     };
   },
   render() {
     const {
-      headerTitle, orgId, tabKey, tabChange, unReadNum,
+      headerTitle, idData, tabKey, tabChange, unReadNum, treeNodeClick, tableData, handleSearch, resetSearch,
     } = this;
 
     return (
@@ -55,16 +134,17 @@ export default defineComponent({
           <div className="monitor-manage-body">
             <div className="left-tree">
               <Tree
-                orgId={orgId}
+                orgId={idData.orgId}
+                onTreeNodeClick={treeNodeClick}
               />
             </div>
             <div className="query-data">
               <div className="query-area">
-                <Query/>
+                <Query ref="monitorQuery" onHandleSearch={handleSearch} onResetSearch={resetSearch}/>
               </div>
               <div className="data-area">
                 <div>
-                  <el-tabs v-model={tabKey} onTabClick={tabChange}>
+                  <el-tabs v-model={tabKey} onTabClick={tabChange} class="monitor-tabs">
                     { monitorTabs(unReadNum).map((item) => (
                       <el-tab-pane
                         key={item.value}
@@ -74,7 +154,7 @@ export default defineComponent({
                     )) }
                   </el-tabs>
                 </div>
-                <Table/>
+                <Table tableData={tableData}/>
               </div>
             </div>
           </div>
