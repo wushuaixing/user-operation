@@ -5,7 +5,7 @@
   padding-bottom: 10px !important;
   .content{
     &-left{
-      width: 280px;
+      min-width: 280px;
       background: #fff;
       min-height: 100%;
       margin-right: 20px;
@@ -109,16 +109,70 @@
       }
     }
     &-right{
-      flex: 1;
+      min-width: 1320px;
       background: #fff;
       padding: 20px;
       &-query{
+        .line{
+          display: flex;
+        }
         .el-form-item{
-          margin: 0 20px 8px 0;
+          margin: 0 10px 8px 0;
         }
         .time-end{
           .el-form-item__label{
             margin: 0 6px;
+          }
+        }
+      }
+      &-table{
+        &-list{
+          .el-table__body{
+            tbody{
+              //.conSumerName,.status{
+              //  vertical-align: top !important;
+              //}
+            }
+          }
+          .action-column{
+            display: flex;
+            flex-direction: column;
+            .el-button{
+              width: 72px;
+              margin-bottom: 12px;
+            }
+            .middle {
+              margin-left: 0 !important;
+            }
+            .btm{
+              margin-left: 0 !important;
+            }
+          }
+        }
+        .column-item-info{
+          li{
+            display: flex;
+            div{
+                max-width: 160px;
+            }
+          }
+        }
+        .auction-info{
+          ul{
+            display: flex;
+            flex-wrap: wrap;
+            li{
+              &:nth-child(odd){
+                min-width: 240px;
+              }
+              &:nth-child(even){
+                div{
+                  &:last-child{
+                    max-width: 104px;
+                  }
+                }
+              }
+            }
           }
         }
       }

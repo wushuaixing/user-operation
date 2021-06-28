@@ -244,34 +244,34 @@ const myOrgColumn = [
 // 我的机构列表
 const auditColumn = [
   {
-    prop: 'zcInfo',
+    prop: 'assetInfo',
     label: '资产信息（更新时间)',
     sort: 'custom',
-    width: '15%',
+    width: '21.5%',
   },
   {
-    prop: 'org',
+    prop: 'conSumerName',
     label: '客户使用机构',
     sort: false,
-    width: '15%',
+    width: '13.3%',
   },
   {
-    prop: 'ppbzInfo',
+    prop: 'remarkInfo',
     label: '匹配备注信息',
     sort: false,
-    width: '10%',
+    width: '17.5%',
   },
   {
-    prop: 'pmInfo',
+    prop: 'auctionInfo',
     label: '拍卖信息（开拍时间）',
     sort: 'custom',
-    width: '11%',
+    width: '34.1%',
   },
   {
     prop: 'status',
     label: '状态',
     sort: false,
-    width: '11%',
+    width: '6%',
   },
 ];
 export {
