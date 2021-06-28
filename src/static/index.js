@@ -24,6 +24,13 @@ const MYORG_LIST = {
   descending: 'DESC',
 };
 
+const MONITOR_LIST = {
+  auctionInfo: 'AUCTIONTIME',
+  assetInfo: 'UPDATETIME',
+  ascending: 'ASC',
+  descending: 'DESC',
+};
+
 // 拍卖状态
 const AUCTION_STATUS = [
   {
@@ -374,4 +381,5 @@ export {
   PUSH_STATUS,
   ASSETS_INFO,
   AUCTION_INFO,
+  MONITOR_LIST,
 };
