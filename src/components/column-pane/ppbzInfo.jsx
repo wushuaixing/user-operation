@@ -7,12 +7,14 @@ export default defineComponent({
   },
   render() {
     const { data } = this;
+    const { reason = '[]', approveTime, createTime } = data;
+    const { name, hl } = (JSON.parse(reason) || [])[0] || {};
     return (
       <div>
-        <span className="zc-info">
-          <span className="zc-info-title">债务人</span>：
-          <span className="zc-info-cent">{}</span>
-        </span>
+        <p className="pp-title">{`审核备注|${approveTime}`}</p>
+        <p className="pp-content"/>
+        <p className="pp-title">{`根据“${name}”匹配|${createTime}`}</p>
+        <p v-html={hl} className="pp-content"/>
       </div>
     );
   },
