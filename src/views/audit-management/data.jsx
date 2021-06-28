@@ -20,10 +20,33 @@ const AssetInfo = (props) => <div className='column-item-info'>
   </ul>
 </div>;
 
-const RemarkInfo = (props) => <ul className='column-item-info'>
-    <p>根据“姜修平”匹配 |{props.createTime}</p>
-    <p>姜修平为拍卖资产的所有人</p>
-</ul>;
+const RemarkInfo = (props, tabType) => {
+  const {
+    recallRemark, approveTime, reason, createTime, shenHeRemark, status,
+  } = props;
+  const isShenHe = ['2', '3', '4'].includes(tabType);
+  const obj = isShenHe ? {
+    approveTime,
+    label: '审核备注',
+    detail: shenHeRemark,
+    display: true,
+  } : {
+    approveTime,
+    label: '召回备注',
+    detail: recallRemark,
+    display: tabType === '5' || (status === 2 && tabType === '1'),
+  };
+  return <div className='remark-info'>
+    {
+      obj.display && <>
+        <p className='before-circle'>{obj.label} | {obj.approveTime}</p>
+        <p className='remark-info-detail'>{obj.detail}</p>
+      </>
+    }
+    <p className='before-circle'>根据{reason[0].name}匹配 | {createTime}</p>
+    <p v-html={reason[0].hl[0]} className='remark-info-detail'></p>
+  </div>;
+};
 const AuctionInfo = (props) => {
   const { url, parsingTitle } = props;
   return <div className='column-item-info auction-info'>
@@ -43,12 +66,12 @@ const AuctionInfo = (props) => {
   </div>;
 };
 
-const columnHtml = (props) => {
+const columnHtml = (props, tabType) => {
   const { status = '' } = props || {};
   const obj = PUSH_STATUS.find((i) => status === i.value) || {};
   return {
     assetInfo: AssetInfo(props),
-    remarkInfo: RemarkInfo(props),
+    remarkInfo: RemarkInfo(props, tabType),
     auctionInfo: AuctionInfo(props),
     conSumerName: props.conSumerName,
     status: obj.label,
