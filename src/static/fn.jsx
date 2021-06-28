@@ -1,31 +1,9 @@
 import { floatFormat } from '@/utils';
+import WarningIcon from '@/assets/img/warn-icon.png';
 import {
   AUCTION_STATUS, COLLATERAL_TYPE, HOUSE_TYPE, DOCUMENTFIND_STATUS,
   WSINATTACH_STATUS,
 } from './index';
-
-const dataAuditTabs = (matchNum, noReadNum) => [
-  {
-    label: `结构化匹配(${matchNum})`,
-    name: '0',
-  },
-  {
-    label: '全文匹配',
-    name: '1',
-  },
-  {
-    label: '已推送',
-    name: '2',
-  },
-  {
-    label: '不推送',
-    name: '3',
-  },
-  {
-    label: `客户未读(${noReadNum})`,
-    name: '4',
-  },
-];
 
 const taskAssignTabs = (toBeAllocatedNum) => [
   {
@@ -140,6 +118,13 @@ const partData = (params) => {
     },
   ];
 };
+const ModalTitle = (props) => {
+  const { title, text } = props;
+  return <div className="yc-confirm-modal">
+    <div className="yc-confirm-modal-title"><img src={WarningIcon} /><span>{title}</span></div>
+    <div className="yc-confirm-modal-body" style="color: rgb(78, 85, 102);">{text}</div>
+  </div>;
+};
 export {
-  dataAuditTabs, taskAssignTabs, partData, auditTabs, monitorTabs,
+  taskAssignTabs, partData, auditTabs, monitorTabs, ModalTitle,
 };

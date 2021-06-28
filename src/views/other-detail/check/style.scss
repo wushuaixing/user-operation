@@ -1,16 +1,6 @@
 .structure-check-wrapper{
   .main-content{
     padding: 20px;
-    &-top{
-      display: flex;
-      flex-wrap: wrap;
-      position: relative;
-      .action-button{
-        position: absolute;
-        right: 0;
-        padding: 0 21px;
-      }
-    }
     .part{
       line-height: 20px;
       font-size: 14px;
@@ -51,6 +41,42 @@
               color: #F93535;
             }
           }
+        }
+      }
+    }
+    &-top{
+      display: flex;
+      flex-wrap: wrap;
+      position: relative;
+      .action-button{
+        position: absolute;
+        right: 0;
+        padding: 0 21px;
+      }
+    }
+    &-modal{
+      .el-dialog{
+        &__header{
+          border-bottom: none;
+          height: unset;
+          font-weight: normal;
+        }
+        &__body{
+          padding: 32px !important;
+        }
+      }
+      &-body{
+        display: flex;
+        padding-left: 38px;
+        margin-top: 32px;
+        .label{
+          min-width: 42px !important;
+          color: #20242E;
+        }
+        .el-textarea__inner{
+          min-height: 92px !important;
+          width: 356px !important;
+          font-family: Microsoft YaHei, PingFangSC-Regular, PingFang SC, Helvetica, Arial, sans-serif;
         }
       }
     }
