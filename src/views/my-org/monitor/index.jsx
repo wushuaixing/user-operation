@@ -109,6 +109,7 @@ export default defineComponent({
     const tabChange = (val) => {
       // val.props.name
       tabKey.value = val.props.name;
+      tableData.page = 1;
       resetSort();
       getList();
     };

@@ -29,6 +29,9 @@ export default defineComponent({
           <span className="zc-info-title">更新时间</span>：
           <span className="zc-info-cent">{data.updateTime || '-'}</span>
         </div>
+        { data.important === 1 ? <svg class="icon jz" aria-hidden="true" style="font-size: 37px;">
+          <use xlink:href="#iconjingzhun" />
+        </svg> : ''}
       </div>
     );
   },

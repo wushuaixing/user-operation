@@ -151,7 +151,7 @@ export default defineComponent({
                     placeholder="开始日期"
                     v-model={state.approveTimeStart}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledStartDate(val, 'approveTimeStart')}
+                    disabledDate={(val) => disabledStartDate(val, 'approveTimeEnd')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -163,7 +163,7 @@ export default defineComponent({
                     placeholder="结束日期"
                     v-model={state.approveTimeEnd}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledEndDate(val, 'approveTimeEnd')}
+                    disabledDate={(val) => disabledEndDate(val, 'approveTimeStart')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -178,7 +178,7 @@ export default defineComponent({
                     placeholder="开始日期"
                     v-model={state.createTimeStart}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledStartDate(val, 'createTimeStart')}
+                    disabledDate={(val) => disabledStartDate(val, 'createTimeEnd')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -190,7 +190,7 @@ export default defineComponent({
                     placeholder="结束日期"
                     v-model={state.createTimeEnd}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledEndDate(val, 'createTimeEnd')}
+                    disabledDate={(val) => disabledEndDate(val, 'createTimeStart')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -222,7 +222,7 @@ export default defineComponent({
                       placeholder="开始日期"
                       v-model={state.updateTimeStart}
                       style={{ width: '130px' }}
-                      disabledDate={(val) => disabledStartDate(val, 'updateTimeStart')}
+                      disabledDate={(val) => disabledStartDate(val, 'updateTimeEnd')}
                       popper-class="data-picker"
                       append-to-body={false}
                     />
@@ -234,7 +234,7 @@ export default defineComponent({
                       placeholder="结束日期"
                       v-model={state.updateTimeEnd}
                       style={{ width: '130px' }}
-                      disabledDate={(val) => disabledEndDate(val, 'updateTimeEnd')}
+                      disabledDate={(val) => disabledEndDate(val, 'updateTimeStart')}
                       popper-class="data-picker"
                       append-to-body={false}
                     />
