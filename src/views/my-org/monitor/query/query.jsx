@@ -52,6 +52,7 @@ export default defineComponent({
     const resetSearch = () => {
       const { resetFields } = proxy.$refs.monitorForm;
       resetFields();
+      state.start = '';
       proxy.$emit('resetSearch');
     };
 
