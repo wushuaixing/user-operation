@@ -165,13 +165,13 @@
       }
       &-table{
         &-list{
-          //.el-table__body{
-          //  tbody{
-          //    .conSumerName,.status{
-          //      vertical-align: top !important;
-          //    }
-          //  }
-          //}
+          .el-table__body{
+            //tbody{
+            //  .conSumerName,.status,.assetInfo,.auctionInfo,.el-table_1_column_6{
+            //    vertical-align: top !important;
+            //  }
+            //}
+          }
           .action-column{
             display: flex;
             flex-direction: column;

@@ -358,7 +358,6 @@ export default defineComponent({
     };
     const type = { 0: '试用', 1: '正式' };
     const list = this.treeState.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
-    console.log('render');
     return (
         <div className="yc-container audit-management-container">
             <div className="content-left">
