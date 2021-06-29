@@ -50,6 +50,7 @@ export default defineComponent({
       tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
       updateTimeEnd: '2021-01-01', // 更新结束时间 ,示例值(2021-01-01)
       updateTimeStart: '2021-01-01', // 更新开始时间 ,示例值(2021-01-01)
+      isOpen: false,
     });
     const tableState = reactive({
       tableList: [{
@@ -58,7 +59,6 @@ export default defineComponent({
         address: '山东省临沂市鼓楼区', // 所在省份
         orgName: '保全李四', // 负责人/机构
         updateTime: '2020-07-14 15:48', // 更新时间
-
         conSumerName: '【一级】资产保全部', // 客户使用机构
 
         reason: [{
@@ -291,7 +291,6 @@ export default defineComponent({
           </div>
         </div>
       </div>;
-
     const PushConfirmModal = () => {
       const text = {
         title: '确认推送该条资产信息吗？',
@@ -438,8 +437,12 @@ export default defineComponent({
                         }
                       </el-select>
                     </el-form-item>
+                    <el-form-item class="switch" onClick={() => formState.isOpen = !formState.isOpen}>
+                      <span v-show={!formState.isOpen}>展开选项<i className="el-icon-arrow-down switch-icon" /></span>
+                      <span v-show={formState.isOpen}>收起选项<i className="el-icon-arrow-up switch-icon"/></span>
+                    </el-form-item>
                   </div>
-                  <div className="line">
+                  <div className="line" v-show={formState.isOpen}>
                     <el-form-item label="标题：" prop='parsingTitle'>
                       <el-input
                         v-model={formState.parsingTitle}
@@ -493,7 +496,7 @@ export default defineComponent({
                         type="date"
                         placeholder="开始时间"
                         v-model={formState.approveTimeStart}
-                        style="width: 135px"
+                        style="width: 130px"
                       />
                     </el-form-item>
                     <el-form-item label="至" prop="approveTimeEnd" class="time-end">
@@ -533,7 +536,7 @@ export default defineComponent({
                         type="date"
                         placeholder="结束时间"
                         v-model={formState.updateTimeEnd}
-                        style="width: 120px"
+                        style="width: 130px"
                       />
                     </el-form-item>
                     <el-form-item style="float: right">
