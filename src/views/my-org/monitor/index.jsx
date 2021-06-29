@@ -110,6 +110,12 @@ export default defineComponent({
       // val.props.name
       tabKey.value = val.props.name;
       tableData.page = 1;
+      const { deleteStatus } = proxy.$refs.monitorQuery;
+      if (tabKey.value === '0') {
+        deleteStatus(false);
+      } else {
+        deleteStatus(true);
+      }
       resetSort();
       getList();
     };

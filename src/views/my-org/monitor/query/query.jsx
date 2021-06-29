@@ -62,6 +62,11 @@ export default defineComponent({
       openStatus.value = !openStatus.value;
     };
 
+    const isDelete = ref(true);
+    const deleteStatus = (val) => {
+      isDelete.value = val;
+    };
+
     return {
       state,
       disabledStartDate,
@@ -70,11 +75,13 @@ export default defineComponent({
       resetSearch,
       openStatus,
       open,
+      deleteStatus,
+      isDelete,
     };
   },
   render() {
     const {
-      state, disabledStartDate, disabledEndDate, handleSearch, resetSearch, openStatus, open,
+      state, disabledStartDate, disabledEndDate, handleSearch, resetSearch, openStatus, open, isDelete,
     } = this;
     return (
       <div>
@@ -242,15 +249,18 @@ export default defineComponent({
                   </el-form-item>
                 </div>
               </el-form-item>
-              <el-form-item label="状态：" prop="process">
-                <el-select v-model={state.process}
-                           style={{ width: '96px' }}
-                           placeholder="请选择拍卖状态">
-                  {
-                    PROCESS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
-                  }
-                </el-select>
-              </el-form-item>
+                {
+                  isDelete
+                    ? <el-form-item label="状态：" prop="process">
+                      <el-select v-model={state.process}
+                                          style={{ width: '96px' }}
+                                          placeholder="请选择拍卖状态">
+                      {
+                        PROCESS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                      }
+                      </el-select>
+                    </el-form-item> : ''
+                }
             </div>
             <el-form-item>
               <el-button
