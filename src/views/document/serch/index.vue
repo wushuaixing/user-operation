@@ -87,7 +87,7 @@
                 >
                   <div class="yc-ellipsis">
                     <span @click="toDetail(scope.row)" class="button-link cursor-pointer">
-                      {{ scope.row.title }}
+                      {{ scope.row.title || '详情' }}
                     </span>
                   </div>
                 </el-tooltip>

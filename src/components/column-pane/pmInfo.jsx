@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, getCurrentInstance } from 'vue';
 import './style.scss';
 import { AUCTION_STATUS } from '@/static';
 import { floatFormat } from '@/utils';
@@ -7,9 +7,23 @@ export default defineComponent({
   props: {
     data: Object,
   },
+  setup() {
+    const { proxy } = getCurrentInstance();
+    const linkTo = (e, id) => {
+      e.preventDefault();
+      const routeData = proxy.$router.resolve({
+        path: '/sourceWeb',
+        query: { id },
+      });
+      window.open(routeData.href, '_blank');
+    };
+    return {
+      linkTo,
+    };
+  },
   render() {
     // pmStatusTitle, initialPriceText
-    const { data } = this;
+    const { data, linkTo } = this;
     const { pmStatus = '', consultPrice, initialPrice } = data;
     const consultPriceText = floatFormat(consultPrice) !== '-' ? `${floatFormat(consultPrice)}` : '-';
     const initialPriceText = floatFormat(initialPrice) !== '-' ? `${floatFormat(initialPrice)}` : '-';
@@ -32,7 +46,7 @@ export default defineComponent({
         <div className="pm-title">
           <a
             class="button-link"
-            href={data.url}
+            onClick={(e) => linkTo(e, data.auctionId)}
             target='_blank'
         >{data.parsingTitle}</a>
         </div>

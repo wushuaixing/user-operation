@@ -2,7 +2,7 @@
  * 当前版本信息
  */
 const Version = 'v0.2';
-const BetaNumber = '.6';
+const BetaNumber = '.7';
 const info = `Version：${Version}${BetaNumber ? `-beta${BetaNumber}` : ''}`;
 window.CurrentVersions = info;
 

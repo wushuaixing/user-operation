@@ -52,6 +52,7 @@ export default defineComponent({
     const resetSearch = () => {
       const { resetFields } = proxy.$refs.monitorForm;
       resetFields();
+      state.start = '';
       proxy.$emit('resetSearch');
     };
 
@@ -59,6 +60,11 @@ export default defineComponent({
     const openStatus = ref(false);
     const open = () => {
       openStatus.value = !openStatus.value;
+    };
+
+    const isDelete = ref(true);
+    const deleteStatus = (val) => {
+      isDelete.value = val;
     };
 
     return {
@@ -69,11 +75,13 @@ export default defineComponent({
       resetSearch,
       openStatus,
       open,
+      deleteStatus,
+      isDelete,
     };
   },
   render() {
     const {
-      state, disabledStartDate, disabledEndDate, handleSearch, resetSearch, openStatus, open,
+      state, disabledStartDate, disabledEndDate, handleSearch, resetSearch, openStatus, open, isDelete,
     } = this;
     return (
       <div>
@@ -94,6 +102,7 @@ export default defineComponent({
                 placeholder="身份证号/统一社会信用代码"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={(val) => (console.log(val, '23'))}
                 clearable={true}
               />
             </el-form-item>
@@ -148,10 +157,10 @@ export default defineComponent({
                 <el-form-item prop="approveTimeStart">
                   <el-date-picker
                     type="date"
-                    placeholder="开始日期"
+                    placeholder="开始时间"
                     v-model={state.approveTimeStart}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledStartDate(val, 'approveTimeStart')}
+                    disabledDate={(val) => disabledStartDate(val, 'approveTimeEnd')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -160,10 +169,10 @@ export default defineComponent({
                 <el-form-item prop="approveTimeEnd">
                   <el-date-picker
                     type="date"
-                    placeholder="结束日期"
+                    placeholder="结束时间"
                     v-model={state.approveTimeEnd}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledEndDate(val, 'approveTimeEnd')}
+                    disabledDate={(val) => disabledEndDate(val, 'approveTimeStart')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -175,10 +184,10 @@ export default defineComponent({
                 <el-form-item prop="createTimeStart">
                   <el-date-picker
                     type="date"
-                    placeholder="开始日期"
+                    placeholder="开始时间"
                     v-model={state.createTimeStart}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledStartDate(val, 'createTimeStart')}
+                    disabledDate={(val) => disabledStartDate(val, 'createTimeEnd')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -187,10 +196,10 @@ export default defineComponent({
                 <el-form-item prop="createTimeEnd">
                   <el-date-picker
                     type="date"
-                    placeholder="结束日期"
+                    placeholder="结束时间"
                     v-model={state.createTimeEnd}
                     style={{ width: '130px' }}
-                    disabledDate={(val) => disabledEndDate(val, 'createTimeEnd')}
+                    disabledDate={(val) => disabledEndDate(val, 'createTimeStart')}
                     popper-class="data-picker"
                     append-to-body={false}
                   />
@@ -204,9 +213,10 @@ export default defineComponent({
                 align="right"
                 unlink-panels
                 style={{ width: '286px' }}
+                class="query-date"
                 range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
                 shortcuts={dateRange()}
               >
               </el-date-picker>
@@ -219,10 +229,10 @@ export default defineComponent({
                   <el-form-item prop="updateTimeStart">
                     <el-date-picker
                       type="date"
-                      placeholder="开始日期"
+                      placeholder="开始时间"
                       v-model={state.updateTimeStart}
                       style={{ width: '130px' }}
-                      disabledDate={(val) => disabledStartDate(val, 'updateTimeStart')}
+                      disabledDate={(val) => disabledStartDate(val, 'updateTimeEnd')}
                       popper-class="data-picker"
                       append-to-body={false}
                     />
@@ -231,25 +241,28 @@ export default defineComponent({
                   <el-form-item prop="updateTimeEnd">
                     <el-date-picker
                       type="date"
-                      placeholder="结束日期"
+                      placeholder="结束时间"
                       v-model={state.updateTimeEnd}
                       style={{ width: '130px' }}
-                      disabledDate={(val) => disabledEndDate(val, 'updateTimeEnd')}
+                      disabledDate={(val) => disabledEndDate(val, 'updateTimeStart')}
                       popper-class="data-picker"
                       append-to-body={false}
                     />
                   </el-form-item>
                 </div>
               </el-form-item>
-              <el-form-item label="状态：" prop="process">
-                <el-select v-model={state.process}
-                           style={{ width: '96px' }}
-                           placeholder="请选择拍卖状态">
-                  {
-                    PROCESS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
-                  }
-                </el-select>
-              </el-form-item>
+                {
+                  isDelete
+                    ? <el-form-item label="状态：" prop="process">
+                      <el-select v-model={state.process}
+                                          style={{ width: '96px' }}
+                                          placeholder="请选择拍卖状态">
+                      {
+                        PROCESS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                      }
+                      </el-select>
+                    </el-form-item> : ''
+                }
             </div>
             <el-form-item>
               <el-button

@@ -6,7 +6,7 @@ import './style.scss';
 import MyOrgApi from '@/server/api/my-org';
 import { auditTabs, ModalTitle } from '@/static/fn';
 import {
-  AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS,
+  AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS, RECALL_REASON, NOPUSH_TIPS, PUSH_TIPS,
 } from '@/static/index';
 import { auditColumn } from '@/static/column';
 import { floatFormat } from '@/utils';
@@ -15,10 +15,7 @@ import {
 } from './data';
 
 const option = [{ label: '正式', val: 1 }, { label: '试用', val: 0 }];
-const text = {
-  title: '确认召回本条信息吗？',
-  text: '点击确定，本条信息将被召回到结构化匹配列表中',
-};
+
 export default defineComponent({
 
   setup() {
@@ -53,6 +50,7 @@ export default defineComponent({
       tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
       updateTimeEnd: '2021-01-01', // 更新结束时间 ,示例值(2021-01-01)
       updateTimeStart: '2021-01-01', // 更新开始时间 ,示例值(2021-01-01)
+      isOpen: false,
     });
     const tableState = reactive({
       tableList: [{
@@ -61,7 +59,6 @@ export default defineComponent({
         address: '山东省临沂市鼓楼区', // 所在省份
         orgName: '保全李四', // 负责人/机构
         updateTime: '2020-07-14 15:48', // 更新时间
-
         conSumerName: '【一级】资产保全部', // 客户使用机构
 
         reason: [{
@@ -143,29 +140,177 @@ export default defineComponent({
       window.open(`/structureCheck/${id}`, '_blank');
     };
     const modalState = reactive({
+      type: '',
       visible: false,
-      value: '',
+      remark: '',
+      noPushRemark: '',
+      important: '',
+      pushRemark: '',
+      recallReason: '', // 召回原因类型 1 误点击 2 备注填错 3 审核出错 9 其他
     });
+    const openModal = (type) => {
+      modalState.type = type;
+      modalState.visible = true;
+    };
     const ColumnAction = ({ id }) => {
       const { tableType } = formState;
       const fn = Number(tableType) % 2 !== 0;
       return <div className='action-column'>
         <el-button type="text" class='button-link top' onClick={() => toDetail(id)}>结构化校验</el-button>
-        {fn && <el-button type="primary" class='button-fourth middle' >推送</el-button>}
-        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' >不推送</el-button>}
-        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => modalState.visible = true}>召回</el-button>}
+        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push') }>推送</el-button>}
+        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush') }>不推送</el-button>}
+        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall') }>召回</el-button>}
       </div>;
     };
     const handleClick = () => {
-      modalState.visible = false;
+      const { type } = modalState;
+      if (type === 'push') {
+        modalState.type = 'pushConfirm';
+      } else {
+        modalState.visible = false;
+      }
+    };
+    const handleCancel = () => {
+      const { type } = modalState;
+      if (type === 'pushConfirm') {
+        modalState.type = 'push';
+      } else {
+        modalState.visible = false;
+      }
     };
     const modalSlots = {
       title: null,
       footer: () => <>
-        <el-button onClick={handleClick}>取 消</el-button>
-        <el-button type="primary" onClick={handleClick}>确定</el-button>
+        <el-button onClick={handleCancel}>{modalState.type === 'pushConfirm' ? '上一步' : '取消'}</el-button>
+        <el-button type="primary" onClick={handleClick}>{modalState.type === 'push' ? '下一步' : '确定'}</el-button>
       </>,
     };
+    const handleFill = (key, val) => {
+      modalState[key] = `${val}\n${modalState[key]}`.slice(0, 1024);
+    };
+    const RecallModal = () => {
+      const text = {
+        title: '确认召回本条信息吗？',
+        text: '点击确定，本条信息将被召回到结构化匹配列表中',
+      };
+      return <div className='recall-modal'>
+        <ModalTitle {...text}/>
+        <div className="recall-modal-body">
+          <div className="recall-modal-body-type">
+              <span className='label'>召回原因类型：</span>
+              <el-radio-group v-model={modalState.recallReason}>
+                {
+                  RECALL_REASON.map((i) => (<el-radio label={i.val}>{i.label}</el-radio>))
+                }
+              </el-radio-group>
+          </div>
+          <div className="recall-modal-body-desc">
+            <span className='label'>召回原因描述：</span>
+            <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入内容"
+              v-model={modalState.remark}/>
+            <span className='val-length'>{modalState.remark.length}/1024</span>
+          </div>
+        </div>
+      </div>;
+    };
+    const NoPushModal = () => {
+      const text = {
+        title: '确认不推送该条资产信息吗？',
+        text: '点击确定，该条资产监控信息将不被推送给用户',
+      };
+      return <div className='no-push-modal'>
+        <ModalTitle {...text}/>
+        <div className="no-push-modal-body">
+          <div className="no-push-modal-body-title">
+            <span className='label'>拍卖标题：</span>
+            <span>姜修平所有的深喉口固定台式压力机等设备一宗</span>
+          </div>
+          <div className="no-push-modal-body-remark">
+            <span className='label'>审核备注：</span>
+            <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入审核备注"
+              maxLength={1024}
+              v-model={modalState.noPushRemark}
+            />
+            <span className='val-length'>{modalState.noPushRemark.length}/1024</span>
+          </div>
+          <div className="no-push-modal-body-tips">
+            <span className='label'>默认备注：</span>
+            <div className="tips-box">
+              {NOPUSH_TIPS.map((i, index) => <p key={index} onClick={() => handleFill('noPushRemark', i)}>{i}</p>)}
+            </div>
+          </div>
+        </div>
+      </div>;
+    };
+    const PushModal = () => <div className='push-modal'>
+        <div className="push-modal-header">
+          <span>推送</span>
+          <span onClick={() => modalState.visible = false}>X</span>
+        </div>
+        <div className="push-modal-body">
+          <div className="push-modal-body-title flex">
+            <span className='label'>拍卖标题：</span>
+            <span>姜修平所有的深喉口固定台式压力机等设备一宗姜修平所有的深喉口固定台式压力机等设备一宗</span>
+          </div>
+          <div className="push-modal-body-desc flex">
+            <span className='label'>审核备注：</span>
+            <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入内容"
+              v-model={modalState.pushRemark}/>
+            <span className='val-length'>{modalState.pushRemark.length}/1024</span>
+          </div>
+          <div className="push-modal-body-type flex">
+            <span className='label'>系统匹配：</span>
+            <span>精准匹配</span>
+          </div>
+          <div className="push-modal-body-level flex">
+            <span className='label'>推送等级：</span>
+            <el-radio-group v-model={modalState.important}>
+              <el-radio label="0">模糊 </el-radio>
+              <el-radio label="1">精准 </el-radio>
+            </el-radio-group>
+          </div>
+          <div className="push-modal-body-tips flex">
+            <span className='label'>默认备注：</span>
+            <div className="tips-box">
+              {PUSH_TIPS.map((i) => <div key={i.key} className='tips-box-item'>
+                <div className="title">{i.title}</div>
+                {
+                  i.desc.map((j, index) => <p key={`${i.key}${index}`} onClick={() => handleFill('pushRemark', j)}>{j}</p>)
+                }
+              </div>)}
+            </div>
+          </div>
+        </div>
+      </div>;
+    const PushConfirmModal = () => {
+      const text = {
+        title: '确认推送该条资产信息吗？',
+        text: '点击确定，该条资产监控信息将被推送给客户',
+      };
+      return <div className='push-confirm-modal'>
+        <ModalTitle {...text}/>
+        <div className="push-confirm-modal-body">
+          <div className='push-confirm-modal-body-level'>
+            <span className='label'>推送等级：</span>
+            <span>精确</span>
+          </div>
+           <div className='push-confirm-modal-body-remark'>
+             <span className="label">审核备注：</span>
+             <div>{modalState.pushRemark}</div>
+           </div>
+        </div>
+      </div>;
+    };
+
     onMounted(() => {
       getAllList();
       document.title = '审核管理';
@@ -181,6 +326,10 @@ export default defineComponent({
       ColumnAction,
       modalState,
       modalSlots,
+      PushModal,
+      NoPushModal,
+      RecallModal,
+      PushConfirmModal,
     };
   },
   render() {
@@ -195,8 +344,17 @@ export default defineComponent({
       ColumnAction,
       modalState,
       modalSlots,
+      PushModal,
+      NoPushModal,
+      RecallModal,
+      PushConfirmModal,
     } = this;
-    console.log('render');
+    const Modal = {
+      push: <PushModal/>,
+      noPush: <NoPushModal/>,
+      reCall: <RecallModal/>,
+      pushConfirm: <PushConfirmModal/>,
+    };
     const type = { 0: '试用', 1: '正式' };
     const list = this.treeState.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
     return (
@@ -279,8 +437,12 @@ export default defineComponent({
                         }
                       </el-select>
                     </el-form-item>
+                    <el-form-item class="switch" onClick={() => formState.isOpen = !formState.isOpen}>
+                      <span v-show={!formState.isOpen}>展开选项<i className="el-icon-arrow-down switch-icon" /></span>
+                      <span v-show={formState.isOpen}>收起选项<i className="el-icon-arrow-up switch-icon"/></span>
+                    </el-form-item>
                   </div>
-                  <div className="line">
+                  <div className="line" v-show={formState.isOpen}>
                     <el-form-item label="标题：" prop='parsingTitle'>
                       <el-input
                         v-model={formState.parsingTitle}
@@ -334,7 +496,7 @@ export default defineComponent({
                         type="date"
                         placeholder="开始时间"
                         v-model={formState.approveTimeStart}
-                        style="width: 135px"
+                        style="width: 130px"
                       />
                     </el-form-item>
                     <el-form-item label="至" prop="approveTimeEnd" class="time-end">
@@ -374,7 +536,7 @@ export default defineComponent({
                         type="date"
                         placeholder="结束时间"
                         v-model={formState.updateTimeEnd}
-                        style="width: 120px"
+                        style="width: 130px"
                       />
                     </el-form-item>
                     <el-form-item style="float: right">
@@ -416,22 +578,12 @@ export default defineComponent({
             <div className="content-modal yc-custom-modal">
               <el-dialog
                 v-model={modalState.visible}
-                width="556px"
+                width={modalState.type === 'reCall' ? '556px' : '500px'}
                 destroy-on-close
                 show-close={false}
                 v-slots={modalSlots}
-                lock-scroll={false}
               >
-                <ModalTitle {...text}/>
-                <div className="yc-custom-modal-body">
-                  <div className='label'>召回原因描述：</div>
-                  <el-input
-                    type="textarea"
-                    autosize
-                    placeholder="请输入内容"
-                    v-model={modalState.value}>
-                  </el-input>
-                </div>
+                {Modal[modalState.type]}
               </el-dialog>
             </div>
         </div>

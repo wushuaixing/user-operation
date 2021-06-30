@@ -56,11 +56,6 @@
     }
     &-modal{
       .el-dialog{
-        &__header{
-          border-bottom: none;
-          height: unset;
-          font-weight: normal;
-        }
         &__body{
           padding: 32px !important;
         }
@@ -72,11 +67,6 @@
         .label{
           min-width: 42px !important;
           color: #20242E;
-        }
-        .el-textarea__inner{
-          min-height: 92px !important;
-          width: 356px !important;
-          font-family: Microsoft YaHei, PingFangSC-Regular, PingFang SC, Helvetica, Arial, sans-serif;
         }
       }
     }
