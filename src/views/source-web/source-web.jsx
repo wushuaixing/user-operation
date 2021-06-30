@@ -28,7 +28,7 @@ export default defineComponent({
       tabKey: 'biddingAnnouncement',
     });
     const tabChange = (val) => {
-      console.log(val);
+      tab.tabKey = val.name;
     };
     const htmlData = reactive({
       data: {
@@ -39,16 +39,33 @@ export default defineComponent({
         title: '',
         url: '',
       },
+      hasOtherAttach: false,
       showTabs: [],
     });
 
+    const getSimilarFile = (id) => {
+      console.log(3);
+      MyOrgApi.getSimilarFile(id).then((res) => {
+        console.log(res, '43');
+        const { code, data } = res.data || {};
+        htmlData.data.attachList = [];
+        if (code === 200) htmlData.data.attachList = data;
+      });
+    };
     const getHtmlData = (id) => {
       MyOrgApi.htmlDetail(id).then((res) => {
         const { code, data, message } = res.data;
         if (code === 200) {
           // 渲染页面
+          document.title = data.title;
           htmlData.data = { ...data };
           htmlData.showTabs = [];
+          console.log(data.attachList.length, 'length');
+          if (!data.attachList.length) {
+            console.log('2');
+            htmlData.hasOtherAttach = true;
+            getSimilarFile(id);
+          }
           // eslint-disable-next-line no-plusplus
           for (let i = 0; i < tabList.length; i++) {
             const item = data[tabList[i].name];
@@ -74,9 +91,9 @@ export default defineComponent({
   },
   render() {
     const {
-      data, showTabs,
+      data, showTabs, hasOtherAttach,
     } = this.htmlData;
-    const { tabChange } = this;
+    const { tabChange, tab } = this;
     return (
       <div className="yc-newpage-contaner">
         <div className="yc-source-web">
@@ -87,23 +104,58 @@ export default defineComponent({
               target='_blank'
             >{data.title}</a>
           </div>
-          <div className="yc-source-web-content">
-            <div className="yc-source-web-content-tab">
-                {
-                  showTabs.map((item) => (
-                    <div key={item.name} onClick={() => tabChange(item)} className="">
-                      {item.isImgTab && <svg class="icon" aria-hidden="true" style={{ fontSize: '17px' }}>
-                        <use xlink:href="#icontu"/>
-                      </svg>
-                      }
-                      <a href={`#${item.name}`}>{item.label}</a>
-                    </div>
-                  ))
-                }
+          <el-affix offset={0}>
+            <div className="yc-source-web-tab">
+              {
+                showTabs.map((item) => (
+                  <div key={item.name} onClick={() => tabChange(item)} className={tab.tabKey === item.name ? 'yc-source-web-tab-item active' : 'yc-source-web-tab-item'}>
+                    {item.isImgTab && <svg class="icon hasImg" aria-hidden="true" style={{ fontSize: '17px' }}>
+                      <use xlink:href="#icontu"/>
+                    </svg>
+                    }
+                    <a href={`#${item.name}`}>{item.label}</a>
+                  </div>
+                ))
+              }
             </div>
-            <div className="yc-source-web-content-html" v-html={data.subjectMatterIntroduction}>
+          </el-affix>
+          <div className="yc-source-web-content">
+            <div className="yc-source-web-content-html">
+              {
+                showTabs.map((item) => (
+                  <div className="html-item" id={item.name}>
+                    <div className="line" />
+                    <div className="title">{item.label}</div>
+                    <div className="html" v-html={data[item.name]} />
+                  </div>
+                ))
+              }
             </div>
           </div>
+        </div>
+        <div className="attachList">
+          <div className="attachList-title">本条数据附件</div>
+          {
+            !hasOtherAttach ? (
+              data.attachList.map((item) => (
+                <div className="attachList-link">
+                  <a key={item.fileId} href={item.url} target="_blank" class="button-link">{item.name}</a>
+                </div>
+              ))
+            ) : <div className="no-data">未找到相关附件</div>
+          }
+          {
+            hasOtherAttach ? <div className="attachList-title">同组其他相似数据附件</div> : ''
+          }
+          {
+            // eslint-disable-next-line no-nested-ternary
+            hasOtherAttach ? (
+              data.attachList.length
+                ? data.attachList.map((item) => (
+                  <div className="attachList-link">
+                    <a key={item.fileId} href={item.url} target="_blank" class="button-link">{item.name}</a>
+                  </div>
+                )) : <div className="no-data">未找到相关附件</div>) : ''}
         </div>
       </div>
     );

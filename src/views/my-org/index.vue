@@ -197,7 +197,7 @@ import { dateUtils, fileDownload, clearEmpty } from '@/utils';
 import { toRaw } from 'vue';
 import $modalConfirm from '@/utils/better-el';
 // import Query from './query/query';
-import Report from '@/views/my-org/report/report.vue';
+import Report from '@/views/my-org/report/report';
 import OrgMessage from './header/org-message';
 
 export default {
@@ -407,7 +407,7 @@ export default {
     handleOpenModal(row) {
       this.isChecked = false;
       const { open } = this.$refs.Report;
-      open(row.id);
+      open(row);
     },
   },
   watch: {
