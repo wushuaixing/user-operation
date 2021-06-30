@@ -16,4 +16,7 @@
   .row-class {
     position: relative;
   }
+  .el-table th, .el-table td {
+    vertical-align: top;
+  }
 }

@@ -242,7 +242,7 @@ const IMPORTANT_TYPE = [
     value: '',
   },
   {
-    label: '精确匹配',
+    label: '精准匹配',
     value: 1,
   },
   {
