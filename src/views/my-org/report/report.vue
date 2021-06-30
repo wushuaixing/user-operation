@@ -13,17 +13,16 @@
     >
       <el-form-item label="更新时间：" prop="time">
         <el-date-picker
-          v-model="reportForm.time"
+          v-model="time"
           style="width: 468px"
+          class="report-date"
           type="daterange"
-          align="right"
           unlink-panels
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :shortcuts="shortcuts"
-        >
-        </el-date-picker>
+        />
       </el-form-item>
       <el-form-item label="全部数据类型：">
         <div class="zcjk-rules-box">
@@ -34,6 +33,7 @@
           >
             <el-checkbox
               class="zcjk-rules-box-item-moduleType"
+              disabled
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
@@ -47,6 +47,7 @@
               <el-checkbox
                 v-for="child in item.children"
                 :label="child.val"
+                disabled
                 :key="child.val"
               >{{ child.label }}
               </el-checkbox>
@@ -64,37 +65,41 @@
   </el-dialog>
 </template>
 
-<script lang="ts">
-import { ref, reactive, defineComponent } from 'vue';
+<script>
+import {
+  ref, reactive, defineComponent, getCurrentInstance,
+} from 'vue';
 import MyOrgApi from '@/server/api/my-org';
+import { dateUtils, fileDownload } from '@/utils';
 
+const shortcuts = [{
+  text: '最近一周',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+    return [start, end];
+  })(),
+}, {
+  text: '最近一个月',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+    return [start, end];
+  })(),
+}, {
+  text: '最近三个月',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+    return [start, end];
+  })(),
+}];
 export default defineComponent({
   setup() {
-    const shortcuts = [{
-      text: '最近一周',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        return [start, end];
-      })(),
-    }, {
-      text: '最近一个月',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        return [start, end];
-      })(),
-    }, {
-      text: '最近三个月',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-        return [start, end];
-      })(),
-    }];
+    const { proxy } = getCurrentInstance();
     const reportFormOptions = {
       options: {
         labelPosition: 'right',
@@ -209,12 +214,16 @@ export default defineComponent({
     const reportForm = reactive({
       time: '',
     });
+    const time = ref('');
     const reportVisible = ref(false);
     const orgId = ref(0);
 
     const open = (id) => {
       reportVisible.value = true;
       orgId.value = id;
+    };
+    const close = () => {
+      reportVisible.value = false;
     };
 
     // 权限模块-全选
@@ -231,11 +240,17 @@ export default defineComponent({
 
     // 点击确定
     const handlereport = () => {
-      const params = {
-        time: '',
-      };
-      MyOrgApi.exportOther(params).then(() => {
-
+      proxy.$refs.reportForm.validate((valid) => {
+        if (valid) {
+          const params = {
+            start: dateUtils.formatStandardDate(time.value[0]),
+            end: dateUtils.formatStandardDate(time.value[1]),
+            id: orgId.value,
+          };
+          MyOrgApi.exportOther(params).then((res) => {
+            fileDownload(res, true);
+          });
+        }
       });
     };
 
@@ -246,10 +261,12 @@ export default defineComponent({
       reportFormOptions,
       checkList,
       reportForm,
-      reportVisible,
       shortcuts,
+      time,
+      reportVisible,
       orgId,
       open,
+      close,
       handleCheckAllChange,
       handleCheckedItemChange,
       handlereport,
@@ -261,6 +278,16 @@ export default defineComponent({
 </script>
 <style lang="scss">
   .report-modal-form {
+    .el-form-item__content {
+      .report-date {
+        .el-range__icon {
+          line-height: 24px;
+        }
+        .el-range-separator {
+          line-height: 24px;
+        }
+      }
+    }
     .zcjk-rules-box {
       padding: 5px 0 16px 16px;
       width: 450px;

@@ -11,7 +11,16 @@ const tabList = [
     label: '标的物介绍',
     name: 'subjectMatterIntroduction',
   },
+  {
+    label: '竞价成功确认书',
+    name: 'auctionSuccessConfirmation',
+  },
 ];
+// 寻找是否有图片标签
+const findImgTag = (html) => {
+  const reg = /<img*/;
+  return reg.test(html);
+};
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance();
@@ -24,12 +33,13 @@ export default defineComponent({
     const htmlData = reactive({
       data: {
         attachList: [],
-        auctionSuccessConfirmation: null,
+        auctionSuccessConfirmation: '',
         biddingAnnouncement: '',
         subjectMatterIntroduction: '',
         title: '',
         url: '',
       },
+      showTabs: [],
     });
 
     const getHtmlData = (id) => {
@@ -37,8 +47,17 @@ export default defineComponent({
         const { code, data, message } = res.data;
         if (code === 200) {
           // 渲染页面
-          console.log(data);
           htmlData.data = { ...data };
+          htmlData.showTabs = [];
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < tabList.length; i++) {
+            const item = data[tabList[i].name];
+            if (item) {
+              const isImgTab = findImgTag(item);
+              htmlData.showTabs.push(Object.assign(tabList[i], { isImgTab }));
+            }
+          }
+          // htmlData.showTabs = tabList.filter((item) => data[item.name]);
         } else {
           proxy.$message.error(message);
         }
@@ -55,32 +74,34 @@ export default defineComponent({
   },
   render() {
     const {
-      url, title, subjectMatterIntroduction,
-    } = this.htmlData.data;
-    const { tab, tabChange } = this;
+      data, showTabs,
+    } = this.htmlData;
+    const { tabChange } = this;
     return (
       <div className="yc-newpage-contaner">
         <div className="yc-source-web">
           <div className="yc-source-web-title">
             <a
               className="button-link source-title"
-              href={url}
+              href={data.url}
               target='_blank'
-            >{title}</a>
+            >{data.title}</a>
           </div>
           <div className="yc-source-web-content">
             <div className="yc-source-web-content-tab">
-              <el-tabs v-model={tab.tabKey} onTabClick={tabChange} class="monitor-tabs">
-                { tabList.map((item) => (
-                  <el-tab-pane
-                    label={item.label}
-                    name={item.name}
-                    key={item.name}/>
-                ))
+                {
+                  showTabs.map((item) => (
+                    <div key={item.name} onClick={() => tabChange(item)} className="">
+                      {item.isImgTab && <svg class="icon" aria-hidden="true" style={{ fontSize: '17px' }}>
+                        <use xlink:href="#icontu"/>
+                      </svg>
+                      }
+                      <a href={`#${item.name}`}>{item.label}</a>
+                    </div>
+                  ))
                 }
-              </el-tabs>
             </div>
-            <div className="yc-source-web-content-html" v-html={subjectMatterIntroduction}>
+            <div className="yc-source-web-content-html" v-html={data.subjectMatterIntroduction}>
             </div>
           </div>
         </div>

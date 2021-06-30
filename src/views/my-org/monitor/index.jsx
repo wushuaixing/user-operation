@@ -92,17 +92,18 @@ export default defineComponent({
         if (code === 200) {
           const { list = [], total } = data;
           tableData.data = list;
+          if (tabKey.value === '0') unReadNum.value = total;
           tableData.total = total;
         }
         tableData.loading = false;
-        getTabNum(idData.activeId);
       });
     };
     // 树节点点击  搜索
-    const treeNodeClick = (ID) => {
+    const treeNodeClick = (ID, type = '') => {
       // 根据节点id进行搜索，清空搜索条件
       idData.activeId = ID;
       tabKey.value = '1';
+      if (type === 'init') getTabNum(idData.activeId);
       const { resetSearch } = proxy.$refs.monitorQuery;
       resetSearch();
     };
@@ -115,6 +116,7 @@ export default defineComponent({
         deleteStatus(false);
       } else {
         deleteStatus(true);
+        getTabNum(idData.activeId);
       }
       resetSort();
       getList();

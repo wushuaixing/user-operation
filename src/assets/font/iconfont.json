@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "22543758",
+      "name": "图",
+      "font_class": "tu",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
       "icon_id": "22305195",
       "name": "过期机构",
       "font_class": "guoqijigou",

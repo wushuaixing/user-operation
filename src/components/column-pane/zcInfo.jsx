@@ -19,7 +19,7 @@ export default defineComponent({
         </div>
         <div className="zc-info">
           <span className="zc-info-title">所在省份</span>：
-          <span className="zc-info-cent">{data.province || '-'}</span>
+          <span className="zc-info-cent">{data.address || '-'}</span>
         </div>
         <div className="zc-info">
           <span className="zc-info-title long">负责人/机构</span>：

@@ -102,6 +102,7 @@ export default defineComponent({
                 placeholder="身份证号/统一社会信用代码"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={(val) => (console.log(val, '23'))}
                 clearable={true}
               />
             </el-form-item>
@@ -156,7 +157,7 @@ export default defineComponent({
                 <el-form-item prop="approveTimeStart">
                   <el-date-picker
                     type="date"
-                    placeholder="开始日期"
+                    placeholder="开始时间"
                     v-model={state.approveTimeStart}
                     style={{ width: '130px' }}
                     disabledDate={(val) => disabledStartDate(val, 'approveTimeEnd')}
@@ -168,7 +169,7 @@ export default defineComponent({
                 <el-form-item prop="approveTimeEnd">
                   <el-date-picker
                     type="date"
-                    placeholder="结束日期"
+                    placeholder="结束时间"
                     v-model={state.approveTimeEnd}
                     style={{ width: '130px' }}
                     disabledDate={(val) => disabledEndDate(val, 'approveTimeStart')}
@@ -183,7 +184,7 @@ export default defineComponent({
                 <el-form-item prop="createTimeStart">
                   <el-date-picker
                     type="date"
-                    placeholder="开始日期"
+                    placeholder="开始时间"
                     v-model={state.createTimeStart}
                     style={{ width: '130px' }}
                     disabledDate={(val) => disabledStartDate(val, 'createTimeEnd')}
@@ -195,7 +196,7 @@ export default defineComponent({
                 <el-form-item prop="createTimeEnd">
                   <el-date-picker
                     type="date"
-                    placeholder="结束日期"
+                    placeholder="结束时间"
                     v-model={state.createTimeEnd}
                     style={{ width: '130px' }}
                     disabledDate={(val) => disabledEndDate(val, 'createTimeStart')}
@@ -212,9 +213,10 @@ export default defineComponent({
                 align="right"
                 unlink-panels
                 style={{ width: '286px' }}
+                class="query-date"
                 range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
                 shortcuts={dateRange()}
               >
               </el-date-picker>
@@ -227,7 +229,7 @@ export default defineComponent({
                   <el-form-item prop="updateTimeStart">
                     <el-date-picker
                       type="date"
-                      placeholder="开始日期"
+                      placeholder="开始时间"
                       v-model={state.updateTimeStart}
                       style={{ width: '130px' }}
                       disabledDate={(val) => disabledStartDate(val, 'updateTimeEnd')}
@@ -239,7 +241,7 @@ export default defineComponent({
                   <el-form-item prop="updateTimeEnd">
                     <el-date-picker
                       type="date"
-                      placeholder="结束日期"
+                      placeholder="结束时间"
                       v-model={state.updateTimeEnd}
                       style={{ width: '130px' }}
                       disabledDate={(val) => disabledEndDate(val, 'updateTimeStart')}
