@@ -27,8 +27,8 @@ const recordModule = (state, getTableList) => {
     const records = JSON.parse(storage.getItem('records')) || [];
     // eslint-disable-next-line no-unused-expressions
     content.trim() && records.unshift(content);
-    const uniqueRecords = [...new Set(records)];
-    storage.setItem('records', JSON.stringify(uniqueRecords.slice(0, 9)));
+    const uniqueRecords = [...new Set(records)].slice(0, 10);
+    storage.setItem('records', JSON.stringify(uniqueRecords));
     recordState.recordsList = uniqueRecords;
   };
   // 点击搜索
@@ -39,6 +39,9 @@ const recordModule = (state, getTableList) => {
       (key) => (params[key] = t(params[key], key !== 'content')),
     );
     state.params = {
+      ...params,
+    };
+    state.queryOptions = {
       ...params,
     };
     state.page = 1;
@@ -60,6 +63,7 @@ const mainModule = () => {
       court: '',
       url: '',
     },
+    queryOptions: {},
     dataList: [],
     total: 0,
     loading: false,
@@ -79,7 +83,7 @@ const mainModule = () => {
 
   const getTableList = () => {
     const params = {
-      ...(state.params),
+      ...(state.queryOptions),
       page: state.page,
     };
     state.loading = true;
@@ -101,6 +105,7 @@ const mainModule = () => {
 
   const resetForm = () => {
     proxy.$refs.queryForm.resetFields();
+    state.queryOptions = {};
     state.page = 1;
     getTableList();
   };
@@ -111,10 +116,12 @@ const mainModule = () => {
   };
   // 点击最近搜索
   const handleFill = (content = '') => {
-    state.params = {
+    const obj = {
       ...state.params,
       content,
     };
+    state.params = obj;
+    state.queryOptions = obj;
     state.page = 1;
     getTableList();
   };
