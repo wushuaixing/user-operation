@@ -123,6 +123,13 @@ export default defineComponent({
       },
     };
   },
+  watch: {
+    'report.reportVisible': function (newVal) {
+      if (!newVal) {
+        this.reportForm.time = ['', ''];
+      }
+    },
+  },
   setup() {
     const { proxy } = getCurrentInstance();
     const checkList = reactive({
@@ -152,12 +159,13 @@ export default defineComponent({
     const open = ({ id, name = '' }) => {
       proxy.$nextTick(() => {
         report.reportVisible = true;
-        proxy.reportForm.time = '';
         report.orgId = id;
         report.title = `客户报告-${name}`;
       });
     };
     const close = () => {
+      proxy.$refs.reportForm.resetFields();
+      proxy.reportForm.time = '';
       report.reportVisible = false;
     };
 
