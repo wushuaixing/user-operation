@@ -19,6 +19,8 @@ const MyOrgApi = {
   orgTree: (params) => axios.get(`/api/user/operate/orgTree?${queryApi(params)}`),
   // 原网站提取页
   htmlDetail: (id) => axios.get(`/api/user/structured/${id}/htmlDetailInfo`),
+  // 获取相似附件
+  getSimilarFile: (id) => axios.get(`/api/user/structured/getSimilarFile/${id}`),
 };
 
 export default MyOrgApi;

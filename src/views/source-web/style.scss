@@ -4,6 +4,7 @@
   min-height: 96vh;
   background: #fff;
   padding: 40px 40px 60px;
+  position: relative;
   &-title {
     margin-bottom: 40px;
     .source-title {
@@ -12,18 +13,102 @@
       line-height: 22px;
     }
   }
-  &-content {
-    &-tab {
+  &-tab {
+    height: 42px;
+    background: #EEF1F7;
+    display: flex;
+    flex-direction: row;
+    font-size: 18px;
+    line-height: 18px;
+    &-item {
       height: 42px;
-      background: #EEF1F7;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      font-size: 18px;
-      line-height: 18px;
+      line-height: 42px;
+      position: relative;
+      padding: 0 13px;
+      margin: 0 27px 0 8px;
       a {
         color: #20242E;
       }
+      .hasImg {
+        margin-right: 10px;
+      }
     }
+    .active {
+      font-weight: 600;
+      border-bottom: 2px solid #296DD3;
+      a {
+        color: #296DD3;
+      }
+    }
+
+  }
+  &-content {
+    &-html {
+      width: 864px;
+      text-align: center;
+      .html-item {
+        padding-top: 41px;
+        position: relative;
+        .html {
+          padding: 0 20px;
+          table {
+            width: 100% !important;
+          }
+          img {
+            width: 100% !important;
+          }
+          * {
+            max-width: 814px !important;
+          }
+        }
+        .title {
+          margin: 0 auto;
+          text-align: center;
+          color: #AD0700;
+          line-height: 28px;
+          font-size: 28px;
+          position: relative;
+          z-index: 12;
+          background: #fff;
+          padding: 0 37px 27px 37px;
+          display: inline-block;
+        }
+        .line {
+          height: 1px;
+          width: 100%;
+          background: #E2E4E9;
+          position: absolute;
+          top: 56px;
+        }
+      }
+    }
+  }
+}
+.attachList {
+  position: fixed;
+  top: 222px;
+  right: 10px;
+  width: 176px;
+  min-height: 160px;
+  box-shadow: 0px 1px 6px 0px rgba(0, 16, 43, 0.17);
+  margin-right: calc((100% - 1120px)/2);
+  padding: 20px;
+  &-title {
+    font-weight: 600;
+    color: #20242E;
+    line-height: 16px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  &-link {
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 6px;
+  }
+  .no-data {
+    color: #B2B8C9;
+    font-size: 12px;
+    line-height: 12px;
+    margin-bottom: 20px;
   }
 }
