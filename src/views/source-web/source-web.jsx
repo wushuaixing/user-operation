@@ -139,7 +139,7 @@ export default defineComponent({
             !hasOtherAttach ? (
               data.attachList.map((item) => (
                 <div className="attachList-link">
-                  <a key={item.fileId} href={item.url} target="_blank" class="button-link">{item.name}</a>
+                  <a key={item.fileId} href={item.url} class="button-link">{item.name}</a>
                 </div>
               ))
             ) : <div className="no-data">未找到相关附件</div>
@@ -153,7 +153,7 @@ export default defineComponent({
               data.attachList.length
                 ? data.attachList.map((item) => (
                   <div className="attachList-link">
-                    <a key={item.fileId} href={item.url} target="_blank" class="button-link">{item.name}</a>
+                    <a key={item.fileId} href={item.url} class="button-link">{item.name}</a>
                   </div>
                 )) : <div className="no-data">未找到相关附件</div>) : ''}
         </div>

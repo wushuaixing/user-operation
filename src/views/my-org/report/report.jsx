@@ -116,6 +116,13 @@ const reportFormOptions = {
 };
 
 export default defineComponent({
+  data() {
+    return {
+      reportForm: {
+        time: '',
+      },
+    };
+  },
   setup() {
     const { proxy } = getCurrentInstance();
     const checkList = reactive({
@@ -133,11 +140,8 @@ export default defineComponent({
       },
     });
 
-    const reportForm = reactive({
-      time: null,
-    });
     const timeChange = (val) => {
-      console.log(val, reportForm.time, '3');
+      console.log(val, proxy.reportForm.time, '3');
     };
     const report = reactive({
       reportVisible: false,
@@ -146,12 +150,14 @@ export default defineComponent({
     });
 
     const open = ({ id, name = '' }) => {
-      report.reportVisible = true;
-      report.orgId = id;
-      report.title = `客户报告-${name}`;
+      proxy.$nextTick(() => {
+        report.reportVisible = true;
+        proxy.reportForm.time = '';
+        report.orgId = id;
+        report.title = `客户报告-${name}`;
+      });
     };
     const close = () => {
-      reportForm.time = null;
       report.reportVisible = false;
     };
 
@@ -173,8 +179,8 @@ export default defineComponent({
         console.log(valid, '345');
         if (valid) {
           const params = {
-            start: dateUtils.formatStandardDate(reportForm.time[0]),
-            end: dateUtils.formatStandardDate(reportForm.time[1]),
+            start: dateUtils.formatStandardDate(proxy.reportForm.time[0]),
+            end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
             id: report.orgId,
           };
           MyOrgApi.exportOther(params).then((res) => {
@@ -198,7 +204,6 @@ export default defineComponent({
 
     return {
       checkList,
-      reportForm,
       report,
       open,
       close,
@@ -220,10 +225,11 @@ export default defineComponent({
       handleCheckAllChange,
       handleCheckedItemChange,
     } = this;
+    const { title, reportVisible = false } = report;
     return (
       <el-dialog
-        title={report.title}
-        v-model={report.reportVisible}
+        title={title}
+        v-model={reportVisible}
         onClose={ close }
         width="638px"
         v-slots={modalSlots}
@@ -237,16 +243,16 @@ export default defineComponent({
         >
           <el-form-item label="更新时间：" prop="time" rules={[{ required: true, message: '请选择更新时间', trigger: 'change' }]}>
             <el-date-picker
-              v-model={reportForm.time}
               style={{ width: '468px' }}
+              v-model={reportForm.time}
               class="report-date"
               type="daterange"
               unlink-panels
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
-              shortcuts={shortcuts}
               onChange={timeChange}
+              shortcuts={shortcuts}
             />
             </el-form-item>
           <el-form-item label="全部数据类型：">
