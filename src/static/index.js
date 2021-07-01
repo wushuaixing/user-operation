@@ -332,34 +332,6 @@ const ASSETS_INFO = [
   },
 ];
 
-// 审核管理列表-拍卖信息
-const AUCTION_INFO = [
-  {
-    lable: '处置机关',
-    key: 'court',
-  },
-  {
-    lable: '省份名称',
-    key: 'province',
-  },
-  {
-    lable: '开拍时间',
-    key: 'start',
-  },
-  {
-    lable: '评估价格',
-    key: 'consultPrice',
-  },
-  {
-    lable: '拍卖状态',
-    key: 'pmStatus',
-  },
-  {
-    lable: '起拍价格',
-    key: 'initialPrice',
-  },
-];
-
 const RECALL_REASON = [
   {
     label: '误点击',
@@ -471,7 +443,6 @@ export {
   PROCESS,
   PUSH_STATUS,
   ASSETS_INFO,
-  AUCTION_INFO,
   MONITOR_LIST,
   RECALL_REASON,
   NOPUSH_TIPS,

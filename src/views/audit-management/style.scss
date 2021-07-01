@@ -200,53 +200,6 @@
             }
           }
         }
-        .column-item-content{
-          .column-item-info{
-            li{
-              display: flex;
-              div{
-                max-width: 160px;
-              }
-            }
-          }
-          .auction-info{
-            ul{
-              display: flex;
-              flex-wrap: wrap;
-              li{
-                &:nth-child(odd){
-                  min-width: 240px;
-                }
-                &:nth-child(even){
-                  div{
-                    &:last-child{
-                      max-width: 104px;
-                    }
-                  }
-                }
-              }
-            }
-          }
-          .remark-info{
-            .before-circle{
-              position: relative;
-              padding-left: 10px;
-              &:before{
-                content: '';
-                position: absolute;
-                width: 5px;
-                height: 5px;
-                background: #20242E;
-                left: 0px;
-                border-radius: 50%;
-                top: 10px;
-              }
-            }
-            &-detail{
-              color: #7D8699;
-            }
-          }
-        }
       }
     }
     &-modal{

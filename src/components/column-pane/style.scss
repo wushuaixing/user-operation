@@ -67,3 +67,63 @@
   margin-bottom: 4px;
   margin-top: 2px;
 }
+
+
+.column-item-content{
+  .asset-info{
+    &-item{
+      display: flex;
+      &-label{
+        min-width: 70px;
+      }
+    }
+  }
+  .auction-info{
+    ul{
+      display: flex;
+      flex-wrap: wrap;
+      li{
+        display: flex;
+        &:nth-child(odd){
+          width: 55%;
+        }
+        &:nth-child(even){
+          width: 45%;
+        }
+        div{
+          &:first-child{
+            min-width: 70px;
+          }
+        }
+        .orange{
+          color:#FF871C ;
+        }
+        .green{
+          color: #1BBA7C;
+        }
+        .red{
+          color: #F93535;
+        }
+      }
+    }
+  }
+  .remark-info{
+    .before-circle{
+      position: relative;
+      padding-left: 10px;
+      &:before{
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background: #20242E;
+        left: 0px;
+        border-radius: 50%;
+        top: 10px;
+      }
+    }
+    &-detail{
+      color: #7D8699;
+    }
+  }
+}

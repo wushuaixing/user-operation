@@ -125,6 +125,45 @@ const ModalTitle = (props) => {
     <div className="yc-confirm-modal-body" style="color: rgb(78, 85, 102);">{text}</div>
   </div>;
 };
+
+// 审核管理列表-拍卖信息
+const auctionInfo = (pmStatus) => {
+  // eslint-disable-next-line no-nested-ternary
+  const obj = pmStatus === 3 ? { class: 'orange', label: '起拍价格' } : pmStatus === 5 ? { class: 'green', label: '成交价格' } : { class: '', label: '当前价格' };
+  return [
+    {
+      lable: '处置机关',
+      key: 'court',
+      class: 'court',
+    },
+    {
+      lable: '省份名称',
+      key: 'province',
+      class: 'province',
+    },
+    {
+      lable: '开拍时间',
+      key: 'start',
+      class: 'start',
+    },
+    {
+      lable: '评估价格',
+      key: 'consultPrice',
+      class: 'consultPrice',
+    },
+    {
+      lable: '拍卖状态',
+      key: 'pmStatus',
+      class: obj.class,
+    },
+    {
+      lable: obj.label,
+      key: 'initialPrice',
+      class: obj.class === 'green' ? 'red' : '',
+    },
+  ];
+};
+
 export {
-  taskAssignTabs, partData, auditTabs, monitorTabs, ModalTitle,
+  taskAssignTabs, partData, auditTabs, monitorTabs, ModalTitle, auctionInfo,
 };
