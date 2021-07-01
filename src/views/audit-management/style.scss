@@ -160,10 +160,22 @@
           min-width: 1200px;
           .switch{
             color: #296DD3;
+            margin-left: 26px;
+          }
+          .el-form-item{
+            &:last-child{
+              margin-right: 0px;
+            }
           }
         }
         .el-form-item{
-          margin: 0 10px 8px 0;
+          margin: 0 20px 16px 0;
+          &__label{
+            line-height: 32px !important;
+          }
+          &__content{
+            line-height: 32px !important;
+          }
           .el-input--suffix .el-input__inner{
             padding-right: 14px !important;
           }

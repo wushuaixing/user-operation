@@ -422,6 +422,24 @@ const PUSH_TIPS = [
     ],
   },
 ];
+const LABEL_TYPE = {
+  1: '资产所有人',
+  2: '债权人',
+  3: '资产线索',
+  4: '起诉人',
+  5: '竞买人',
+};
+const GENDER_TYPE = {
+  0: '未知',
+  1: '男',
+  2: '女',
+};
+
+// 匹配类型
+const MATCH_TYPE = {
+  0: '模糊',
+  1: '精确',
+};
 
 export {
   SORTER_TYPE,
@@ -447,4 +465,7 @@ export {
   RECALL_REASON,
   NOPUSH_TIPS,
   PUSH_TIPS,
+  LABEL_TYPE,
+  GENDER_TYPE,
+  MATCH_TYPE,
 };

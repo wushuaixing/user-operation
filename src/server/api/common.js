@@ -14,6 +14,31 @@ const CommonApi = {
 
   // 审核列表信息
   getAuditList: (params) => axios.post('/api/user/audit/getAuditList', clearEmpty(params)),
+
+  // 客户未读-召回数量
+  auditCountNum: (params) => axios.post('/api/user/audit/countNum', clearEmpty(params)),
+
+  // // 推送-不推送
+  // pushOrNot: (params) => axios.post('/api/user/audit/pushOrNot', clearEmpty(params)),
+  //
+  // // 退回-再次退回
+  // auditBack: (params) => axios.post('/api/user/audit/back', clearEmpty(params)),
+  //
+  // // 召回
+  // auditReCall: (params) => axios.post('/api/user/audit/reCall', clearEmpty(params)),
+
+  auditAction: (sign, params) => {
+    let url;
+    if (sign === 'recall') {
+      url = '/api/user/audit/reCall';
+    } else {
+      url = '/api/user/audit/pushOrNot';
+    }
+    return axios.post(url, clearEmpty(params));
+  },
+
+  // 结构化校验
+  assetDetail: (auctionId) => axios.get(`/api/user/audit/assetDetail?auctionId=${auctionId}`),
 };
 
 export default CommonApi;

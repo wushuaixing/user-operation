@@ -3,6 +3,7 @@ import {
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
 import queryModule from '@/views/audit-management/business/query';
+import { dateRange } from '@/utils';
 
 export default defineComponent({
   setup() {
@@ -52,7 +53,7 @@ export default defineComponent({
               <el-input
                 v-model={formState.parsingTitle}
                 placeholder="拍卖信息标题"
-                style={{ width: '220px' }}
+                style={{ width: '210px' }}
                 maxlength="100"
               />
             </el-form-item>
@@ -69,7 +70,7 @@ export default defineComponent({
                 type="date"
                 placeholder="开始时间"
                 v-model={formState.createTimeStart}
-                style="width: 135px"
+                style="width: 130px"
               />
             </el-form-item>
             <el-form-item label="至" prop="createTimeEnd" class="time-end">
@@ -77,7 +78,7 @@ export default defineComponent({
                 type="date"
                 placeholder="结束时间"
                 v-model={formState.createTimeEnd}
-                style="width: 135px"
+                style="width: 130px"
               />
             </el-form-item>
             <el-form-item label="拍卖状态：" prop='pmStatus'>
@@ -112,21 +113,18 @@ export default defineComponent({
                 style="width: 130px"
               />
             </el-form-item>
-            <el-form-item label="开拍时间：" prop="startStart" style={{ marginRight: 0 }}>
+            <el-form-item label="开拍时间：" prop="start" class="time-end" >
               <el-date-picker
-                type="date"
-                placeholder="开始时间"
-                v-model={formState.startStart}
-                style="width: 130px"
-              />
-            </el-form-item>
-            <el-form-item label="至" prop="startEnd" class="time-end">
-              <el-date-picker
-                type="date"
-                placeholder="结束时间"
-                v-model={formState.startEnd}
-                style="width: 130px"
-              />
+                v-model={formState.start}
+                type="daterange"
+                unlink-panels
+                style={{ width: '286px' }}
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                shortcuts={dateRange()}
+              >
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="更新时间：" prop="updateTimeStart" style={{ marginRight: 0 }}>
               <el-date-picker

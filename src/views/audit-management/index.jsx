@@ -1,5 +1,5 @@
 import {
-  defineComponent, reactive, onMounted, getCurrentInstance, toRaw,
+  defineComponent, reactive, onMounted, getCurrentInstance, toRaw, watch,
 } from 'vue';
 import CommonApi from '@/server/api/common';
 import { auditTabs } from '@/static/fn';
@@ -14,7 +14,6 @@ import './style.scss';
 const option = [{ label: '正式', val: 1 }, { label: '试用', val: 0 }];
 
 export default defineComponent({
-
   setup() {
     const { proxy } = getCurrentInstance();
     const treeState = reactive({
@@ -32,6 +31,8 @@ export default defineComponent({
       page: 1,
       num: 10,
       total: 0,
+      readNotNum: '',
+      recallNum: '',
     });
     const getTableList = () => {
       const params = toRaw(formState);
@@ -47,74 +48,93 @@ export default defineComponent({
         }
       });
     };
-    const tabChange = (isClear) => {
-      const { allList } = treeState;
+    const typeChange = (isClear) => {
+      const { allList, type } = treeState;
       treeState.treeList = allList.filter((i) => i.type === treeState.type);
       if (isClear === 'clear') {
         formState.orgId = '';
-        proxy.$router.push('/auditManagement');
+        proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
       }
     };
     const treeItemChange = (id, sign) => {
       const { treeList, type } = toRaw(treeState);
-      if (sign === 'query' && id) {
-        if (!(treeList.filter((i) => i.id === id) || []).length) {
-          treeState.type = option.find((i) => i.val !== type).val;
-          tabChange();
-        }
+      let orgId = id;
+      if (sign === 'all') {
+        orgId = type ? -1 : -2;
       }
-      formState.orgId = id;
-      proxy.$router.push(`/auditManagement${id && '/'}${id}`);
+      if (sign === 'query') {
+        if (id < 0) {
+          treeState.type = id === -1 ? 1 : 0;
+        } else if (!(treeList.filter((i) => i.id === id) || []).length) {
+          treeState.type = option.find((i) => i.val !== type).val;
+        }
+        typeChange();
+      }
+      formState.orgId = id < 0 ? '' : id;
+      proxy.$router.push(`/auditManagement/${orgId}`);
       getTableList();
     };
-    const getAllList = () => {
+    const getTreeList = () => {
       const { id } = proxy.$route.params;
       CommonApi.listTopOrg().then((res) => {
         const { code, data = [] } = res.data || {};
         if (code === 200) {
           treeState.allList = data;
-          tabChange();
+          typeChange();
           treeItemChange(Number(id) || '', 'query');
         } else {
           proxy.$message.error('请求出错');
         }
       });
     };
-    const toDetail = (id) => {
-      window.open(`/structureCheck/${id}`, '_blank');
+    const toDetail = (auctionId) => {
+      window.open(`/structureCheck/${auctionId}`, '_blank');
     };
-    const ColumnAction = ({ id }) => {
+
+    const ColumnAction = (props) => {
+      const { auctionId } = props || {};
+      console.log(props);
       const { tableType } = formState;
       const fn = Number(tableType) % 2 !== 0;
       return <div className='action-column'>
-        <el-button type="text" class='button-link top' onClick={() => toDetail(id)}>结构化校验</el-button>
-        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push') }>推送</el-button>}
-        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush') }>不推送</el-button>}
-        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall') }>召回</el-button>}
+        <el-button type="text" class='button-link top' onClick={() => toDetail(auctionId)}>结构化校验</el-button>
+        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push', props) }>推送</el-button>}
+        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush', props) }>不推送</el-button>}
+        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall', props) }>召回</el-button>}
       </div>;
     };
-
+    const getNum = () => {
+      const { orgId } = formState;
+      CommonApi.auditCountNum({ orgId, type: 0 }).then((res) => {
+        const { code, data = {} } = res.data || {};
+        if (code === 200) {
+          const { readNotNum, recallNum } = data;
+          tableState.readNotNum = readNotNum || '0';
+          tableState.recallNum = recallNum || '0';
+        }
+      });
+    };
     const pageChange = () => {
 
     };
-    const sizeChange = () => {
-
-    };
+    watch(() => formState.tableType, (newVal, oldVal) => {
+      if (newVal !== oldVal) getTableList();
+    });
     onMounted(() => {
-      getAllList();
+      getTreeList();
+      getNum();
       document.title = '审核管理';
     });
     return {
       treeState,
       treeItemChange,
-      tabChange,
+      typeChange,
       formState,
       onSerch,
       resetForm,
       tableState,
       ColumnAction,
       pageChange,
-      sizeChange,
       modalState,
       modalHtml,
       modalSlots,
@@ -125,11 +145,10 @@ export default defineComponent({
       treeState,
       formState,
       treeItemChange,
-      tabChange,
+      typeChange,
       tableState,
       ColumnAction,
       pageChange,
-      sizeChange,
       modalState,
       modalSlots,
       modalHtml,
@@ -149,7 +168,7 @@ export default defineComponent({
                 </div>
                 <div className="content-left-tree-tabs">
                     <div className="content-left-tree-tabs-content">
-                      <el-radio-group v-model={treeState.type} onChange={() => tabChange('clear')}>
+                      <el-radio-group v-model={treeState.type} onChange={() => typeChange('clear')}>
                         {
                           option.map((i) => <el-radio-button label={i.val} key={i.val}>{ i.label}</el-radio-button>)
                         }
@@ -157,7 +176,7 @@ export default defineComponent({
                     </div>
                 </div>
                 <div className="content-left-tree-list">
-                    <div className="content-left-tree-list-title" onClick={() => treeItemChange('')}>
+                    <div className="content-left-tree-list-title" onClick={() => treeItemChange('', 'all')}>
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
                       </svg>
@@ -187,7 +206,7 @@ export default defineComponent({
                   <div className="content-right-table-tabs">
                     <el-tabs v-model={formState.tableType}>
                       {
-                        auditTabs(23, 2).map((i) => (
+                        auditTabs(tableState.readNotNum, tableState.recallNum).map((i) => (
                           <el-tab-pane
                             label={i.label}
                             name={i.name}
@@ -213,7 +232,6 @@ export default defineComponent({
                   </el-table>
                   <el-pagination
                     current-change={pageChange}
-                    size-change={sizeChange}
                     background
                     current-page={tableState.page}
                     layout='total, prev, pager, next, jumper'

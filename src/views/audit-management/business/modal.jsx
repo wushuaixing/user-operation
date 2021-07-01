@@ -1,23 +1,56 @@
-import { reactive } from 'vue';
+import { reactive, getCurrentInstance } from 'vue';
 import { ModalTitle } from '@/static/fn';
-import { NOPUSH_TIPS, PUSH_TIPS, RECALL_REASON } from '@/static';
+import {
+  NOPUSH_TIPS, PUSH_TIPS, RECALL_REASON, MATCH_TYPE,
+} from '@/static';
+import CommonApi from '@/server/api/common';
 
 const modalModule = () => {
+  const { proxy } = getCurrentInstance();
   const modalState = reactive({
     type: '',
     visible: false,
     remark: '',
     noPushRemark: '',
-    important: '',
+    important: '1',
     pushRemark: '',
     recallReason: '', // 召回原因类型 1 误点击 2 备注填错 3 审核出错 9 其他
+    title: '',
+    importants: '',
   });
   // 点击确定
   const handleClick = () => {
-    const { type } = modalState;
+    const {
+      type, id, remark, noPushRemark, important, pushRemark, recallReason,
+    } = modalState;
+    // eslint-disable-next-line no-unused-vars
+    let obj = {};
+    switch (type) {
+      case 'pushConfirm':
+        obj = {
+          approveStatus: 1, id, important, remark: pushRemark, message: '推送成功',
+        }; break;
+      case 'noPush':
+        obj = {
+          approveStatus: 0, id, important, remark: noPushRemark, message: '推送成功',
+        }; break;
+      case 'recall':
+        obj = {
+          id, recallReason, remark, message: '召回成功',
+        }; break;
+      default: break;
+    }
     if (type === 'push') {
       modalState.type = 'pushConfirm';
     } else {
+      CommonApi.auditAction(type, obj).then((res) => {
+        const { code } = res.data || {};
+        if (code === 200) {
+          proxy.$message.success(obj.message);
+        } else {
+          proxy.$message.error('请求错误');
+        }
+      });
       modalState.visible = false;
     }
   };
@@ -31,10 +64,12 @@ const modalModule = () => {
     }
   };
   // 打开弹窗
-  const openModal = (type) => {
+  const openModal = (type, { parsingTitle, important, id }) => {
+    modalState.title = parsingTitle;
+    modalState.importants = important;
     modalState.type = type;
+    modalState.id = id;
     modalState.visible = true;
-    console.log(modalState.type);
   };
   // 填充内容
   const handleFill = (key, val) => {
@@ -111,7 +146,7 @@ const modalModule = () => {
     <div className="push-modal-body">
       <div className="push-modal-body-title flex">
         <span className='label'>拍卖标题：</span>
-        <span>姜修平所有的深喉口固定台式压力机等设备一宗姜修平所有的深喉口固定台式压力机等设备一宗</span>
+        <span>{modalState.title}</span>
       </div>
       <div className="push-modal-body-desc flex">
         <span className='label'>审核备注：</span>
@@ -124,13 +159,13 @@ const modalModule = () => {
       </div>
       <div className="push-modal-body-type flex">
         <span className='label'>系统匹配：</span>
-        <span>精准匹配</span>
+        <span>{MATCH_TYPE[1]}匹配</span>
       </div>
       <div className="push-modal-body-level flex">
         <span className='label'>推送等级：</span>
         <el-radio-group v-model={modalState.important}>
+          <el-radio label="1">精确 </el-radio>
           <el-radio label="0">模糊 </el-radio>
-          <el-radio label="1">精准 </el-radio>
         </el-radio-group>
       </div>
       <div className="push-modal-body-tips flex">
@@ -157,7 +192,7 @@ const modalModule = () => {
       <div className="push-confirm-modal-body">
         <div className='push-confirm-modal-body-level'>
           <span className='label'>推送等级：</span>
-          <span>精确</span>
+          <span>{MATCH_TYPE[modalState.important]}</span>
         </div>
         <div className='push-confirm-modal-body-remark'>
           <span className="label">审核备注：</span>

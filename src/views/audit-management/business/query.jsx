@@ -27,6 +27,7 @@ const queryModule = () => {
     updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
     updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
     isOpen: false,
+    start: '',
   });
   const onSerch = () => {
     console.log(toRaw(formState));

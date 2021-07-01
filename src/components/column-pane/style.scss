@@ -74,8 +74,9 @@
   margin-top: 2px;
 }
 
-
+//审核管理列表
 .column-item-content{
+  //资产信息
   .asset-info{
     &-item{
       display: flex;
@@ -84,6 +85,7 @@
       }
     }
   }
+  //拍卖信息
   .auction-info{
     ul{
       display: flex;
@@ -113,6 +115,7 @@
       }
     }
   }
+  //匹配备注信息
   .remark-info{
     .before-circle{
       position: relative;
