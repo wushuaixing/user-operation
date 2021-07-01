@@ -78,7 +78,7 @@ export default defineComponent({
         text: '点击确定，将为您导出选中的所有信息',
         title: '确认导出选中的所有信息吗？',
       };
-      multiple.idList = type ? [] : multiple.multipleSelection.map((item) => item.id);
+      multiple.idList = type ? [] : multiple.multipleSelection.map((item) => item.auctionId);
       proxy.$emit('export');
     };
     const exportAction = (param) => {
@@ -172,7 +172,7 @@ export default defineComponent({
           tooltip-effect="dark"
           onSelectionChange={(val) => (multiple.multipleSelection = val)}
           onSortChange={handleSortChange}
-          row-key={(val) => val.id}
+          row-key={(val) => val.auctionId}
           v-slots={multiple.empty}
           row-class-name="row-class"
         >

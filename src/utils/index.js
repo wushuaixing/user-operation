@@ -41,16 +41,23 @@ const dateUtils = {
 };
 
 // 文件下载处理
-const fileDownload = (res) => {
+const fileDownload = (res, isReport = false) => {
   const { data } = res;
   // 创建blob对象
   const blod = new Blob([data], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   });
-  // 从返回数据中获取文件名称
-  let fileName = res.headers['content-disposition'].split('"')[1];
-  // 由于中文出现乱码 需要转码
-  fileName = decodeURIComponent(fileName).replace(/(.xlsx)/g, '');
+  let fileName;
+  if (isReport) {
+    // 若是客户报告
+    const name = res.request.responseURL.split('name=')[1].split('&startTime')[0];
+    fileName = decodeURIComponent(name);
+  } else {
+    // 从返回数据中获取文件名称
+    const name = res.headers['content-disposition'].split('"')[1];
+    // 由于中文出现乱码 需要转码
+    fileName = decodeURIComponent(name).replace(/(.xlsx)/g, '');
+  }
   // 创建a标签
   const elink = document.createElement('a');
   elink.style.display = 'none';

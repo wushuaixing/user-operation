@@ -46,7 +46,7 @@ export default defineComponent({
         if (code === 200) {
           const { tree } = data;
           treeData.treeData = [tree];
-          proxy.$emit('treeNodeClick', tree.id);
+          proxy.$emit('treeNodeClick', tree.id, 'init');
           highLight(tree.id);
           filterTree(tree, '');
         } else {
@@ -80,6 +80,7 @@ export default defineComponent({
           class="monitor-tree-select"
           v-slots={selectSlots}
           v-model={treeData.searchValue}
+          onInput={() => treeData.searchValue = treeData.searchValue.replace(/\s+/g, '')}
           filterable
           placeholder="请输入机构名称">
           {

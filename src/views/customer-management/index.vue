@@ -435,7 +435,7 @@ export default {
     }
     &-right {
       flex: 1 !important;
-      width: 500px;
+      width: 1px;
       background-color: #fff;
       .customer-detail {
         display: flex;

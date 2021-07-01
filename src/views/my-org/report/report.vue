@@ -1,29 +1,31 @@
 <template>
   <el-dialog
-    title="创建域名机构"
+    :title="title"
     v-model="reportVisible"
     @close="close"
     width="638px"
+    destroy-on-close
   >
     <el-form
       :model="reportForm"
       ref="reportForm"
       v-bind="reportFormOptions.options"
-      :rules="reportFormOptions.rules"
     >
-      <el-form-item label="更新时间：" prop="time">
+      <el-form-item label="更新时间：" prop="time" :rules="[{ required: true, message: '请选择更新时间', trigger: 'change',},]">
         <el-date-picker
           v-model="reportForm.time"
+          key="report-date1"
           style="width: 468px"
+          class="report-date"
           type="daterange"
-          align="right"
           unlink-panels
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
           :shortcuts="shortcuts"
-        >
-        </el-date-picker>
+          @change="timeChange"
+        />
+        <el-input style="display: none"></el-input>
       </el-form-item>
       <el-form-item label="全部数据类型：">
         <div class="zcjk-rules-box">
@@ -34,6 +36,7 @@
           >
             <el-checkbox
               class="zcjk-rules-box-item-moduleType"
+              disabled
               :indeterminate="checkList[item.key].isIndeterminate"
               v-model="checkList[item.key].checkAll"
               @change="(val) => handleCheckAllChange(val, item.key)"
@@ -47,6 +50,7 @@
               <el-checkbox
                 v-for="child in item.children"
                 :label="child.val"
+                disabled
                 :key="child.val"
               >{{ child.label }}
               </el-checkbox>
@@ -64,50 +68,58 @@
   </el-dialog>
 </template>
 
-<script lang="ts">
-import { ref, reactive, defineComponent } from 'vue';
+<script>
+import {
+  ref, reactive, defineComponent, getCurrentInstance,
+} from 'vue';
 import MyOrgApi from '@/server/api/my-org';
+import { dateUtils, fileDownload } from '@/utils';
 
+const shortcuts = [{
+  text: '最近一天',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24);
+    return [start, end];
+  })(),
+}, {
+  text: '最近一周',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+    return [start, end];
+  })(),
+}, {
+  text: '最近一个月',
+  value: (() => {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - 1);
+    return [start, end];
+  })(),
+}];
 export default defineComponent({
+  data() {
+    return {
+      time: '',
+    };
+  },
   setup() {
-    const shortcuts = [{
-      text: '最近一周',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        return [start, end];
-      })(),
-    }, {
-      text: '最近一个月',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        return [start, end];
-      })(),
-    }, {
-      text: '最近三个月',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-        return [start, end];
-      })(),
-    }];
+    const { proxy } = getCurrentInstance();
     const reportFormOptions = {
       options: {
         labelPosition: 'right',
         labelWidth: '138px',
-        destroyOnClose: true,
         class: 'report-modal-form',
       },
       rules: {
-        time: {
-          required: true,
-          message: '请选择更新时间',
-          trigger: 'change',
-        },
+        time: [
+          {
+            required: true, message: '请选择更新时间', trigger: 'change',
+          },
+        ],
       },
       itemsChecked: [
         {
@@ -116,65 +128,77 @@ export default defineComponent({
           children: [
             {
               label: '资产拍卖',
+              val: '1',
+            },
+            {
+              label: '土地信息',
               val: '2',
             },
             {
-              label: '土地数据',
-              val: '29',
-            },
-            {
-              label: '招标中标',
-              val: '30',
+              label: '无形资产',
+              val: '3',
             },
             {
               label: '代位权',
               val: '4',
             },
             {
-              label: '金融资产',
-              val: '31',
+              label: '股权质押',
+              val: '5',
             },
             {
               label: '动产抵押',
-              val: '32',
-            },
-            {
-              label: '无形资产',
-              val: '41',
+              val: '6',
             },
             {
               label: '查解封资产',
-              val: '49',
+              val: '7',
             },
             {
-              label: '股权质押',
-              val: '44',
-            },
-            {
-              label: '车辆信息',
-              val: '52',
+              label: '在建工程',
+              val: '8',
             },
             {
               label: '不动产登记',
-              val: '51',
+              val: '9',
+            },
+            {
+              label: '车辆信息',
+              val: '10',
+            },
+            {
+              label: '金融资产',
+              val: '11',
+            },
+            {
+              label: '招投标',
+              val: '12',
             },
           ],
         },
         {
-          title: '资产挖掘-在建工程',
-          key: 'zjgc',
+          title: '风险参考',
+          key: 'fxck',
           children: [
             {
-              label: '建设单位',
-              val: '54',
+              label: '破案重组',
+              val: '13',
             },
             {
-              label: '中标单位',
-              val: '55',
+              label: '失信记录',
+              val: '14',
             },
             {
-              label: '施工单位',
-              val: '56',
+              label: '限制高消费',
+              val: '15',
+            },
+            {
+              label: '诉讼立案',
+              val: '16',
+            },
+            {
+              label: '经营风险',
+              val: '17',
             },
           ],
         },
@@ -183,38 +207,38 @@ export default defineComponent({
     const checkList = {
       zcwj: {
         checkAll: true,
-        checkedData: [
-          '2',
-          '29',
-          '30',
-          '4',
-          '31',
-          '32',
-          '41',
-          '49',
-          '44',
-          '52',
-          '51',
-        ],
+        checkedData: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
         isIndeterminate: false,
-        options: ['2', '29', '30', '4', '31', '32', '41', '49', '44', '52', '51'],
+        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
       },
-      zjgc: {
+      fxck: {
         checkAll: true,
-        checkedData: ['54', '55', '56'],
+        checkedData: ['13', '14', '15', '16', '17'],
         isIndeterminate: false,
-        options: ['54', '55', '56'],
+        options: ['13', '14', '15', '16', '17'],
       },
     };
+
     const reportForm = reactive({
       time: '',
     });
+    const timeChange = (val) => {
+      console.log(val, reportForm.time, '2');
+    };
     const reportVisible = ref(false);
     const orgId = ref(0);
+    const title = ref('');
 
-    const open = (id) => {
-      reportVisible.value = true;
-      orgId.value = id;
+    const open = ({ id, name = '' }) => {
+      proxy.$nextTick(() => {
+        reportVisible.value = true;
+        orgId.value = id;
+        title.value = `客户报告-${name}`;
+      });
+    };
+    const close = () => {
+      proxy.$refs.reportForm.resetFields();
+      reportVisible.value = false;
     };
 
     // 权限模块-全选
@@ -231,11 +255,17 @@ export default defineComponent({
 
     // 点击确定
     const handlereport = () => {
-      const params = {
-        time: '',
-      };
-      MyOrgApi.exportOther(params).then(() => {
-
+      proxy.$refs.reportForm.validate((valid) => {
+        if (valid) {
+          const params = {
+            start: dateUtils.formatStandardDate(reportForm.time[0]),
+            end: dateUtils.formatStandardDate(reportForm.time[1]),
+            id: orgId.value,
+          };
+          MyOrgApi.exportOther(params).then((res) => {
+            fileDownload(res, true);
+          });
+        }
       });
     };
 
@@ -246,10 +276,13 @@ export default defineComponent({
       reportFormOptions,
       checkList,
       reportForm,
-      reportVisible,
+      timeChange,
       shortcuts,
+      reportVisible,
       orgId,
+      title,
       open,
+      close,
       handleCheckAllChange,
       handleCheckedItemChange,
       handlereport,
@@ -261,6 +294,19 @@ export default defineComponent({
 </script>
 <style lang="scss">
   .report-modal-form {
+    .el-form-item__content {
+      .report-date {
+        .el-range__icon {
+          line-height: 24px;
+        }
+        .el-range-separator {
+          line-height: 24px;
+        }
+        .el-range__close-icon {
+          line-height: 24px;
+        }
+      }
+    }
     .zcjk-rules-box {
       padding: 5px 0 16px 16px;
       width: 450px;
@@ -276,7 +322,7 @@ export default defineComponent({
           }
         }
         .el-checkbox {
-          min-width: 100px;
+          min-width: 105px;
           line-height: 20px !important;
           margin-right: 0;
           &__label {

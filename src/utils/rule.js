@@ -37,6 +37,11 @@ export const normalRoutes = [
     name: 'monitorManage',
     component: () => import('@/views/my-org/monitor'),
   },
+  {
+    path: '/sourceWeb',
+    name: 'sourceWeb',
+    component: () => import('@/views/source-web/source-web'),
+  },
 ];
 
 export const adminRoutes = [
