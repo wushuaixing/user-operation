@@ -73,3 +73,66 @@
   margin-bottom: 4px;
   margin-top: 2px;
 }
+
+//审核管理列表
+.column-item-content{
+  //资产信息
+  .asset-info{
+    &-item{
+      display: flex;
+      &-label{
+        min-width: 70px;
+      }
+    }
+  }
+  //拍卖信息
+  .auction-info{
+    ul{
+      display: flex;
+      flex-wrap: wrap;
+      li{
+        display: flex;
+        &:nth-child(odd){
+          width: 55%;
+        }
+        &:nth-child(even){
+          width: 45%;
+        }
+        div{
+          &:first-child{
+            min-width: 70px;
+          }
+        }
+        .orange{
+          color:#FF871C ;
+        }
+        .green{
+          color: #1BBA7C;
+        }
+        .red{
+          color: #F93535;
+        }
+      }
+    }
+  }
+  //匹配备注信息
+  .remark-info{
+    .before-circle{
+      position: relative;
+      padding-left: 10px;
+      &:before{
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background: #20242E;
+        left: 0px;
+        border-radius: 50%;
+        top: 10px;
+      }
+    }
+    &-detail{
+      color: #7D8699;
+    }
+  }
+}

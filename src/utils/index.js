@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { GENDER_TYPE, LABEL_TYPE } from '@/static';
 /**
  * 去除对象中空值
  * @param obj
@@ -103,7 +104,7 @@ const clone = (obj) => {
 
 const floatFormat = (str) => {
   const num = parseFloat(str);
-  if (Number.isNaN(num) || Array.isArray(str)) return '-';
+  if (Number.isNaN(num) || num <= 0) return '-';
   const result = Number(num.toFixed(2)).toLocaleString();
   if (!result.split('.')[1]) return `${result}.00 元`;
   return `${result} 元`;
@@ -147,7 +148,28 @@ const dateRange = () => [{
     return [start, end];
   })(),
 }];
+/**
+ * 将数组对象中的空值变为'-'
+ * @param arr
+ * @returns {{}[]}
+ */
+const replaceEmpty = (arr = []) => {
+  const fn = (obj = {}) => {
+    const newObj = {};
+    Object.keys(obj).forEach((i) => newObj[i] = obj[i] ? obj[i] : '-');
+    return newObj;
+  };
+  return arr.map((i) => fn(i));
+};
+
+const handleObligors = (arr = []) => {
+  const dynamicArr = (arr || []).map((i) => {
+    const { labelType, gender } = i || {};
+    return ({ ...i, labelType: LABEL_TYPE[labelType], gender: GENDER_TYPE[gender] });
+  });
+  return replaceEmpty(dynamicArr);
+};
 
 export {
-  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat, ranStr, dateRange,
+  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat, ranStr, dateRange, replaceEmpty, handleObligors,
 };
