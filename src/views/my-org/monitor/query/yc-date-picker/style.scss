@@ -1,0 +1,36 @@
+.yc-query-date {
+  position: relative;
+  display: inline;
+  &-picker {
+    margin-bottom: 15px;
+    .el-range__icon {
+      line-height: 24px;
+    }
+    .el-range-separator {
+      line-height: 24px;
+    }
+    .el-range__close-icon {
+      line-height: 24px;
+    }
+  }
+  .input-style {
+    position: absolute;
+    width: 99px;
+    height: 24px;
+    top: -4px;
+    .el-input__inner {
+      height: 24px;
+      line-height: 24px;
+      border: none;
+    }
+    .el-input__inner:focus {
+      box-shadow: none;
+    }
+  }
+  .left {
+    left: 30px;
+  }
+  .right {
+    right: 35px;
+  }
+}
