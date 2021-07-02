@@ -29,7 +29,7 @@ const CommonApi = {
 
   auditAction: (sign, params) => {
     let url;
-    if (sign === 'recall') {
+    if (sign === 'reCall') {
       url = '/api/user/audit/reCall';
     } else {
       url = '/api/user/audit/pushOrNot';

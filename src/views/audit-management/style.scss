@@ -83,7 +83,6 @@
         }
         &-list{
           padding-top: 16px;
-          height: 72vh;
           overflow: auto;
           position: relative;
           //滚动条的宽度
@@ -167,6 +166,18 @@
               margin-right: 0px;
             }
           }
+          .section-date{
+            .el-date-editor{
+              .el-range{
+                &__icon,&__close-icon{
+                  line-height: 26px;
+                }
+                &-separator{
+                  line-height: 24px;
+                }
+              }
+            }
+          }
         }
         .el-form-item{
           margin: 0 20px 16px 0;
@@ -211,6 +222,9 @@
               margin-left: 0 !important;
             }
           }
+        }
+        .el-table__body-wrapper{
+          @include scoll-style
         }
       }
     }
