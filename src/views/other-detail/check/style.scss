@@ -64,9 +64,18 @@
         display: flex;
         padding-left: 38px;
         margin-top: 32px;
+        position: relative;
         .label{
           min-width: 42px !important;
           color: #20242E;
+        }
+        .val-length{
+          position: absolute;
+          bottom: 8px;
+          right: 12px;
+          color: #7D8699;
+          font-size: 12px;
+          line-height: 12px;
         }
       }
     }

@@ -52,12 +52,24 @@ const monitorTabs = (unReadNum) => [
 ];
 
 // 结构化校验-详情
-const partData = (params) => {
+const handlePart = (params) => {
   const {
-    ah, remark, buildingArea, collateral, houseType, landArea, priorityPrice, title, url, wsFindStatus, wsInAttach, wsUrl, status,
+    ah, remark, buildingArea, collateral, houseType, landArea, priorityPrice, title, id, wsFindStatus, wsInAttach, wsUrl, status, isBack,
   } = params;
   const statusFn = (i = '') => (AUCTION_STATUS.slice(1).find((j) => j.value === i.toString()) || {}).label;
-  const areaFn = (i = '') => (!Number(i) ? '-' : Number(i).toFixed(2));
+  const areaFn = (i = '') => (Number(i) <= 0 ? '-' : Number(i).toFixed(2));
+  const list = wsFindStatus ? [{
+    lable: '相关文书案号', val: ah || [], key: 'ah',
+  },
+  {
+    lable: '文书链接地址', val: wsUrl || [], key: 'wsUrl',
+  },
+  {
+    lable: '见附件情况', val: WSINATTACH_STATUS[wsInAttach], key: 'wsInAttach',
+  },
+  {
+    lable: '优先受偿额', val: floatFormat(priorityPrice), key: 'priorityPrice',
+  }] : [];
   return [
     {
       label: '基本信息',
@@ -65,15 +77,15 @@ const partData = (params) => {
       width: '100%',
       list: [
         {
-          lable: '标题', val: title || '-', key: 'title', url,
+          lable: '标题', val: title || '-', key: 'title', id,
         },
         {
           lable: '拍卖状态', val: statusFn(status) || '-', key: 'status',
         },
-        {
+        isBack && {
           lable: '退回备注', val: remark || '-', key: 'remark', color: '#f93535',
         },
-      ],
+      ].filter((i) => i),
     },
     {
       label: '房产/土地信息',
@@ -102,19 +114,8 @@ const partData = (params) => {
         {
           lable: '查找情况', val: DOCUMENTFIND_STATUS[wsFindStatus] || '-', key: 'wsFindStatus',
         },
-        {
-          lable: '相关文书案号', val: ah || [], key: 'ah',
-        },
-        {
-          lable: '文书链接地址', val: wsUrl || [], key: 'wsUrl',
-        },
-        {
-          lable: '见附件情况', val: WSINATTACH_STATUS[wsInAttach], key: 'wsInAttach',
-        },
-        {
-          lable: '优先受偿额', val: floatFormat(priorityPrice), key: 'priorityPrice',
-        },
-      ],
+        ...list,
+      ].filter((i) => i),
     },
   ];
 };
@@ -125,6 +126,45 @@ const ModalTitle = (props) => {
     <div className="yc-confirm-modal-body" style="color: rgb(78, 85, 102);">{text}</div>
   </div>;
 };
+
+// 审核管理列表-拍卖信息
+const auctionInfo = (pmStatus) => {
+  // eslint-disable-next-line no-nested-ternary
+  const obj = pmStatus === 3 ? { class: 'orange', label: '起拍价格' } : pmStatus === 5 ? { class: 'green', label: '成交价格' } : { class: '', label: '当前价格' };
+  return [
+    {
+      lable: '处置机关',
+      key: 'court',
+      class: 'court',
+    },
+    {
+      lable: '省份名称',
+      key: 'province',
+      class: 'province',
+    },
+    {
+      lable: '开拍时间',
+      key: 'start',
+      class: 'start',
+    },
+    {
+      lable: '评估价格',
+      key: 'consultPrice',
+      class: 'consultPrice',
+    },
+    {
+      lable: '拍卖状态',
+      key: 'pmStatus',
+      class: obj.class,
+    },
+    {
+      lable: obj.label,
+      key: 'initialPrice',
+      class: obj.class === 'green' ? 'red' : '',
+    },
+  ];
+};
+
 export {
-  taskAssignTabs, partData, auditTabs, monitorTabs, ModalTitle,
+  taskAssignTabs, handlePart, auditTabs, monitorTabs, ModalTitle, auctionInfo,
 };

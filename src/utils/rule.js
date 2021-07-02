@@ -23,7 +23,7 @@ export const normalRoutes = [
     component: () => import('@/views/document/serch/index.vue'),
   },
   {
-    path: '/structureCheck/:id',
+    path: '/structureCheck/:auctionId',
     name: 'structureCheck',
     component: () => import('@/views/other-detail/check/index'),
   },
@@ -38,7 +38,7 @@ export const normalRoutes = [
     component: () => import('@/views/my-org/monitor'),
   },
   {
-    path: '/sourceWeb',
+    path: '/sourceWeb/:id',
     name: 'sourceWeb',
     component: () => import('@/views/source-web/source-web'),
   },

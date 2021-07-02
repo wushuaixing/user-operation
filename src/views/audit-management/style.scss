@@ -160,10 +160,22 @@
           min-width: 1200px;
           .switch{
             color: #296DD3;
+            margin-left: 26px;
+          }
+          .el-form-item{
+            &:last-child{
+              margin-right: 0px;
+            }
           }
         }
         .el-form-item{
-          margin: 0 10px 8px 0;
+          margin: 0 20px 16px 0;
+          &__label{
+            line-height: 32px !important;
+          }
+          &__content{
+            line-height: 32px !important;
+          }
           .el-input--suffix .el-input__inner{
             padding-right: 14px !important;
           }
@@ -197,53 +209,6 @@
             }
             .btm{
               margin-left: 0 !important;
-            }
-          }
-        }
-        .column-item-content{
-          .column-item-info{
-            li{
-              display: flex;
-              div{
-                max-width: 160px;
-              }
-            }
-          }
-          .auction-info{
-            ul{
-              display: flex;
-              flex-wrap: wrap;
-              li{
-                &:nth-child(odd){
-                  min-width: 240px;
-                }
-                &:nth-child(even){
-                  div{
-                    &:last-child{
-                      max-width: 104px;
-                    }
-                  }
-                }
-              }
-            }
-          }
-          .remark-info{
-            .before-circle{
-              position: relative;
-              padding-left: 10px;
-              &:before{
-                content: '';
-                position: absolute;
-                width: 5px;
-                height: 5px;
-                background: #20242E;
-                left: 0px;
-                border-radius: 50%;
-                top: 10px;
-              }
-            }
-            &-detail{
-              color: #7D8699;
             }
           }
         }

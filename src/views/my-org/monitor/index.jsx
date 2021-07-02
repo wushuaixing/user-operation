@@ -54,7 +54,8 @@ export default defineComponent({
     });
     let queryParams = reactive({});
     const resetSort = () => {
-      const { resetTable } = proxy.$refs.Table;
+      const { resetTable, multiple } = proxy.$refs.Table;
+      multiple.isChecked = false;
       resetTable();
     };
 
@@ -99,12 +100,13 @@ export default defineComponent({
       });
     };
     // 树节点点击  搜索
-    const treeNodeClick = (ID, type = '') => {
+    const treeNodeClick = (ID) => {
       // 根据节点id进行搜索，清空搜索条件
       idData.activeId = ID;
       tabKey.value = '1';
-      if (type === 'init') getTabNum(idData.activeId);
-      const { resetSearch } = proxy.$refs.monitorQuery;
+      getTabNum(idData.activeId);
+      const { resetSearch, deleteStatus } = proxy.$refs.monitorQuery;
+      deleteStatus(true);
       resetSearch();
     };
     const tabChange = (val) => {

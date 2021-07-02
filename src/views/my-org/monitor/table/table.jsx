@@ -24,7 +24,7 @@ export default defineComponent({
     tableData: Object,
   },
   emits: ['pageChange', 'sizeChange', 'export', 'sortChange'],
-  setup() {
+  setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
     const setTablePane = (row, type) => {
       if (type === 'assetInfo') return <ZcInfo data={row}/>;
@@ -45,21 +45,26 @@ export default defineComponent({
       },
     });
     const resetTable = () => {
-      const { clearSelection } = proxy.$refs.multipleTable;
+      const { clearSelection, clearSort } = proxy.$refs.multipleTable;
       clearSelection();
+      clearSort();
+      multiple.isChecked = false;
       multiple.multipleSelection = [];
     };
     // 排序
     const handleSortChange = (sort) => {
       // 排序查询
-      console.log(sort, 'sort', proxy);
-      proxy.$emit('sortChange', sort);
+      const { clearSelection } = proxy.$refs.multipleTable;
+      clearSelection();
+      multiple.isChecked = false;
+      multiple.multipleSelection = [];
+      emit('sortChange', sort);
     };
     const pageChange = (page) => {
-      proxy.$emit('pageChange', page);
+      emit('pageChange', page);
     };
     const sizeChange = (num) => {
-      proxy.$emit('sizeChange', num);
+      emit('sizeChange', num);
     };
 
     const handleBatchCheck = (isChecked) => {
@@ -79,7 +84,7 @@ export default defineComponent({
         title: '确认导出选中的所有信息吗？',
       };
       multiple.idList = type ? [] : multiple.multipleSelection.map((item) => item.auctionId);
-      proxy.$emit('export');
+      emit('export');
     };
     const exportAction = (param) => {
       const paramData = {
@@ -112,6 +117,7 @@ export default defineComponent({
     const {
       setTablePane, tableData = {}, multiple, handleBatchCheck, handleExport, handleSortChange, pageChange, sizeChange,
     } = this;
+    console.log(tableData.data, '为啥会多呢');
     return (
       <div className="monitor-table">
         <div className="table-content-btn">
@@ -172,7 +178,7 @@ export default defineComponent({
           tooltip-effect="dark"
           onSelectionChange={(val) => (multiple.multipleSelection = val)}
           onSortChange={handleSortChange}
-          row-key={(val) => val.auctionId}
+          row-key={(val) => val.id}
           v-slots={multiple.empty}
           row-class-name="row-class"
         >

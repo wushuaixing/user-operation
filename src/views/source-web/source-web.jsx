@@ -80,7 +80,7 @@ export default defineComponent({
         }
       });
     };
-    const { id } = proxy.$route.query;
+    const { id } = proxy.$route.params;
     getHtmlData(id);
 
     return {
