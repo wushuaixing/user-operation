@@ -39,6 +39,8 @@ export default defineComponent({
       });
     };
     onMounted(() => {
+      const dom = document.getElementById('orgSelect');
+      dom.setAttribute('maxLength', 100);
       // 获取客户使用机构树
       const params = { orgId: props.orgId };
       MyOrgApi.orgTree(params).then((res) => {
@@ -57,31 +59,40 @@ export default defineComponent({
     const remoteMethod = (val) => {
       // 搜索
       treeData.searchList = [];
-      filterTree(treeData.treeData[0], val);
+      const key = val.replace(/\s+/g, '');
+      filterTree(treeData.treeData[0], key);
     };
     const handleNodeClick = (node) => {
       // 将orgId传递给查询区域
       treeData.searchValue = node.id;
       proxy.$emit('treeNodeClick', node.id);
     };
+    const resetList = () => {
+      treeData.searchList = [];
+      filterTree(treeData.treeData[0], '');
+    };
     return {
       treeData,
       remoteMethod,
       handleNodeClick,
+      resetList,
     };
   },
   render() {
     const {
-      treeData, handleNodeClick,
+      treeData, handleNodeClick, remoteMethod, resetList,
     } = this;
     return (
       <div className="monitor-tree">
         <el-select
           class="monitor-tree-select"
+          id="orgSelect"
           v-slots={selectSlots}
           v-model={treeData.searchValue}
-          onInput={() => treeData.searchValue = treeData.searchValue.replace(/\s+/g, '')}
           filterable
+          remote
+          remote-method={remoteMethod}
+          onVisibleChange={resetList}
           placeholder="请输入机构名称">
           {
             treeData.searchList.map((item) => <el-option key={item.id} label={item.name} value={item.id}/>)

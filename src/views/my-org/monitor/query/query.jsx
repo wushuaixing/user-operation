@@ -3,11 +3,15 @@ import {
 } from 'vue';
 import { dateUtils, dateRange } from '@/utils';
 import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
+// import DateTime from './yc-date-picker/yc-date-picker';
 import './style.scss';
 
 export default defineComponent({
   emits: ['handleSearch', 'resetSearch'],
-  setup() {
+  components: {
+    // DateTime,
+  },
+  setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
     const state = reactive({
       obName: '', // 债务人
@@ -46,14 +50,14 @@ export default defineComponent({
     };
 
     const handleSearch = () => {
-      proxy.$emit('handleSearch');
+      emit('handleSearch');
     };
 
     const resetSearch = () => {
       const { resetFields } = proxy.$refs.monitorForm;
       resetFields();
       state.start = '';
-      proxy.$emit('resetSearch');
+      emit('resetSearch');
     };
 
     // 展开收起
@@ -92,6 +96,7 @@ export default defineComponent({
                 v-model={state.obName}
                 placeholder="姓名/公司名称"
                 style={{ width: '220px' }}
+                onBlur={() => state.obName = state.obName.trim()}
                 maxlength="100"
                 clearable={true}
               />
@@ -102,7 +107,7 @@ export default defineComponent({
                 placeholder="身份证号/统一社会信用代码"
                 style={{ width: '220px' }}
                 maxlength="100"
-                onBlur={(val) => (console.log(val, '23'))}
+                onBlur={() => state.obNumber = state.obNumber.trim()}
                 clearable={true}
               />
             </el-form-item>
@@ -111,6 +116,7 @@ export default defineComponent({
                 v-model={state.orgName}
                 placeholder="负责人/机构名称"
                 style={{ width: '220px' }}
+                onBlur={() => state.orgName = state.orgName.trim()}
                 maxlength="100"
                 clearable={true}
               />
@@ -148,6 +154,7 @@ export default defineComponent({
                 v-model={state.title}
                 placeholder="拍卖信息标题"
                 style={{ width: '220px' }}
+                onBlur={() => state.title = state.title.trim()}
                 maxlength="100"
                 clearable={true}
               />
