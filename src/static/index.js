@@ -332,34 +332,6 @@ const ASSETS_INFO = [
   },
 ];
 
-// 审核管理列表-拍卖信息
-const AUCTION_INFO = [
-  {
-    lable: '处置机关',
-    key: 'court',
-  },
-  {
-    lable: '省份名称',
-    key: 'province',
-  },
-  {
-    lable: '开拍时间',
-    key: 'start',
-  },
-  {
-    lable: '评估价格',
-    key: 'consultPrice',
-  },
-  {
-    lable: '拍卖状态',
-    key: 'pmStatus',
-  },
-  {
-    lable: '起拍价格',
-    key: 'initialPrice',
-  },
-];
-
 const RECALL_REASON = [
   {
     label: '误点击',
@@ -450,6 +422,24 @@ const PUSH_TIPS = [
     ],
   },
 ];
+const LABEL_TYPE = {
+  1: '资产所有人',
+  2: '债权人',
+  3: '资产线索',
+  4: '起诉人',
+  5: '竞买人',
+};
+const GENDER_TYPE = {
+  0: '未知',
+  1: '男',
+  2: '女',
+};
+
+// 匹配类型
+const MATCH_TYPE = {
+  0: '模糊',
+  1: '精确',
+};
 
 export {
   SORTER_TYPE,
@@ -471,9 +461,11 @@ export {
   PROCESS,
   PUSH_STATUS,
   ASSETS_INFO,
-  AUCTION_INFO,
   MONITOR_LIST,
   RECALL_REASON,
   NOPUSH_TIPS,
   PUSH_TIPS,
+  LABEL_TYPE,
+  GENDER_TYPE,
+  MATCH_TYPE,
 };
