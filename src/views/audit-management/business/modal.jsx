@@ -18,6 +18,7 @@ const modalModule = (getTableList) => {
     title: '',
     importants: '',
     currentStatus: '',
+    tableType: '',
   });
   // 点击确定
   const handleClick = () => {
@@ -54,14 +55,25 @@ const modalModule = (getTableList) => {
   };
   // 打开弹窗
   const openModal = (type, {
-    parsingTitle, important, id, status,
+    parsingTitle, important, id, tableType,
   }) => {
-    modalState.title = parsingTitle;
-    modalState.importants = important;
-    modalState.type = type;
-    modalState.id = id;
     modalState.visible = true;
-    modalState.currentStatus = status;
+    modalState.type = type;
+    modalState.currentStatus = tableType === '3' ? 5 : 0;
+    const isSame = modalState.id === id && tableType === modalState.tableType;
+    if (type === 'push') {
+      modalState.title = parsingTitle;
+      modalState.importants = important;
+      modalState.pushRemark = isSame ? modalState.pushRemark : '';
+      modalState.important = isSame ? modalState.important : '1';
+    } else if (type === 'noPush') {
+      modalState.title = parsingTitle;
+      modalState.noPushRemark = isSame ? modalState.noPushRemark : '';
+    } else {
+      modalState.remark = isSame ? modalState.remark : '';
+      modalState.recallReason = isSame ? modalState.recallReason : '';
+    }
+    modalState.id = id;
   };
   // 填充内容
   const handleFill = (key, val) => {
@@ -73,7 +85,7 @@ const modalModule = (getTableList) => {
       title: '确认召回本条信息吗？',
       text: '点击确定，本条信息将被召回到结构化匹配列表中',
     };
-    return <div className='recall-modal'>
+    return <div className='recall-modal' key={modalState.id}>
       <ModalTitle {...text}/>
       <div className="recall-modal-body">
         <div className="recall-modal-body-type">

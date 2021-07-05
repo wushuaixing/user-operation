@@ -167,11 +167,15 @@ export default defineComponent({
       const { auctionId } = props || {};
       const { tableType } = queryState;
       const fn = Number(tableType) % 2 !== 0;
+      const params = {
+        ...props,
+        tableType,
+      };
       return <div className='action-column'>
         <el-button type="text" class='button-link top' onClick={() => toDetail(auctionId)}>结构化校验</el-button>
-        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push', props) }>推送</el-button>}
-        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush', props) }>不推送</el-button>}
-        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall', props) }>召回</el-button>}
+        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push', params) }>推送</el-button>}
+        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush', params) }>不推送</el-button>}
+        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall', params) }>召回</el-button>}
       </div>;
     };
 
@@ -196,6 +200,7 @@ export default defineComponent({
     watch(() => queryState.tableType, (newVal, oldVal) => {
       if (newVal !== oldVal) {
         handleReset();
+        modalState.data = {};
       }
     });
     onMounted(() => {
