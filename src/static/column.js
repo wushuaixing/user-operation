@@ -197,14 +197,14 @@ const myOrgColumn = [
     prop: 'name',
     label: '顶级合作机构名称',
     sort: false,
-    width: '15%',
+    width: '17%',
   },
   {
     prop: 'subOrgNum',
     label: '全部子机构数',
     align: 'center',
     sort: false,
-    width: '15%',
+    width: '13%',
   },
   {
     prop: 'obligorNum',

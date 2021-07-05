@@ -13,7 +13,10 @@
     }
     .el-tree-node__children {
       .el-tree-node__content {
-        height: 30px;
+        height: 38px;
+        .el-tree-node__label {
+          color: #20242E;
+        }
       }
     }
     .el-tree-node.is-current > .el-tree-node__content {

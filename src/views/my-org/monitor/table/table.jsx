@@ -124,7 +124,6 @@ export default defineComponent({
     const {
       setTablePane, tableData = {}, multiple, handleBatchCheck, handleExport, handleSortChange, pageChange, sizeChange,
     } = this;
-    console.log(tableData.data, '为啥会多呢');
     return (
       <div className="monitor-table">
         <div className="table-content-btn">
@@ -191,6 +190,7 @@ export default defineComponent({
         >
           {
             multiple.isChecked ? <el-table-column
+              class="check-column"
               type="selection"
               width="55"
               reserve-selection={true}

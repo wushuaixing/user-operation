@@ -23,7 +23,7 @@ export default defineComponent({
         </div>
         <div className="zc-info">
           <span className="zc-info-title long">负责人/机构</span>：
-          <span className="zc-info-cent">{data.orgName || '-'}</span>
+          <span className="zc-info-cent-long">{data.orgName || '-'}</span>
         </div>
         <div className="zc-info">
           <span className="zc-info-title">更新时间</span>：

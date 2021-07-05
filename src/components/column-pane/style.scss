@@ -2,6 +2,7 @@
   line-height: 14px;
   font-size: 14px;
   margin-bottom: 8px;
+  display: flex;
   &-title {
     display: inline-block;
     width: 58px;
@@ -12,7 +13,14 @@
     width: 76px;
   }
   &-cent {
+    display: inline-block;
     color: #20242E;
+    width: calc(100% - 72px);
+  }
+  &-cent-long {
+    display: inline-block;
+    color: #20242E;
+    width: calc(100% - 90px);
   }
 }
 .jz {
@@ -35,10 +43,11 @@
     &-sider {
       .pm-info-line {
         margin-bottom: 8px;
-        display: block;
+        display: flex;
         color: #7D8699;
         .pm-info-text {
           color: #20242E;
+          width: 145px;
         }
       }
     }
@@ -70,7 +79,7 @@
   color: #7D8699;
   line-height: 21px;
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   margin-top: 2px;
 }
 

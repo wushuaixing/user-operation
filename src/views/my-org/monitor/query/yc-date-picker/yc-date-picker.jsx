@@ -1,5 +1,5 @@
 import {
-  defineComponent, reactive, getCurrentInstance, onMounted,
+  defineComponent, reactive, getCurrentInstance, onMounted, nextTick,
 } from 'vue';
 import { dateUtils } from '@/utils';
 import './style.scss';
@@ -12,8 +12,8 @@ export default defineComponent({
     console.log(proxy);
     const pickerDate = reactive({
       time: '',
-      start: '',
-      end: '',
+      start: '开始时间',
+      end: '结束时间',
       isLefe: false,
     });
     const dateRange = [{
@@ -49,8 +49,9 @@ export default defineComponent({
       proxy.$emit('update:modelValue', [pickerDate.start, pickerDate.end]);
     };
     const setFocus = () => {
-      proxy.$refs.pickerStartTime.blur();
-      document.querySelector('.pickerDate1').querySelectorAll('input')[0].focus();
+      nextTick(() => {
+        document.querySelector('.yc-query-date-picker').click();
+      });
     };
     onMounted(() => {
       const dom = document.querySelectorAll('.el-picker-panel__shortcut');
@@ -86,30 +87,27 @@ export default defineComponent({
       <div className="yc-query-date">
         <el-date-picker
           v-model={pickerDate.time}
-          class="pickerDate1"
           type="daterange"
+          ref="startTime"
           unlink-panels
           style={{ width: '286px' }}
           class="yc-query-date-picker"
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
+          popper-class="date-picker-kp"
           shortcuts={dateRange}
           onChange={setTime}
         >
         </el-date-picker>
-        <el-input
-          v-model={pickerDate.start}
+        <div
           class="input-style left"
-          ref="pickerStartTime"
-          onFocus={setFocus}
-          placeholder="开始时间"
-        />
-        <el-input
-          v-model={pickerDate.end}
+          onClick={setFocus}
+        >{pickerDate.start}</div>
+        <div
           class="input-style right"
-          placeholder="结束时间"
-        />
+          onClick={setFocus}
+        >{pickerDate.end}</div>
       </div>
     );
   },

@@ -3,13 +3,13 @@ import {
 } from 'vue';
 import { dateUtils, dateRange } from '@/utils';
 import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
-import DateTime from './yc-date-picker/yc-date-picker';
+// import DateTime from './yc-date-picker/yc-date-picker';
+// <DateTime v-model={state.DateTimeTest} />
 import './style.scss';
 
 export default defineComponent({
   emits: ['handleSearch', 'resetSearch'],
   components: {
-    DateTime,
   },
   setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
@@ -217,7 +217,6 @@ export default defineComponent({
               <el-date-picker
                 v-model={state.start}
                 type="daterange"
-                align="right"
                 unlink-panels
                 style={{ width: '286px' }}
                 class="query-date"
@@ -290,7 +289,6 @@ export default defineComponent({
             </el-form-item>
           </div>
         </el-form>
-        <DateTime v-model={state.DateTimeTest} />
       </div>
     );
   },
