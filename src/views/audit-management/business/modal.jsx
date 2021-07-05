@@ -90,6 +90,7 @@ const modalModule = (getTableList) => {
             type="textarea"
             autosize
             placeholder="请输入内容"
+            maxLength={1024}
             v-model={modalState.remark}/>
           <span className='val-length'>{modalState.remark.length}/1024</span>
         </div>
@@ -107,7 +108,7 @@ const modalModule = (getTableList) => {
       <div className="no-push-modal-body">
         <div className="no-push-modal-body-title">
           <span className='label'>拍卖标题：</span>
-          <span>姜修平所有的深喉口固定台式压力机等设备一宗</span>
+          <span>{modalState.title}</span>
         </div>
         <div className="no-push-modal-body-remark">
           <span className='label'>审核备注：</span>
@@ -146,12 +147,13 @@ const modalModule = (getTableList) => {
           type="textarea"
           autosize
           placeholder="请输入内容"
+          maxLength={1024}
           v-model={modalState.pushRemark}/>
         <span className='val-length'>{modalState.pushRemark.length}/1024</span>
       </div>
       <div className="push-modal-body-type flex">
         <span className='label'>系统匹配：</span>
-        <span>{MATCH_TYPE[1]}匹配</span>
+        <span>{MATCH_TYPE[modalState.importants]}匹配</span>
       </div>
       <div className="push-modal-body-level flex">
         <span className='label'>推送等级：</span>

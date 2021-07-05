@@ -100,12 +100,19 @@ export default defineComponent({
       });
     };
 
-    const onSearch = () => {
+    const handleReset = () => {
       const { clearSort } = proxy.$refs.tableRef;
-      queryState.page = 1;
       clearSort();
+      queryState.page = 1;
+      queryState.sortColumn = '';
+      queryState.sortOrder = '';
       getList();
     };
+
+    const onSearch = () => {
+      handleReset();
+    };
+
     const {
       openModal, modalState, modalHtml, modalSlots,
     } = modalModule(getList);
@@ -114,8 +121,8 @@ export default defineComponent({
       state.treeList = allList.filter((i) => i.type === state.type);
       if (isClear === 'clear') {
         queryState.orgId = '';
-        getList();
         proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
+        handleReset();
       }
     };
     const treeItemChange = (id, sign) => {
@@ -140,7 +147,7 @@ export default defineComponent({
           dom.scrollIntoView({ block: 'center' });
         }
       }).then((r) => console.log(r));
-      getList();
+      handleReset();
     };
     const getTreeList = () => {
       const { id } = proxy.$route.params;
@@ -181,17 +188,23 @@ export default defineComponent({
       queryState.sortOrder = MONITOR_LIST[order];
       getList();
     };
+    const isNewPageClose = () => {
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'backSign' && e.newValue === 'SUCCESS') {
+          localStorage.setItem('backSign', '');
+          getList();
+        }
+      });
+    };
     watch(() => queryState.tableType, (newVal, oldVal) => {
-      const { clearSort } = proxy.$refs.tableRef;
       if (newVal !== oldVal) {
-        getList();
-        clearSort();
+        handleReset();
       }
     });
     onMounted(() => {
       getTreeList();
+      isNewPageClose();
       document.title = '审核管理';
-      state.height = proxy.$refs.RightRef.offsetHeight;
     });
     return {
       state,
@@ -275,7 +288,7 @@ export default defineComponent({
               </div>
             </div>
             <div className="content-right" id='content-right' ref='RightRef'>
-              <Query ref="queryRef" onHandleSearch={onSearch}/>
+              <Query ref="queryRef" onHandleSearch={onSearch} onHandleClearQuery = {onSearch}/>
               <div className="content-right-table">
                   <div className="content-right-table-tabs">
                     <el-tabs v-model={queryState.tableType}>
