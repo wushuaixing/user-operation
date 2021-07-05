@@ -159,13 +159,13 @@ export default defineComponent({
     const open = ({ id, name = '' }) => {
       proxy.$nextTick(() => {
         report.reportVisible = true;
+        proxy.reportForm.time = '';
         report.orgId = id;
         report.title = `客户报告-${name}`;
       });
     };
     const close = () => {
       proxy.$refs.reportForm.resetFields();
-      proxy.reportForm.time = '';
       report.reportVisible = false;
     };
 
@@ -195,6 +195,7 @@ export default defineComponent({
             const { code = 200, message = '导出失败' } = res.data || {};
             if (code === 200) {
               fileDownload(res, true);
+              report.reportVisible = false;
             } else {
               proxy.$message.error(message);
             }
@@ -263,7 +264,7 @@ export default defineComponent({
               shortcuts={shortcuts}
             />
             </el-form-item>
-          <el-form-item label="全部数据类型：">
+          <el-form-item label="全部数据类型：" rules={[{ required: true }]}>
           <div className="zcjk-rules-box">
             {
               reportFormOptions.itemsChecked.map((item) => (
