@@ -7,6 +7,7 @@ import { roleInfoColumn } from '@/static/column';
 import { handleObligors } from '@/utils';
 import './style.scss';
 import CommonApi from '@/server/api/common';
+import { tableEmptytSlots } from '@/static/slot';
 
 const params = {
   title: '确认将本条数据退回至检查人员',
@@ -130,6 +131,7 @@ export default defineComponent({
                   data={handleObligors(obligors)}
                   style="width: 100%"
                   row-key={(val) => val.id}
+                  v-slots={tableEmptytSlots}
                 >
                   {
                     roleInfoColumn.map((i) => <el-table-column prop={i.prop} label={i.label} key={i.class} min-width={i.width}/>)
