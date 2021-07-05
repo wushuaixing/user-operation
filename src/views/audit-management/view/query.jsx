@@ -48,13 +48,14 @@ export default defineComponent({
       }
       return false;
     };
+    const handleBlur = (key) => state[key] = state[key].trim();
     return {
-      state, resetForm, handleSearch, disabledEndDate, disabledStartDate,
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
     };
   },
   render() {
     const {
-      state, resetForm, handleSearch, disabledEndDate, disabledStartDate,
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
     } = this;
     return (
       <div className="content-right-query">
@@ -66,6 +67,7 @@ export default defineComponent({
                 placeholder="客户使用机构名称"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('conSumerName')}
               />
             </el-form-item>
             <el-form-item label="债务人：" prop='obName'>
@@ -74,6 +76,7 @@ export default defineComponent({
                 placeholder="姓名/公司名称"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('obName')}
               />
             </el-form-item>
             <el-form-item label="证件号：" prop='obNumber'>
@@ -82,6 +85,7 @@ export default defineComponent({
                 placeholder="身份证号/统一社会信用代码"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('obNumber')}
               />
             </el-form-item>
             <el-form-item label="匹配类型：" prop='important'>
@@ -103,6 +107,7 @@ export default defineComponent({
                 placeholder="拍卖信息标题"
                 style={{ width: '210px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('parsingTitle')}
               />
             </el-form-item>
             <el-form-item label="负责人/机构：" prop='orgName'>
@@ -111,6 +116,7 @@ export default defineComponent({
                 placeholder="负责人/机构名称"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('orgName')}
               />
             </el-form-item>
             <el-form-item label="匹配时间：" prop="createTimeStart" style={{ marginRight: 0 }}>
