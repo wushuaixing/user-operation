@@ -3,13 +3,13 @@ import {
 } from 'vue';
 import { dateUtils, dateRange } from '@/utils';
 import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
-// import DateTime from './yc-date-picker/yc-date-picker';
+import DateTime from './yc-date-picker/yc-date-picker';
 import './style.scss';
 
 export default defineComponent({
   emits: ['handleSearch', 'resetSearch'],
   components: {
-    // DateTime,
+    DateTime,
   },
   setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
@@ -28,7 +28,7 @@ export default defineComponent({
       start: '',
       startStart: '', // 开拍开始时间 ,示例值(2021-01-01)
       startEnd: '', // 开拍结束时间 ,示例值(2021-01-01)
-
+      DateTimeTest: ['2019-01-02', '2021-9-9'],
       updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       process: '', // 状态 0 未读 3 确认中（资产监控为跟进中） 6 跟进中 9 已完成 12 已忽略 15 已放弃
@@ -96,7 +96,7 @@ export default defineComponent({
                 v-model={state.obName}
                 placeholder="姓名/公司名称"
                 style={{ width: '220px' }}
-                onBlur={() => state.obName = state.obName.trim()}
+                onBlur={() => state.obName = state.obName.replace(/\s+/g, '')}
                 maxlength="100"
                 clearable={true}
               />
@@ -107,7 +107,7 @@ export default defineComponent({
                 placeholder="身份证号/统一社会信用代码"
                 style={{ width: '220px' }}
                 maxlength="100"
-                onBlur={() => state.obNumber = state.obNumber.trim()}
+                onBlur={() => state.obNumber = state.obNumber.replace(/\s+/g, '')}
                 clearable={true}
               />
             </el-form-item>
@@ -116,7 +116,7 @@ export default defineComponent({
                 v-model={state.orgName}
                 placeholder="负责人/机构名称"
                 style={{ width: '220px' }}
-                onBlur={() => state.orgName = state.orgName.trim()}
+                onBlur={() => state.orgName = state.orgName.replace(/\s+/g, '')}
                 maxlength="100"
                 clearable={true}
               />
@@ -154,7 +154,7 @@ export default defineComponent({
                 v-model={state.title}
                 placeholder="拍卖信息标题"
                 style={{ width: '220px' }}
-                onBlur={() => state.title = state.title.trim()}
+                onBlur={() => state.title = state.title.replace(/\s+/g, '')}
                 maxlength="100"
                 clearable={true}
               />
@@ -290,6 +290,7 @@ export default defineComponent({
             </el-form-item>
           </div>
         </el-form>
+        <DateTime v-model={state.DateTimeTest} />
       </div>
     );
   },

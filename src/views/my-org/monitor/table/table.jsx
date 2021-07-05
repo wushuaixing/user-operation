@@ -69,7 +69,11 @@ export default defineComponent({
 
     const handleBatchCheck = (isChecked) => {
       multiple.isChecked = isChecked;
-      if (!isChecked) resetTable();
+      if (!isChecked) {
+        const { clearSelection } = proxy.$refs.multipleTable;
+        clearSelection();
+        multiple.multipleSelection = [];
+      }
     };
     const handleExport = (type) => {
       if (!type && !multiple.multipleSelection.length) {
@@ -94,9 +98,12 @@ export default defineComponent({
         idList: multiple.idList,
       };
       $modalConfirm(multiple.info).then(() => {
-        multiple.isChecked = false;
-        resetTable();
+        const msgModal = proxy.$message.warning({
+          message: '正在下载，请稍等...',
+          duration: 0,
+        });
         MyOrgApi.auditExport(paramData).then((res) => {
+          msgModal.close();
           const { code = 200, message = '' } = res;
           if (code === 200) {
             fileDownload(res);

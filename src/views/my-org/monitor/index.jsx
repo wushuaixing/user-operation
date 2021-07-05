@@ -56,6 +56,8 @@ export default defineComponent({
     const resetSort = () => {
       const { resetTable, multiple } = proxy.$refs.Table;
       multiple.isChecked = false;
+      if (queryParams.sortColumn) delete queryParams.sortColumn;
+      if (queryParams.sortOrder) delete queryParams.sortOrder;
       resetTable();
     };
 

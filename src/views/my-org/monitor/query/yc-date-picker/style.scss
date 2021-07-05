@@ -17,11 +17,18 @@
     position: absolute;
     width: 99px;
     height: 24px;
-    top: -4px;
+    top: 0px;
+    background: #fff;
+    font-size: 14px;
+    line-height: 24px;
+    color: #b2b8c9;
+    text-align: center;
     .el-input__inner {
       height: 24px;
       line-height: 24px;
       border: none;
+      text-align: center;
+      padding: 0;
     }
     .el-input__inner:focus {
       box-shadow: none;
