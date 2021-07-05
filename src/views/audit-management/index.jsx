@@ -49,18 +49,7 @@ export default defineComponent({
         }
       }).then((r) => console.log(r));
     };
-    const getNum = () => {
-      const { id } = proxy.$route.params;
-      const orgId = Number(id) || -1;
-      CommonApi.auditCountNum({ orgId, type: 0 }).then((res) => {
-        const { code, data = {} } = res.data || {};
-        if (code === 200) {
-          const { readNotNum, recallNum } = data;
-          state.readNotNum = readNotNum || '0';
-          state.recallNum = recallNum || '0';
-        }
-      });
-    };
+
     const getParams = () => {
       const f = (i) => dateUtils.formatStandardDate(i);
       const {
@@ -86,12 +75,17 @@ export default defineComponent({
       CommonApi.getAuditList(params).then((res) => {
         const { code, data } = res.data || {};
         if (code === 200) {
-          const { page, total, list } = data || {};
-          state.tableList = list;
+          const {
+            list, numInfo,
+          } = data || {};
+          const { page, total } = list || {};
+          const { readNotNum, recallNum } = numInfo || {};
+          state.tableList = list.list || [];
           state.page = page;
           state.total = total;
+          state.readNotNum = readNotNum || '0';
+          state.recallNum = recallNum || '0';
           setTreeMinHeight();
-          getNum();
         } else {
           proxy.$message.error('请求出错');
         }
@@ -235,18 +229,14 @@ export default defineComponent({
       sortChange,
     } = this;
     const type = { 0: '试用', 1: '正式' };
-    const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
-    const { tableType } = queryState;
-    const { total, readNotNum, recallNum } = state;
-    console.log('备用：', total, tableType);
-    const notNum = readNotNum;
-    const callNum = recallNum;
+    const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}）` }));
+    const { readNotNum, recallNum } = state;
     return (
         <div className="yc-container audit-management-container" id='tree3311'>
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">
-                  <el-select v-model={queryState.orgId} filterable placeholder="请选择" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
+                  <el-select v-model={queryState.orgId} filterable placeholder="请输入顶级机构名称" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
                     {
                       list.map((i) => <el-option key={i.id} label={i.name} value={i.id} onClick={() => treeItemChange(i.id, 'query')}></el-option>)
                     }
@@ -293,7 +283,7 @@ export default defineComponent({
                   <div className="content-right-table-tabs">
                     <el-tabs v-model={queryState.tableType}>
                       {
-                        auditTabs(notNum, callNum).map((i) => (
+                        auditTabs(readNotNum, recallNum).map((i) => (
                           <el-tab-pane
                             label={i.label}
                             name={i.name}
