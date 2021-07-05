@@ -75,11 +75,12 @@ export default defineComponent({
             message: '退回成功',
             duration: 1500,
             onClose: () => {
+              localStorage.setItem('backSign', 'SUCCESS');
               window.close();
             },
           });
         } else {
-          proxy.$message.success('退回失败');
+          proxy.$message.error('退回失败');
         }
       });
       state.visible = false;

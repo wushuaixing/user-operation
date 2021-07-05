@@ -237,8 +237,8 @@ export default {
     onFill(flag) {
       this.params = {
         ...this.params,
-        username: flag ? '12345678910' : '15990184842',
-        password: flag ? '678910' : '184842',
+        username: flag ? '12345678910' : '66666666666',
+        password: flag ? '678910' : '666666',
       };
     },
   },
