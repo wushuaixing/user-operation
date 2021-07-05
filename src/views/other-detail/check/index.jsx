@@ -7,6 +7,7 @@ import { roleInfoColumn } from '@/static/column';
 import { handleObligors } from '@/utils';
 import './style.scss';
 import CommonApi from '@/server/api/common';
+import { tableEmptytSlots } from '@/static/slot';
 
 const params = {
   title: '确认将本条数据退回至检查人员',
@@ -62,9 +63,6 @@ export default defineComponent({
       visible: false,
       value: '',
     });
-    const returnFn = () => {
-      state.visible = true;
-    };
     const handleClick = () => {
       const { params: { auctionId } } = proxy.$route;
       const remark = state.value;
@@ -88,7 +86,7 @@ export default defineComponent({
     const modalSlots = {
       title: null,
       footer: () => <>
-      <el-button onClick={handleClick}>取 消</el-button>
+      <el-button onClick={() => state.visible = false}>取 消</el-button>
       <el-button type="primary" onClick={handleClick}>确定</el-button>
       </>,
     };
@@ -106,12 +104,12 @@ export default defineComponent({
       document.title = '结构化校验/详情';
     });
     return {
-      returnFn, state, modalSlots,
+      state, modalSlots,
     };
   },
   render() {
     const {
-      returnFn, modalSlots, state,
+      modalSlots, state,
     } = this;
     const { obligors, isBack } = state.assetDetail;
     const partDatas = handlePart(toRaw(state.assetDetail));
@@ -121,7 +119,7 @@ export default defineComponent({
           <BreadCrumb text='结构化校验/详情' />
           <div className="main-content">
             <div className="main-content-top">
-              <el-button type="primary" class="button-first action-button" onClick ={returnFn}>{Number(isBack) ? '再次退回' : '退回'}</el-button>
+              <el-button type="primary" class="button-first action-button" onClick ={() => state.visible = true}>{Number(isBack) ? '再次退回' : '退回'}</el-button>
               {partDatas.map((i) => <Part {...i}/>)}
             </div>
             <div className="main-content-btm">
@@ -130,6 +128,7 @@ export default defineComponent({
                   data={handleObligors(obligors)}
                   style="width: 100%"
                   row-key={(val) => val.id}
+                  v-slots={tableEmptytSlots}
                 >
                   {
                     roleInfoColumn.map((i) => <el-table-column prop={i.prop} label={i.label} key={i.class} min-width={i.width}/>)

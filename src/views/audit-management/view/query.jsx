@@ -2,7 +2,7 @@ import {
   defineComponent, getCurrentInstance, reactive, toRaw,
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
-import { dateRange } from '@/utils';
+import { dateRange, dateUtils } from '@/utils';
 
 export default defineComponent({
   emits: ['handleSearch'],
@@ -33,10 +33,30 @@ export default defineComponent({
     const handleSearch = () => {
       proxy.$emit('handleSearch', toRaw(state));
     };
-    return { state, resetForm, handleSearch };
+    // 日期控件做前后限制
+    const disabledStartDate = (startTime, prop) => {
+      if (state[prop]) {
+        const time = dateUtils.formatStandardDate(state[prop]);
+        return startTime.getTime() > new Date(`${time} 00:00:00`).getTime();
+      }
+      return false;
+    };
+    const disabledEndDate = (endTime, prop) => {
+      if (state[prop]) {
+        const time = dateUtils.formatStandardDate(state[prop]);
+        return endTime.getTime() < new Date(`${time} 00:00:00`).getTime();
+      }
+      return false;
+    };
+    const handleBlur = (key) => state[key] = state[key].trim();
+    return {
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
+    };
   },
   render() {
-    const { state, resetForm, handleSearch } = this;
+    const {
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
+    } = this;
     return (
       <div className="content-right-query">
         <el-form inline={true} model={state} class="content-right-query-form" ref='queryForm'>
@@ -47,6 +67,7 @@ export default defineComponent({
                 placeholder="客户使用机构名称"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('conSumerName')}
               />
             </el-form-item>
             <el-form-item label="债务人：" prop='obName'>
@@ -55,6 +76,7 @@ export default defineComponent({
                 placeholder="姓名/公司名称"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('obName')}
               />
             </el-form-item>
             <el-form-item label="证件号：" prop='obNumber'>
@@ -63,6 +85,7 @@ export default defineComponent({
                 placeholder="身份证号/统一社会信用代码"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('obNumber')}
               />
             </el-form-item>
             <el-form-item label="匹配类型：" prop='important'>
@@ -84,6 +107,7 @@ export default defineComponent({
                 placeholder="拍卖信息标题"
                 style={{ width: '210px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('parsingTitle')}
               />
             </el-form-item>
             <el-form-item label="负责人/机构：" prop='orgName'>
@@ -92,6 +116,7 @@ export default defineComponent({
                 placeholder="负责人/机构名称"
                 style={{ width: '220px' }}
                 maxlength="100"
+                onBlur={() => handleBlur('orgName')}
               />
             </el-form-item>
             <el-form-item label="匹配时间：" prop="createTimeStart" style={{ marginRight: 0 }}>
@@ -100,6 +125,7 @@ export default defineComponent({
                 placeholder="开始时间"
                 v-model={state.createTimeStart}
                 style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'createTimeEnd')}
               />
             </el-form-item>
             <el-form-item label="至" prop="createTimeEnd" class="time-end">
@@ -108,6 +134,7 @@ export default defineComponent({
                 placeholder="结束时间"
                 v-model={state.createTimeEnd}
                 style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'createTimeStart')}
               />
             </el-form-item>
             <el-form-item label="拍卖状态：" prop='pmStatus'>
@@ -132,6 +159,7 @@ export default defineComponent({
                 placeholder="开始时间"
                 v-model={state.approveTimeStart}
                 style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'approveTimeEnd')}
               />
             </el-form-item>
             <el-form-item label="至" prop="approveTimeEnd" class="time-end">
@@ -140,6 +168,7 @@ export default defineComponent({
                 placeholder="结束时间"
                 v-model={state.approveTimeEnd}
                 style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'approveTimeStart')}
               />
             </el-form-item>
             <el-form-item label="开拍时间：" prop="start" class="section-date" >
@@ -161,6 +190,7 @@ export default defineComponent({
                 placeholder="开始时间"
                 v-model={state.updateTimeStart}
                 style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'updateTimeEnd')}
               />
             </el-form-item>
             <el-form-item label="至" prop="updateTimeEnd" class="time-end">
@@ -169,6 +199,7 @@ export default defineComponent({
                 placeholder="结束时间"
                 v-model={state.updateTimeEnd}
                 style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'updateTimeStart')}
               />
             </el-form-item>
             <el-form-item style="float: right">
