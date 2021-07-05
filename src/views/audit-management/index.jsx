@@ -7,6 +7,7 @@ import { auditColumn } from '@/static/column';
 import { selectSlots, timeLineSlots, tableEmptytSlots } from '@/static/slot';
 import { dateUtils } from '@/utils/index';
 import { MONITOR_LIST } from '@/static';
+import NoOrgImg from '@/assets/img/no_org.png';
 import columnHtml from './business/table';
 import modalModule from './business/modal';
 import Query from './view/query';
@@ -49,18 +50,7 @@ export default defineComponent({
         }
       }).then((r) => console.log(r));
     };
-    const getNum = () => {
-      const { id } = proxy.$route.params;
-      const orgId = Number(id) || -1;
-      CommonApi.auditCountNum({ orgId, type: 0 }).then((res) => {
-        const { code, data = {} } = res.data || {};
-        if (code === 200) {
-          const { readNotNum, recallNum } = data;
-          state.readNotNum = readNotNum || '0';
-          state.recallNum = recallNum || '0';
-        }
-      });
-    };
+
     const getParams = () => {
       const f = (i) => dateUtils.formatStandardDate(i);
       const {
@@ -74,7 +64,7 @@ export default defineComponent({
         ...obj,
         ...rest,
         ...queryState,
-        orgType: state.type,
+        orgType: (state.type).toString(),
         page: queryState.page,
         isOpen: '',
       };
@@ -86,12 +76,17 @@ export default defineComponent({
       CommonApi.getAuditList(params).then((res) => {
         const { code, data } = res.data || {};
         if (code === 200) {
-          const { page, total, list } = data || {};
-          state.tableList = list;
+          const {
+            list, numInfo,
+          } = data || {};
+          const { page, total } = list || {};
+          const { readNotNum, recallNum } = numInfo || {};
+          state.tableList = list.list || [];
           state.page = page;
           state.total = total;
+          state.readNotNum = readNotNum || '0';
+          state.recallNum = recallNum || '0';
           setTreeMinHeight();
-          getNum();
         } else {
           proxy.$message.error('请求出错');
         }
@@ -117,16 +112,18 @@ export default defineComponent({
       openModal, modalState, modalHtml, modalSlots,
     } = modalModule(getList);
     const typeChange = (isClear) => {
+      const { resetForm } = proxy.$refs.queryRef;
       const { allList, type } = state;
-      state.treeList = allList.filter((i) => i.type === state.type);
+      state.treeList = allList.filter((i) => i.type === state.type) || [];
       if (isClear === 'clear') {
         queryState.orgId = '';
         proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
-        handleReset();
+        resetForm();
       }
     };
     const treeItemChange = (id, sign) => {
       const { treeList, type } = toRaw(state);
+      const { resetForm } = proxy.$refs.queryRef;
       let orgId = id;
       if (sign === 'all') {
         orgId = type ? -1 : -2;
@@ -147,7 +144,7 @@ export default defineComponent({
           dom.scrollIntoView({ block: 'center' });
         }
       }).then((r) => console.log(r));
-      handleReset();
+      resetForm();
     };
     const getTreeList = () => {
       const { id } = proxy.$route.params;
@@ -170,11 +167,15 @@ export default defineComponent({
       const { auctionId } = props || {};
       const { tableType } = queryState;
       const fn = Number(tableType) % 2 !== 0;
+      const params = {
+        ...props,
+        tableType,
+      };
       return <div className='action-column'>
         <el-button type="text" class='button-link top' onClick={() => toDetail(auctionId)}>结构化校验</el-button>
-        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push', props) }>推送</el-button>}
-        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush', props) }>不推送</el-button>}
-        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall', props) }>召回</el-button>}
+        {fn && <el-button type="primary" class='button-fourth middle' onClick = {() => openModal('push', params) }>推送</el-button>}
+        {fn && tableType !== '3' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('noPush', params) }>不推送</el-button>}
+        {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall', params) }>召回</el-button>}
       </div>;
     };
 
@@ -199,6 +200,7 @@ export default defineComponent({
     watch(() => queryState.tableType, (newVal, oldVal) => {
       if (newVal !== oldVal) {
         handleReset();
+        modalState.data = {};
       }
     });
     onMounted(() => {
@@ -235,18 +237,15 @@ export default defineComponent({
       sortChange,
     } = this;
     const type = { 0: '试用', 1: '正式' };
-    const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
-    const { tableType } = queryState;
-    const { total, readNotNum, recallNum } = state;
-    console.log('备用：', total, tableType);
-    const notNum = readNotNum;
-    const callNum = recallNum;
+    const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}）` }));
+    const hasData = (state.treeList || []).length;
+    const { readNotNum, recallNum } = state;
     return (
         <div className="yc-container audit-management-container" id='tree3311'>
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">
-                  <el-select v-model={queryState.orgId} filterable placeholder="请选择" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
+                  <el-select v-model={queryState.orgId} filterable placeholder="请输入顶级机构名称" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
                     {
                       list.map((i) => <el-option key={i.id} label={i.name} value={i.id} onClick={() => treeItemChange(i.id, 'query')}></el-option>)
                     }
@@ -261,7 +260,7 @@ export default defineComponent({
                       </el-radio-group>
                     </div>
                 </div>
-                <div className="content-left-tree-list" style={{ height: state.height }} id='treeList'>
+                <div className="content-left-tree-list" style={{ height: state.height }} id='treeList' v-show={hasData}>
                     <div className="content-left-tree-list-title" onClick={() => treeItemChange('', 'all')}>
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
@@ -285,6 +284,10 @@ export default defineComponent({
                       </el-timeline>
                     </div>
                 </div>
+                <div className="content-left-tree-no-data" v-show={!hasData}>
+                  <img src={NoOrgImg} alt="" />
+                  <p>暂无数据</p>
+                </div>
               </div>
             </div>
             <div className="content-right" id='content-right' ref='RightRef'>
@@ -293,7 +296,7 @@ export default defineComponent({
                   <div className="content-right-table-tabs">
                     <el-tabs v-model={queryState.tableType}>
                       {
-                        auditTabs(notNum, callNum).map((i) => (
+                        auditTabs(readNotNum, recallNum).map((i) => (
                           <el-tab-pane
                             label={i.label}
                             name={i.name}
