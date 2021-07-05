@@ -2,7 +2,7 @@ import {
   defineComponent, getCurrentInstance, reactive, toRaw,
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
-import { dateRange } from '@/utils';
+import { dateRange, dateUtils } from '@/utils';
 
 export default defineComponent({
   emits: ['handleSearch'],
@@ -33,10 +33,29 @@ export default defineComponent({
     const handleSearch = () => {
       proxy.$emit('handleSearch', toRaw(state));
     };
-    return { state, resetForm, handleSearch };
+    // 日期控件做前后限制
+    const disabledStartDate = (startTime, prop) => {
+      if (state[prop]) {
+        const time = dateUtils.formatStandardDate(state[prop]);
+        return startTime.getTime() > new Date(`${time} 00:00:00`).getTime();
+      }
+      return false;
+    };
+    const disabledEndDate = (endTime, prop) => {
+      if (state[prop]) {
+        const time = dateUtils.formatStandardDate(state[prop]);
+        return endTime.getTime() < new Date(`${time} 00:00:00`).getTime();
+      }
+      return false;
+    };
+    return {
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate,
+    };
   },
   render() {
-    const { state, resetForm, handleSearch } = this;
+    const {
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate,
+    } = this;
     return (
       <div className="content-right-query">
         <el-form inline={true} model={state} class="content-right-query-form" ref='queryForm'>
@@ -100,6 +119,7 @@ export default defineComponent({
                 placeholder="开始时间"
                 v-model={state.createTimeStart}
                 style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'createTimeEnd')}
               />
             </el-form-item>
             <el-form-item label="至" prop="createTimeEnd" class="time-end">
@@ -108,6 +128,7 @@ export default defineComponent({
                 placeholder="结束时间"
                 v-model={state.createTimeEnd}
                 style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'createTimeStart')}
               />
             </el-form-item>
             <el-form-item label="拍卖状态：" prop='pmStatus'>
@@ -132,6 +153,7 @@ export default defineComponent({
                 placeholder="开始时间"
                 v-model={state.approveTimeStart}
                 style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'approveTimeEnd')}
               />
             </el-form-item>
             <el-form-item label="至" prop="approveTimeEnd" class="time-end">
@@ -140,6 +162,7 @@ export default defineComponent({
                 placeholder="结束时间"
                 v-model={state.approveTimeEnd}
                 style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'approveTimeStart')}
               />
             </el-form-item>
             <el-form-item label="开拍时间：" prop="start" class="section-date" >
@@ -161,6 +184,7 @@ export default defineComponent({
                 placeholder="开始时间"
                 v-model={state.updateTimeStart}
                 style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'updateTimeEnd')}
               />
             </el-form-item>
             <el-form-item label="至" prop="updateTimeEnd" class="time-end">
@@ -169,6 +193,7 @@ export default defineComponent({
                 placeholder="结束时间"
                 v-model={state.updateTimeEnd}
                 style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'updateTimeStart')}
               />
             </el-form-item>
             <el-form-item style="float: right">
