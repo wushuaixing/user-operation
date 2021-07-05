@@ -241,7 +241,7 @@ export default defineComponent({
     const hasData = (state.treeList || []).length;
     const { readNotNum, recallNum } = state;
     return (
-        <div className="yc-container audit-management-container" id='tree3311'>
+        <div className="yc-container audit-management-container">
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">

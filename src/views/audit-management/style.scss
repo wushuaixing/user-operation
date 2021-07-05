@@ -221,6 +221,8 @@
           .action-column{
             display: flex;
             flex-direction: column;
+            position: relative;
+            top: -3px;
             .el-button{
               width: 72px;
               margin-bottom: 12px;

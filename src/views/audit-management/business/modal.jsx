@@ -37,6 +37,14 @@ const modalModule = (getTableList) => {
         if (code === 200) {
           proxy.$message.success('操作成功');
           getTableList();
+        } else if (code === 6005) {
+          proxy.$message.warning({
+            message: '数据状态变更，为您刷新当前列表',
+            duration: 1500,
+            onClose: () => {
+              getTableList();
+            },
+          });
         } else {
           proxy.$message.error('请求错误');
         }
@@ -60,6 +68,7 @@ const modalModule = (getTableList) => {
     modalState.visible = true;
     modalState.type = type;
     modalState.currentStatus = tableType === '3' ? 5 : 0;
+    console.log(tableType, modalState.tableType);
     const isSame = modalState.id === id && tableType === modalState.tableType;
     if (type === 'push') {
       modalState.title = parsingTitle;
@@ -73,6 +82,7 @@ const modalModule = (getTableList) => {
       modalState.remark = isSame ? modalState.remark : '';
       modalState.recallReason = isSame ? modalState.recallReason : '';
     }
+    modalState.tableType = tableType;
     modalState.id = id;
   };
   // 填充内容

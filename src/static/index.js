@@ -115,8 +115,8 @@ const TOP_ORG_STATUS = {
 
 const COLLATERAL_TYPE = {
   0: '未知',
-  1: '有抵押',
-  2: '无抵押',
+  1: '无抵押',
+  2: '有抵押',
 };
 const HOUSE_TYPE = {
   0: '未知',
