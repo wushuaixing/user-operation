@@ -12,5 +12,8 @@ const AssetInfo = (props) => <div className='asset-info'>
       ))
     }
   </ul>
+  { props.important === 1 ? <svg class="icon jz" aria-hidden="true" style="font-size: 37px;">
+    <use xlink:href="#iconjingzhun" />
+  </svg> : ''}
 </div>;
 export default AssetInfo;
