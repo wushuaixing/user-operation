@@ -18,18 +18,12 @@ const CommonApi = {
   // 客户未读-召回数量
   auditCountNum: (params) => axios.post('/api/user/audit/countNum', clearEmpty(params)),
 
-  // // 推送-不推送
-  // pushOrNot: (params) => axios.post('/api/user/audit/pushOrNot', clearEmpty(params)),
-  //
-  // // 退回-再次退回
-  // auditBack: (params) => axios.post('/api/user/audit/back', clearEmpty(params)),
-  //
-  // // 召回
-  // auditReCall: (params) => axios.post('/api/user/audit/reCall', clearEmpty(params)),
+  // 退回-再次退回
+  auditBack: (params) => axios.post('/api/user/audit/back', clearEmpty(params)),
 
   auditAction: (sign, params) => {
     let url;
-    if (sign === 'recall') {
+    if (sign === 'reCall') {
       url = '/api/user/audit/reCall';
     } else {
       url = '/api/user/audit/pushOrNot';

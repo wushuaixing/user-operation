@@ -1,13 +1,14 @@
 import {
-  defineComponent, reactive, onMounted, getCurrentInstance, toRaw, watch,
+  defineComponent, reactive, onMounted, getCurrentInstance, toRaw, watch, nextTick,
 } from 'vue';
 import CommonApi from '@/server/api/common';
 import { auditTabs } from '@/static/fn';
 import { auditColumn } from '@/static/column';
 import { selectSlots, timeLineSlots, tableEmptytSlots } from '@/static/slot';
+import { dateUtils } from '@/utils/index';
+import { MONITOR_LIST } from '@/static';
 import columnHtml from './business/table';
 import modalModule from './business/modal';
-import queryModule from './business/query';
 import Query from './view/query';
 import './style.scss';
 
@@ -16,70 +17,144 @@ const option = [{ label: '正式', val: 1 }, { label: '试用', val: 0 }];
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance();
-    const treeState = reactive({
+    const state = reactive({
       type: 1,
       allList: [],
-      treeSelectVal: '',
       treeList: [],
-    });
-    const {
-      openModal, modalState, modalHtml, modalSlots,
-    } = modalModule();
-    const { formState, onSerch, resetForm } = queryModule();
-    const tableState = reactive({
+      height: '72vh',
       tableList: [],
       page: 1,
       num: 10,
       total: 0,
-      readNotNum: '',
-      recallNum: '',
+      readNotNum: '0',
+      recallNum: '0',
+      loading: false,
     });
-    const getTableList = () => {
-      const params = toRaw(formState);
+    const queryState = reactive({
+      num: 10, // 每页条数，默认20 ,示例值(20)
+      orgId: '', // 机构id
+      page: 1, //
+      sortColumn: '', // 排序字段,可用值:AUCTIONTIME,UPDATETIME
+      sortOrder: '', // 排序顺序,可用值:ASC,DESC
+      tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
+    });
+
+    const setTreeMinHeight = () => {
+      state.height = '72vh';
+      nextTick(() => {
+        const dom = document.getElementById('content-right');
+        if (dom && dom.clientHeight) {
+          const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
+          state.height = height;
+        }
+      }).then((r) => console.log(r));
+    };
+    const getNum = () => {
+      const { id } = proxy.$route.params;
+      const orgId = Number(id) || -1;
+      CommonApi.auditCountNum({ orgId, type: 0 }).then((res) => {
+        const { code, data = {} } = res.data || {};
+        if (code === 200) {
+          const { readNotNum, recallNum } = data;
+          state.readNotNum = readNotNum || '0';
+          state.recallNum = recallNum || '0';
+        }
+      });
+    };
+    const getParams = () => {
+      const f = (i) => dateUtils.formatStandardDate(i);
+      const {
+        createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, start, updateTimeEnd, updateTimeStart, ...rest
+      } = proxy.$refs.queryRef.state;
+      const obj = {
+        createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, updateTimeEnd, updateTimeStart, startStart: start[0], startEnd: start[1],
+      };
+      Object.keys(obj).forEach((i) => obj[i] = f(obj[i]));
+      const params = {
+        ...obj,
+        ...rest,
+        ...queryState,
+        orgType: state.type,
+        page: queryState.page,
+        isOpen: '',
+      };
+      return params;
+    };
+    const getList = () => {
+      state.loading = true;
+      const params = getParams();
       CommonApi.getAuditList(params).then((res) => {
         const { code, data } = res.data || {};
         if (code === 200) {
           const { page, total, list } = data || {};
-          tableState.tableList = list;
-          tableState.page = page;
-          tableState.total = total;
+          state.tableList = list;
+          state.page = page;
+          state.total = total;
+          setTreeMinHeight();
+          getNum();
         } else {
           proxy.$message.error('请求出错');
         }
+      }).finally(() => {
+        state.loading = false;
       });
     };
+
+    const handleReset = () => {
+      const { clearSort } = proxy.$refs.tableRef;
+      clearSort();
+      queryState.page = 1;
+      queryState.sortColumn = '';
+      queryState.sortOrder = '';
+      getList();
+    };
+
+    const onSearch = () => {
+      handleReset();
+    };
+
+    const {
+      openModal, modalState, modalHtml, modalSlots,
+    } = modalModule(getList);
     const typeChange = (isClear) => {
-      const { allList, type } = treeState;
-      treeState.treeList = allList.filter((i) => i.type === treeState.type);
+      const { allList, type } = state;
+      state.treeList = allList.filter((i) => i.type === state.type);
       if (isClear === 'clear') {
-        formState.orgId = '';
+        queryState.orgId = '';
         proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
+        handleReset();
       }
     };
     const treeItemChange = (id, sign) => {
-      const { treeList, type } = toRaw(treeState);
+      const { treeList, type } = toRaw(state);
       let orgId = id;
       if (sign === 'all') {
         orgId = type ? -1 : -2;
       }
       if (sign === 'query') {
         if (id < 0) {
-          treeState.type = id === -1 ? 1 : 0;
-        } else if (!(treeList.filter((i) => i.id === id) || []).length) {
-          treeState.type = option.find((i) => i.val !== type).val;
+          state.type = id === -1 ? 1 : 0;
+        } else if (id && !(treeList.filter((i) => i.id === id) || []).length) {
+          state.type = option.find((i) => i.val !== type).val;
         }
         typeChange();
       }
-      formState.orgId = id < 0 ? '' : id;
+      queryState.orgId = id < 0 ? '' : id;
       proxy.$router.push(`/auditManagement/${orgId}`);
-      getTableList();
+      nextTick(() => {
+        const dom = document.getElementById('active');
+        if (dom) {
+          dom.scrollIntoView({ block: 'center' });
+        }
+      }).then((r) => console.log(r));
+      handleReset();
     };
     const getTreeList = () => {
       const { id } = proxy.$route.params;
       CommonApi.listTopOrg().then((res) => {
         const { code, data = [] } = res.data || {};
         if (code === 200) {
-          treeState.allList = data;
+          state.allList = data;
           typeChange();
           treeItemChange(Number(id) || '', 'query');
         } else {
@@ -93,8 +168,7 @@ export default defineComponent({
 
     const ColumnAction = (props) => {
       const { auctionId } = props || {};
-      console.log(props);
-      const { tableType } = formState;
+      const { tableType } = queryState;
       const fn = Number(tableType) % 2 !== 0;
       return <div className='action-column'>
         <el-button type="text" class='button-link top' onClick={() => toDetail(auctionId)}>结构化校验</el-button>
@@ -103,64 +177,76 @@ export default defineComponent({
         {tableType === '4' && <el-button type="primary" class='button-fourth btm' onClick = {() => openModal('reCall', props) }>召回</el-button>}
       </div>;
     };
-    const getNum = () => {
-      const { orgId } = formState;
-      CommonApi.auditCountNum({ orgId, type: 0 }).then((res) => {
-        const { code, data = {} } = res.data || {};
-        if (code === 200) {
-          const { readNotNum, recallNum } = data;
-          tableState.readNotNum = readNotNum || '0';
-          tableState.recallNum = recallNum || '0';
+
+    const pageChange = (val) => {
+      queryState.page = val;
+      getList();
+    };
+    const sortChange = ({ prop, order }) => {
+      queryState.page = 1;
+      queryState.sortColumn = MONITOR_LIST[prop];
+      queryState.sortOrder = MONITOR_LIST[order];
+      getList();
+    };
+    const isNewPageClose = () => {
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'backSign' && e.newValue === 'SUCCESS') {
+          localStorage.setItem('backSign', '');
+          getList();
         }
       });
     };
-    const pageChange = () => {
-
-    };
-    watch(() => formState.tableType, (newVal, oldVal) => {
-      if (newVal !== oldVal) getTableList();
+    watch(() => queryState.tableType, (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        handleReset();
+      }
     });
     onMounted(() => {
       getTreeList();
-      getNum();
+      isNewPageClose();
       document.title = '审核管理';
     });
     return {
-      treeState,
-      treeItemChange,
-      typeChange,
-      formState,
-      onSerch,
-      resetForm,
-      tableState,
-      ColumnAction,
-      pageChange,
+      state,
+      queryState,
       modalState,
       modalHtml,
       modalSlots,
+      onSearch,
+      ColumnAction,
+      pageChange,
+      treeItemChange,
+      typeChange,
+      sortChange,
     };
   },
   render() {
     const {
-      treeState,
-      formState,
+      state,
+      queryState,
       treeItemChange,
       typeChange,
-      tableState,
       ColumnAction,
       pageChange,
       modalState,
       modalSlots,
       modalHtml,
+      onSearch,
+      sortChange,
     } = this;
     const type = { 0: '试用', 1: '正式' };
-    const list = this.treeState.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
+    const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}` }));
+    const { tableType } = queryState;
+    const { total, readNotNum, recallNum } = state;
+    console.log('备用：', total, tableType);
+    const notNum = readNotNum;
+    const callNum = recallNum;
     return (
-        <div className="yc-container audit-management-container">
+        <div className="yc-container audit-management-container" id='tree3311'>
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">
-                  <el-select v-model={formState.orgId} filterable placeholder="请选择" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
+                  <el-select v-model={queryState.orgId} filterable placeholder="请选择" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
                     {
                       list.map((i) => <el-option key={i.id} label={i.name} value={i.id} onClick={() => treeItemChange(i.id, 'query')}></el-option>)
                     }
@@ -168,29 +254,30 @@ export default defineComponent({
                 </div>
                 <div className="content-left-tree-tabs">
                     <div className="content-left-tree-tabs-content">
-                      <el-radio-group v-model={treeState.type} onChange={() => typeChange('clear')}>
+                      <el-radio-group v-model={state.type} onChange={() => typeChange('clear')}>
                         {
                           option.map((i) => <el-radio-button label={i.val} key={i.val}>{ i.label}</el-radio-button>)
                         }
                       </el-radio-group>
                     </div>
                 </div>
-                <div className="content-left-tree-list">
+                <div className="content-left-tree-list" style={{ height: state.height }} id='treeList'>
                     <div className="content-left-tree-list-title" onClick={() => treeItemChange('', 'all')}>
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
                       </svg>
-                      <span className={!formState.orgId ? 'active' : ''}>全部{type[treeState.type]}机构</span>
+                      <span className={!queryState.orgId ? 'active' : ''}>全部{type[state.type]}机构</span>
                     </div>
                     <div className='content-left-tree-list-content'>
                       <el-timeline>
                         {
-                          treeState.treeList.map((i) => (
+                          state.treeList.map((i) => (
                             <el-timeline-item
                               key={i.id}
                               v-slots={timeLineSlots}
                               onClick={() => treeItemChange(i.id)}
-                              className={`${formState.orgId === i.id ? 'active' : ''} el-timeline-item` }
+                              className={`${queryState.orgId === i.id ? 'active' : ''} el-timeline-item` }
+                              id={`${queryState.orgId === i.id ? 'active' : ''}` }
                             >
                               {i.name}
                             </el-timeline-item>))
@@ -200,13 +287,13 @@ export default defineComponent({
                 </div>
               </div>
             </div>
-            <div className="content-right">
-              <Query/>
+            <div className="content-right" id='content-right' ref='RightRef'>
+              <Query ref="queryRef" onHandleSearch={onSearch} onHandleClearQuery = {onSearch}/>
               <div className="content-right-table">
                   <div className="content-right-table-tabs">
-                    <el-tabs v-model={formState.tableType}>
+                    <el-tabs v-model={queryState.tableType}>
                       {
-                        auditTabs(tableState.readNotNum, tableState.recallNum).map((i) => (
+                        auditTabs(notNum, callNum).map((i) => (
                           <el-tab-pane
                             label={i.label}
                             name={i.name}
@@ -218,25 +305,35 @@ export default defineComponent({
                   </div>
                 <div className="content-right-table-list">
                   <el-table
-                    data={tableState.tableList}
-                    v-loading={tableState.loading}
+                    data={state.tableList}
+                    v-loading={state.loading}
                     v-slots={tableEmptytSlots}
                     row-key={(val) => val.id}
+                    onSortChange={sortChange}
+                    ref="tableRef"
                   >
                     {
                       auditColumn.map((i) => (
-                        <el-table-column label={i.label} key={i.prop} min-width={i.width} className ={i.prop} v-slots={(scope) => <div className='column-item-content'>{columnHtml(scope.row, formState.tableType)[i.prop]}</div>}/>
+                        <el-table-column
+                          label={i.label}
+                          key={i.prop}
+                          prop={i.prop}
+                          min-width={i.width}
+                          className ={i.prop}
+                          sortable={i.sort}
+                          v-slots={(scope) => <div className='column-item-content'>{columnHtml(scope.row, queryState.tableType)[i.prop]}</div>}
+                        />
                       ))
                     }
                     <el-table-column label="操作" min-width='10%' v-slots={(scope) => <ColumnAction {...scope.row}/>}/>
                   </el-table>
                   <el-pagination
-                    current-change={pageChange}
+                    onCurrentChange={pageChange}
                     background
-                    current-page={tableState.page}
+                    current-page={state.page}
                     layout='total, prev, pager, next, jumper'
-                    total={tableState.total}
-                    key={tableState.page}
+                    total={state.total}
+                    key={state.page}
                 />
                 </div>
               </div>

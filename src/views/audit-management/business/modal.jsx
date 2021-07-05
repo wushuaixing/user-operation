@@ -5,7 +5,7 @@ import {
 } from '@/static';
 import CommonApi from '@/server/api/common';
 
-const modalModule = () => {
+const modalModule = (getTableList) => {
   const { proxy } = getCurrentInstance();
   const modalState = reactive({
     type: '',
@@ -17,36 +17,25 @@ const modalModule = () => {
     recallReason: '', // 召回原因类型 1 误点击 2 备注填错 3 审核出错 9 其他
     title: '',
     importants: '',
+    currentStatus: '',
   });
   // 点击确定
   const handleClick = () => {
     const {
-      type, id, remark, noPushRemark, important, pushRemark, recallReason,
+      type, id, remark, noPushRemark, important, pushRemark, recallReason, currentStatus,
     } = modalState;
-    // eslint-disable-next-line no-unused-vars
-    let obj = {};
-    switch (type) {
-      case 'pushConfirm':
-        obj = {
-          approveStatus: 1, id, important, remark: pushRemark, message: '推送成功',
-        }; break;
-      case 'noPush':
-        obj = {
-          approveStatus: 0, id, important, remark: noPushRemark, message: '推送成功',
-        }; break;
-      case 'recall':
-        obj = {
-          id, recallReason, remark, message: '召回成功',
-        }; break;
-      default: break;
-    }
+    const obj = type === 'noPush' ? { status: 5, remark: noPushRemark } : { status: 1, remark: pushRemark };
+    const params = type === 'reCall' ? { id, recallReason, remark } : {
+      approveStatus: obj.status, id, important, remark: obj.remark, currentStatus,
+    };
     if (type === 'push') {
       modalState.type = 'pushConfirm';
     } else {
-      CommonApi.auditAction(type, obj).then((res) => {
+      CommonApi.auditAction(type, params).then((res) => {
         const { code } = res.data || {};
         if (code === 200) {
-          proxy.$message.success(obj.message);
+          proxy.$message.success('操作成功');
+          getTableList();
         } else {
           proxy.$message.error('请求错误');
         }
@@ -64,12 +53,15 @@ const modalModule = () => {
     }
   };
   // 打开弹窗
-  const openModal = (type, { parsingTitle, important, id }) => {
+  const openModal = (type, {
+    parsingTitle, important, id, status,
+  }) => {
     modalState.title = parsingTitle;
     modalState.importants = important;
     modalState.type = type;
     modalState.id = id;
     modalState.visible = true;
+    modalState.currentStatus = status;
   };
   // 填充内容
   const handleFill = (key, val) => {
@@ -98,6 +90,7 @@ const modalModule = () => {
             type="textarea"
             autosize
             placeholder="请输入内容"
+            maxLength={1024}
             v-model={modalState.remark}/>
           <span className='val-length'>{modalState.remark.length}/1024</span>
         </div>
@@ -115,7 +108,7 @@ const modalModule = () => {
       <div className="no-push-modal-body">
         <div className="no-push-modal-body-title">
           <span className='label'>拍卖标题：</span>
-          <span>姜修平所有的深喉口固定台式压力机等设备一宗</span>
+          <span>{modalState.title}</span>
         </div>
         <div className="no-push-modal-body-remark">
           <span className='label'>审核备注：</span>
@@ -154,12 +147,13 @@ const modalModule = () => {
           type="textarea"
           autosize
           placeholder="请输入内容"
+          maxLength={1024}
           v-model={modalState.pushRemark}/>
         <span className='val-length'>{modalState.pushRemark.length}/1024</span>
       </div>
       <div className="push-modal-body-type flex">
         <span className='label'>系统匹配：</span>
-        <span>{MATCH_TYPE[1]}匹配</span>
+        <span>{MATCH_TYPE[modalState.importants]}匹配</span>
       </div>
       <div className="push-modal-body-level flex">
         <span className='label'>推送等级：</span>
