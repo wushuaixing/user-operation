@@ -168,7 +168,7 @@ export default defineComponent({
                     onBlur={() => state.value = state.value.trim()}
                   >
                   </el-input>
-                  <span className='val-length'>{state.value.length}/1024</span>
+                  <span className='val-length'>{state.value.length}/1000</span>
                 </div>
               </el-dialog>
             </div>

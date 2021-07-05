@@ -304,7 +304,13 @@
             display: flex;
             margin-top: 24px;
             .tips-box{
-              @include tips-box
+              @include tips-box;
+              p{
+                color: #4E5566;
+                &:hover{
+                  background-color: #EFF5FF;
+                }
+              }
             }
           }
         }
