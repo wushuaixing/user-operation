@@ -30,6 +30,7 @@ export default defineComponent({
       readNotNum: '0',
       recallNum: '0',
       loading: false,
+      queryOptions: {},
     });
     const queryState = reactive({
       num: 10, // 每页条数，默认20 ,示例值(20)
@@ -55,9 +56,9 @@ export default defineComponent({
       const f = (i) => dateUtils.formatStandardDate(i);
       const {
         createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, start, updateTimeEnd, updateTimeStart, ...rest
-      } = proxy.$refs.queryRef.state;
+      } = state.queryOptions;
       const obj = {
-        createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, updateTimeEnd, updateTimeStart, startStart: start[0], startEnd: start[1],
+        createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, updateTimeEnd, updateTimeStart, startStart: (start || [])[0], startEnd: (start || [])[1],
       };
       Object.keys(obj).forEach((i) => obj[i] = f(obj[i]));
       const params = {
@@ -104,7 +105,10 @@ export default defineComponent({
       getList();
     };
 
-    const onSearch = () => {
+    const handleSearch = (sign) => {
+      if (sign === 'search') {
+        state.queryOptions = proxy.$refs.queryRef.state || {};
+      }
       handleReset();
     };
 
@@ -200,7 +204,6 @@ export default defineComponent({
     watch(() => queryState.tableType, (newVal, oldVal) => {
       if (newVal !== oldVal) {
         handleReset();
-        modalState.data = {};
       }
     });
     onMounted(() => {
@@ -214,7 +217,7 @@ export default defineComponent({
       modalState,
       modalHtml,
       modalSlots,
-      onSearch,
+      handleSearch,
       ColumnAction,
       pageChange,
       treeItemChange,
@@ -233,7 +236,7 @@ export default defineComponent({
       modalState,
       modalSlots,
       modalHtml,
-      onSearch,
+      handleSearch,
       sortChange,
     } = this;
     const type = { 0: '试用', 1: '正式' };
@@ -291,7 +294,7 @@ export default defineComponent({
               </div>
             </div>
             <div className="content-right" id='content-right' ref='RightRef'>
-              <Query ref="queryRef" onHandleSearch={onSearch} onHandleClearQuery = {onSearch}/>
+              <Query ref="queryRef" onHandleSearch={handleSearch} onHandleClearQuery = {handleSearch}/>
               <div className="content-right-table">
                   <div className="content-right-table-tabs">
                     <el-tabs v-model={queryState.tableType}>
