@@ -112,16 +112,18 @@ export default defineComponent({
       openModal, modalState, modalHtml, modalSlots,
     } = modalModule(getList);
     const typeChange = (isClear) => {
+      const { resetForm } = proxy.$refs.queryRef;
       const { allList, type } = state;
       state.treeList = allList.filter((i) => i.type === state.type) || [];
       if (isClear === 'clear') {
         queryState.orgId = '';
         proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
-        handleReset();
+        resetForm();
       }
     };
     const treeItemChange = (id, sign) => {
       const { treeList, type } = toRaw(state);
+      const { resetForm } = proxy.$refs.queryRef;
       let orgId = id;
       if (sign === 'all') {
         orgId = type ? -1 : -2;
@@ -142,7 +144,7 @@ export default defineComponent({
           dom.scrollIntoView({ block: 'center' });
         }
       }).then((r) => console.log(r));
-      handleReset();
+      resetForm();
     };
     const getTreeList = () => {
       const { id } = proxy.$route.params;
