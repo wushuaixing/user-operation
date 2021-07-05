@@ -7,6 +7,7 @@ import { auditColumn } from '@/static/column';
 import { selectSlots, timeLineSlots, tableEmptytSlots } from '@/static/slot';
 import { dateUtils } from '@/utils/index';
 import { MONITOR_LIST } from '@/static';
+import NoOrgImg from '@/assets/img/no_org.png';
 import columnHtml from './business/table';
 import modalModule from './business/modal';
 import Query from './view/query';
@@ -63,7 +64,7 @@ export default defineComponent({
         ...obj,
         ...rest,
         ...queryState,
-        orgType: state.type,
+        orgType: (state.type).toString(),
         page: queryState.page,
         isOpen: '',
       };
@@ -112,7 +113,7 @@ export default defineComponent({
     } = modalModule(getList);
     const typeChange = (isClear) => {
       const { allList, type } = state;
-      state.treeList = allList.filter((i) => i.type === state.type);
+      state.treeList = allList.filter((i) => i.type === state.type) || [];
       if (isClear === 'clear') {
         queryState.orgId = '';
         proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
@@ -230,6 +231,7 @@ export default defineComponent({
     } = this;
     const type = { 0: '试用', 1: '正式' };
     const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}）` }));
+    const hasData = (state.treeList || []).length;
     const { readNotNum, recallNum } = state;
     return (
         <div className="yc-container audit-management-container" id='tree3311'>
@@ -251,7 +253,7 @@ export default defineComponent({
                       </el-radio-group>
                     </div>
                 </div>
-                <div className="content-left-tree-list" style={{ height: state.height }} id='treeList'>
+                <div className="content-left-tree-list" style={{ height: state.height }} id='treeList' v-show={hasData}>
                     <div className="content-left-tree-list-title" onClick={() => treeItemChange('', 'all')}>
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
@@ -274,6 +276,10 @@ export default defineComponent({
                         }
                       </el-timeline>
                     </div>
+                </div>
+                <div className="content-left-tree-no-data" v-show={!hasData}>
+                  <img src={NoOrgImg} alt="" />
+                  <p>暂无数据</p>
                 </div>
               </div>
             </div>

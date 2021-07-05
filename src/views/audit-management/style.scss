@@ -147,13 +147,23 @@
             }
           }
         }
+        &-no-data{
+          text-align: center;
+          padding-right: 20px;
+          margin-top: 62px;
+          p{
+            margin-top:12px;
+            color: #7D8699;
+            font-size: 14px;
+          }
+        }
       }
     }
     &-right{
       flex: 1 !important;
       background: #fff;
       padding: 20px;
-      width: 1303px;
+      min-width: 1303px;
       &-query{
         .line{
           min-width: 1200px;
