@@ -164,6 +164,10 @@
       background: #fff;
       padding: 20px;
       min-width: 1303px;
+      height: 85vh;
+      overflow: auto;
+      @include scoll-style;
+      position: relative;
       &-query{
         .line{
           min-width: 1200px;
@@ -208,6 +212,20 @@
         }
       }
       &-table{
+        &-tabs{
+          position: sticky;
+          top: -20px;
+          z-index: 100;
+          background: #fff;
+        }
+        .el-table{
+          overflow: visible;
+          .el-table__header-wrapper{
+            position: sticky;
+            top: 40px;
+            z-index: 10;
+          }
+        }
         &-list{
           .el-table__body{
             tbody{
@@ -234,9 +252,6 @@
               margin-left: 0 !important;
             }
           }
-        }
-        .el-table__body-wrapper{
-          @include scoll-style
         }
       }
     }

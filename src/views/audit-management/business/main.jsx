@@ -30,17 +30,17 @@ const mainModule = () => {
     sortOrder: '', // 排序顺序,可用值:ASC,DESC
     tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
   });
-  // 设置左侧树的高度
-  const setTreeMinHeight = () => {
-    state.height = '72vh';
-    nextTick(() => {
-      const dom = document.getElementById('content-right');
-      if (dom && dom.clientHeight) {
-        const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
-        state.height = height;
-      }
-    }).then((r) => console.log(r));
-  };
+  // // 设置左侧树的高度
+  // const setTreeMinHeight = () => {
+  //   state.height = '72vh';
+  //   nextTick(() => {
+  //     const dom = document.getElementById('content-right');
+  //     if (dom && dom.clientHeight) {
+  //       const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
+  //       state.height = height;
+  //     }
+  //   }).then((r) => console.log(r));
+  // };
   // 获取请求列表参数
   const getParams = () => {
     const f = (i) => dateUtils.formatStandardDate(i);
@@ -78,7 +78,7 @@ const mainModule = () => {
         state.total = total;
         state.readNotNum = readNotNum || '0';
         state.recallNum = recallNum || '0';
-        setTreeMinHeight();
+        // setTreeMinHeight();
       } else {
         proxy.$message.error('请求出错');
       }
@@ -195,7 +195,7 @@ const mainModule = () => {
     sortChange,
     isNewPageClose,
     getTreeList,
-    setTreeMinHeight,
+    // setTreeMinHeight,
     getParams,
     getList,
     handleReset,
