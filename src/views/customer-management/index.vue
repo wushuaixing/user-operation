@@ -60,7 +60,7 @@
             </div>
           </template>
         </BreadCrumb>
-        <div class="table-content" id="main-content-right">
+        <div class="table-list" id="main-content-right">
           <Table ref="listTable"
                  :tableData="tableData"
                  @pageOrSizeChange="pageOrSizeChange"
@@ -503,19 +503,8 @@ export default {
           }
         }
       }
-      .table-content {
+      .table-list {
         padding: 20px 20px 40px;
-        &-btn {
-          margin-bottom: 12px;
-          .total-tips {
-            font-size: 14px;
-            padding-left: 20px;
-            color: #4e5566;
-            b {
-              color: #20242e;
-            }
-          }
-        }
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="table-content-btn">
+    <div class="table-content-button">
       <el-button
         type="primary"
         v-if="!isChecked"
@@ -210,7 +210,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.table-content-btn {
+.table-content-button {
   margin-bottom: 12px;
   .total-tips {
     font-size: 14px;

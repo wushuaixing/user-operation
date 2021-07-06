@@ -204,17 +204,19 @@ export default defineComponent({
             sortable={i.sort}
             v-slots={(scope) => setTablePane(scope.row, i.prop)}/>)}
         </el-table>
-        <el-pagination
-          onCurrentChange={pageChange}
-          onSizeChange={sizeChange}
-          background
-          current-page={tableData.page}
-          page-sizes={[10, 20, 30, 40, 50]}
-          page-size={tableData.num}
-          layout="total,sizes, prev, pager, next, jumper"
-          total={tableData.total}
-          key={tableData.page}
-        />
+        {
+          tableData.data.length ? <el-pagination
+            onCurrentChange={pageChange}
+            onSizeChange={sizeChange}
+            background
+            current-page={tableData.page}
+            page-sizes={[10, 20, 30, 40, 50]}
+            page-size={tableData.num}
+            layout="total,sizes, prev, pager, next, jumper"
+            total={tableData.total}
+            key={tableData.page}
+          /> : ''
+        }
       </div>
     );
   },
