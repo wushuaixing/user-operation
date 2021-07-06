@@ -28,6 +28,7 @@ export default defineComponent({
     });
     const resetForm = () => {
       proxy.$refs.queryForm.resetFields();
+      state.start = '';
       proxy.$emit('handleClearQuery', 'reset');
     };
     const handleSearch = () => {
