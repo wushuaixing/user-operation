@@ -147,13 +147,23 @@
             }
           }
         }
+        &-no-data{
+          text-align: center;
+          padding-right: 20px;
+          margin-top: 62px;
+          p{
+            margin-top:12px;
+            color: #7D8699;
+            font-size: 14px;
+          }
+        }
       }
     }
     &-right{
       flex: 1 !important;
       background: #fff;
       padding: 20px;
-      width: 1303px;
+      min-width: 1303px;
       &-query{
         .line{
           min-width: 1200px;
@@ -211,6 +221,8 @@
           .action-column{
             display: flex;
             flex-direction: column;
+            position: relative;
+            top: -3px;
             .el-button{
               width: 72px;
               margin-bottom: 12px;
@@ -292,7 +304,13 @@
             display: flex;
             margin-top: 24px;
             .tips-box{
-              @include tips-box
+              @include tips-box;
+              p{
+                color: #4E5566;
+                &:hover{
+                  background-color: #EFF5FF;
+                }
+              }
             }
           }
         }

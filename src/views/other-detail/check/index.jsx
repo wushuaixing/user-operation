@@ -7,11 +7,7 @@ import { roleInfoColumn } from '@/static/column';
 import { handleObligors } from '@/utils';
 import './style.scss';
 import CommonApi from '@/server/api/common';
-
-const params = {
-  title: '确认将本条数据退回至检查人员',
-  text: '点击确定，该条数据将被退回至结构化检查人员，修改后将会重新匹配',
-};
+import { tableEmptytSlots } from '@/static/slot';
 
 const Item = (props) => {
   const { id, key, val } = props;
@@ -62,9 +58,6 @@ export default defineComponent({
       visible: false,
       value: '',
     });
-    const returnFn = () => {
-      state.visible = true;
-    };
     const handleClick = () => {
       const { params: { auctionId } } = proxy.$route;
       const remark = state.value;
@@ -76,6 +69,7 @@ export default defineComponent({
             duration: 1500,
             onClose: () => {
               localStorage.setItem('backSign', 'SUCCESS');
+              state.visible = false;
               window.close();
             },
           });
@@ -83,16 +77,30 @@ export default defineComponent({
           proxy.$message.error('退回失败');
         }
       });
-      state.visible = false;
     };
     const modalSlots = {
       title: null,
       footer: () => <>
-      <el-button onClick={handleClick}>取 消</el-button>
+      <el-button onClick={() => state.visible = false}>取 消</el-button>
       <el-button type="primary" onClick={handleClick}>确定</el-button>
       </>,
     };
-
+    const params = () => {
+      const { isBack } = state.assetDetail;
+      return isBack ? {
+        title: '确认再次退回本条数据?',
+        text: '点击确定，错误原因将被覆盖',
+      } : {
+        title: '确认将本条数据退回至检查人员?',
+        text: '点击确定，该条数据将被退回至结构化检查人员，修改后将会重新匹配',
+      };
+    };
+    const handleOpen = () => {
+      const { assetDetail: { isBack, remark }, value } = state;
+      state.visible = true;
+      const text = isBack ? remark : '';
+      state.value = value || text;
+    };
     onMounted(() => {
       const { params: { auctionId } } = proxy.$route;
       CommonApi.assetDetail(auctionId).then((res) => {
@@ -102,16 +110,17 @@ export default defineComponent({
         } else {
           proxy.$message.error('请求出错');
         }
+        const { title } = data || {};
+        document.title = title || '结构化校验/详情';
       });
-      document.title = '结构化校验/详情';
     });
     return {
-      returnFn, state, modalSlots,
+      state, modalSlots, params, handleOpen,
     };
   },
   render() {
     const {
-      returnFn, modalSlots, state,
+      modalSlots, state, params, handleOpen,
     } = this;
     const { obligors, isBack } = state.assetDetail;
     const partDatas = handlePart(toRaw(state.assetDetail));
@@ -121,7 +130,7 @@ export default defineComponent({
           <BreadCrumb text='结构化校验/详情' />
           <div className="main-content">
             <div className="main-content-top">
-              <el-button type="primary" class="button-first action-button" onClick ={returnFn}>{Number(isBack) ? '再次退回' : '退回'}</el-button>
+              <el-button type="primary" class="button-first action-button" onClick ={handleOpen}>{Number(isBack) ? '再次退回' : '退回'}</el-button>
               {partDatas.map((i) => <Part {...i}/>)}
             </div>
             <div className="main-content-btm">
@@ -130,6 +139,7 @@ export default defineComponent({
                   data={handleObligors(obligors)}
                   style="width: 100%"
                   row-key={(val) => val.id}
+                  v-slots={tableEmptytSlots}
                 >
                   {
                     roleInfoColumn.map((i) => <el-table-column prop={i.prop} label={i.label} key={i.class} min-width={i.width}/>)
@@ -146,17 +156,19 @@ export default defineComponent({
                 v-slots={modalSlots}
                 lock-scroll={false}
               >
-                <ModalTitle {...params}/>
+                <ModalTitle {...params()}/>
                 <div className="main-content-modal-body">
                   <div className='label'>备注：</div>
                   <el-input
                     type="textarea"
                     autosize
-                    placeholder="请输入内容"
-                    maxLength={1024}
-                    v-model={state.value}>
+                    placeholder="请输入..."
+                    maxLength={1000}
+                    v-model={state.value}
+                    onBlur={() => state.value = state.value.trim()}
+                  >
                   </el-input>
-                  <span className='val-length'>{state.value.length}/1024</span>
+                  <span className='val-length'>{state.value.length}/1000</span>
                 </div>
               </el-dialog>
             </div>
