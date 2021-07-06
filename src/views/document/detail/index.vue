@@ -97,13 +97,16 @@ export default {
 
 <style lang="scss">
 .document-detail-wrapper {
-  padding: 50px 40px 40px;
+  padding: 48px 40px 40px;
   box-sizing: border-box;
   .container-main {
     width: 924px;
     header {
+      h1{
+        line-height: 26px;
+      }
       p {
-        margin: 20px 0 30px;
+        margin: 18px 0 30px;
         line-height: 16px;
         font-size: 16px;
         color: #7D8699;
