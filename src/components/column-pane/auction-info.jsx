@@ -15,7 +15,7 @@ const AuctionInfo = (props) => {
   };
 
   return <div className='auction-info'>
-    <div className="title"><a href={url} className='button-link'>{parsingTitle || ''}</a></div>
+    <div className="title"><a href={url} className='button-link' target='_blank'>{parsingTitle || ''}</a></div>
     <ul>
       {
         auctionInfo(pmStatus).map((i) => (
