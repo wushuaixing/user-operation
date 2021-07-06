@@ -1,13 +1,13 @@
 import {
-  defineComponent, reactive, onMounted, getCurrentInstance, toRaw, watch, nextTick,
+  defineComponent, onMounted,
 } from 'vue';
-import CommonApi from '@/server/api/common';
+
 import { auditTabs } from '@/static/fn';
 import { auditColumn } from '@/static/column';
 import { selectSlots, timeLineSlots, tableEmptytSlots } from '@/static/slot';
-import { dateUtils } from '@/utils/index';
-import { MONITOR_LIST } from '@/static';
+
 import NoOrgImg from '@/assets/img/no_org.png';
+import mainModule from '@/views/audit-management/business/main';
 import columnHtml from './business/table';
 import modalModule from './business/modal';
 import Query from './view/query';
@@ -17,152 +17,29 @@ const option = [{ label: '正式', val: 1 }, { label: '试用', val: 0 }];
 
 export default defineComponent({
   setup() {
-    const { proxy } = getCurrentInstance();
-    const state = reactive({
-      type: 1,
-      allList: [],
-      treeList: [],
-      height: '72vh',
-      tableList: [],
-      page: 1,
-      num: 10,
-      total: 0,
-      readNotNum: '0',
-      recallNum: '0',
-      loading: false,
-    });
-    const queryState = reactive({
-      num: 10, // 每页条数，默认20 ,示例值(20)
-      orgId: '', // 机构id
-      page: 1, //
-      sortColumn: '', // 排序字段,可用值:AUCTIONTIME,UPDATETIME
-      sortOrder: '', // 排序顺序,可用值:ASC,DESC
-      tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
-    });
-
-    const setTreeMinHeight = () => {
-      state.height = '72vh';
-      nextTick(() => {
-        const dom = document.getElementById('content-right');
-        if (dom && dom.clientHeight) {
-          const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
-          state.height = height;
-        }
-      }).then((r) => console.log(r));
-    };
-
-    const getParams = () => {
-      const f = (i) => dateUtils.formatStandardDate(i);
-      const {
-        createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, start, updateTimeEnd, updateTimeStart, ...rest
-      } = proxy.$refs.queryRef.state;
-      const obj = {
-        createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, updateTimeEnd, updateTimeStart, startStart: start[0], startEnd: start[1],
-      };
-      Object.keys(obj).forEach((i) => obj[i] = f(obj[i]));
-      const params = {
-        ...obj,
-        ...rest,
-        ...queryState,
-        orgType: (state.type).toString(),
-        page: queryState.page,
-        isOpen: '',
-      };
-      return params;
-    };
-    const getList = () => {
-      state.loading = true;
-      const params = getParams();
-      CommonApi.getAuditList(params).then((res) => {
-        const { code, data } = res.data || {};
-        if (code === 200) {
-          const {
-            list, numInfo,
-          } = data || {};
-          const { page, total } = list || {};
-          const { readNotNum, recallNum } = numInfo || {};
-          state.tableList = list.list || [];
-          state.page = page;
-          state.total = total;
-          state.readNotNum = readNotNum || '0';
-          state.recallNum = recallNum || '0';
-          setTreeMinHeight();
-        } else {
-          proxy.$message.error('请求出错');
-        }
-      }).finally(() => {
-        state.loading = false;
-      });
-    };
-
-    const handleReset = () => {
-      const { clearSort } = proxy.$refs.tableRef;
-      clearSort();
-      queryState.page = 1;
-      queryState.sortColumn = '';
-      queryState.sortOrder = '';
-      getList();
-    };
-
-    const onSearch = () => {
-      handleReset();
-    };
-
+    // 列表相关逻辑
+    const {
+      state,
+      queryState,
+      handleSearch,
+      pageChange,
+      treeItemChange,
+      typeChange,
+      sortChange,
+      isNewPageClose,
+      getTreeList,
+      getList,
+    } = mainModule();
+    // 弹框相关逻辑
     const {
       openModal, modalState, modalHtml, modalSlots,
     } = modalModule(getList);
-    const typeChange = (isClear) => {
-      const { resetForm } = proxy.$refs.queryRef;
-      const { allList, type } = state;
-      state.treeList = allList.filter((i) => i.type === state.type) || [];
-      if (isClear === 'clear') {
-        queryState.orgId = '';
-        proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
-        resetForm();
-      }
-    };
-    const treeItemChange = (id, sign) => {
-      const { treeList, type } = toRaw(state);
-      const { resetForm } = proxy.$refs.queryRef;
-      let orgId = id;
-      if (sign === 'all') {
-        orgId = type ? -1 : -2;
-      }
-      if (sign === 'query') {
-        if (id < 0) {
-          state.type = id === -1 ? 1 : 0;
-        } else if (id && !(treeList.filter((i) => i.id === id) || []).length) {
-          state.type = option.find((i) => i.val !== type).val;
-        }
-        typeChange();
-      }
-      queryState.orgId = id < 0 ? '' : id;
-      proxy.$router.push(`/auditManagement/${orgId}`);
-      nextTick(() => {
-        const dom = document.getElementById('active');
-        if (dom) {
-          dom.scrollIntoView({ block: 'center' });
-        }
-      }).then((r) => console.log(r));
-      resetForm();
-    };
-    const getTreeList = () => {
-      const { id } = proxy.$route.params;
-      CommonApi.listTopOrg().then((res) => {
-        const { code, data = [] } = res.data || {};
-        if (code === 200) {
-          state.allList = data;
-          typeChange();
-          treeItemChange(Number(id) || '', 'query');
-        } else {
-          proxy.$message.error('请求出错');
-        }
-      });
-    };
+
+    // 打开结构化详情页面
     const toDetail = (auctionId) => {
       window.open(`/structureCheck/${auctionId}`, '_blank');
     };
-
+    // 获取操作列
     const ColumnAction = (props) => {
       const { auctionId } = props || {};
       const { tableType } = queryState;
@@ -179,30 +56,6 @@ export default defineComponent({
       </div>;
     };
 
-    const pageChange = (val) => {
-      queryState.page = val;
-      getList();
-    };
-    const sortChange = ({ prop, order }) => {
-      queryState.page = 1;
-      queryState.sortColumn = MONITOR_LIST[prop];
-      queryState.sortOrder = MONITOR_LIST[order];
-      getList();
-    };
-    const isNewPageClose = () => {
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'backSign' && e.newValue === 'SUCCESS') {
-          localStorage.setItem('backSign', '');
-          getList();
-        }
-      });
-    };
-    watch(() => queryState.tableType, (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        handleReset();
-        modalState.data = {};
-      }
-    });
     onMounted(() => {
       getTreeList();
       isNewPageClose();
@@ -214,7 +67,7 @@ export default defineComponent({
       modalState,
       modalHtml,
       modalSlots,
-      onSearch,
+      handleSearch,
       ColumnAction,
       pageChange,
       treeItemChange,
@@ -233,7 +86,7 @@ export default defineComponent({
       modalState,
       modalSlots,
       modalHtml,
-      onSearch,
+      handleSearch,
       sortChange,
     } = this;
     const type = { 0: '试用', 1: '正式' };
@@ -241,7 +94,8 @@ export default defineComponent({
     const hasData = (state.treeList || []).length;
     const { readNotNum, recallNum } = state;
     return (
-        <div className="yc-container audit-management-container" id='tree3311'>
+        <div className="yc-container audit-management-container">
+            {/* 左侧树 */}
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">
@@ -291,7 +145,9 @@ export default defineComponent({
               </div>
             </div>
             <div className="content-right" id='content-right' ref='RightRef'>
-              <Query ref="queryRef" onHandleSearch={onSearch} onHandleClearQuery = {onSearch}/>
+              {/* 列表搜索条件 */}
+              <Query ref="queryRef" onHandleSearch={handleSearch} onHandleClearQuery = {handleSearch}/>
+              {/* 列表 */}
               <div className="content-right-table">
                   <div className="content-right-table-tabs">
                     <el-tabs v-model={queryState.tableType}>
@@ -341,6 +197,7 @@ export default defineComponent({
                 </div>
               </div>
             </div>
+          {/* 弹框 */}
           <div className="content-modal yc-custom-modal">
             <el-dialog
               v-model={modalState.visible}

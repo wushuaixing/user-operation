@@ -1,11 +1,11 @@
 import {
-  defineComponent, getCurrentInstance, reactive, toRaw,
+  defineComponent, getCurrentInstance, reactive,
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
 import { dateRange, dateUtils } from '@/utils';
 
 export default defineComponent({
-  emits: ['handleSearch'],
+  emits: ['handleSearch', 'handleClearQuery'],
   setup() {
     const { proxy } = getCurrentInstance();
     const state = reactive({
@@ -28,10 +28,10 @@ export default defineComponent({
     });
     const resetForm = () => {
       proxy.$refs.queryForm.resetFields();
-      proxy.$emit('handleClearQuery');
+      proxy.$emit('handleClearQuery', 'reset');
     };
     const handleSearch = () => {
-      proxy.$emit('handleSearch', toRaw(state));
+      proxy.$emit('handleSearch', 'search');
     };
     // 日期控件做前后限制
     const disabledStartDate = (startTime, prop) => {
