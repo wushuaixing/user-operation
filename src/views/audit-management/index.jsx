@@ -119,7 +119,7 @@ export default defineComponent({
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
                       </svg>
-                      <span className={!queryState.orgId ? 'active' : ''}>全部{type[state.type]}机构</span>
+                      <span className={!queryState.orgId ? 'active' : ''} id={!queryState.orgId ? 'active' : ''}>全部{type[state.type]}机构</span>
                     </div>
                     <div className='content-left-tree-list-content'>
                       <el-timeline>
