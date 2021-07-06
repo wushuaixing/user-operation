@@ -225,10 +225,10 @@ const modalModule = (getTableList) => {
   // 弹窗底部按钮
   const modalSlots = {
     title: null,
-    footer: () => <>
+    footer: () => <div>
       <el-button onClick={handleCancel}>{modalState.type === 'pushConfirm' ? '上一步' : '取消'}</el-button>
       <el-button type="primary" onClick={handleClick}>{modalState.type === 'push' ? '下一步' : '确定'}</el-button>
-    </>,
+    </div>,
   };
   return {
     modalState, modalSlots, openModal, modalHtml,

@@ -205,6 +205,7 @@ export default defineComponent({
               destroy-on-close
               show-close={false}
               v-slots={modalSlots}
+              customClass={modalState.type}
             >
               {modalHtml[modalState.type]}
             </el-dialog>
