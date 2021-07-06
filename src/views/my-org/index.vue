@@ -437,8 +437,8 @@ export default {
       align-items: center;
       .tabs-button {
         border: 1px solid #296DD3;
-        width: 240px;
-        height: 36px;
+        width: 238px;
+        height: 34px;
         border-radius: 2px;
         display: flex;
         align-items: center;
@@ -455,7 +455,7 @@ export default {
     }
     .table-content {
       &-btn {
-        padding: 1px 0 12px 0;
+        padding-bottom: 12px;
         .total-tips {
           font-size: 14px;
           padding-left: 20px;
@@ -477,9 +477,15 @@ export default {
       }
     }
     .query-content {
-      margin-top: 18px;
+      margin-top: 20px;
       .el-form-item {
-        margin: 0 32px 12px 0;
+        margin: 0 32px 20px 0;
+        .el-form-item__label {
+          line-height: 32px;
+        }
+        .el-form-item__content {
+          line-height: 32px;
+        }
       }
       .form-item-time {
         .el-form-item {

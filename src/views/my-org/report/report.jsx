@@ -123,13 +123,6 @@ export default defineComponent({
       },
     };
   },
-  watch: {
-    'report.reportVisible': function (newVal) {
-      if (!newVal) {
-        this.reportForm.time = ['', ''];
-      }
-    },
-  },
   setup() {
     const { proxy } = getCurrentInstance();
     const checkList = reactive({
@@ -155,18 +148,22 @@ export default defineComponent({
       orgId: 0,
       title: '',
     });
+    const msg = reactive({
+      buttonLoading: false,
+      msgModal: null,
+    });
 
     const open = ({ id, name = '' }) => {
-      proxy.$nextTick(() => {
-        report.reportVisible = true;
-        proxy.reportForm.time = '';
-        report.orgId = id;
-        report.title = `客户报告-${name}`;
-      });
+      report.reportVisible = true;
+      report.orgId = id;
+      report.title = `客户报告-${name}`;
     };
     const close = () => {
       proxy.$refs.reportForm.resetFields();
+      proxy.reportForm.time = '';
       report.reportVisible = false;
+      if (msg.buttonLoading) msg.buttonLoading = false;
+      if (msg.msgModal) msg.msgModal.close();
     };
 
     // 权限模块-全选
@@ -184,14 +181,20 @@ export default defineComponent({
     // 点击确定
     const handlereport = () => {
       proxy.$refs.reportForm.validate((valid) => {
-        console.log(valid, '345');
         if (valid) {
           const params = {
             start: dateUtils.formatStandardDate(proxy.reportForm.time[0]),
             end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
             id: report.orgId,
           };
+          msg.msgModal = proxy.$message.warning({
+            message: '正在下载，请稍等...',
+            duration: 0,
+          });
+          msg.buttonLoading = true;
           MyOrgApi.exportOther(params).then((res) => {
+            msg.msgModal.close();
+            msg.buttonLoading = false;
             const { code = 200, message = '导出失败' } = res.data || {};
             if (code === 200) {
               fileDownload(res, true);
@@ -206,8 +209,8 @@ export default defineComponent({
     const modalSlots = {
       title: null,
       footer: () => <>
-        <el-button onClick={close}>取消</el-button>
-        <el-button type="primary" onClick={handlereport}>确定</el-button>
+        <el-button onClick={ close }>取消</el-button>
+        <el-button type="primary" onClick={handlereport} loading={msg.buttonLoading}>确定</el-button>
       </>,
     };
 
@@ -221,6 +224,7 @@ export default defineComponent({
       handleCheckedItemChange,
       handlereport,
       modalSlots,
+      msg,
     };
   },
   render() {
@@ -239,8 +243,9 @@ export default defineComponent({
       <el-dialog
         title={title}
         v-model={reportVisible}
-        onClose={ close }
+        onClosed={ close }
         width="638px"
+        destroy-on-close
         v-slots={modalSlots}
       >
         <el-form

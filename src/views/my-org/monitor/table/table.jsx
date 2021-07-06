@@ -69,7 +69,11 @@ export default defineComponent({
 
     const handleBatchCheck = (isChecked) => {
       multiple.isChecked = isChecked;
-      if (!isChecked) resetTable();
+      if (!isChecked) {
+        const { clearSelection } = proxy.$refs.multipleTable;
+        clearSelection();
+        multiple.multipleSelection = [];
+      }
     };
     const handleExport = (type) => {
       if (!type && !multiple.multipleSelection.length) {
@@ -94,9 +98,12 @@ export default defineComponent({
         idList: multiple.idList,
       };
       $modalConfirm(multiple.info).then(() => {
-        multiple.isChecked = false;
-        resetTable();
+        const msgModal = proxy.$message.warning({
+          message: '正在下载，请稍等...',
+          duration: 0,
+        });
         MyOrgApi.auditExport(paramData).then((res) => {
+          msgModal.close();
           const { code = 200, message = '' } = res;
           if (code === 200) {
             fileDownload(res);
@@ -117,7 +124,6 @@ export default defineComponent({
     const {
       setTablePane, tableData = {}, multiple, handleBatchCheck, handleExport, handleSortChange, pageChange, sizeChange,
     } = this;
-    console.log(tableData.data, '为啥会多呢');
     return (
       <div className="monitor-table">
         <div className="table-content-btn">
@@ -184,6 +190,7 @@ export default defineComponent({
         >
           {
             multiple.isChecked ? <el-table-column
+              class="check-column"
               type="selection"
               width="55"
               reserve-selection={true}

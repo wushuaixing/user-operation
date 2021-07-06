@@ -13,10 +13,26 @@
       }
     }
   }
+  .el-table .cell {
+    padding-left: 30px !important;
+  }
+  .el-table__header-wrapper {
+    .el-table-column--selection {
+      .cell {
+        padding-left: 20px !important;
+      }
+    }
+  }
   .row-class {
     position: relative;
-  }
-  .el-table th, .el-table td {
-    vertical-align: top;
+    td {
+      padding: 20px 0;
+      vertical-align: top;
+    }
+    .el-table-column--selection {
+      .cell {
+        padding-left: 20px !important;
+      }
+    }
   }
 }
