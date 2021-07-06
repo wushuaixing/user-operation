@@ -37,6 +37,14 @@ const modalModule = (getTableList) => {
         if (code === 200) {
           proxy.$message.success('操作成功');
           getTableList();
+        } else if (code === 6005) {
+          proxy.$message.warning({
+            message: '数据状态变更，为您刷新当前列表',
+            duration: 1500,
+            onClose: () => {
+              getTableList();
+            },
+          });
         } else {
           proxy.$message.error('请求错误');
         }
@@ -65,7 +73,7 @@ const modalModule = (getTableList) => {
       modalState.title = parsingTitle;
       modalState.importants = important;
       modalState.pushRemark = isSame ? modalState.pushRemark : '';
-      modalState.important = isSame ? modalState.important : '1';
+      modalState.important = isSame ? modalState.important : important.toString();
     } else if (type === 'noPush') {
       modalState.title = parsingTitle;
       modalState.noPushRemark = isSame ? modalState.noPushRemark : '';
@@ -73,11 +81,12 @@ const modalModule = (getTableList) => {
       modalState.remark = isSame ? modalState.remark : '';
       modalState.recallReason = isSame ? modalState.recallReason : '';
     }
+    modalState.tableType = tableType;
     modalState.id = id;
   };
   // 填充内容
   const handleFill = (key, val) => {
-    modalState[key] = `${val}\n${modalState[key]}`.slice(0, 1024);
+    modalState[key] = `${val}\n${modalState[key]}`.slice(0, 1000);
   };
   // 召回弹窗
   const RecallModal = () => {
@@ -101,10 +110,10 @@ const modalModule = (getTableList) => {
           <el-input
             type="textarea"
             autosize
-            placeholder="请输入内容"
-            maxLength={1024}
+            placeholder="请输入..."
+            maxLength={1000}
             v-model={modalState.remark}/>
-          <span className='val-length'>{modalState.remark.length}/1024</span>
+          <span className='val-length'>{modalState.remark.length}/1000</span>
         </div>
       </div>
     </div>;
@@ -128,10 +137,10 @@ const modalModule = (getTableList) => {
             type="textarea"
             autosize
             placeholder="请输入审核备注"
-            maxLength={1024}
+            maxLength={1000}
             v-model={modalState.noPushRemark}
           />
-          <span className='val-length'>{modalState.noPushRemark.length}/1024</span>
+          <span className='val-length'>{modalState.noPushRemark.length}/1000</span>
         </div>
         <div className="no-push-modal-body-tips">
           <span className='label'>默认备注：</span>
@@ -158,10 +167,10 @@ const modalModule = (getTableList) => {
         <el-input
           type="textarea"
           autosize
-          placeholder="请输入内容"
-          maxLength={1024}
+          placeholder="请输入..."
+          maxLength={1000}
           v-model={modalState.pushRemark}/>
-        <span className='val-length'>{modalState.pushRemark.length}/1024</span>
+        <span className='val-length'>{modalState.pushRemark.length}/1000</span>
       </div>
       <div className="push-modal-body-type flex">
         <span className='label'>系统匹配：</span>

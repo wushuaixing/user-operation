@@ -23,11 +23,11 @@ const RemarkInfo = (props, tabType) => {
     {
       obj.display && <>
         <p className='before-circle'>{obj.label} | {obj.approveTime}</p>
-        <p className='remark-info-detail'>{obj.detail}</p>
+        <p className='remark-info-detail'>{obj.detail || '-'}</p>
       </>
     }
     <p className='before-circle'>根据{name}匹配 | {createTime}</p>
-    <p v-html={hl[0]} className='remark-info-detail'></p>
+    <p v-html={hl[0] || '-'} className='remark-info-detail'></p>
   </div>;
 };
 export default RemarkInfo;

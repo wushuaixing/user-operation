@@ -14,12 +14,13 @@ const columnHtml = (props, tabType) => {
     7: '五级',
     8: '六级',
   };
-  const levelHtml = levelType[props.level] ? `【${levelType[props.level]}】` : '';
+  const level = levelType[props.level];
+  const levelHtml = level ? `【${level}】${props.conSumerName || ''}` : '-';
   return {
     assetInfo: AssetInfo(props),
     remarkInfo: RemarkInfo(props, tabType),
     auctionInfo: AuctionInfo(props),
-    conSumerName: `${levelHtml}${props.conSumerName || ''}`,
+    conSumerName: levelHtml,
     status: obj.label,
   };
 };
