@@ -1,5 +1,5 @@
 import {
-  defineComponent, reactive, getCurrentInstance, onMounted, nextTick,
+  defineComponent, reactive, getCurrentInstance, onMounted, Teleport,
 } from 'vue';
 import { dateUtils } from '@/utils';
 import './style.scss';
@@ -12,32 +12,50 @@ export default defineComponent({
     console.log(proxy);
     const pickerDate = reactive({
       time: '',
-      start: '开始时间',
-      end: '结束时间',
+      start: '',
+      end: '',
       isLefe: false,
+      dom: <div/>,
     });
     const dateRange = [{
-      text: '最近一个月',
+      text: '近一个月及以后',
       value: (() => {
         const start = new Date();
         start.setMonth(start.getMonth() - 1);
         return [start, start];
       })(),
     }, {
-      text: '最近三个月',
+      text: '近三个月及以后',
       value: (() => {
         const start = new Date();
         start.setMonth(start.getMonth() - 3);
         return [start, start];
       })(),
     }, {
-      text: '最近半年',
+      text: '近半年及以后',
       value: (() => {
         const start = new Date();
         start.setMonth(start.getMonth() - 6);
         return [start, start];
       })(),
     }];
+    const updateTime = () => {
+      const dom = document.getElementById('pickerTime');
+      if (dom) {
+        pickerDate.dom = <Teleport to="#pickerTime">
+          <input
+            value={pickerDate.start}
+            placeholder="开始时间"
+            class="input-style left"
+          />
+          <input
+            value={pickerDate.end}
+            placeholder="结束时间"
+            class="input-style right"
+          />
+        </Teleport>;
+      }
+    };
     const setTime = () => {
       if (pickerDate.time && pickerDate.time.length) {
         pickerDate.start = dateUtils.formatStandardDate(pickerDate.time[0]);
@@ -46,32 +64,31 @@ export default defineComponent({
         pickerDate.start = '';
         pickerDate.end = '';
       }
+      updateTime();
       proxy.$emit('update:modelValue', [pickerDate.start, pickerDate.end]);
     };
-    const setFocus = () => {
-      nextTick(() => {
-        document.querySelector('.yc-query-date-picker').click();
-      });
-    };
     onMounted(() => {
+      document.querySelector('.yc-query-date-picker').setAttribute('id', 'pickerTime');
       const dom = document.querySelectorAll('.el-picker-panel__shortcut');
       dom.forEach((item) => {
         item.addEventListener('click', () => {
           pickerDate.end = '';
+          updateTime();
           proxy.$emit('update:modelValue', [pickerDate.start, pickerDate.end]);
         });
       });
+      updateTime();
     });
     return {
       pickerDate,
       setTime,
       dateRange,
-      setFocus,
+      updateTime,
     };
   },
   render() {
     const {
-      pickerDate, setTime, dateRange, modelValue, setFocus,
+      pickerDate, setTime, dateRange, modelValue, updateTime,
     } = this;
     const [timeStart, timeEnd] = modelValue;
     if (timeStart && timeEnd) {
@@ -83,12 +100,12 @@ export default defineComponent({
     }
     pickerDate.start = timeStart;
     pickerDate.end = timeEnd;
+    updateTime();
     return (
       <div className="yc-query-date">
         <el-date-picker
           v-model={pickerDate.time}
           type="daterange"
-          ref="startTime"
           unlink-panels
           style={{ width: '286px' }}
           class="yc-query-date-picker"
@@ -97,17 +114,8 @@ export default defineComponent({
           end-placeholder="结束时间"
           popper-class="date-picker-kp"
           shortcuts={dateRange}
-          onChange={setTime}
-        >
-        </el-date-picker>
-        <div
-          class="input-style left"
-          onClick={setFocus}
-        >{pickerDate.start}</div>
-        <div
-          class="input-style right"
-          onClick={setFocus}
-        >{pickerDate.end}</div>
+          onChange={setTime}/>
+        {pickerDate.dom}
       </div>
     );
   },
