@@ -155,7 +155,7 @@ const modalModule = (getTableList) => {
   const PushModal = () => <div className='push-modal'>
     <div className="push-modal-header">
       <span>推送</span>
-      <span onClick={() => modalState.visible = false}>X</span>
+      <span onClick={() => modalState.visible = false} className='cursor-pointer'><i className='el-icon el-icon-close'></i></span>
     </div>
     <div className="push-modal-body">
       <div className="push-modal-body-title flex">
