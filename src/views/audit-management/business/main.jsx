@@ -102,6 +102,14 @@ const mainModule = () => {
     }
     handleReset();
   };
+  const scrollIntoView = () => {
+    nextTick(() => {
+      const dom = document.getElementById('active');
+      if (dom) {
+        dom.scrollIntoView({ block: 'center' });
+      }
+    }).then((r) => console.log(r));
+  };
   // 结构类型切换
   const typeChange = (isClear) => {
     const { resetForm } = proxy.$refs.queryRef;
@@ -110,6 +118,7 @@ const mainModule = () => {
     if (isClear === 'clear') {
       queryState.orgId = '';
       proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
+      scrollIntoView();
       resetForm();
     }
   };
@@ -131,12 +140,7 @@ const mainModule = () => {
     }
     queryState.orgId = id < 0 ? '' : id;
     proxy.$router.push(`/auditManagement/${orgId}`);
-    nextTick(() => {
-      const dom = document.getElementById('active');
-      if (dom) {
-        dom.scrollIntoView({ block: 'center' });
-      }
-    }).then((r) => console.log(r));
+    scrollIntoView();
     resetForm();
   };
   // 获取顶级机构列表
