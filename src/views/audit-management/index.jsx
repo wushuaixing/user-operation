@@ -115,7 +115,7 @@ export default defineComponent({
                     </div>
                 </div>
                 <div className="content-left-tree-list" style={{ height: state.height }} id='treeList' v-show={hasData}>
-                    <div className="content-left-tree-list-title" onClick={() => treeItemChange('', 'all')}>
+                    <div className="content-left-tree-list-title cursor-pointer" onClick={() => treeItemChange('', 'all')}>
                       <svg className="icon" aria-hidden="true" style={{ width: '18px', height: '18px', marginRight: '8px' }}>
                         <use xlink:href="#iconyonghuyunying-quanbushiyongjigou"></use>
                       </svg>
@@ -129,7 +129,7 @@ export default defineComponent({
                               key={i.id}
                               v-slots={timeLineSlots}
                               onClick={() => treeItemChange(i.id)}
-                              className={`${queryState.orgId === i.id ? 'active' : ''} el-timeline-item` }
+                              className={`${queryState.orgId === i.id ? 'active' : ''} el-timeline-item cursor-pointer` }
                               id={`${queryState.orgId === i.id ? 'active' : ''}` }
                             >
                               {i.name}

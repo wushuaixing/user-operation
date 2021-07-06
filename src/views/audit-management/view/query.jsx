@@ -96,7 +96,7 @@ export default defineComponent({
                 }
               </el-select>
             </el-form-item>
-            <el-form-item class="switch" onClick={() => state.isOpen = !state.isOpen}>
+            <el-form-item class="switch" onClick={() => state.isOpen = !state.isOpen} class='cursor-pointer'>
               <span v-show={!state.isOpen}>展开选项<i className="el-icon-arrow-down switch-icon" /></span>
               <span v-show={state.isOpen}>收起选项<i className="el-icon-arrow-up switch-icon" /></span>
             </el-form-item>
