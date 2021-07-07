@@ -29,6 +29,7 @@ export default defineComponent({
       isNewPageClose,
       getTreeList,
       getList,
+      handleReset,
     } = mainModule();
     // 弹框相关逻辑
     const {
@@ -73,6 +74,7 @@ export default defineComponent({
       treeItemChange,
       typeChange,
       sortChange,
+      handleReset,
     };
   },
   render() {
@@ -88,6 +90,7 @@ export default defineComponent({
       modalHtml,
       handleSearch,
       sortChange,
+      handleReset,
     } = this;
     const type = { 0: '试用', 1: '正式' };
     const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}）` }));
@@ -150,7 +153,7 @@ export default defineComponent({
               {/* 列表 */}
               <div className="content-right-table">
                   <div className="content-right-table-tabs">
-                    <el-tabs v-model={queryState.tableType}>
+                    <el-tabs v-model={queryState.tableType} onTabClick={handleReset}>
                       {
                         auditTabs(readNotNum, recallNum).map((i) => (
                           <el-tab-pane

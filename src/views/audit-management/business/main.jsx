@@ -1,5 +1,5 @@
 import {
-  getCurrentInstance, nextTick, reactive, toRaw, watch,
+  getCurrentInstance, nextTick, reactive, toRaw,
 } from 'vue';
 import { dateUtils } from '@/utils';
 import CommonApi from '@/server/api/common';
@@ -114,6 +114,7 @@ const mainModule = () => {
   const typeChange = (isClear) => {
     const { resetForm } = proxy.$refs.queryRef;
     const { allList, type } = state;
+    queryState.tableType = '1';
     state.treeList = allList.filter((i) => i.type === state.type) || [];
     if (isClear === 'clear') {
       queryState.orgId = '';
@@ -126,6 +127,7 @@ const mainModule = () => {
   const treeItemChange = (id, sign) => {
     const { treeList, type } = toRaw(state);
     const { resetForm } = proxy.$refs.queryRef;
+    queryState.tableType = '1';
     let orgId = id;
     if (sign === 'all') {
       orgId = type ? -1 : -2;
@@ -179,12 +181,6 @@ const mainModule = () => {
       }
     });
   };
-  // 监听tab变化
-  watch(() => queryState.tableType, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      handleReset();
-    }
-  });
   return {
     state,
     queryState,
@@ -195,7 +191,6 @@ const mainModule = () => {
     sortChange,
     isNewPageClose,
     getTreeList,
-    // setTreeMinHeight,
     getParams,
     getList,
     handleReset,
