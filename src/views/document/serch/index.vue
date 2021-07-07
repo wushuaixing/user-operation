@@ -15,14 +15,14 @@
             <div class="records" v-if="recordsList.length">
               <span class="title">最近搜索：</span>
               <div class="records-box">
-            <span
-              v-for="item in recordsList"
-              :key="item"
-              @click="handleFill(item)"
-              class="cursor-pointer"
-            >
-              {{ item }}
-            </span>
+                <span
+                  v-for="item in recordsList"
+                  :key="item"
+                  @click="handleFill(item)"
+                  class="cursor-pointer"
+                >
+                  {{ item }}
+                </span>
                 <el-tooltip
                   effect="dark"
                   content="清空最近搜索记录"
@@ -59,7 +59,7 @@
                 @keyup.enter="onSubmit"
               ></el-input>
             </el-form-item>
-            <el-form-item style="float: right">
+            <el-form-item style="float: right;margin-right: 0">
               <el-button type="primary" @click="onSubmit" class="button-first" style="padding: 8px 21px">搜索</el-button>
               <el-button type="primary" @click="resetForm" class="button-fourth" style="padding: 8px 11px">清空搜索条件</el-button>
             </el-form-item>
@@ -205,7 +205,7 @@ export default {
     .content-input {
       width: 100%;
       .el-form-item__content {
-        width: calc(100% - 54px);
+        width: calc(100% - 42px);
         .el-input__inner {
           width: 100% !important;
           height: 40px;
@@ -221,6 +221,7 @@ export default {
       margin-top: -2px;
       .title {
         min-width: 60px;
+        color: #4e5566;
       }
       &-box {
         display: flex;
