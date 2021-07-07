@@ -181,6 +181,7 @@
           layout="total,sizes, prev, pager, next, jumper"
           :total="total"
           :key="page"
+          hide-on-single-page
         />
       </div>
     </div>

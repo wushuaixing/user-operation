@@ -196,6 +196,7 @@ export default defineComponent({
                     layout='total, prev, pager, next, jumper'
                     total={state.total}
                     key={state.page}
+                    hide-on-single-page={true}
                 />
                 </div>
               </div>
