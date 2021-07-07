@@ -25,7 +25,7 @@
 }
 .jz {
   position: absolute;
-  top: 0;
+  top: -1px;
   left: 0;
 }
 
@@ -87,18 +87,26 @@
 .column-item-content{
   //资产信息
   .asset-info{
+    padding-left: 8px;
     &-item{
       display: flex;
+      line-height: 20px;
       &-label{
         min-width: 70px;
+        color: #7D8699;
       }
     }
   }
   //拍卖信息
   .auction-info{
+    .title{
+      line-height: 21px;
+      margin-bottom: 4px;
+    }
     ul{
       display: flex;
       flex-wrap: wrap;
+      line-height: 21px;
       li{
         display: flex;
         &:nth-child(odd){
@@ -110,6 +118,7 @@
         div{
           &:first-child{
             min-width: 70px;
+            color:#7D8699 ;
           }
         }
         .orange{
@@ -126,6 +135,7 @@
   }
   //匹配备注信息
   .remark-info{
+    line-height: 21px;
     .before-circle{
       position: relative;
       padding-left: 10px;
@@ -135,13 +145,14 @@
         width: 5px;
         height: 5px;
         background: #20242E;
-        left: 0px;
+        left: 0;
         border-radius: 50%;
         top: 10px;
       }
     }
     &-detail{
       color: #7D8699;
+      padding-left: 11px;
     }
   }
 }

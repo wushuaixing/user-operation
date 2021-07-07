@@ -49,7 +49,7 @@ export default defineComponent({
       }
       return false;
     };
-    const handleBlur = (key) => state[key] = state[key].trim();
+    const handleBlur = (key) => state[key] = state[key].replace(/\s+/g, '');
     return {
       state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
     };
@@ -106,7 +106,7 @@ export default defineComponent({
               <el-input
                 v-model={state.parsingTitle}
                 placeholder="拍卖信息标题"
-                style={{ width: '210px' }}
+                style={{ width: '215px' }}
                 maxlength="100"
                 onBlur={() => handleBlur('parsingTitle')}
               />
@@ -115,7 +115,7 @@ export default defineComponent({
               <el-input
                 v-model={state.orgName}
                 placeholder="负责人/机构名称"
-                style={{ width: '220px' }}
+                style={{ width: '215px' }}
                 maxlength="100"
                 onBlur={() => handleBlur('orgName')}
               />
@@ -177,7 +177,7 @@ export default defineComponent({
                 v-model={state.start}
                 type="daterange"
                 unlink-panels
-                style={{ width: '260px' }}
+                style={{ width: '280px' }}
                 range-separator="至"
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"

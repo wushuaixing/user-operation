@@ -88,11 +88,14 @@ const modalModule = (getTableList) => {
   const handleFill = (key, val) => {
     modalState[key] = `${val}\n${modalState[key]}`.slice(0, 1000);
   };
+  const handleBlur = (key) => {
+    modalState[key] = modalState[key].trim();
+  };
   // 召回弹窗
   const RecallModal = () => {
     const text = {
       title: '确认召回本条信息吗？',
-      text: '点击确定，本条信息将被召回到结构化匹配列表中',
+      text: '点击确定，该条资产监控信息将被召回，进入召回列表',
     };
     return <div className='recall-modal' key={modalState.id}>
       <ModalTitle {...text}/>
@@ -110,7 +113,8 @@ const modalModule = (getTableList) => {
           <el-input
             type="textarea"
             autosize
-            placeholder="请输入..."
+            placeholder="请输入召回原因描述"
+            onBlur={() => handleBlur('remark')}
             maxLength={1000}
             v-model={modalState.remark}/>
           <span className='val-length'>{modalState.remark.length}/1000</span>
@@ -122,7 +126,7 @@ const modalModule = (getTableList) => {
   const NoPushModal = () => {
     const text = {
       title: '确认不推送该条资产信息吗？',
-      text: '点击确定，该条资产监控信息将不被推送给用户',
+      text: '点击确定，该条资产监控信息将不被推送给客户',
     };
     return <div className='no-push-modal'>
       <ModalTitle {...text}/>
@@ -138,6 +142,7 @@ const modalModule = (getTableList) => {
             autosize
             placeholder="请输入审核备注"
             maxLength={1000}
+            onBlur={() => handleBlur('noPushRemark')}
             v-model={modalState.noPushRemark}
           />
           <span className='val-length'>{modalState.noPushRemark.length}/1000</span>
@@ -145,7 +150,7 @@ const modalModule = (getTableList) => {
         <div className="no-push-modal-body-tips">
           <span className='label'>默认备注：</span>
           <div className="tips-box">
-            {NOPUSH_TIPS.map((i, index) => <p key={index} onClick={() => handleFill('noPushRemark', i)}>{i}</p>)}
+            {NOPUSH_TIPS.map((i, index) => <p key={index} onClick={() => handleFill('noPushRemark', i)} className='cursor-pointer'>{i}</p>)}
           </div>
         </div>
       </div>
@@ -155,7 +160,7 @@ const modalModule = (getTableList) => {
   const PushModal = () => <div className='push-modal'>
     <div className="push-modal-header">
       <span>推送</span>
-      <span onClick={() => modalState.visible = false}>X</span>
+      <span onClick={() => modalState.visible = false} className='cursor-pointer'><i className='el-icon el-icon-close'></i></span>
     </div>
     <div className="push-modal-body">
       <div className="push-modal-body-title flex">
@@ -167,8 +172,9 @@ const modalModule = (getTableList) => {
         <el-input
           type="textarea"
           autosize
-          placeholder="请输入..."
+          placeholder="请输入审核备注"
           maxLength={1000}
+          onBlur={() => handleBlur('pushRemark')}
           v-model={modalState.pushRemark}/>
         <span className='val-length'>{modalState.pushRemark.length}/1000</span>
       </div>
@@ -189,7 +195,7 @@ const modalModule = (getTableList) => {
           {PUSH_TIPS.map((i) => <div key={i.key} className='tips-box-item'>
             <div className="title">{i.title}</div>
             {
-              i.desc.map((j, index) => <p key={`${i.key}${index}`} onClick={() => handleFill('pushRemark', j)}>{j}</p>)
+              i.desc.map((j, index) => <p key={`${i.key}${index}`} onClick={() => handleFill('pushRemark', j)} className='cursor-pointer'>{j}</p>)
             }
           </div>)}
         </div>
@@ -225,10 +231,10 @@ const modalModule = (getTableList) => {
   // 弹窗底部按钮
   const modalSlots = {
     title: null,
-    footer: () => <>
+    footer: () => <div>
       <el-button onClick={handleCancel}>{modalState.type === 'pushConfirm' ? '上一步' : '取消'}</el-button>
       <el-button type="primary" onClick={handleClick}>{modalState.type === 'push' ? '下一步' : '确定'}</el-button>
-    </>,
+    </div>,
   };
   return {
     modalState, modalSlots, openModal, modalHtml,

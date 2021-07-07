@@ -1,5 +1,5 @@
 import {
-  getCurrentInstance, nextTick, reactive, toRaw, watch,
+  getCurrentInstance, nextTick, reactive, toRaw,
 } from 'vue';
 import { dateUtils } from '@/utils';
 import CommonApi from '@/server/api/common';
@@ -30,17 +30,17 @@ const mainModule = () => {
     sortOrder: '', // 排序顺序,可用值:ASC,DESC
     tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
   });
-  // 设置左侧树的高度
-  const setTreeMinHeight = () => {
-    state.height = '72vh';
-    nextTick(() => {
-      const dom = document.getElementById('content-right');
-      if (dom && dom.clientHeight) {
-        const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
-        state.height = height;
-      }
-    }).then((r) => console.log(r));
-  };
+  // // 设置左侧树的高度
+  // const setTreeMinHeight = () => {
+  //   state.height = '72vh';
+  //   nextTick(() => {
+  //     const dom = document.getElementById('content-right');
+  //     if (dom && dom.clientHeight) {
+  //       const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
+  //       state.height = height;
+  //     }
+  //   }).then((r) => console.log(r));
+  // };
   // 获取请求列表参数
   const getParams = () => {
     const f = (i) => dateUtils.formatStandardDate(i);
@@ -78,7 +78,7 @@ const mainModule = () => {
         state.total = total;
         state.readNotNum = readNotNum || '0';
         state.recallNum = recallNum || '0';
-        setTreeMinHeight();
+        // setTreeMinHeight();
       } else {
         proxy.$message.error('请求出错');
       }
@@ -102,14 +102,24 @@ const mainModule = () => {
     }
     handleReset();
   };
+  const scrollIntoView = () => {
+    nextTick(() => {
+      const dom = document.getElementById('active');
+      if (dom) {
+        dom.scrollIntoView({ block: 'center' });
+      }
+    }).then((r) => console.log(r));
+  };
   // 结构类型切换
   const typeChange = (isClear) => {
     const { resetForm } = proxy.$refs.queryRef;
     const { allList, type } = state;
+    queryState.tableType = '1';
     state.treeList = allList.filter((i) => i.type === state.type) || [];
     if (isClear === 'clear') {
       queryState.orgId = '';
       proxy.$router.push(`/auditManagement/${type ? -1 : -2}`);
+      scrollIntoView();
       resetForm();
     }
   };
@@ -117,6 +127,7 @@ const mainModule = () => {
   const treeItemChange = (id, sign) => {
     const { treeList, type } = toRaw(state);
     const { resetForm } = proxy.$refs.queryRef;
+    queryState.tableType = '1';
     let orgId = id;
     if (sign === 'all') {
       orgId = type ? -1 : -2;
@@ -131,12 +142,7 @@ const mainModule = () => {
     }
     queryState.orgId = id < 0 ? '' : id;
     proxy.$router.push(`/auditManagement/${orgId}`);
-    nextTick(() => {
-      const dom = document.getElementById('active');
-      if (dom) {
-        dom.scrollIntoView({ block: 'center' });
-      }
-    }).then((r) => console.log(r));
+    scrollIntoView();
     resetForm();
   };
   // 获取顶级机构列表
@@ -175,12 +181,6 @@ const mainModule = () => {
       }
     });
   };
-  // 监听tab变化
-  watch(() => queryState.tableType, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      handleReset();
-    }
-  });
   return {
     state,
     queryState,
@@ -191,7 +191,6 @@ const mainModule = () => {
     sortChange,
     isNewPageClose,
     getTreeList,
-    setTreeMinHeight,
     getParams,
     getList,
     handleReset,
