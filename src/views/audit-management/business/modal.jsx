@@ -88,6 +88,9 @@ const modalModule = (getTableList) => {
   const handleFill = (key, val) => {
     modalState[key] = `${val}\n${modalState[key]}`.slice(0, 1000);
   };
+  const handleBlur = (key) => {
+    modalState[key] = modalState[key].trim();
+  };
   // 召回弹窗
   const RecallModal = () => {
     const text = {
@@ -111,6 +114,7 @@ const modalModule = (getTableList) => {
             type="textarea"
             autosize
             placeholder="请输入召回原因描述"
+            onBlur={() => handleBlur('remark')}
             maxLength={1000}
             v-model={modalState.remark}/>
           <span className='val-length'>{modalState.remark.length}/1000</span>
@@ -138,6 +142,7 @@ const modalModule = (getTableList) => {
             autosize
             placeholder="请输入审核备注"
             maxLength={1000}
+            onBlur={() => handleBlur('noPushRemark')}
             v-model={modalState.noPushRemark}
           />
           <span className='val-length'>{modalState.noPushRemark.length}/1000</span>
@@ -169,6 +174,7 @@ const modalModule = (getTableList) => {
           autosize
           placeholder="请输入审核备注"
           maxLength={1000}
+          onBlur={() => handleBlur('pushRemark')}
           v-model={modalState.pushRemark}/>
         <span className='val-length'>{modalState.pushRemark.length}/1000</span>
       </div>
