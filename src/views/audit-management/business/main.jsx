@@ -143,6 +143,8 @@ const mainModule = () => {
     queryState.orgId = id < 0 ? '' : id;
     proxy.$router.push(`/auditManagement/${orgId}`);
     scrollIntoView();
+    const { blur } = proxy.$refs.selectRef;
+    nextTick(() => blur()).then((r) => console.log(r));
     resetForm();
   };
   // 获取顶级机构列表
