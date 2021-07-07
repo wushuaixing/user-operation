@@ -122,7 +122,7 @@ const modalModule = (getTableList) => {
   const NoPushModal = () => {
     const text = {
       title: '确认不推送该条资产信息吗？',
-      text: '点击确定，该条资产监控信息将不被推送给用户',
+      text: '点击确定，该条资产监控信息将不被推送给客户',
     };
     return <div className='no-push-modal'>
       <ModalTitle {...text}/>
@@ -145,7 +145,7 @@ const modalModule = (getTableList) => {
         <div className="no-push-modal-body-tips">
           <span className='label'>默认备注：</span>
           <div className="tips-box">
-            {NOPUSH_TIPS.map((i, index) => <p key={index} onClick={() => handleFill('noPushRemark', i)}>{i}</p>)}
+            {NOPUSH_TIPS.map((i, index) => <p key={index} onClick={() => handleFill('noPushRemark', i)} className='cursor-pointer'>{i}</p>)}
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ const modalModule = (getTableList) => {
           {PUSH_TIPS.map((i) => <div key={i.key} className='tips-box-item'>
             <div className="title">{i.title}</div>
             {
-              i.desc.map((j, index) => <p key={`${i.key}${index}`} onClick={() => handleFill('pushRemark', j)}>{j}</p>)
+              i.desc.map((j, index) => <p key={`${i.key}${index}`} onClick={() => handleFill('pushRemark', j)} className='cursor-pointer'>{j}</p>)
             }
           </div>)}
         </div>
