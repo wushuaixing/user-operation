@@ -110,7 +110,7 @@ const modalModule = (getTableList) => {
           <el-input
             type="textarea"
             autosize
-            placeholder="请输入..."
+            placeholder="请输入召回原因描述"
             maxLength={1000}
             v-model={modalState.remark}/>
           <span className='val-length'>{modalState.remark.length}/1000</span>
@@ -167,7 +167,7 @@ const modalModule = (getTableList) => {
         <el-input
           type="textarea"
           autosize
-          placeholder="请输入..."
+          placeholder="请输入审核备注"
           maxLength={1000}
           v-model={modalState.pushRemark}/>
         <span className='val-length'>{modalState.pushRemark.length}/1000</span>
