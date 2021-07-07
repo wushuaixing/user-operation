@@ -63,62 +63,35 @@
         &-tabs{
           padding-right: 20px;
           &-content{
-            padding: 4px ;
+            padding: 3px ;
             border-radius: 2px;
             border: 1px solid #296DD3;
-            $--width116:113px;
             .el-radio-group{
               .el-radio-button{
-                &:first-child{
-                  .el-radio-button__inner{
-                    border: none;
-                    width:$--width116;
-                    border-radius:  2px 0 0 2px;
-                  }
+                .el-radio-button__inner{
+                  border: none;
+                  width:116px;
+                  border-radius:  2px;
+                  height: 28px;
+                  padding: 0;
+                  line-height: 28px;
+                  font-size: 16px;
                 }
-                &:last-child{
-                  .el-radio-button__inner{
-                    border: none;
-                    width:$--width116;
-                    border-radius: 0  2px 2px 0;
-                  }
+              }
+              .is-active{
+                .el-radio-button__inner{
+                  font-weight: bold;
+
                 }
               }
             }
           }
         }
         &-list{
-          padding-top: 16px;
+          margin-top: 16px;
           overflow: auto;
           position: relative;
-          //滚动条的宽度
-          &::-webkit-scrollbar {
-            width:4px;
-          }
-
-          //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
-          &::-webkit-scrollbar-track {
-            width: 4px;
-            background-color:#FFF;
-          }
-
-          //滚动条的设置
-          &::-webkit-scrollbar-thumb {
-            background-color:#B2B8C9;
-            background-clip:padding-box;
-            min-height:49px;
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-            border-radius:5px;
-          }
-          //滚动条移上去的背景
-
-          &::-webkit-scrollbar-thumb:hover{
-            background-color:#B2B8C9;
-          }
-          &::-webkit-scrollbar-track:hover{
-            background-color:#E2E4E9;
-          }
+          @include scoll-style;
           &-title{
             display: flex;
             align-items: center;
@@ -129,15 +102,31 @@
             }
           }
           &-content{
-            margin: 20px 0 0 8px;
-            .el-timeline-item{
-              &__tail{
-                border-left: 1px solid #C5C7CE ;
-                left: 0;
-              }
-              &__wrapper{
-                top: -9px;
-                padding-left: 18px;
+            margin: 24px 0 0 8px;
+            .el-timeline{
+              &-item{
+                &:first-child{
+                  &::before{
+                    content: '';
+                    position: absolute;
+                    width: 1px;
+                    height: 19px;
+                    background: #C5C7CE;
+                    top: -19px;
+                    left: 0px;
+                  }
+                }
+                &__tail{
+                  border-left: 1px solid #C5C7CE ;
+                  left: 0;
+                }
+                &__wrapper{
+                  top: -9px;
+                  padding-left: 18px;
+                  &:hover{
+                    background: #EEF1F7;
+                  }
+                }
               }
             }
             .active{
@@ -181,7 +170,10 @@
           min-width: 1200px;
           .switch{
             color: #296DD3;
-            margin-left: 26px;
+            margin-left: 8px;
+            &:hover{
+              color: #2E7BED;
+            }
           }
           .el-form-item{
             &:last-child{
