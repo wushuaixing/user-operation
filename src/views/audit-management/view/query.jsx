@@ -49,7 +49,7 @@ export default defineComponent({
       }
       return false;
     };
-    const handleBlur = (key) => state[key] = state[key].trim();
+    const handleBlur = (key) => state[key] = state[key].replace(/\s+/g, '');
     return {
       state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
     };
