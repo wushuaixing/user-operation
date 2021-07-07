@@ -247,7 +247,7 @@ const auditColumn = [
     prop: 'assetInfo',
     label: '资产信息（更新时间)',
     sort: 'custom',
-    width: '21.5%',
+    width: '22%',
   },
   {
     prop: 'conSumerName',
@@ -259,7 +259,7 @@ const auditColumn = [
     prop: 'remarkInfo',
     label: '匹配备注信息',
     sort: false,
-    width: '17.5%',
+    width: '18%',
   },
   {
     prop: 'auctionInfo',
