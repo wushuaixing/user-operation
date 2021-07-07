@@ -95,7 +95,7 @@ const modalModule = (getTableList) => {
   const RecallModal = () => {
     const text = {
       title: '确认召回本条信息吗？',
-      text: '点击确定，本条信息将被召回到结构化匹配列表中',
+      text: '点击确定，该条资产监控信息将被召回，进入召回列表',
     };
     return <div className='recall-modal' key={modalState.id}>
       <ModalTitle {...text}/>

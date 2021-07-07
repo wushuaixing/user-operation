@@ -114,9 +114,9 @@ const TOP_ORG_STATUS = {
 };
 
 const COLLATERAL_TYPE = {
-  0: '未知',
+  0: '-',
   1: '无抵押',
-  2: '有抵押',
+  2: '-',
 };
 const HOUSE_TYPE = {
   0: '未知',
@@ -130,8 +130,8 @@ const DOCUMENTFIND_STATUS = {
 };
 
 const WSINATTACH_STATUS = {
-  0: '否',
-  1: '是',
+  0: '-',
+  1: '详情见资产拍卖附件',
 };
 // 机构类型
 const orgType = [
@@ -426,7 +426,6 @@ const LABEL_TYPE = {
   1: '资产所有人',
   2: '债权人',
   3: '资产线索',
-  4: '起诉人',
   5: '竞买人',
 };
 const GENDER_TYPE = {
