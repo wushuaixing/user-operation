@@ -123,6 +123,9 @@
                 &__wrapper{
                   top: -9px;
                   padding-left: 18px;
+                  &:hover{
+                    background: #EEF1F7;
+                  }
                 }
               }
             }
@@ -168,6 +171,9 @@
           .switch{
             color: #296DD3;
             margin-left: 8px;
+            &:hover{
+              color: #2E7BED;
+            }
           }
           .el-form-item{
             &:last-child{
