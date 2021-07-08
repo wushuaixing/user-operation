@@ -3,7 +3,7 @@
   border: 1px solid #C5C7CE;
   border-radius: 2px;
   line-height: 21px;
-  padding: 6px 12px;
+  padding: 6px 0;
 }
 @mixin val-length{
   position: absolute;
@@ -53,66 +53,45 @@
         padding: 20px 0 20px 20px;
         &-query{
           padding-right: 20px;
+          .select-trigger{
+            .iconsousuo{
+              font-size: 14px;
+              margin-left: 4px;
+            }
+          }
         }
         &-tabs{
           padding-right: 20px;
           &-content{
-            padding: 4px ;
+            padding: 3px ;
             border-radius: 2px;
             border: 1px solid #296DD3;
-            $--width116:113px;
             .el-radio-group{
               .el-radio-button{
-                &:first-child{
-                  .el-radio-button__inner{
-                    border: none;
-                    width:$--width116;
-                    border-radius:  2px 0 0 2px;
-                  }
+                .el-radio-button__inner{
+                  border: none;
+                  width:116px;
+                  border-radius:  2px;
+                  height: 28px;
+                  padding: 0;
+                  line-height: 28px;
+                  font-size: 16px;
                 }
-                &:last-child{
-                  .el-radio-button__inner{
-                    border: none;
-                    width:$--width116;
-                    border-radius: 0  2px 2px 0;
-                  }
+              }
+              .is-active{
+                .el-radio-button__inner{
+                  font-weight: bold;
+
                 }
               }
             }
           }
         }
         &-list{
-          padding-top: 16px;
+          margin-top: 16px;
           overflow: auto;
           position: relative;
-          //滚动条的宽度
-          &::-webkit-scrollbar {
-            width:4px;
-          }
-
-          //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
-          &::-webkit-scrollbar-track {
-            width: 4px;
-            background-color:#FFF;
-          }
-
-          //滚动条的设置
-          &::-webkit-scrollbar-thumb {
-            background-color:#B2B8C9;
-            background-clip:padding-box;
-            min-height:49px;
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-            border-radius:5px;
-          }
-          //滚动条移上去的背景
-
-          &::-webkit-scrollbar-thumb:hover{
-            background-color:#B2B8C9;
-          }
-          &::-webkit-scrollbar-track:hover{
-            background-color:#E2E4E9;
-          }
+          @include scoll-style;
           &-title{
             display: flex;
             align-items: center;
@@ -123,14 +102,31 @@
             }
           }
           &-content{
-            margin: 20px 0 0 4px;
-            .el-timeline-item{
-              &__tail{
-                border-left: 1px solid #C5C7CE ;
-                left: 0;
-              }
-              &__wrapper{
-                top: -9px;
+            margin: 24px 0 0 8px;
+            .el-timeline{
+              &-item{
+                &:first-child{
+                  &::before{
+                    content: '';
+                    position: absolute;
+                    width: 1px;
+                    height: 19px;
+                    background: #C5C7CE;
+                    top: -19px;
+                    left: 0px;
+                  }
+                }
+                &__tail{
+                  border-left: 1px solid #C5C7CE ;
+                  left: 0;
+                }
+                &__wrapper{
+                  top: -9px;
+                  padding-left: 18px;
+                  &:hover{
+                    background: #EEF1F7;
+                  }
+                }
               }
             }
             .active{
@@ -164,12 +160,20 @@
       background: #fff;
       padding: 20px;
       min-width: 1303px;
+      height: 85vh;
+      overflow: auto;
+      @include scoll-style;
+      position: relative;
       &-query{
+        border-bottom: 1px solid #E2E4E9;
         .line{
           min-width: 1200px;
           .switch{
             color: #296DD3;
-            margin-left: 26px;
+            margin-left: 8px;
+            &:hover{
+              color: #2E7BED;
+            }
           }
           .el-form-item{
             &:last-child{
@@ -208,12 +212,27 @@
         }
       }
       &-table{
+        &-tabs{
+          position: sticky;
+          top: -20px;
+          z-index: 100;
+          background: #fff;
+        }
+        .el-table{
+          overflow: visible;
+          .el-table__header-wrapper{
+            position: sticky;
+            top: 40px;
+            z-index: 10;
+          }
+        }
         &-list{
           .el-table__body{
             tbody{
              tr{
                td{
                  vertical-align: top !important;
+                 padding-top: 15px;
                }
               }
             }
@@ -222,21 +241,23 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            align-items: center;
             top: -3px;
             .el-button{
               width: 72px;
               margin-bottom: 12px;
+            }
+            .top{
+              margin-bottom: 6px;
             }
             .middle {
               margin-left: 0 !important;
             }
             .btm{
               margin-left: 0 !important;
+              padding: 0;
             }
           }
-        }
-        .el-table__body-wrapper{
-          @include scoll-style
         }
       }
     }
@@ -261,6 +282,7 @@
             margin: 28px 0 22px;
             .el-radio{
               margin-right:30px;
+              line-height: 19px;
               &__label{
                 padding-left: 7px;
               }
@@ -292,6 +314,7 @@
           }
           &-title{
             margin: 24px 0 22px;
+            display: flex;
           }
           &-remark{
             position: relative;
@@ -306,6 +329,7 @@
             .tips-box{
               @include tips-box;
               p{
+                padding: 0 12px;
                 color: #4E5566;
                 &:hover{
                   background-color: #EFF5FF;
@@ -325,9 +349,16 @@
           border-bottom: 1px #E2E4E9 solid;
           font-weight: bold;
           font-size: 16px;
+          .el-icon{
+            font-size: 24px;
+            color: #7D8699;
+            &:hover{
+              color: #20242E;
+            }
+          }
         }
         &-body{
-          padding:28px 30px 20px 68px;
+          padding:28px 34px 20px 68px;
           .flex{
             display: flex;
             .label{
@@ -348,22 +379,29 @@
             margin-top: 20px;
           }
           &-level{
-            margin-top: 20px;
+            margin-top: 18px;
+            align-items: center;
+            .el-radio{
+              line-height: 19px;
+            }
           }
           &-tips{
-            margin-top: 20px;
+            margin-top: 22px;
            .tips-box{
-             height: 200px;
+             height: 280px;
              overflow: auto;
+             box-sizing: border-box;
              @include tips-box;
              @include scoll-style;
              &-item{
-               margin-bottom: 10px;
+               margin-bottom: 6px;
                .title{
                  font-weight: bold;
+                 padding: 0 12px;
                }
                p{
                  color: #4E5566;
+                 padding: 5px 12px;
                  &:hover{
                    background-color: #EFF5FF;
                  }
@@ -373,16 +411,24 @@
           }
         }
       }
+      .pushConfirm,.reCall{
+        .el-dialog__footer{
+          padding-bottom: 32px !important;
+        }
+      }
       .push-confirm-modal{
-        padding:28px 30px 20px 68px;
+        padding:32px 32px 20px;
         &-body{
           padding-left: 38px;
           &-level{
             margin-top: 24px;
           }
           &-remark{
-            margin-top: 24px;
+            margin-top: 18px;
             display: flex;
+            div{
+              line-height: 21px;
+            }
           }
           .label{
             min-width: 70px;
@@ -393,13 +439,12 @@
               width: 5px;
               height: 5px;
               background: #20242E;
-              left: -10px;
+              left: -14px;
               border-radius: 50%;
               top: 8px;
             }
           }
         }
-
       }
     }
   }

@@ -29,6 +29,7 @@ export default defineComponent({
       isNewPageClose,
       getTreeList,
       getList,
+      handleReset,
     } = mainModule();
     // 弹框相关逻辑
     const {
@@ -73,6 +74,7 @@ export default defineComponent({
       treeItemChange,
       typeChange,
       sortChange,
+      handleReset,
     };
   },
   render() {
@@ -88,6 +90,7 @@ export default defineComponent({
       modalHtml,
       handleSearch,
       sortChange,
+      handleReset,
     } = this;
     const type = { 0: '试用', 1: '正式' };
     const list = this.state.allList.map((i) => ({ ...i, name: `${i.name}（${type[i.type]}）` }));
@@ -99,7 +102,7 @@ export default defineComponent({
             <div className="content-left">
               <div className="content-left-tree">
                 <div className="content-left-tree-query">
-                  <el-select v-model={queryState.orgId} filterable placeholder="请输入顶级机构名称" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' >
+                  <el-select v-model={queryState.orgId} filterable placeholder="请输入顶级机构名称" v-slots={selectSlots} style={{ width: '100%', marginBottom: '16px' }} popper-class='content-left-tree-query-select' ref='selectRef'>
                     {
                       list.map((i) => <el-option key={i.id} label={i.name} value={i.id} onClick={() => treeItemChange(i.id, 'query')}></el-option>)
                     }
@@ -150,7 +153,7 @@ export default defineComponent({
               {/* 列表 */}
               <div className="content-right-table">
                   <div className="content-right-table-tabs">
-                    <el-tabs v-model={queryState.tableType}>
+                    <el-tabs v-model={queryState.tableType} onTabClick={handleReset}>
                       {
                         auditTabs(readNotNum, recallNum).map((i) => (
                           <el-tab-pane
@@ -184,7 +187,7 @@ export default defineComponent({
                         />
                       ))
                     }
-                    <el-table-column label="操作" min-width='10%' v-slots={(scope) => <ColumnAction {...scope.row}/>}/>
+                    <el-table-column label="操作" min-width='10%' align='center' v-slots={(scope) => <ColumnAction {...scope.row}/>}/>
                   </el-table>
                   <el-pagination
                     onCurrentChange={pageChange}
@@ -193,6 +196,7 @@ export default defineComponent({
                     layout='total, prev, pager, next, jumper'
                     total={state.total}
                     key={state.page}
+                    hide-on-single-page={true}
                 />
                 </div>
               </div>
@@ -205,6 +209,7 @@ export default defineComponent({
               destroy-on-close
               show-close={false}
               v-slots={modalSlots}
+              customClass={modalState.type}
             >
               {modalHtml[modalState.type]}
             </el-dialog>

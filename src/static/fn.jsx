@@ -130,7 +130,7 @@ const ModalTitle = (props) => {
 // 审核管理列表-拍卖信息
 const auctionInfo = (pmStatus) => {
   // eslint-disable-next-line no-nested-ternary
-  const obj = pmStatus === 3 ? { class: 'orange', label: '起拍价格' } : pmStatus === 5 ? { class: 'green', label: '成交价格' } : { class: '', label: '当前价格' };
+  const obj = pmStatus === 1 ? { class: 'orange', label: '起拍价格' } : pmStatus === 5 ? { class: 'green', label: '成交价格' } : { class: '', label: '当前价格' };
   return [
     {
       lable: '处置机关',
