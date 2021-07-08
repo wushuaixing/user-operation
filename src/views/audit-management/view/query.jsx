@@ -203,7 +203,7 @@ export default defineComponent({
                 disabledDate={(val) => disabledEndDate(val, 'updateTimeStart')}
               />
             </el-form-item>
-            <el-form-item style="float: right">
+            <el-form-item class='query-action'>
               <el-button type="primary" onClick={handleSearch} class="button-first" style="padding: 8px 21px">搜索</el-button>
               <el-button type="primary" onClick={resetForm} class="button-fourth" style="padding: 8px 11px">清空搜索条件</el-button>
             </el-form-item>
