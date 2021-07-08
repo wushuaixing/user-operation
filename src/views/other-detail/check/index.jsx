@@ -13,7 +13,7 @@ const Item = (props) => {
   const { id, key, val } = props;
   switch (key) {
     case 'title':
-      return <a href={`/sourceWeb/${id}`} target='_blank'>{val}</a>;
+      return <a href={`/sourceWeb/${id}`} target='_blank' className='button-link'>{val}</a>;
     case 'buildingArea':
       return <span className='area-field'>{val} <i v-show={val !== '-'}>m<sup>2</sup></i></span>;
     case 'landArea':

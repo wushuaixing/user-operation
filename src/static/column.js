@@ -245,7 +245,7 @@ const myOrgColumn = [
 const auditColumn = [
   {
     prop: 'assetInfo',
-    label: '资产信息（更新时间)',
+    label: '资产信息 (更新时间)',
     sort: 'custom',
     width: '22%',
   },
@@ -263,7 +263,7 @@ const auditColumn = [
   },
   {
     prop: 'auctionInfo',
-    label: '拍卖信息（开拍时间）',
+    label: '拍卖信息 (开拍时间)',
     sort: 'custom',
     width: '34.1%',
   },
