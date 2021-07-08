@@ -57,8 +57,10 @@ export default defineComponent({
       assetDetail: {},
       visible: false,
       value: '',
+      loading: false,
     });
     const handleClick = () => {
+      state.loading = true;
       const { params: { auctionId } } = proxy.$route;
       const remark = state.value;
       CommonApi.auditBack({ auctionId, remark }).then((res) => {
@@ -70,11 +72,13 @@ export default defineComponent({
             onClose: () => {
               localStorage.setItem('backSign', 'SUCCESS');
               state.visible = false;
+              state.loading = false;
               window.close();
             },
           });
         } else {
           proxy.$message.error('退回失败');
+          state.loading = false;
         }
       });
     };
@@ -82,7 +86,7 @@ export default defineComponent({
       title: null,
       footer: () => <>
       <el-button onClick={() => state.visible = false}>取 消</el-button>
-      <el-button type="primary" onClick={handleClick}>确定</el-button>
+      <el-button type="primary" onClick={handleClick} loading={state.loading}>确定</el-button>
       </>,
     };
     const params = () => {
