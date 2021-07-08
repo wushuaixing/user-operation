@@ -31,7 +31,7 @@ const auditTabs = (readNotNum, recallNum) => [
     name: '3',
   },
   {
-    label: `客户未读(${readNotNum})`,
+    label: `客户未读 (${readNotNum})`,
     name: '4',
   },
   {
