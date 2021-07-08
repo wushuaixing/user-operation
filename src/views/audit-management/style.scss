@@ -170,7 +170,7 @@
           min-width: 1200px;
           .switch{
             color: #296DD3;
-            margin-left: 8px;
+            margin-left: 12px;
             &:hover{
               color: #2E7BED;
             }
@@ -209,6 +209,9 @@
           .el-form-item__label{
             margin: 0 6px;
           }
+        }
+        .query-action{
+          margin-left: 6px;
         }
       }
       &-table{

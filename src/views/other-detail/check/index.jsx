@@ -162,7 +162,7 @@ export default defineComponent({
                   <el-input
                     type="textarea"
                     autosize
-                    placeholder="请输入备注"
+                    placeholder="请输入..."
                     maxLength={1000}
                     v-model={state.value}
                     onBlur={() => state.value = state.value.trim()}
