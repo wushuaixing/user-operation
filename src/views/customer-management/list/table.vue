@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="table-content-btn">
+    <div class="table-content-button">
       <el-button
         type="primary"
         v-if="!isChecked"
@@ -117,7 +117,7 @@
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
-        hide-on-single-page
+        :hide-on-single-page="total === 0"
       />
     </div>
   </div>
@@ -211,7 +211,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.table-content-btn {
+.table-content-button {
   margin-bottom: 12px;
   .total-tips {
     font-size: 14px;

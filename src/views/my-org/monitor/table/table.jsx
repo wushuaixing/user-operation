@@ -214,7 +214,7 @@ export default defineComponent({
           layout="total,sizes, prev, pager, next, jumper"
           total={tableData.total}
           key={tableData.page}
-          hide-on-single-page={true}
+          hide-on-single-page={tableData.total === 0}
         />
       </div>
     );

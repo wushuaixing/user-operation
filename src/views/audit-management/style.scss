@@ -105,6 +105,7 @@
             margin: 24px 0 0 8px;
             .el-timeline{
               &-item{
+                height: 28px;
                 &:first-child{
                   &::before{
                     content: '';
@@ -121,8 +122,11 @@
                   left: 0;
                 }
                 &__wrapper{
-                  top: -9px;
-                  padding-left: 18px;
+                  top: -17px;
+                  padding-left: 8px;
+                }
+                &__content{
+                  padding: 7px 0 7px 10px;
                   &:hover{
                     background: #EEF1F7;
                   }
@@ -159,7 +163,8 @@
       flex: 1 !important;
       background: #fff;
       padding: 20px;
-      min-width: 1303px;
+      min-width: 1312px;
+      box-sizing: border-box;
       height: 85vh;
       overflow: auto;
       @include scoll-style;
@@ -170,7 +175,7 @@
           min-width: 1200px;
           .switch{
             color: #296DD3;
-            margin-left: 8px;
+            margin-left: 12px;
             &:hover{
               color: #2E7BED;
             }
@@ -209,6 +214,9 @@
           .el-form-item__label{
             margin: 0 6px;
           }
+        }
+        .query-action{
+          margin-left: 6px;
         }
       }
       &-table{

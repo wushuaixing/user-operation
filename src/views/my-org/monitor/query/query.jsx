@@ -1,15 +1,16 @@
 import {
   defineComponent, reactive, ref, getCurrentInstance,
 } from 'vue';
-import { dateUtils, dateRange } from '@/utils';
+import { dateUtils } from '@/utils';
 import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
-// import DateTime from './yc-date-picker/yc-date-picker';
+import DateTime from './yc-date-picker/yc-date-picker';
 // <DateTime v-model={state.DateTimeTest} />
 import './style.scss';
 
 export default defineComponent({
   emits: ['handleSearch', 'resetSearch'],
   components: {
+    DateTime,
   },
   setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
@@ -28,7 +29,6 @@ export default defineComponent({
       start: '',
       startStart: '', // 开拍开始时间 ,示例值(2021-01-01)
       startEnd: '', // 开拍结束时间 ,示例值(2021-01-01)
-      DateTimeTest: ['2019-01-02', '2021-9-9'],
       updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       process: '', // 状态 0 未读 3 确认中（资产监控为跟进中） 6 跟进中 9 已完成 12 已忽略 15 已放弃
@@ -56,7 +56,7 @@ export default defineComponent({
     const resetSearch = () => {
       const { resetFields } = proxy.$refs.monitorForm;
       resetFields();
-      state.start = '';
+      state.start = ['', ''];
       emit('resetSearch');
     };
 
@@ -214,18 +214,7 @@ export default defineComponent({
               </div>
             </el-form-item>
             <el-form-item label="开拍时间：" prop="start">
-              <el-date-picker
-                v-model={state.start}
-                type="daterange"
-                unlink-panels
-                style={{ width: '286px' }}
-                class="query-date"
-                range-separator="至"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                shortcuts={dateRange()}
-              >
-              </el-date-picker>
+              <DateTime v-model={state.start} />
             </el-form-item>
           </div>
           <div className="monitor-form-line">

@@ -12,32 +12,31 @@
     .el-range__close-icon {
       line-height: 24px;
     }
-  }
-  .input-style {
-    position: absolute;
-    width: 99px;
-    height: 24px;
-    top: 0px;
-    background: #fff;
-    font-size: 14px;
-    line-height: 24px;
-    color: #b2b8c9;
-    text-align: center;
-    .el-input__inner {
+    .input-style {
+      position: absolute;
+      width: 99px;
       height: 24px;
+      background: #fff;
+      font-size: 14px;
       line-height: 24px;
-      border: none;
+      color: #20242E;
       text-align: center;
-      padding: 0;
+      border: none;
     }
-    .el-input__inner:focus {
-      box-shadow: none;
+    input::-webkit-input-placeholder {
+      /* WebKit browsers */
+      color: #b2b8c9;
+    }
+    .left {
+      left: 30px;
+    }
+    .right {
+      right: 35px;
     }
   }
-  .left {
-    left: 30px;
-  }
-  .right {
-    right: 35px;
+}
+.date-picker-kp {
+  .el-picker-panel__sidebar {
+    width: 120px;
   }
 }

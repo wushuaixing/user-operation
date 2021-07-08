@@ -186,7 +186,7 @@ export default defineComponent({
     } = this;
 
     return (
-      <div className="yc-newpage-contaner">
+      <div className="yc-newpage-contaner" id="lalal">
         <div className="monitor-manage">
           <div className="monitor-manage-header">
             <span className="header-title">

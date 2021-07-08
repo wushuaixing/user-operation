@@ -113,11 +113,11 @@ const modalModule = (getTableList) => {
           <el-input
             type="textarea"
             autosize
-            placeholder="请输入召回原因描述"
+            placeholder="请输入..."
             onBlur={() => handleBlur('remark')}
             maxLength={1000}
             v-model={modalState.remark}/>
-          <span className='val-length'>{modalState.remark.length}/1000</span>
+          <span className='val-length'>{(modalState.remark || '').length}/1000</span>
         </div>
       </div>
     </div>;
@@ -140,12 +140,12 @@ const modalModule = (getTableList) => {
           <el-input
             type="textarea"
             autosize
-            placeholder="请输入审核备注"
+            placeholder="请输入..."
             maxLength={1000}
             onBlur={() => handleBlur('noPushRemark')}
             v-model={modalState.noPushRemark}
           />
-          <span className='val-length'>{modalState.noPushRemark.length}/1000</span>
+          <span className='val-length'>{(modalState.noPushRemark || '').length}/1000</span>
         </div>
         <div className="no-push-modal-body-tips">
           <span className='label'>默认备注：</span>
@@ -172,11 +172,11 @@ const modalModule = (getTableList) => {
         <el-input
           type="textarea"
           autosize
-          placeholder="请输入审核备注"
+          placeholder="请输入..."
           maxLength={1000}
           onBlur={() => handleBlur('pushRemark')}
           v-model={modalState.pushRemark}/>
-        <span className='val-length'>{modalState.pushRemark.length}/1000</span>
+        <span className='val-length'>{(modalState.pushRemark || '').length}/1000</span>
       </div>
       <div className="push-modal-body-type flex">
         <span className='label'>系统匹配：</span>
