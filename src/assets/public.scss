@@ -36,12 +36,20 @@ a{
 i,b{
   font-style: normal;
 }
-.yc-ellipsis {
+@mixin ellipsis{
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.yc-ellipsis{
+  -webkit-line-clamp: 1;
+  @include ellipsis
+}
+.yc-ellipsis-two {
+  -webkit-line-clamp: 2;
+  @include ellipsis
 }
 
 .yc-line {

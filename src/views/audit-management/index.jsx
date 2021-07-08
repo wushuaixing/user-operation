@@ -135,7 +135,16 @@ export default defineComponent({
                               className={`${queryState.orgId === i.id ? 'active' : ''} el-timeline-item cursor-pointer` }
                               id={`${queryState.orgId === i.id ? 'active' : ''}` }
                             >
-                              {i.name}
+                              <el-tooltip
+                                effect="dark"
+                                content= {i.name}
+                                placement="top"
+                                disabled= {(i.name || '').length < 16}
+                              >
+                                <div style={{ width: '230px' }} class='yc-ellipsis'>
+                                  {i.name}
+                                </div>
+                              </el-tooltip>
                             </el-timeline-item>))
                         }
                       </el-timeline>

@@ -85,7 +85,7 @@
                   placement="top"
                   :disabled="(scope.row.title||'').length<35"
                 >
-                  <div class="yc-ellipsis">
+                  <div class="yc-ellipsis-two">
                     <span @click="toDetail(scope.row)" class="button-link cursor-pointer">
                       {{ scope.row.title || '详情' }}
                     </span>
@@ -107,7 +107,7 @@
                   placement="top"
                   :disabled="(scope.row.appellors||'').length<26"
                 >
-                  <div class="yc-ellipsis  cursor-pointer">
+                  <div class="yc-ellipsis-two  cursor-pointer">
                     {{ $filters.undefinedShow(scope.row.appellors) }}
                   </div>
                 </el-tooltip>
