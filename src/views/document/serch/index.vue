@@ -136,7 +136,7 @@
           :current-page="page"
           layout="total, prev, pager, next, jumper"
           :total="total > 10000 ? 10000 : total"
-          hide-on-single-page
+          :hide-on-single-page="total === 0"
           :key="page"
         >
         </el-pagination>

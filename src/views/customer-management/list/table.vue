@@ -117,7 +117,7 @@
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
-        hide-on-single-page
+        :hide-on-single-page="total === 0"
       />
     </div>
   </div>
