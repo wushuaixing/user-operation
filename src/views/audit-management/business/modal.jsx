@@ -19,6 +19,7 @@ const modalModule = (getTableList) => {
     importants: '',
     currentStatus: '',
     tableType: '',
+    loading: false,
   });
   // 点击确定
   const handleClick = () => {
@@ -29,27 +30,34 @@ const modalModule = (getTableList) => {
     const params = type === 'reCall' ? { id, recallReason, remark } : {
       approveStatus: obj.status, id, important, remark: obj.remark, currentStatus,
     };
+    const close = () => {
+      modalState.visible = false;
+      getTableList();
+      modalState.loading = false;
+    };
     if (type === 'push') {
       modalState.type = 'pushConfirm';
     } else {
+      modalState.loading = true;
       CommonApi.auditAction(type, params).then((res) => {
         const { code } = res.data || {};
         if (code === 200) {
-          proxy.$message.success('操作成功');
-          getTableList();
+          proxy.$message.success({
+            message: '操作成功',
+            duration: 1000,
+            onClose: () => close(),
+          });
         } else if (code === 6005) {
           proxy.$message.warning({
             message: '数据状态变更，为您刷新当前列表',
             duration: 1500,
-            onClose: () => {
-              getTableList();
-            },
+            onClose: () => close(),
           });
         } else {
           proxy.$message.error('请求错误');
+          modalState.loading = false;
         }
       });
-      modalState.visible = false;
     }
   };
   // 点击取消
@@ -233,7 +241,7 @@ const modalModule = (getTableList) => {
     title: null,
     footer: () => <div>
       <el-button onClick={handleCancel}>{modalState.type === 'pushConfirm' ? '上一步' : '取消'}</el-button>
-      <el-button type="primary" onClick={handleClick}>{modalState.type === 'push' ? '下一步' : '确定'}</el-button>
+      <el-button type="primary" onClick={handleClick} loading={modalState.loading}>{modalState.type === 'push' ? '下一步' : '确定'}</el-button>
     </div>,
   };
   return {

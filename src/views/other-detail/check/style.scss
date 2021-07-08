@@ -60,6 +60,9 @@
         &__body{
           padding: 32px 32px 20px!important;
         }
+        &__footer{
+          padding: 20px 32px 32px 0 !important;
+        }
       }
       &-body{
         display: flex;
@@ -69,6 +72,7 @@
         .label{
           min-width: 42px !important;
           color: #20242E;
+          line-height: 32px;
         }
         .val-length{
           position: absolute;

@@ -196,7 +196,7 @@ export default defineComponent({
                         />
                       ))
                     }
-                    <el-table-column label="操作" min-width='10%' align='center' v-slots={(scope) => <ColumnAction {...scope.row}/>}/>
+                    <el-table-column label="操作" min-width='10%' align='center' className='action' v-slots={(scope) => <ColumnAction {...scope.row}/>}/>
                   </el-table>
                   <el-pagination
                     onCurrentChange={pageChange}

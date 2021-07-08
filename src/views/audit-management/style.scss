@@ -1,5 +1,5 @@
 @mixin tips-box{
-  width: 328px;
+  width: 350px;
   border: 1px solid #C5C7CE;
   border-radius: 2px;
   line-height: 21px;
@@ -240,7 +240,10 @@
              tr{
                td{
                  vertical-align: top !important;
-                 padding-top: 15px;
+                 padding:15px 0;
+               }
+               .action{
+                 padding-bottom: 4px;
                }
               }
             }
@@ -283,6 +286,7 @@
             display: flex;
             .label{
               min-width: 98px;
+              line-height: 32px;
             }
           }
           &-type{
@@ -330,15 +334,24 @@
             .val-length{
               @include val-length
             }
+            .label{
+              line-height: 32px;
+            }
           }
           &-tips{
             display: flex;
             margin-top: 24px;
+            .label{
+              line-height: 34px;
+            }
             .tips-box{
               @include tips-box;
               p{
                 padding: 0 12px;
                 color: #4E5566;
+                &:first-child{
+                  margin-bottom: 5px;
+                }
                 &:hover{
                   background-color: #EFF5FF;
                 }
@@ -366,7 +379,8 @@
           }
         }
         &-body{
-          padding:28px 34px 20px 68px;
+          padding:28px 40px 40px;
+          border-bottom: 1px solid #e2e4e9;
           .flex{
             display: flex;
             .label{
@@ -376,6 +390,7 @@
           &-desc{
             .el-textarea__inner{
               max-height: 190px;
+              width: 350px !important;
             }
             position: relative;
             margin-top: 20px;
@@ -421,7 +436,7 @@
       }
       .pushConfirm,.reCall{
         .el-dialog__footer{
-          padding-bottom: 32px !important;
+          padding: 20px 32px 32px 0 !important;
         }
       }
       .push-confirm-modal{
