@@ -163,8 +163,9 @@
       flex: 1 !important;
       background: #fff;
       padding: 20px;
-      min-width: 1343px;
-      height: 85vh;
+      min-width: 1360px;
+      box-sizing: border-box;
+      height: 89vh;
       overflow: auto;
       @include scoll-style;
       position: relative;
@@ -174,7 +175,7 @@
           min-width: 1200px;
           .switch{
             color: #296DD3;
-            margin-left: 12px;
+            margin-left: 8px;
             &:hover{
               color: #2E7BED;
             }
@@ -215,7 +216,7 @@
           }
         }
         .query-action{
-          margin-left: 6px;
+          margin-left: 2px;
         }
       }
       &-table{
