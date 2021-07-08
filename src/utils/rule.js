@@ -122,19 +122,19 @@ export const adminMenu = [
 export const userMenu = [
   {
     text: '我的机构',
-    icon: 'el-icon-present',
+    icon: 'iconfont iconwodejigou',
     path: '/index',
     key: 'MyOrg',
   },
   {
     text: '审核管理',
-    icon: 'el-icon-picture-outline-round',
+    icon: 'iconfont iconshenheguanli',
     path: '/auditManagement',
     key: 'AuditManagement',
   },
   {
     text: '文书搜索',
-    icon: 'el-icon-present',
+    icon: 'iconfont iconyonghuyunying-wenshusousuo',
     path: '/documentSearch',
     key: 'documentSearch',
   },

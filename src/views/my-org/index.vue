@@ -172,6 +172,7 @@
           </el-table-column>
         </el-table>
         <el-pagination
+          v-if="tableData.length"
           @current-change="pageChange"
           @size-change="sizeChange"
           background
@@ -384,7 +385,12 @@ export default {
       params.idList = type ? [] : this.multipleSelection.map((item) => item.id);
       $modalConfirm(info).then(() => {
         this.isChecked = false;
+        const msgModal = this.$message.warning({
+          message: '正在下载，请稍等...',
+          duration: 0,
+        });
         MyOrgApi.export(params).then((res) => {
+          msgModal.close();
           const { code = 200, message = '' } = res;
           if (code === 200) {
             fileDownload(res);
