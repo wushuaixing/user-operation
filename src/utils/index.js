@@ -124,28 +124,25 @@ const ranStr = (l = 4) => {
 };
 
 const dateRange = () => [{
-  text: '最近一个月',
+  text: '近一个月及以后',
   value: (() => {
-    const end = new Date();
     const start = new Date();
     start.setMonth(start.getMonth() - 1);
-    return [start, end];
+    return [start, new Date(0)];
   })(),
 }, {
-  text: '最近三个月',
+  text: '近三个月及以后',
   value: (() => {
-    const end = new Date();
     const start = new Date();
     start.setMonth(start.getMonth() - 3);
-    return [start, end];
+    return [start, new Date(0)];
   })(),
 }, {
-  text: '最近半年',
+  text: '近半年及以后',
   value: (() => {
-    const end = new Date();
     const start = new Date();
     start.setMonth(start.getMonth() - 6);
-    return [start, end];
+    return [start, new Date(0)];
   })(),
 }];
 /**

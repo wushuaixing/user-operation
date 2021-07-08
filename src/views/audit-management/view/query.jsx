@@ -1,5 +1,5 @@
 import {
-  defineComponent, getCurrentInstance, reactive,
+  defineComponent, getCurrentInstance, reactive, watch, toRaw,
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
 import { dateRange, dateUtils } from '@/utils';
@@ -23,17 +23,25 @@ export default defineComponent({
       approveTimeEnd: '', // 审核结束时间
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
-      start: '',
+      start: [],
       isOpen: false,
     });
     const resetForm = () => {
       proxy.$refs.queryForm.resetFields();
-      state.start = '';
+      state.start = [];
       proxy.$emit('handleClearQuery', 'reset');
     };
     const handleSearch = () => {
       proxy.$emit('handleSearch', 'search');
     };
+    watch(() => state.start, (newVal) => {
+      const arr = toRaw(newVal) || [];
+      const startDate = arr[0];
+      const endDate = arr[1];
+      if (new Date(endDate).getTime() === 0) {
+        state.start = [startDate];
+      }
+    });
     // 日期控件做前后限制
     const disabledStartDate = (startTime, prop) => {
       if (state[prop]) {
@@ -182,6 +190,8 @@ export default defineComponent({
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
                 shortcuts={dateRange()}
+                popper-class="date-picker-kp"
+                key={state.start}
               >
               </el-date-picker>
             </el-form-item>

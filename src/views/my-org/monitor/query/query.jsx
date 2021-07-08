@@ -214,7 +214,7 @@ export default defineComponent({
               </div>
             </el-form-item>
             <el-form-item label="开拍时间：" prop="start">
-              <DateTime v-model={state.start} />
+              <DateTime v-model={state.start} key={state.start}/>
             </el-form-item>
           </div>
           <div className="monitor-form-line">

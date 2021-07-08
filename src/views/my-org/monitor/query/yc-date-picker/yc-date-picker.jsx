@@ -9,7 +9,6 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup() {
     const { proxy } = getCurrentInstance();
-    console.log(proxy);
     const pickerDate = reactive({
       time: '',
       start: '',
@@ -90,7 +89,8 @@ export default defineComponent({
     const {
       pickerDate, setTime, dateRange, modelValue, updateTime,
     } = this;
-    const [timeStart, timeEnd] = modelValue;
+    const value = modelValue || ['', ''];
+    const [timeStart, timeEnd] = value;
     if (timeStart && timeEnd) {
       pickerDate.time = [new Date(timeStart), new Date(timeEnd)];
     } else if (!timeStart && !timeEnd) {
