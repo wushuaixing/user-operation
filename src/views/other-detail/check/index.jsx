@@ -23,7 +23,7 @@ const Item = (props) => {
       return ((val || []).map((i) => <p key={i}>{i}</p>));
     case 'wsUrl':
       if (!val.length) return '-';
-      return ((val || []).map((i) => <p><a key={i} href={i} target='_blank'>{i}</a></p>));
+      return ((val || []).map((i) => <p><a key={i} href={i} target='_blank' className='button-link'>{i}</a></p>));
     default:
       return val;
   }
