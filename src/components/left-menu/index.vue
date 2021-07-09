@@ -17,7 +17,7 @@
       >
         <el-submenu v-if="item.child" :index="item.path">
           <template #title>
-            <i :class="item.icon"></i>
+            <i :class="item.icon" style="font-size: 18px"></i>
             <span>{{ item.text }}</span>
           </template>
           <el-menu-item
@@ -34,7 +34,7 @@
           :key="item.key"
           :index="item.path"
         >
-          <i :class="item.icon"></i>
+          <i :class="item.icon" style="font-size: 18px"></i>
           <template #title
             >{{ item.text }}
             <svg

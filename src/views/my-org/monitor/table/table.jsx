@@ -98,12 +98,11 @@ export default defineComponent({
         idList: multiple.idList,
       };
       $modalConfirm(multiple.info).then(() => {
-        const msgModal = proxy.$message.warning({
+        proxy.$message.warning({
           message: '正在下载，请稍等...',
-          duration: 0,
+          duration: 1000,
         });
         MyOrgApi.auditExport(paramData).then((res) => {
-          msgModal.close();
           const { code = 200, message = '' } = res;
           if (code === 200) {
             fileDownload(res);

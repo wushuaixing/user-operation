@@ -45,40 +45,42 @@
   &-content {
     &-html {
       width: 864px;
-      text-align: center;
       .html-item {
         padding-top: 41px;
-        position: relative;
+        .header {
+          position: relative;
+          text-align: center;
+          .title {
+            margin: 0 auto;
+            text-align: center;
+            color: #AD0700;
+            line-height: 28px;
+            font-size: 28px;
+            position: relative;
+            z-index: 12;
+            background: #fff;
+            padding: 0 37px 27px 37px;
+            display: inline-block;
+          }
+          .line {
+            height: 1px;
+            width: 100%;
+            background: #E2E4E9;
+            position: absolute;
+            top: 15px;
+          }
+        }
         .html {
           padding: 0 20px;
           table {
-            width: 100% !important;
+            //width: 100% !important;
           }
           img {
-            width: 100% !important;
+            //width: 100% !important;
           }
           * {
             max-width: 814px !important;
           }
-        }
-        .title {
-          margin: 0 auto;
-          text-align: center;
-          color: #AD0700;
-          line-height: 28px;
-          font-size: 28px;
-          position: relative;
-          z-index: 12;
-          background: #fff;
-          padding: 0 37px 27px 37px;
-          display: inline-block;
-        }
-        .line {
-          height: 1px;
-          width: 100%;
-          background: #E2E4E9;
-          position: absolute;
-          top: 56px;
         }
       }
     }
