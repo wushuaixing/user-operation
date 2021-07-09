@@ -150,7 +150,6 @@ export default defineComponent({
     });
     const msg = reactive({
       buttonLoading: false,
-      msgModal: null,
     });
 
     const open = ({ id, name = '' }) => {
@@ -163,7 +162,6 @@ export default defineComponent({
       proxy.reportForm.time = '';
       report.reportVisible = false;
       if (msg.buttonLoading) msg.buttonLoading = false;
-      if (msg.msgModal) msg.msgModal.close();
     };
 
     // 权限模块-全选
@@ -187,13 +185,12 @@ export default defineComponent({
             end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
             id: report.orgId,
           };
-          msg.msgModal = proxy.$message.warning({
+          proxy.$message.warning({
             message: '正在下载，请稍等...',
-            duration: 0,
+            duration: 1000,
           });
           msg.buttonLoading = true;
           MyOrgApi.exportOther(params).then((res) => {
-            msg.msgModal.close();
             msg.buttonLoading = false;
             const { code = 200, message = '导出失败' } = res.data || {};
             if (code === 200) {

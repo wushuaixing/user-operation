@@ -385,12 +385,11 @@ export default {
       params.idList = type ? [] : this.multipleSelection.map((item) => item.id);
       $modalConfirm(info).then(() => {
         this.isChecked = false;
-        const msgModal = this.$message.warning({
+        this.$message.warning({
           message: '正在下载，请稍等...',
-          duration: 0,
+          duration: 1000,
         });
         MyOrgApi.export(params).then((res) => {
-          msgModal.close();
           const { code = 200, message = '' } = res;
           if (code === 200) {
             fileDownload(res);
