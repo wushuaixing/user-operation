@@ -101,7 +101,6 @@
             maxlength="11"
             @change="(value) => (orgForm.phone = value.replace(/\D/g, ''))"
             placeholder="请输入手机号"
-            @blur="handlePwd"
           ></el-input>
         </el-form-item>
         <el-form-item label="密码：" prop="password" v-if="type === 'add'" class="need-bottom">
@@ -109,11 +108,10 @@
             ref="accountPwd"
             v-model="orgForm.password"
             style="width: 300px;"
-            placeholder="密码默认为账号后六位"
+            placeholder="密码默认为当天日期"
             autocomplete="off"
             maxlength="20"
             @change="(value) => (orgForm.password = value.replace(/[\W_]/g, ''))"
-            type="password"
           ></el-input>
         </el-form-item>
         <el-form-item label="角色：" prop="roleId" style="margin-bottom: 15px">
@@ -138,6 +136,7 @@
 import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
 import { encryptInfo } from '@/utils/encrypt';
+import { dateUtils } from '@/utils';
 
 export default {
   name: 'OrgAccountModal',
@@ -246,22 +245,23 @@ export default {
         this.orgForm = Object.assign(this.orgForm, {
           name: '',
           phone: '',
-          password: '',
+          password: dateUtils.formatStandardDate(new Date()).replace(/-/g, ''),
           parentId: '',
           roleId: 181,
         });
+        // 密码赋值日期后六位
         this.title = modalType === 'org' ? '创建子机构' : '创建本级账号';
       }
       this.visible = true;
     },
     // 添加账号-密码默认为账号后六位
-    handlePwd() {
-      const { phone } = this.orgForm;
-      if (phone.length === 11) {
-        this.orgForm.password = phone.substring(phone.length - 6);
-        this.$refs.orgForm.clearValidate('password');
-      }
-    },
+    // handlePwd() {
+    //   const { phone } = this.orgForm;
+    //   if (phone.length === 11) {
+    //     this.orgForm.password = phone.substring(phone.length - 6);
+    //     this.$refs.orgForm.clearValidate('password');
+    //   }
+    // },
     close() {
       this.$refs.orgForm.resetFields();
       this.visible = false;

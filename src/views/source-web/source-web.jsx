@@ -124,8 +124,10 @@ export default defineComponent({
               {
                 showTabs.map((item) => (
                   <div className="html-item" id={item.name}>
-                    <div className="line" />
-                    <div className="title">{item.label}</div>
+                    <div className="header">
+                      <div className="line" />
+                      <div className="title">{item.label}</div>
+                    </div>
                     <div className="html" v-html={data[item.name]} />
                   </div>
                 ))
@@ -145,11 +147,11 @@ export default defineComponent({
             ) : <div className="no-data">未找到相关附件</div>
           }
           {
-            hasOtherAttach ? <div className="attachList-title">同组其他相似数据附件</div> : ''
+            (hasOtherAttach && data.attachList.length) ? <div className="attachList-title">同组其他相似数据附件</div> : ''
           }
           {
             // eslint-disable-next-line no-nested-ternary
-            hasOtherAttach ? (
+            (hasOtherAttach && data.attachList.length) ? (
               data.attachList.length
                 ? data.attachList.map((item) => (
                   <div className="attachList-link">
