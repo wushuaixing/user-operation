@@ -7,7 +7,7 @@ import { auditColumn } from '@/static/column';
 import { selectSlots, timeLineSlots, tableEmptytSlots } from '@/static/slot';
 
 import NoOrgImg from '@/assets/img/no_org.png';
-import mainModule from '@/views/audit-management/business/main';
+import mainModule from './business/main';
 import columnHtml from './business/table';
 import modalModule from './business/modal';
 import Query from './view/query';
