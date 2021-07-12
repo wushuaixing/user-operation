@@ -4,6 +4,7 @@ import {
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
 import { dateRange, dateUtils } from '@/utils';
 
+// 审核管理-右侧搜索条件
 export default defineComponent({
   emits: ['handleSearch', 'handleClearQuery'],
   setup() {
@@ -23,17 +24,20 @@ export default defineComponent({
       approveTimeEnd: '', // 审核结束时间
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
-      start: [],
-      isOpen: false,
+      start: [], // 开拍时间
+      isOpen: false, // 展开收起
     });
+    // 重置搜索条件
     const resetForm = () => {
       proxy.$refs.queryForm.resetFields();
       state.start = [];
       proxy.$emit('handleClearQuery', 'reset');
     };
+    // 搜索
     const handleSearch = () => {
       proxy.$emit('handleSearch', 'search');
     };
+    // 监听开拍时间，选择日期范围后,结束日期置空
     watch(() => state.start, (newVal) => {
       const arr = toRaw(newVal) || [];
       const startDate = arr[0];
@@ -57,6 +61,7 @@ export default defineComponent({
       }
       return false;
     };
+    // 失焦去空格
     const handleBlur = (key) => state[key] = state[key].replace(/\s+/g, '');
     return {
       state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,

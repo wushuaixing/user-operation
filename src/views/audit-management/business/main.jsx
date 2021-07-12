@@ -25,22 +25,11 @@ const mainModule = () => {
   const queryState = reactive({
     num: 10, // 每页条数，默认20 ,示例值(20)
     orgId: '', // 机构id
-    page: 1, //
+    page: 1, // 页数
     sortColumn: '', // 排序字段,可用值:AUCTIONTIME,UPDATETIME
     sortOrder: '', // 排序顺序,可用值:ASC,DESC
     tableType: '1', // 查询列表标签 1:结构化匹配 2:已推送 3:不推送 4:客户未读 5:召回
   });
-  // // 设置左侧树的高度
-  // const setTreeMinHeight = () => {
-  //   state.height = '72vh';
-  //   nextTick(() => {
-  //     const dom = document.getElementById('content-right');
-  //     if (dom && dom.clientHeight) {
-  //       const height = dom.clientHeight > 834 ? `${dom.clientHeight}px` : '72vh';
-  //       state.height = height;
-  //     }
-  //   }).then((r) => console.log(r));
-  // };
   // 获取请求列表参数
   const getParams = () => {
     const f = (i) => dateUtils.formatStandardDate(i);
@@ -110,7 +99,7 @@ const mainModule = () => {
       }
     }).then((r) => console.log(r));
   };
-  // 结构类型切换
+  // 机构类型切换
   const typeChange = (isClear) => {
     const { resetForm } = proxy.$refs.queryRef;
     const { allList, type } = state;
@@ -161,7 +150,6 @@ const mainModule = () => {
       }
     });
   };
-
   // 翻页
   const pageChange = (val) => {
     queryState.page = val;
