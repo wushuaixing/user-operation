@@ -1,5 +1,5 @@
 import {
-  defineComponent, getCurrentInstance, reactive, watch, toRaw,
+  defineComponent, getCurrentInstance, reactive, watch, toRaw, nextTick,
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
 import { dateRange, dateUtils } from '@/utils';
@@ -42,8 +42,15 @@ export default defineComponent({
       const arr = toRaw(newVal) || [];
       const startDate = arr[0];
       const endDate = arr[1];
+      const fn = (i) => dateUtils.formatStandardDate(i);
+      const dom = document.getElementsByClassName('el-picker-panel__shortcut');
       if (new Date(endDate).getTime() === 0) {
         state.start = [startDate];
+        dateRange().forEach((i, index) => {
+          if (fn(i.value[0]) === fn(startDate)) {
+            nextTick(() => dom[index].style.color = '#296DD3').then((r) => console.log(r));
+          }
+        });
       }
     });
     // 日期控件做前后限制
