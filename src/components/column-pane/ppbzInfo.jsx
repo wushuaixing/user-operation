@@ -10,7 +10,7 @@ export default defineComponent({
     const {
       reason = '[]', approveTime, createTime, remark = '-',
     } = data;
-    const { name, hl } = (JSON.parse(reason) || [])[0] || {};
+    const { name = '', hl } = (JSON.parse(reason) || [])[0] || {};
     return (
       <div>
         <p className="pp-title">{`审核备注 | ${approveTime}`}</p>
