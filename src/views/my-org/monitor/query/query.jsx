@@ -1,7 +1,7 @@
 import {
-  defineComponent, reactive, ref, getCurrentInstance,
+  defineComponent, reactive, ref, getCurrentInstance, watch, toRaw, nextTick,
 } from 'vue';
-import { dateUtils } from '@/utils';
+import { dateUtils, dateRange } from '@/utils';
 import { IMPORTANT_TYPE, AUCTION_STATUS, PROCESS } from '@/static';
 import DateTime from './yc-date-picker/yc-date-picker';
 // <DateTime v-model={state.DateTimeTest} />
@@ -33,6 +33,22 @@ export default defineComponent({
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       process: '', // 状态 0 未读 3 确认中（资产监控为跟进中） 6 跟进中 9 已完成 12 已忽略 15 已放弃
     });
+    // 监听开拍时间，选择日期范围后,结束日期置空
+    watch(() => state.start, (newVal) => {
+      const arr = toRaw(newVal) || [];
+      const startDate = arr[0];
+      const endDate = arr[1];
+      const fn = (i) => dateUtils.formatStandardDate(i);
+      const dom = document.getElementsByClassName('el-picker-panel__shortcut');
+      if (new Date(endDate).getTime() === 0) {
+        state.start = [startDate];
+        dateRange().forEach((i, index) => {
+          if (fn(i.value[0]) === fn(startDate)) {
+            nextTick(() => dom[index].style.color = '#296DD3').then((r) => console.log(r));
+          }
+        });
+      }
+    });
     // 日期控件做前后限制
     const disabledStartDate = (startTime, prop) => {
       if (state[prop]) {
@@ -56,7 +72,7 @@ export default defineComponent({
     const resetSearch = () => {
       const { resetFields } = proxy.$refs.monitorForm;
       resetFields();
-      state.start = ['', ''];
+      state.start = '';
       emit('resetSearch');
     };
 
@@ -214,7 +230,20 @@ export default defineComponent({
               </div>
             </el-form-item>
             <el-form-item label="开拍时间：" prop="start">
-              <DateTime v-model={state.start} key={state.start}/>
+              { /* <DateTime v-model={state.start} key={state.start}/> */ }
+              <el-date-picker
+                v-model={state.start}
+                type="daterange"
+                unlink-panels
+                class="query-date"
+                style={{ width: '286px' }}
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                shortcuts={dateRange()}
+                popper-class="date-picker-kp"
+                key={state.start}
+              />
             </el-form-item>
           </div>
           <div className="monitor-form-line">
