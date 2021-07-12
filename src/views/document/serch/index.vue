@@ -198,6 +198,10 @@ export default {
     padding-top: 20px;
     .el-form-item{
       margin-bottom: 14px;
+      margin-right: 32px;
+      &:first-child{
+        margin-right: 0;
+      }
     }
     .el-input__inner {
       width: 260px;
@@ -248,7 +252,7 @@ export default {
     }
   }
   .table-content{
-    padding-top: 20px;
+    padding-top: 2px;
   }
 }
 </style>

@@ -480,5 +480,10 @@
 .date-picker-kp{
   .el-picker-panel__sidebar{
     width: 120px;
+    .el-picker-panel__shortcut{
+      &:hover{
+        color: #296DD3;
+      }
+    }
   }
 }
