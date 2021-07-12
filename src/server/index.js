@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 
 axios.processData = false;
 axios.defaults.withCredentials = true;
@@ -40,12 +41,15 @@ axios.interceptors.response.use(
   },
   (err) => {
     console.log(err);
-    if (err.response.status === 504 || err.response.status === 404) {
+    const { status } = err.response || {};
+    if (status === 504 || status === 404) {
       console.log('请求出错');
-    } else if (err.response.status === 401) {
+    } else if (status === 401) {
       console.log('请重新登录');
-    } else if (err.response.status === 500) {
+    } else if (status === 500) {
       console.log('服务器遇到错误，无法完成请求');
+    } else {
+      ElMessage.error(err.message);
     }
     return Promise.reject(err);
   },
