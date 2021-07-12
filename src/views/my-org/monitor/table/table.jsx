@@ -98,7 +98,7 @@ export default defineComponent({
         idList: multiple.idList,
       };
       $modalConfirm(multiple.info).then(() => {
-        proxy.$message.warning({
+        const modalMsg = proxy.$message.warning({
           message: '正在下载，请稍等...',
           duration: 1000,
         });
@@ -109,6 +109,8 @@ export default defineComponent({
           } else {
             proxy.$message.error(message);
           }
+        }, () => {
+          modalMsg.close();
         });
       }).catch((err) => {
         console.log(err);

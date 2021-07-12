@@ -385,7 +385,7 @@ export default {
       params.idList = type ? [] : this.multipleSelection.map((item) => item.id);
       $modalConfirm(info).then(() => {
         this.isChecked = false;
-        this.$message.warning({
+        const modalMsg = this.$message.warning({
           message: '正在下载，请稍等...',
           duration: 1000,
         });
@@ -396,6 +396,8 @@ export default {
           } else {
             this.$message.error(message);
           }
+        }, () => {
+          modalMsg.close();
         });
       }).catch((err) => {
         console.log(err);

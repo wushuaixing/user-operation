@@ -39,6 +39,7 @@ const mainModule = () => {
     const obj = {
       createTimeStart, createTimeEnd, approveTimeStart, approveTimeEnd, updateTimeEnd, updateTimeStart, startStart: (start || [])[0], startEnd: (start || [])[1],
     };
+    const { tableType, sortColumn, sortOrder } = queryState;
     Object.keys(obj).forEach((i) => obj[i] = f(obj[i]));
     const params = {
       ...obj,
@@ -47,6 +48,7 @@ const mainModule = () => {
       orgType: (state.type).toString(),
       page: queryState.page,
       isOpen: '',
+      flag: tableType === '5' ? Boolean(sortColumn && sortOrder) : '',
     };
     return params;
   };
