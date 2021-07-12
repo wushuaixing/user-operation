@@ -185,7 +185,7 @@ export default defineComponent({
             end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
             id: report.orgId,
           };
-          proxy.$message.warning({
+          const modalMsg = proxy.$message.warning({
             message: '正在下载，请稍等...',
             duration: 1000,
           });
@@ -199,6 +199,9 @@ export default defineComponent({
             } else {
               proxy.$message.error(message);
             }
+          }, () => {
+            msg.buttonLoading = false;
+            modalMsg.close();
           });
         }
       });
