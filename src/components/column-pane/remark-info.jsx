@@ -6,7 +6,7 @@ const RemarkInfo = (props, tabType) => {
     recallRemark, approveTime, reason, createTime, remark, status,
   } = props;
   const dynamicReason = JSON.parse(reason) || [];
-  const { hl = [], name } = dynamicReason[0] || {};
+  const { hl = [] } = dynamicReason[0] || {};
   const isShenHe = ['2', '3', '4'].includes(tabType);
   const obj = isShenHe ? {
     approveTime,
@@ -22,12 +22,12 @@ const RemarkInfo = (props, tabType) => {
   return <div className='remark-info'>
     {
       obj.display && <>
-        <p className='before-circle'>{obj.label} | {obj.approveTime}</p>
+        <p className='before-circle'>{obj.label} | {obj.approveTime || '-'}</p>
         <p className='remark-info-detail'>{obj.detail || '-'}</p>
       </>
     }
-    <p className='before-circle'>根据{name}匹配 | {createTime}</p>
-    <p v-html={hl[0] || '-'} className='remark-info-detail'></p>
+    <p className='before-circle'>匹配信息 | {createTime || '-'}</p>
+    <p v-html={hl[0] || '-'} className='remark-info-detail'/>
   </div>;
 };
 export default RemarkInfo;
