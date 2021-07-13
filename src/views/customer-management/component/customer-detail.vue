@@ -136,6 +136,7 @@
               <el-table
                 :data="accountData"
                 class="list-table"
+                v-loading="accountLoading"
                 style="width: 100%">
                 <template #empty>
                   <img src="../../../assets/img/no_data.png" alt="" />
@@ -148,7 +149,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="name"
-                  width="170"
+                  width="140"
                   label="姓名"
                   >
                 </el-table-column>
@@ -232,6 +233,7 @@ export default {
   data() {
     return {
       loading: false, // 整页loading
+      accountLoading: false,
       activeOrgId: 0, // 当前选择的机构id 初始时是顶级机构id
       activeLevel: 0, // 当前机构层级
       customerData: {},
@@ -274,13 +276,12 @@ export default {
       }
     });
   },
-  updated() {
-    this.setTreeColor();
-  },
   methods: {
     // 获取页面机构详情数据
     getOrgDetailData(id, type = '') {
+      this.loading = true;
       AdminApi.orgDetail(id).then((res) => {
+        // this.loading = false;
         const { code, data, message } = res.data;
         if (code === 200) {
           // 进行赋值
@@ -292,6 +293,7 @@ export default {
           this.treeData = [tree];
           document.title = tree.name;
           // 设置斑马
+          console.log(this.$refs.SearchTree, '2323');
           const { hightlight, setSearchList, setTreeColor } = this.$refs.SearchTree;
           setTreeColor();
           if (type === 'init') {
@@ -318,11 +320,15 @@ export default {
         } else {
           this.$message.error(message);
         }
+      }).finally(() => {
+        this.loading = false;
       });
     },
     // 获取本级账号数据
     getAccountData(id) {
+      this.accountLoading = true;
       AdminApi.detailSubOrg(id).then((res) => {
+        this.accountLoading = false;
         const { code, data, message } = res.data;
         if (code === 200) {
           this.accountData = data.users.map((item) => {
@@ -525,6 +531,34 @@ export default {
           }
         }
       }
+    }
+      //滚动条的宽度
+    &-list::-webkit-scrollbar {
+      width:4px;
+    }
+
+    //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
+    &-list::-webkit-scrollbar-track {
+      width: 4px;
+      background-color:#FFF;
+    }
+
+    //滚动条的设置
+    &-list::-webkit-scrollbar-thumb {
+      background-color:#B2B8C9;
+      background-clip:padding-box;
+      min-height:49px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius:5px;
+    }
+    //滚动条移上去的背景
+
+    &-list::-webkit-scrollbar-thumb:hover{
+      background-color:#B2B8C9;
+    }
+    &-list::-webkit-scrollbar-track:hover{
+      background-color:#fff;
     }
     .scroll {
       overflow-y: auto;
