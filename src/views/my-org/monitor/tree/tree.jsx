@@ -67,6 +67,10 @@ export default defineComponent({
       treeData.searchValue = node.id;
       proxy.$emit('treeNodeClick', node.id);
     };
+    const selectChange = (val) => {
+      proxy.$emit('treeNodeClick', val);
+      highLight(val);
+    };
     const resetList = () => {
       treeData.searchList = [];
       filterTree(treeData.treeData[0], '');
@@ -76,11 +80,12 @@ export default defineComponent({
       remoteMethod,
       handleNodeClick,
       resetList,
+      selectChange,
     };
   },
   render() {
     const {
-      treeData, handleNodeClick, remoteMethod, resetList,
+      treeData, handleNodeClick, remoteMethod, resetList, selectChange,
     } = this;
     return (
       <div className="monitor-tree">
@@ -93,6 +98,7 @@ export default defineComponent({
           remote
           remote-method={remoteMethod}
           onVisibleChange={resetList}
+          onChange={selectChange}
           placeholder="请输入机构名称">
           {
             treeData.searchList.map((item) => <el-option key={item.id} label={item.name} value={item.id}/>)
