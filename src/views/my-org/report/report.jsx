@@ -84,6 +84,10 @@ const reportFormOptions = {
           label: '招投标',
           val: '12',
         },
+        {
+          label: '电子报',
+          val: '18',
+        },
       ],
     },
     {
@@ -93,6 +97,14 @@ const reportFormOptions = {
         {
           label: '破案重组',
           val: '13',
+        },
+        {
+          label: '被执行信息',
+          val: '19',
+        },
+        {
+          label: '终本案件',
+          val: '20',
         },
         {
           label: '失信记录',
@@ -128,15 +140,15 @@ export default defineComponent({
     const checkList = reactive({
       zcwj: {
         checkAll: true,
-        checkedData: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        checkedData: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '18'],
         isIndeterminate: false,
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '18'],
       },
       fxck: {
         checkAll: true,
-        checkedData: ['13', '14', '15', '16', '17'],
+        checkedData: ['13', '14', '15', '16', '17', '19', '20'],
         isIndeterminate: false,
-        options: ['13', '14', '15', '16', '17'],
+        options: ['13', '14', '15', '16', '17', '19', '20'],
       },
     });
 
