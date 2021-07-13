@@ -207,7 +207,7 @@ const rulesFormOptions = {
           val: '64',
         },
         {
-          label: '被执行案件',
+          label: '被执行信息',
           val: '65',
         },
       ],
