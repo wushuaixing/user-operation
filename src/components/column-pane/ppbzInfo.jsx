@@ -13,9 +13,9 @@ export default defineComponent({
     const { hl } = (JSON.parse(reason) || [])[0] || {};
     return (
       <div>
-        <p className="pp-title">{`审核备注 | ${approveTime}`}</p>
+        <p className="pp-title">{`审核备注 | ${approveTime || '-'}`}</p>
         <p className="pp-content">{remark || '-'}</p>
-        <p className="pp-title">{`匹配信息 | ${createTime}`}</p>
+        <p className="pp-title">{`匹配信息 | ${createTime || '-'}`}</p>
         <p v-html={hl || '-'} className="pp-content"/>
       </div>
     );
