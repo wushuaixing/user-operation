@@ -10,13 +10,13 @@ export default defineComponent({
     const {
       reason = '[]', approveTime, createTime, remark = '-',
     } = data;
-    const { name = '', hl } = (JSON.parse(reason) || [])[0] || {};
+    const { hl } = (JSON.parse(reason) || [])[0] || {};
     return (
       <div>
-        <p className="pp-title">{`审核备注 | ${approveTime}`}</p>
+        <p className="pp-title">{`审核备注 | ${approveTime || '-'}`}</p>
         <p className="pp-content">{remark || '-'}</p>
-        <p className="pp-title">{`根据“${name}”匹配 | ${createTime}`}</p>
-        <p v-html={hl} className="pp-content"/>
+        <p className="pp-title">{`匹配信息 | ${createTime || '-'}`}</p>
+        <p v-html={hl || '-'} className="pp-content"/>
       </div>
     );
   },

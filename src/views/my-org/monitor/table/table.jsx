@@ -14,6 +14,12 @@ import './style.scss';
 
 const width = ['20%', '35%', '35%', '10%'];
 const column = auditColumn.filter((item, index) => index !== 1).map((item, index) => Object.assign(item, { width: width[index] }));
+const processList = [...PROCESS];
+processList.splice(2, 0, {
+  label: '未跟进',
+  value: 1,
+});
+console.log(processList, 'ni');
 export default defineComponent({
   components: {
     ZcInfo,
@@ -30,7 +36,7 @@ export default defineComponent({
       if (type === 'assetInfo') return <ZcInfo data={row}/>;
       if (type === 'remarkInfo') return <ppbzInfo data={row}/>;
       if (type === 'auctionInfo') return <PmInfo data={row}/>;
-      const status = PROCESS.filter((i) => i.value === row.process);
+      const status = processList.filter((i) => i.value === row.process);
       return <span>{status[0].label}</span>;
     };
 
