@@ -66,9 +66,9 @@
             <span class="item-label">域名网址</span>：
             <a
               class="button-link"
-              :href="`https://${customerData.url}.yczcjk.com`"
+              :href="`https://${customerData.url}${customerData.url ? '.' : ''}yczcjk.com`"
               target='_blank'
-            >{{customerData.url + '.yczcjk.com'}}</a>
+            >{{`${customerData.url}${customerData.url ? '.' : ''}yczcjk.com`}}</a>
           </div>
         </div>
       </div>
