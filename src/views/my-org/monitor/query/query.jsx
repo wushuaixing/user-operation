@@ -103,6 +103,11 @@ export default defineComponent({
     const {
       state, disabledStartDate, disabledEndDate, handleSearch, resetSearch, openStatus, open, isDelete,
     } = this;
+    const processList = [...PROCESS];
+    processList.splice(2, 0, {
+      label: '未跟进',
+      value: 1,
+    });
     return (
       <div>
         <el-form inline={true} model={state} className="monitor-form" ref="monitorForm">
@@ -282,7 +287,7 @@ export default defineComponent({
                                           style={{ width: '96px' }}
                                           placeholder="请选择拍卖状态">
                       {
-                        PROCESS.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                        processList.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
                       }
                       </el-select>
                     </el-form-item> : ''
