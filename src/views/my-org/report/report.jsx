@@ -115,7 +115,7 @@ const reportFormOptions = {
           val: '15',
         },
         {
-          label: '诉讼信息',
+          label: '涉诉信息',
           val: '16',
         },
         {
