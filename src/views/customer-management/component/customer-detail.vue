@@ -361,7 +361,7 @@ export default {
       } else {
         obj = {
           title: '确认重置密码？',
-          text: '点击确定，密码将被重置为账号后6位',
+          text: '点击确定，密码将被重置为当前日期',
           color: '#4E5566',
           api: () => AdminApi.detailResetPwd(params),
         };
