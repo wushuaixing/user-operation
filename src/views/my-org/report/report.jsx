@@ -206,7 +206,7 @@ export default defineComponent({
             msg.buttonLoading = false;
             const { code = 200, message = '导出失败' } = res.data || {};
             if (code === 200) {
-              fileDownload(res, true);
+              fileDownload(res);
               report.reportVisible = false;
             } else {
               proxy.$message.error(message);
