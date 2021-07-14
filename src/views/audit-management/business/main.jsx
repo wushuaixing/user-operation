@@ -117,7 +117,6 @@ const mainModule = () => {
   // 顶级机构切换
   const treeItemChange = (id, sign) => {
     const { treeList, type } = toRaw(state);
-    const { resetForm } = proxy.$refs.queryRef;
     queryState.tableType = '1';
     let orgId = id;
     if (sign === 'all') {
@@ -136,7 +135,7 @@ const mainModule = () => {
     scrollIntoView();
     const { blur } = proxy.$refs.selectRef;
     nextTick(() => blur()).then((r) => console.log(r));
-    resetForm();
+    handleReset();
   };
   // 获取顶级机构列表
   const getTreeList = () => {
