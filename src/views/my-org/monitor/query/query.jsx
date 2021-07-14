@@ -281,16 +281,15 @@ export default defineComponent({
                 </div>
               </el-form-item>
                 {
-                  isDelete
-                    ? <el-form-item label="状态：" prop="process">
-                      <el-select v-model={state.process}
-                                          style={{ width: '96px' }}
-                                          placeholder="请选择拍卖状态">
-                      {
-                        processList.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
-                      }
-                      </el-select>
-                    </el-form-item> : ''
+                  <el-form-item label="状态：" prop="process" v-show={isDelete}>
+                    <el-select v-model={state.process}
+                                        style={{ width: '96px' }}
+                                        placeholder="请选择拍卖状态">
+                    {
+                      processList.map((item) => <el-option key={item.value} label={item.label} value={item.value}/>)
+                    }
+                    </el-select>
+                  </el-form-item>
                 }
             </div>
             <el-form-item>
