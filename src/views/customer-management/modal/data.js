@@ -160,7 +160,7 @@ const rulesFormOptions = {
         },
         {
           label: '电子报',
-          val: '58',
+          val: '57',
         },
       ],
     },
@@ -204,11 +204,11 @@ const rulesFormOptions = {
         },
         {
           label: '终本案件',
-          val: '64',
+          val: '58',
         },
         {
           label: '被执行信息',
-          val: '65',
+          val: '59',
         },
       ],
     },
@@ -380,10 +380,10 @@ const checkList = {
       '44',
       '52',
       '51',
-      '58',
+      '57',
     ],
     isIndeterminate: false,
-    options: ['2', '29', '30', '4', '31', '32', '41', '49', '44', '52', '51', '58'],
+    options: ['2', '29', '30', '4', '31', '32', '41', '49', '44', '52', '51', '57'],
   },
   zjgc: {
     checkAll: true,
@@ -393,9 +393,9 @@ const checkList = {
   },
   fxjk: {
     checkAll: true,
-    checkedData: ['39', '42', '40', '50', '64', '65'],
+    checkedData: ['39', '42', '40', '50', '58', '59'],
     isIndeterminate: false,
-    options: ['39', '42', '40', '50', '64', '65'],
+    options: ['39', '42', '40', '50', '58', '59'],
   },
   jyfx: {
     checkAll: true,
