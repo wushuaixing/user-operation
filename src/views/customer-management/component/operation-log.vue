@@ -115,12 +115,9 @@
         </el-table>
         <el-pagination
           @current-change="pageChange"
-          @size-change="sizeChange"
           background
           :current-page="page"
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size="params.num"
-          layout="total,sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next, jumper"
           :total="total"
           :key="page"
           :hide-on-single-page="total === 0"
@@ -150,7 +147,6 @@ export default {
       page: 1,
       name: '',
       loading: false,
-      isTriggerCurrent: false,
       params: {
         id: '',
         num: 10,
@@ -227,20 +223,7 @@ export default {
     },
     // 换页
     pageChange(page) {
-      if (!this.isTriggerCurrent) {
-        this.page = parseInt(page, 10);
-        this.getList();
-      }
-      this.isTriggerCurrent = false;
-    },
-    // 切换pageSize
-    sizeChange(num) {
-      this.params = {
-        ...this.params,
-        num,
-      };
-      this.isTriggerCurrent = this.page > Math.ceil(this.total / num);
-      this.page = 1;
+      this.page = parseInt(page, 10);
       this.getList();
     },
     // 时间控件做前后限制

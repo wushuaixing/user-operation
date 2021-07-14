@@ -144,12 +144,9 @@
         </el-table>
         <el-pagination
           @current-change="pageChange"
-          @size-change="sizeChange"
           background
           :current-page="page"
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size="params.num"
-          layout="total,sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next, jumper"
           :total="total"
           :key="page"
           :hide-on-single-page="total === 0"
@@ -236,7 +233,6 @@ export default {
       taskAssignTabs,
       toggle: true,
       column: taskAssignColumn,
-      isTriggerCurrent: false,
       isChecked: false,
       tabKey: '1',
       tableData: [],
@@ -315,23 +311,9 @@ export default {
     },
     // 翻页
     pageChange(page) {
-      if (!this.isTriggerCurrent) {
-        this.page = parseInt(page, 10);
-        this.getList();
-      }
-      this.isTriggerCurrent = false;
-    },
-    // pageSize 改变
-    sizeChange(num) {
-      this.params = {
-        ...this.params,
-        num,
-      };
-      this.isTriggerCurrent = this.page > Math.ceil(this.total / num);
-      this.page = 1;
+      this.page = parseInt(page, 10);
       this.getList();
     },
-
     // tab切换 && 清空搜索条件
     resetOptions(flag = false) {
       this.page = 1;
