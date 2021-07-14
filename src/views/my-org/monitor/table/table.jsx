@@ -29,7 +29,7 @@ export default defineComponent({
   props: {
     tableData: Object,
   },
-  emits: ['pageChange', 'sizeChange', 'export', 'sortChange'],
+  emits: ['pageChange', 'export', 'sortChange'],
   setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
     const setTablePane = (row, type) => {
@@ -68,9 +68,6 @@ export default defineComponent({
     };
     const pageChange = (page) => {
       emit('pageChange', page);
-    };
-    const sizeChange = (num) => {
-      emit('sizeChange', num);
     };
 
     const handleBatchCheck = (isChecked) => {
@@ -124,12 +121,12 @@ export default defineComponent({
     };
 
     return {
-      setTablePane, multiple, handleBatchCheck, handleExport, handleSortChange, exportAction, pageChange, sizeChange, resetTable,
+      setTablePane, multiple, handleBatchCheck, handleExport, handleSortChange, exportAction, pageChange, resetTable,
     };
   },
   render() {
     const {
-      setTablePane, tableData = {}, multiple, handleBatchCheck, handleExport, handleSortChange, pageChange, sizeChange,
+      setTablePane, tableData = {}, multiple, handleBatchCheck, handleExport, handleSortChange, pageChange,
     } = this;
     return (
       <div className="monitor-table">
@@ -213,12 +210,10 @@ export default defineComponent({
         </el-table>
         <el-pagination
           onCurrentChange={pageChange}
-          onSizeChange={sizeChange}
           background
           current-page={tableData.page}
-          page-sizes={[10, 20, 30, 40, 50]}
           page-size={tableData.num}
-          layout="total,sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next, jumper"
           total={tableData.total}
           key={tableData.page}
           hide-on-single-page={tableData.total === 0}

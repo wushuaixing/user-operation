@@ -109,13 +109,11 @@
       </el-table>
       <el-pagination
         @current-change="pageChange"
-        @size-change="sizeChange"
         background
         :key="page"
         :current-page="page"
-        :page-sizes="[10, 20, 30, 40, 50]"
         :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="total, prev, pager, next, jumper"
         :total="total"
         :hide-on-single-page="total === 0"
       />
@@ -198,13 +196,6 @@ export default {
     // 翻页
     pageChange(page) {
       this.page = parseInt(page, 10);
-      this.$emit('pageOrSizeChange');
-    },
-    // 页数改变
-    sizeChange(size) {
-      this.page = 1;
-      this.pageSize = size;
-      // 页数变化之后 改变左侧树的min-height
       this.$emit('pageOrSizeChange');
     },
   },

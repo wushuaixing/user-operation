@@ -74,18 +74,16 @@
         </el-table>
         <el-pagination
           @current-change="pageChange"
-          @size-change="sizeChange"
           background
           :key="otherParams.page"
           :current-page="otherParams.page"
-          :page-sizes="[10, 20, 30, 40, 50]"
           :page-size="otherParams.num"
-          layout="total,sizes, prev, pager, next, jumper"
+          layout="total,prev, pager, next, jumper"
           :total="total"
           :hide-on-single-page="total === 0"
         />
       </div>
-    </section>>
+    </section>
   </div>
 </template>
 
