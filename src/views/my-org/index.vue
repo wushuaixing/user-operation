@@ -174,12 +174,10 @@
         <el-pagination
           v-if="tableData.length"
           @current-change="pageChange"
-          @size-change="sizeChange"
           background
           :current-page="page"
-          :page-sizes="[10, 20, 30, 40, 50]"
           :page-size="params.num"
-          layout="total,sizes, prev, pager, next, jumper"
+          layout="total, prev, pager, next, jumper"
           :total="total"
           :key="page"
           :hide-on-single-page="total === 0"
