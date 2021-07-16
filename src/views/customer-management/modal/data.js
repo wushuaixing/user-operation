@@ -365,76 +365,7 @@ const rulesForm = {
   subOrgUseCount: 0, // 已使用子机构数
   accountUseCount: 0, // 已使用账号数
 };
-const checkList = {
-  zcwj: {
-    checkAll: true,
-    checkedData: [
-      '2',
-      '29',
-      '30',
-      '4',
-      '31',
-      '32',
-      '41',
-      '49',
-      '44',
-      '52',
-      '51',
-      '57',
-    ],
-    isIndeterminate: false,
-    options: ['2', '29', '30', '4', '31', '32', '41', '49', '44', '52', '51', '57'],
-  },
-  zjgc: {
-    checkAll: true,
-    checkedData: ['54', '55', '56'],
-    isIndeterminate: false,
-    options: ['54', '55', '56'],
-  },
-  fxjk: {
-    checkAll: true,
-    checkedData: ['39', '42', '40', '50', '58', '59'],
-    isIndeterminate: false,
-    options: ['39', '42', '40', '50', '58', '59'],
-  },
-  jyfx: {
-    checkAll: true,
-    checkedData: ['33', '34', '35', '38', '36', '37'],
-    isIndeterminate: false,
-    options: ['33', '34', '35', '38', '36', '37'],
-  },
-  ywgl: {
-    checkAll: true,
-    checkedData: ['6', '7'],
-    isIndeterminate: false,
-    options: ['6', '7'],
-  },
-  hxss: {
-    checkAll: true,
-    checkedData: ['27'],
-    isIndeterminate: false,
-    options: ['27'],
-  },
-  xxss: {
-    checkAll: true,
-    checkedData: ['12', '13', '18', '25', '28', '45', '46', '47', '48'],
-    isIndeterminate: false,
-    options: ['12', '13', '18', '25', '28', '45', '46', '47', '48'],
-  },
-  jggl: {
-    checkAll: true,
-    checkedData: ['10', '11', '43'],
-    isIndeterminate: false,
-    options: ['10', '11', '43'],
-  },
-  dljg: {
-    checkAll: false,
-    checkedData: [],
-    isIndeterminate: false,
-    options: ['53'],
-  },
-};
 
 export {
-  rulesFormOptions, rulesForm, checkList, zcjkRules,
+  rulesFormOptions, rulesForm, zcjkRules,
 };

@@ -358,7 +358,16 @@ export default {
           }
         });
       } else if (this.editable) {
-        this.$refs.RulesModal.open(toRaw(this.customerObj), true);
+        const { domainId, domainName } = this.customerObj;
+        AdminApi.getAllPermission().then((res) => {
+          const { code, data } = res.data || {};
+          const { orgPermissions } = data || {};
+          if (code === 200) {
+            this.$refs.RulesModal.open({ domainId, domainName, orgPermissions }, true);
+          } else {
+            this.$message.error('请求错误');
+          }
+        });
       } else {
         this.$refs.OrgAddModal.addOrgVisible = true;
       }
