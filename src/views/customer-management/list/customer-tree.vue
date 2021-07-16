@@ -112,7 +112,7 @@ export default {
   methods: {
     // 设置文字+数字
     setText(item) {
-      return `（${item.operatedOrgNum}/${item.orgNum}）`;
+      return `(${item.operatedOrgNum}/${item.orgNum})`;
     },
     setStatusAll() {
       this.selectAll = true;
