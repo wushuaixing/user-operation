@@ -153,11 +153,13 @@ export default {
     const dom = document.getElementById('org-select');
     dom.setAttribute('maxLength', 100);
     const that = this;
-    window.onfocus = function () {
-      // 刷新数据
-      that.getList();
-      if (that.$refs.query) that.$refs.query.getOrgList('');
-    };
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'detailChange' && e.newValue === 'SUCCESS') {
+        localStorage.setItem('detailChange', '');
+        that.getList();
+        if (that.$refs.query) that.$refs.query.getOrgList('');
+      }
+    });
   },
   watch: {
     $route(to) {
