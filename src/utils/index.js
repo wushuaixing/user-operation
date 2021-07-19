@@ -179,7 +179,8 @@ const handlePermissions = (arr = []) => arr.map((i) => ({ ...i, isSelect: i.grou
 const getCheckedList = (permissions = []) => {
   let list = [];
   const group = ['menu_zcwj', 'menu_zjgc', 'menu_fxjk', 'menu_jyfx', 'menu_ywgl', 'menu_hxcx', 'menu_xxss', 'menu_jjgl', 'menu_dljg'];
-  const categoryGroup = [...new Set([...group, ...permissions.map((i) => i.group)])];
+  const categoryGroup = [...new Set([...group, ...permissions.map((i) => i.group)])].filter((i) => i);
+  console.log(categoryGroup);
   categoryGroup.forEach((i) => {
     const arr = permissions.filter((j) => j.group === i) || [];
     const title = (arr[0] || {}).category;
