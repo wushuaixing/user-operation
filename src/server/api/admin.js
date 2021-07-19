@@ -83,7 +83,8 @@ const AdminApi = {
 
   // 机构权限查询
   orgPermission: (id) => axios.get(`/api/admin/organization/permission?id=${id}`),
-
+  // 全量权限查询
+  getAllPermission: () => axios.get('/api/admin/organization/getAllPermission'),
   // 创建顶级合作机构 && 权限修改保存
   addAndEditRules: (params, sign) => {
     const url = sign === 'add' ? 'addTopOrg' : 'savePermission';
