@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { GENDER_TYPE, LABEL_TYPE } from '@/static';
+
 /**
  * 去除对象中空值
  * @param obj
@@ -167,6 +168,70 @@ const handleObligors = (arr = []) => {
   return replaceEmpty(dynamicArr);
 };
 
+/**
+ * 处理全量权限
+ * 代理机构创建时默认不勾选
+ * @param arr
+ * @returns {{[p: string]: *}[]}
+ */
+const handlePermissions = (arr = []) => arr.map((i) => ({ ...i, isSelect: i.group !== 'menu_dljg' }));
+
+const getCheckedList = (permissions = []) => {
+  let list = [];
+  const group = ['menu_zcwj', 'menu_zjgc', 'menu_fxjk', 'menu_jyfx', 'menu_ywgl', 'menu_hxcx', 'menu_xxss', 'menu_jjgl', 'menu_dljg'];
+  const categoryGroup = [...new Set([...group, ...permissions.map((i) => i.group)])].filter((i) => i);
+  console.log(categoryGroup);
+  categoryGroup.forEach((i) => {
+    const arr = permissions.filter((j) => j.group === i) || [];
+    const title = (arr[0] || {}).category;
+    list = [...list, {
+      key: i,
+      title,
+      children: arr.map((k) => ({ id: k.id, name: k.name, isSelect: k.isSelect })),
+    }];
+  });
+  return list;
+};
+
+const getPermissionsList = (list = []) => {
+  const checkLists = {};
+  list.forEach((i = {}) => {
+    const arr = i.children || [];
+    const options = arr.map((j) => j.id) || [];
+    const checkedData = arr.filter((j) => j.isSelect).map((k) => k.id) || [];
+    checkLists[i.key] = {
+      checkAll: options.length === checkedData.length,
+      checkedData,
+      isIndeterminate: checkedData.length > 0 && checkedData.length < options.length,
+      options,
+    };
+  });
+  return checkLists;
+};
+
+const recordPermissions = (permissions = [], str) => {
+  let list = [];
+  const record = str.split(',') || [];
+  const filterList = permissions.filter((i) => record.includes((i.id || '').toString())) || [];
+  const uniqueGroup = [...new Set(filterList.map((i = {}) => i.category))];
+  uniqueGroup.forEach((i) => {
+    list = [...list, { title: i, child: filterList.filter((j) => j.category === i).map((k) => k.name) }];
+  });
+  return list;
+};
 export {
-  clearEmpty, queryApi, dateUtils, fileDownload, clone, floatFormat, ranStr, dateRange, replaceEmpty, handleObligors,
+  clearEmpty,
+  queryApi,
+  dateUtils,
+  fileDownload,
+  clone,
+  floatFormat,
+  ranStr,
+  dateRange,
+  replaceEmpty,
+  handleObligors,
+  handlePermissions,
+  getCheckedList,
+  getPermissionsList,
+  recordPermissions,
 };

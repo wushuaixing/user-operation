@@ -133,8 +133,7 @@ import AdminApi from '@/server/api/admin';
 import { toRaw } from 'vue';
 import { OPERA_MODULE_LIST } from '@/static';
 import { operationColumn } from '@/static/column';
-import { dateUtils } from '@/utils';
-import { zcjkRules } from '../modal/data';
+import { dateUtils, recordPermissions } from '@/utils';
 
 export default {
   name: 'operation-log',
@@ -162,6 +161,7 @@ export default {
       userList: [],
       OPERA_MODULE_LIST,
       column: operationColumn,
+      permissions: [],
     };
   },
 
@@ -180,8 +180,21 @@ export default {
   },
   methods: {
     getData() {
+      this.getRules();
       this.operatorList();
       this.getList();
+    },
+    getRules() {
+      AdminApi.getAllPermission().then((res) => {
+        const { code, data } = res.data || {};
+        const { orgPermissions } = data || {};
+        if (code === 200) {
+          this.permissions = orgPermissions;
+          console.log(recordPermissions(orgPermissions, '10,11,43,53'));
+        } else {
+          this.$message.error('请求错误');
+        }
+      });
     },
     // 操作人
     operatorList() {
@@ -248,17 +261,7 @@ export default {
       if ([8, 9, 10].includes(type)) type = 8;
       let obj = { before, after };
       const suffixNum = (i, unit) => (i === '-1' ? '不限' : `${i}${unit}`);
-      const sufficRules = (text) => {
-        const str = text.split(',');
-        const fn = (arr) => arr.filter((i) => str.indexOf(i) > -1);
-        let data = [];
-        zcjkRules.forEach((i) => {
-          const arr = i.children.map((c) => c.val);
-          // eslint-disable-next-line no-param-reassign
-          data = [...data, { title: i.title, child: fn(arr).map((d) => d = i.children.find((k) => k.val === d).label) }];
-        });
-        return data.filter((i) => i.child.length);
-      };
+      const sufficRules = (text) => recordPermissions(this.permissions, text);
       const sufficType = (i) => (Number(i) ? '正式' : '试用');
       switch (type) {
         case 3:
