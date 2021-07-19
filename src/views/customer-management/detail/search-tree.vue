@@ -88,7 +88,12 @@ export default {
     searchTypeChange() {
       this.searchValue = '';
       this.searchList = [];
-      if (this.searchType === 'org') this.filterTree(this.treeData[0], '');
+      const data = {
+        target: {
+          value: '',
+        },
+      };
+      this.handleSearch(data);
     },
     setSearchList(val) {
       this.searchList = [];

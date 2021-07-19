@@ -416,6 +416,7 @@ export default {
     afterAction() {
       // 重新获取机构详情数据
       const { id } = this.$route.params;
+      localStorage.setItem('detailChange', 'SUCCESS');
       this.getOrgDetailData(id, 'org');
       // 根据选中的树节点加载 子机构列表数据
       // 加载本级账号表格数据
