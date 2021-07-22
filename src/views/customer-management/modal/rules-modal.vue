@@ -154,7 +154,7 @@
         <div class="zcjk-rules-box">
           <div
             class="zcjk-rules-box-item"
-            v-for="item in rulesFormOptions.itemsChecked"
+            v-for="item in itemsChecked"
             :key="item.title"
           >
             <el-checkbox
@@ -171,9 +171,9 @@
             >
               <el-checkbox
                 v-for="child in item.children"
-                :label="child.val"
-                :key="child.val"
-                >{{ child.label }}
+                :label="child.id"
+                :key="child.id"
+                >{{ child.name }}
               </el-checkbox>
             </el-checkbox-group>
           </div>
@@ -191,8 +191,10 @@
 
 <script>
 import AdminApi from '@/server/api/admin';
-import { dateUtils, clone } from '@/utils';
-import { rulesFormOptions, rulesForm, checkList } from './data';
+import {
+  dateUtils, handlePermissions, getCheckedList, getPermissionsList,
+} from '@/utils';
+import { rulesFormOptions, rulesForm } from './data';
 
 export default {
   name: 'rules-modal',
@@ -213,29 +215,32 @@ export default {
       endTime: '',
       parentOrg: [],
       rulesForm,
-      checkList: clone(checkList),
+      checkList: {},
       rulesFormOptions,
+      itemsChecked: [],
     };
   },
 
   methods: {
     // 弹窗打开
     open(params = {}, isAdd) {
+      this.visible = true;
       if (isAdd) {
-        const { domainId, domainName } = params;
+        const { domainId, domainName, orgPermissions } = params;
         this.rulesForm = {
           ...this.rulesForm,
           parentId: domainId,
           parentName: domainName,
         };
+        this.getCheckList(handlePermissions(orgPermissions));
       } else {
         const { permissions = [], ...rest } = params;
         const {
           id, type, end, start,
         } = rest;
+        this.getCheckList(permissions);
         this.disabledType = type;
         this.endTime = end;
-        this.getCheckList(permissions);
         this.rulesForm = {
           ...rest,
           start: start ? new Date(start) : '',
@@ -251,19 +256,17 @@ export default {
         });
       }
       this.isAdd = isAdd;
-      this.visible = true;
     },
     // 弹窗关闭
     close() {
       this.$refs.rulesForm.resetFields();
       this.rulesForm = rulesForm;
-      this.checkList = clone(checkList);
     },
     // 提交
     onsubmit() {
       this.$refs.rulesForm.validate((valid) => {
         if (valid) {
-          const permissions = this.getPermission();
+          const selectedIds = this.getPermission();
           const time = (val) => dateUtils.formatStandardDate(val);
           const {
             end,
@@ -279,7 +282,7 @@ export default {
           } = this.rulesForm;
           const params = {
             ...this.rulesForm,
-            permissions,
+            selectedIds,
             end: time(end),
             start: time(start),
             portraitLimitCount: isPortraitLimit ? portraitLimitCount : 0,
@@ -309,22 +312,18 @@ export default {
 
     // 提交时处理 权限数组
     getPermission() {
-      const arr = [];
+      let arr = [];
       Object.keys(this.checkList).forEach((key) => {
-        const obj = {};
-        obj.moduleName = key;
-        obj.permission = this.checkList[key].checkedData;
-        arr.push(obj);
+        const data = this.checkList[key].checkedData;
+        arr = [...arr, ...data];
       });
       return arr;
     },
     // 回显时处理 权限数组
-    getCheckList(arr = []) {
-      arr.forEach((i) => {
-        const list = i.permission || [];
-        this.checkList[i.moduleName].checkedData = list.map((j) => j.toString());
-        this.handleCheckedItemChange(list, i.moduleName);
-      });
+    getCheckList(permissions = []) {
+      const arr = getCheckedList(permissions);
+      this.itemsChecked = arr;
+      this.checkList = getPermissionsList(arr);
     },
 
     // 权限模块-全选

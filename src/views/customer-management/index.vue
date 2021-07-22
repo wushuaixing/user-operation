@@ -153,11 +153,13 @@ export default {
     const dom = document.getElementById('org-select');
     dom.setAttribute('maxLength', 100);
     const that = this;
-    window.onfocus = function () {
-      // 刷新数据
-      that.getList();
-      if (that.$refs.query) that.$refs.query.getOrgList('');
-    };
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'detailChange' && e.newValue === 'SUCCESS') {
+        localStorage.setItem('detailChange', '');
+        that.getList();
+        if (that.$refs.query) that.$refs.query.getOrgList('');
+      }
+    });
   },
   watch: {
     $route(to) {
@@ -358,7 +360,16 @@ export default {
           }
         });
       } else if (this.editable) {
-        this.$refs.RulesModal.open(toRaw(this.customerObj), true);
+        const { domainId, domainName } = this.customerObj;
+        AdminApi.getAllPermission().then((res) => {
+          const { code, data } = res.data || {};
+          const { orgPermissions } = data || {};
+          if (code === 200) {
+            this.$refs.RulesModal.open({ domainId, domainName, orgPermissions }, true);
+          } else {
+            this.$message.error('请求错误');
+          }
+        });
       } else {
         this.$refs.OrgAddModal.addOrgVisible = true;
       }
