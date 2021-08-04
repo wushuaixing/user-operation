@@ -98,10 +98,12 @@ export default {
       this.handleSearch(data);
     },
     setSearchList(val) {
-      this.searchList = [];
-      this.$nextTick(() => {
-        this.filterTree(this.treeData[0], val);
-      });
+      if (this.searchType === 'org') {
+        this.searchList = [];
+        this.$nextTick(() => {
+          this.filterTree(this.treeData[0], val);
+        });
+      }
     },
     // 树节点搜索
     handleSearch(value) {
@@ -132,7 +134,11 @@ export default {
       });
     },
     resetUerlist() {
-      this.getUserList('');
+      // 若是账号搜索
+      if (this.searchType === 'account') {
+        this.searchValue = '';
+        this.getUserList();
+      }
     },
     // 遍历树 深度
     filterTree(node, value) {
@@ -143,13 +149,13 @@ export default {
     },
     // 设置树节点高亮
     setTree(val) {
-      // 机构搜索
+    // 机构搜索
       if (this.searchType === 'org') {
         const node = this.searchList.filter((item) => item.id === val);
         this.treeClick(node[0]);
         this.hightlight(val);
       } else {
-        // 账号搜索
+      // 账号搜索
         this.$emit('setLoading', true);
         AdminApi.searchUser(val).then((res) => {
           this.$emit('setLoading', false);
@@ -174,10 +180,11 @@ export default {
       }
     },
     treeClick(obj) {
-      // 需要对搜索框做回填
+    // 需要对搜索框做回填
       const { id } = obj;
       if (this.searchType !== 'org') {
         this.searchType = 'org';
+        this.searchList = [];
         this.filterTree(this.treeData[0], '');
       }
       this.searchValue = id;
@@ -201,7 +208,7 @@ export default {
     },
     // 高亮树节点
     hightlight(id) {
-      // 根据当前选中的子机构进行 树的选中
+    // 根据当前选中的子机构进行 树的选中
       this.$nextTick(() => {
         const { setCurrentKey } = this.$refs.orgTree;
         setCurrentKey(id);
@@ -270,6 +277,7 @@ export default {
   }
   .orgTree-scroll {
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: 78vh;
     @include scroll-style;
     .el-tree-node__content {

@@ -380,7 +380,7 @@ export default {
             if (code === 200) {
               this.$message.success(message);
               if (type !== 'reset') {
-                this.afterAction(type);
+                this.afterAction();
               }
             } else {
               this.$message.error(message);
@@ -400,6 +400,7 @@ export default {
       // 子机构赋值
       this.filterTreeNode(this.treeData, id);
       this.accountData = list;
+      this.activeOrgId = id;
     },
     // 树节点点击
     treeClick(obj) {
@@ -412,20 +413,17 @@ export default {
       this.getAccountData(id);
       this.subOrgData = [...subOrg].reverse();
     },
-    // 新增，编辑结束刷新页面
-    afterAction(type) {
+    // 新增，编辑结束刷新页面 删除
+    afterAction() {
       // 重新获取机构详情数据
       const { id } = this.$route.params;
       localStorage.setItem('detailChange', 'SUCCESS');
-      if (type === 'org') {
-        this.getOrgDetailData(id, 'org');
-        // 根据选中的树节点加载 子机构列表数据
-      } else {
-        // 加载本级账号表格数据
-        this.getAccountData(this.activeOrgId);
-        const { resetUerlist } = this.$refs.SearchTree;
-        resetUerlist();
-      }
+      this.getOrgDetailData(id, 'org');
+      // 根据选中的树节点加载 子机构列表数据
+      // 加载本级账号表格数据
+      this.getAccountData(this.activeOrgId);
+      const { resetUerlist } = this.$refs.SearchTree;
+      resetUerlist();
     },
     filterTreeNode(list, value) {
       list.forEach((item) => {
@@ -451,7 +449,7 @@ export default {
           this.$message.success('机构名称修改成功');
           this.editable = false;
           // 刷新数据
-          this.afterAction('org');
+          this.afterAction();
         } else {
           this.$message.error(message);
         }
