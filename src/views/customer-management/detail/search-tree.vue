@@ -34,31 +34,33 @@
       <span>ID</span>
       <span>机构名称</span>
     </div>
-    <el-tree
-      ref="orgTree"
-      :data="treeData"
-      node-key="id"
-      highlight-current
-      @node-click="treeClick"
-      default-expand-all
-      :props="defaultProps"
-      :expand-on-click-node="false">
-      <template #default="{ node }">
-                  <span class="custom-tree-node">
-                    <span class="node-id">{{node.key}}</span>
-                    <span class="node-name">{{ node.label }}
-                      <span v-if="node.level === 1">（顶级合作机构）</span>
-                    </span>
-                  </span>
-      </template>
-    </el-tree>
+    <div class="orgTree-scroll">
+      <el-tree
+        ref="orgTree"
+        :data="treeData"
+        node-key="id"
+        highlight-current
+        @node-click="treeClick"
+        default-expand-all
+        :props="defaultProps"
+        :expand-on-click-node="false">
+        <template #default="{ node }">
+          <span class="custom-tree-node">
+            <span class="node-id" :id="node.key">{{node.key}}</span>
+            <span class="node-name" :title="node.label">{{ node.label }}
+              <span v-if="node.level === 1">（顶级合作机构）</span>
+            </span>
+          </span>
+        </template>
+      </el-tree>
+    </div>
   </div>
 </template>
 <script>
 import AdminApi from '@/server/api/admin';
 
 export default {
-  emits: ['treeClick', 'afterAcountSearch'],
+  emits: ['treeClick', 'afterAcountSearch', 'setLoading'],
   props: {
     treeData: {
       type: Array,
@@ -109,21 +111,28 @@ export default {
         this.searchList = [];
         this.filterTree(this.treeData[0], searchKey);
       } else {
-        const { id } = this.$route.params;
-        const params = {
-          mobile: searchKey,
-          orgId: id,
-        };
-        AdminApi.simpleUser(params).then((res) => {
-          const { code, data, message } = res.data || {};
-          if (code === 200) {
-            // 赋值下拉框
-            this.searchList = data;
-          } else {
-            this.$message.error(message);
-          }
-        });
+        this.getUserList(searchKey);
       }
+    },
+    getUserList(searchKey) {
+      this.searchList = [];
+      const { id } = this.$route.params;
+      const params = {
+        mobile: searchKey,
+        orgId: id,
+      };
+      AdminApi.simpleUser(params).then((res) => {
+        const { code, data, message } = res.data || {};
+        if (code === 200) {
+          // 赋值下拉框
+          this.searchList = data;
+        } else {
+          this.$message.error(message);
+        }
+      });
+    },
+    resetUerlist() {
+      this.getUserList('');
     },
     // 遍历树 深度
     filterTree(node, value) {
@@ -141,7 +150,9 @@ export default {
         this.hightlight(val);
       } else {
         // 账号搜索
+        this.$emit('setLoading', true);
         AdminApi.searchUser(val).then((res) => {
+          this.$emit('setLoading', false);
           const { code, data, message } = res.data || {};
           if (code === 200) {
             const { orgId, user } = data;
@@ -154,6 +165,8 @@ export default {
             this.$emit('afterAcountSearch', orgId, accountData);
             // 根据当前选中的子机构进行 树的选中
             this.hightlight(orgId);
+            const dom = document.getElementById(orgId);
+            if (dom) dom.scrollIntoView({ block: 'center' });
           } else {
             this.$message.error(message);
           }
@@ -169,6 +182,8 @@ export default {
       }
       this.searchValue = id;
       this.$emit('treeClick', obj);
+      const dom = document.getElementById(id);
+      if (dom) dom.scrollIntoView({ block: 'center' });
     },
     // 设置树结构斑马纹
     setTreeColor() {
@@ -196,6 +211,7 @@ export default {
 };
 </script>
 <style lang="scss">
+  @import "../style.scss";
   .customer-tree-select {
     border: 1px solid #C5C7CE;
     border-radius: 2px;
@@ -252,35 +268,40 @@ export default {
       margin-right: 46px;
     }
   }
-  .el-tree-node__content {
-    height: 38px;
-    .custom-tree-node {
-      .node-id {
-        position: absolute;
-        left: 20px;
-        font-size: 14px;
-        color: #20242E;
-        margin-top: 2px;
-      }
-      .node-name {
-        color: #20242E;
-        font-size: 14px;
-        line-height: 14px;
+  .orgTree-scroll {
+    overflow-y: auto;
+    max-height: 78vh;
+    @include scroll-style;
+    .el-tree-node__content {
+      height: 38px;
+      .custom-tree-node {
+        .node-id {
+          position: absolute;
+          left: 20px;
+          font-size: 14px;
+          color: #20242E;
+          margin-top: 2px;
+        }
+        .node-name {
+          color: #20242E;
+          font-size: 14px;
+          line-height: 14px;
+        }
       }
     }
-  }
-  .el-tree-node__content:nth-of-type(2n) {
-    background: #F6F7FA !important;
-  }
-  .el-tree-node__content > .el-tree-node__expand-icon {
-    margin-left: 58px !important;
-  }
-  .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-    background-color: unset;
-    .custom-tree-node {
-      .node-name {
-        color: #296DD3 !important;
-        font-weight: 600;
+    .el-tree-node__content:nth-of-type(2n) {
+      background: #F6F7FA !important;
+    }
+    .el-tree-node__content > .el-tree-node__expand-icon {
+      margin-left: 58px !important;
+    }
+    .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+      background-color: unset;
+      .custom-tree-node {
+        .node-name {
+          color: #296DD3 !important;
+          font-weight: 600;
+        }
       }
     }
   }

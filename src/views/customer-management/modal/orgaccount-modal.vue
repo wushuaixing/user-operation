@@ -127,7 +127,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="onsubmit">确 定</el-button>
+        <el-button type="primary" @click="onsubmit" :loading="buttonLoading">确 定</el-button>
       </span>
     </template>
   </el-dialog>
@@ -171,6 +171,7 @@ export default {
         parentId: '',
         roleId: '',
       },
+      buttonLoading: false,
       rules: {
         parentId: [
           { required: true, message: '上级机构ID不允许为空', trigger: 'change' },
@@ -296,11 +297,13 @@ export default {
               messageTip = '账号编辑成功';
             }
           }
+          this.buttonLoading = true;
           api().then((res) => {
             const { code, message } = res.data;
+            this.buttonLoading = false;
             if (code === 200) {
               this.$message.success(messageTip);
-              this.$emit('afterAction');
+              this.$emit('afterAction', this.modalType);
               // 关闭弹窗 刷新页面
               this.visible = false;
             } else if (code === 5005) {
@@ -323,9 +326,11 @@ export default {
         font-weight: 600;
         color: #20242E;
         font-size: 16px;
-        line-height: 16px;
-        display: flex;
-        align-items: center;
+        line-height: 24px;
+        max-width: 375px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .level {
         color: #FF871C;

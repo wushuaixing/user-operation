@@ -4,9 +4,8 @@
       <div class="yc-customer-header">
         <Header ref="Header"></Header>
       </div>
-      <el-affix :offset="1" @change="affixChange">
         <div class="yc-customer-content">
-          <div class="yc-customer-content-customerTree">
+          <div class="yc-customer-content-customerTree" style="padding-bottom: 20px;max-height: 96vh;">
             <div class="module-title">
               客户使用机构
             </div>
@@ -15,11 +14,12 @@
                 ref="SearchTree"
                 :treeData="treeData"
                 @treeClick="treeClick"
+                @setLoading="setLoading"
                 @afterAcountSearch="afterAcountSearch"
               ></SearchTree>
             </div>
           </div>
-          <div class="yc-customer-content-list scroll" :class="{scroll: scrollShow}">
+          <div class="yc-customer-content-list scroll">
             <div class="module-title">
               <template v-if="!editable">
                 <span>{{activeCustonerName}}</span>
@@ -79,10 +79,10 @@
                   prop="id"
                   label="ID">
                 </el-table-column>
-                <el-table-column
-                  prop="name"
-                  label="机构名称"
-                  >
+                <el-table-column label="机构名称">
+                  <template #default="scope">
+                    <span @click="intoOrg(scope.row)" style="color: #296DD3; cursor: pointer;">{{scope.row.name}}</span>
+                  </template>
                 </el-table-column>
                 <el-table-column
                   prop="accountNum"
@@ -210,7 +210,6 @@
             ></OrgAccountModal>
           </div>
         </div>
-      </el-affix>
     </div>
   </div>
 </template>
@@ -343,6 +342,7 @@ export default {
     },
     // 固钉状态改变
     affixChange(val) {
+      console.log('我触发了');
       this.scrollShow = val;
     },
     handleDelete(row, type) {
@@ -380,7 +380,7 @@ export default {
             if (code === 200) {
               this.$message.success(message);
               if (type !== 'reset') {
-                this.afterAction();
+                this.afterAction(type);
               }
             } else {
               this.$message.error(message);
@@ -413,14 +413,19 @@ export default {
       this.subOrgData = [...subOrg].reverse();
     },
     // 新增，编辑结束刷新页面
-    afterAction() {
+    afterAction(type) {
       // 重新获取机构详情数据
       const { id } = this.$route.params;
       localStorage.setItem('detailChange', 'SUCCESS');
-      this.getOrgDetailData(id, 'org');
-      // 根据选中的树节点加载 子机构列表数据
-      // 加载本级账号表格数据
-      this.getAccountData(this.activeOrgId);
+      if (type === 'org') {
+        this.getOrgDetailData(id, 'org');
+        // 根据选中的树节点加载 子机构列表数据
+      } else {
+        // 加载本级账号表格数据
+        this.getAccountData(this.activeOrgId);
+        const { resetUerlist } = this.$refs.SearchTree;
+        resetUerlist();
+      }
     },
     filterTreeNode(list, value) {
       list.forEach((item) => {
@@ -429,6 +434,8 @@ export default {
         }
         if (item.id === value) {
           this.subOrgData = [...item.subOrg].reverse();
+          this.activeCustonerName = item.name;
+          this.activeLevel = item.level;
         }
       });
     },
@@ -444,7 +451,7 @@ export default {
           this.$message.success('机构名称修改成功');
           this.editable = false;
           // 刷新数据
-          this.afterAction();
+          this.afterAction('org');
         } else {
           this.$message.error(message);
         }
@@ -459,11 +466,22 @@ export default {
       });
       window.open(routerData.href, '_blank');
     },
+    setLoading(val) {
+      this.accountLoading = val;
+    },
+    intoOrg(row) {
+      const { treeClick, hightlight } = this.$refs.SearchTree;
+      treeClick(row);
+      hightlight(row.id);
+      const dom = document.getElementById(row.id);
+      if (dom) dom.scrollIntoView({ block: 'center' });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "../style.scss";
 .main-content {
   width: 1400px;
   margin: 20px auto;
@@ -532,34 +550,7 @@ export default {
           }
         }
       }
-    }
-      //滚动条的宽度
-    &-list::-webkit-scrollbar {
-      width:4px;
-    }
-
-    //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
-    &-list::-webkit-scrollbar-track {
-      width: 4px;
-      background-color:#FFF;
-    }
-
-    //滚动条的设置
-    &-list::-webkit-scrollbar-thumb {
-      background-color:#B2B8C9;
-      background-clip:padding-box;
-      min-height:49px;
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      border-radius:5px;
-    }
-    //滚动条移上去的背景
-
-    &-list::-webkit-scrollbar-thumb:hover{
-      background-color:#B2B8C9;
-    }
-    &-list::-webkit-scrollbar-track:hover{
-      background-color:#fff;
+      @include scroll-style;
     }
     .scroll {
       overflow-y: auto;
