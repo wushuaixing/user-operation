@@ -180,7 +180,6 @@ const getCheckedList = (permissions = []) => {
   let list = [];
   const group = ['menu_zcwj', 'menu_zjgc', 'menu_fxjk', 'menu_jyfx', 'menu_ywgl', 'menu_hxcx', 'menu_xxss', 'menu_jjgl', 'menu_dljg'];
   const categoryGroup = [...new Set([...group, ...permissions.map((i) => i.group)])].filter((i) => i);
-  console.log(categoryGroup);
   categoryGroup.forEach((i) => {
     const arr = permissions.filter((j) => j.group === i) || [];
     const title = (arr[0] || {}).category;
@@ -193,6 +192,11 @@ const getCheckedList = (permissions = []) => {
   return list;
 };
 
+/**
+ * 权限：全选、单选 处理
+ * @param list
+ * @returns {{}}
+ */
 const getPermissionsList = (list = []) => {
   const checkLists = {};
   list.forEach((i = {}) => {
@@ -208,7 +212,12 @@ const getPermissionsList = (list = []) => {
   });
   return checkLists;
 };
-
+/**
+ * 权限处理
+ * @param permissions
+ * @param str
+ * @returns {[{title:'',child:[]}]}
+ */
 const recordPermissions = (permissions = [], str) => {
   let list = [];
   const record = str.split(',') || [];
