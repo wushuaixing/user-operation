@@ -303,7 +303,7 @@ export default {
             this.buttonLoading = false;
             if (code === 200) {
               this.$message.success(messageTip);
-              this.$emit('afterAction', this.modalType);
+              this.$emit('afterAction', this.type);
               // 关闭弹窗 刷新页面
               this.visible = false;
             } else if (code === 5005) {
