@@ -282,6 +282,7 @@ export default {
     @include scroll-style;
     .el-tree-node__content {
       /*height: 38px;*/
+      height: unset!important;
       padding: 6px 0;
       .custom-tree-node {
         width: 78% !important;
@@ -319,6 +320,7 @@ export default {
   }
   .el-tree-node__content {
     padding-top: 6px!important;
+    height: unset !important;
     padding-bottom: 6px !important;
   }
 </style>
