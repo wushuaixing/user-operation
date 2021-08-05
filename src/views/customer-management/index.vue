@@ -401,9 +401,9 @@ export default {
     },
     // 保存顶级机构名称
     saveName(name) {
-      const { queryParams } = this.$refs.query;
+      // const { queryParams } = this.$refs.query;
       const params = {
-        id: queryParams.orgId,
+        id: this.customerObj.domainId,
         value: name,
       };
       AdminApi.detailEditName(params).then((res) => {
