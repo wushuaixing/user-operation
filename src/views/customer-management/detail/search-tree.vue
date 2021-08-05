@@ -45,12 +45,12 @@
         :props="defaultProps"
         :expand-on-click-node="false">
         <template #default="{ node }">
-          <span class="custom-tree-node">
+          <div class="custom-tree-node">
             <span class="node-id" :id="node.key">{{node.key}}</span>
-            <span class="node-name" :title="node.label">{{ node.label }}
+            <div class="node-name">{{ node.label }}
               <span v-if="node.level === 1">（顶级合作机构）</span>
-            </span>
-          </span>
+            </div>
+          </div>
         </template>
       </el-tree>
     </div>
@@ -281,8 +281,12 @@ export default {
     max-height: 78vh;
     @include scroll-style;
     .el-tree-node__content {
-      height: 38px;
+      /*height: 38px;*/
+      padding: 6px 0;
       .custom-tree-node {
+        width: 78% !important;
+        display: block;
+        white-space: normal;
         .node-id {
           position: absolute;
           left: 20px;
@@ -312,5 +316,9 @@ export default {
         }
       }
     }
+  }
+  .el-tree-node__content {
+    padding-top: 6px!important;
+    padding-bottom: 6px !important;
   }
 </style>
