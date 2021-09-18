@@ -66,6 +66,21 @@ export const adminRoutes = [
         name: 'TaskAssign',
         component: () => import('@/views/task-assign/index.vue'),
       },
+      {
+        path: '/workBench',
+        name: 'workBench',
+        component: () => import('@/views/work-bench/index'),
+      },
+      {
+        path: '/monitoringView',
+        name: 'monitoring-view',
+        component: () => import('@/views/monitoring-view/index'),
+      },
+      {
+        path: '/monitoringApi',
+        name: 'monitoringApi',
+        component: () => import('@/views/monitoring-api/index'),
+      },
     ],
   },
   {
@@ -116,6 +131,24 @@ export const adminMenu = [
     icon: 'iconfont iconguquanchuantoutu',
     path: '/taskAssign',
     key: 'TaskAssign',
+  },
+  {
+    text: '工作台',
+    icon: 'iconfont iconguquanchuantoutu',
+    path: '/workBench',
+    key: 'WorkBench',
+  },
+  {
+    text: '监控视图概览',
+    icon: 'iconfont iconguquanchuantoutu',
+    path: '/monitoringView',
+    key: 'MonitoringView',
+  },
+  {
+    text: 'API监控',
+    icon: 'iconfont iconguquanchuantoutu',
+    path: '/monitoringApi',
+    key: 'MonitoringApi',
   },
 ];
 
