@@ -1,5 +1,6 @@
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, onMounted } from 'vue';
 import './style.scss';
+import * as echarts from 'echarts';
 import { workbenchTopAsset, columns } from './source';
 
 export default defineComponent({
@@ -48,6 +49,8 @@ export default defineComponent({
         },
       ],
       dialogVisible: false,
+      total: 10,
+      page: 1,
     });
     const toExport = () => {
       console.log('导出了...');
@@ -55,7 +58,39 @@ export default defineComponent({
     const sortChange = ({ column, prop, order }) => {
       console.log(column, prop, order);
     };
-    return { state, toExport, sortChange };
+    const pageChange = (page) => {
+      console.log(page);
+    };
+    const sizeChange = (size) => {
+      console.log(size);
+    };
+    onMounted(() => {
+      const myChart = echarts.init(document.getElementById('echarts-main'));
+      myChart.setOption({
+        title: {
+          text: '这是一个echarts',
+        },
+        tooltip: {},
+        xAxis: {
+          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子'],
+        },
+        yAxis: {},
+        series: [
+          {
+            name: '销量',
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20],
+          },
+        ],
+      });
+    });
+    return {
+      state,
+      toExport,
+      sortChange,
+      pageChange,
+      sizeChange,
+    };
   },
   render() {
     return (
@@ -96,8 +131,7 @@ export default defineComponent({
             <el-input
               placeholder="顶级机构名称"
               prefix-icon="el-icon-search"
-            >
-            </el-input>
+            />
             <el-button
               type="primary"
               class="button-third"
@@ -111,11 +145,21 @@ export default defineComponent({
             <el-table data={this.state.orgTableData} onSortChange={this.sortChange}>
               {columns.map((i) => <el-table-column {...i} />)}
             </el-table>
+            <el-pagination
+            onCurrentChange={this.pageChange}
+            onSizeChange={this.sizeChange}
+            current-page="page"
+            layout="total, prev, pager, next, jumper"
+            total={this.state.total}
+          />
           </div>
         </div>
         <div className="workbench-container workbench-login-data">
           <div className="workbench-container-head">
             <div className="content-title">平台账号登录数量统计</div>
+          </div>
+          <div className="workbench-container-echarts">
+            <div id="echarts-main" style={{ width: '600px', height: '400px' }}></div>
           </div>
         </div>
       </div>
