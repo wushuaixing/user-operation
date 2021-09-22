@@ -1,51 +1,10 @@
 import { defineComponent, reactive } from 'vue';
 import './style.scss';
-import orgData from '@/assets/img/org_data.png';
-import newAddDebtor from '@/assets/img/newadd_debtor.png';
-import corOrg from '@/assets/img/cor_org.png';
-import monitorDebtor from '@/assets/img/monitor_debtor.png';
-import outDate from '@/assets/img/outdate.png';
+import { workbenchTopAsset, columns } from './source';
 
 export default defineComponent({
   setup() {
     const state = reactive({
-      workbenchTopAsset: [
-        {
-          img: orgData,
-          title: '正式机构数据推送量',
-          describe: '',
-          subtitle_left: '昨日数据推送量',
-          subtitle_right: '近半年日均推送量',
-        },
-        {
-          img: newAddDebtor,
-          title: '昨日新增债务人',
-          describe: '',
-          subtitle_left: '正式机构',
-          subtitle_right: '试用机构',
-        },
-        {
-          img: corOrg,
-          title: '合作机构数',
-          describe: '历史合作机构总数：',
-          subtitle_left: '正式机构',
-          subtitle_right: '试用机构',
-        },
-        {
-          img: outDate,
-          title: '即将过期机构数',
-          describe: '过期两个月内机构总数：',
-          subtitle_left: '正式机构',
-          subtitle_right: '试用机构',
-        },
-        {
-          img: monitorDebtor,
-          title: '监控债务人数',
-          describe: '',
-          subtitle_left: '正式机构',
-          subtitle_right: '试用机构',
-        },
-      ],
       orgTableData: [
         {
           orgName: 'a机构',
@@ -88,18 +47,22 @@ export default defineComponent({
           lastWeekNum: 124,
         },
       ],
+      dialogVisible: false,
     });
     const toExport = () => {
       console.log('导出了...');
     };
-    return { state, toExport };
+    const sortChange = ({ column, prop, order }) => {
+      console.log(column, prop, order);
+    };
+    return { state, toExport, sortChange };
   },
   render() {
     return (
       <div className="workbench-wrapper">
         <div className="workbench-top-content">
           {
-            this.state.workbenchTopAsset.map((i) => <div className="workbench-top-content-item">
+            workbenchTopAsset.map((i) => <div className="workbench-top-content-item" key={i.key}>
               <div className="item-up">
                 <div className="left-block"><img src={i.img} alt="" /></div>
                 <div className="right-block">
@@ -124,6 +87,10 @@ export default defineComponent({
         <div className="workbench-container workbench-org-data">
           <div className="workbench-container-head">
             <div className="content-title">机构数据统计</div>
+            <el-tabs>
+              <el-tab-pane label="正式机构" name="0"></el-tab-pane>
+              <el-tab-pane label="试用机构" name="1"></el-tab-pane>
+            </el-tabs>
           </div>
           <div className="workbench-container-operate">
             <el-input
@@ -141,13 +108,8 @@ export default defineComponent({
             </el-button>
           </div>
           <div className="workbench-container-table">
-            <el-table data={this.state.orgTableData} style="width: 100%">
-              <el-table-column prop="orgName" label="顶级合作机构" />
-              <el-table-column prop="endDate" label="合同结束日期" />
-              <el-table-column prop="newAddDebtor" label="昨日新增债务人数" align="center" />
-              <el-table-column prop="yesterdayNum" label="昨日推送量" align="center" />
-              <el-table-column prop="lastWeekDebtor" label="上周新增债务人数" align="center" />
-              <el-table-column prop="lastWeekNum" label="上周推送量" align="center" />
+            <el-table data={this.state.orgTableData} onSortChange={this.sortChange}>
+              {columns.map((i) => <el-table-column {...i} />)}
             </el-table>
           </div>
         </div>

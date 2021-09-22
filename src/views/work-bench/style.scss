@@ -87,11 +87,29 @@
         line-height: 20px;
         padding-left: 8px;
         margin-bottom: 11px;
+        margin-right: 80px;
         border-left: 3px solid #296DD3;
       }
       .el-tabs,.el-tabs *{
         padding: 0;
         margin: 0;
+      }
+      .is-top{
+        background-color: #fff;
+      }
+      .el-tabs__active-bar{
+        display: none;
+      }
+      .el-tabs__item{
+        height: 30px !important;
+        line-height: 16px !important;
+        padding: 0 12px 12px !important;
+        &~.el-tabs__item{
+          margin-left: 16px;
+        }
+        &.is-active{
+          border-bottom: 2px solid #296DD3;
+        }
       }
     }
     &-operate{
