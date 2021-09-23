@@ -1,12 +1,18 @@
 import {
-  defineComponent, getCurrentInstance, reactive, watch, toRaw, nextTick,
+  defineComponent, getCurrentInstance, reactive,
 } from 'vue';
 import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
-import { dateRange, dateUtils } from '@/utils';
+import { dateUtils } from '@/utils';
 
 // 审核管理-右侧搜索条件
 export default defineComponent({
   emits: ['handleSearch', 'handleClearQuery'],
+  props: {
+    tableType: {
+      type: String,
+      default: '',
+    },
+  },
   setup() {
     const { proxy } = getCurrentInstance();
     const state = reactive({
@@ -15,7 +21,6 @@ export default defineComponent({
       obNumber: '', // 证件号
       important: '', // 匹配类型 0-模糊匹配、1-精确匹配
       parsingTitle: '', // 标题
-      orgName: '', // 负责人/机构名称
       createTimeStart: '', // 匹配开始时间
       createTimeEnd: '', // 匹配结束时间
       pmStatus: '', // 拍卖状态 1:'即将开始', 3:'进行中',5:'已成交',7:'已流拍',9:'中止',11:'撤回'
@@ -24,13 +29,13 @@ export default defineComponent({
       approveTimeEnd: '', // 审核结束时间
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
       updateTimeStart: '', // 更新开始时间 ,示例值(2021-01-01)
-      start: [], // 开拍时间
+      startStart: '', // 开拍开始时间
+      startEnd: '', // 开拍结束时间
       isOpen: false, // 展开收起
     });
     // 重置搜索条件
     const resetForm = () => {
       proxy.$refs.queryForm.resetFields();
-      state.start = [];
       proxy.$emit('handleClearQuery', 'reset');
     };
     // 搜索
@@ -38,21 +43,21 @@ export default defineComponent({
       proxy.$emit('handleSearch', 'search');
     };
     // 监听开拍时间，选择日期范围后,结束日期置空
-    watch(() => state.start, (newVal) => {
-      const arr = toRaw(newVal) || [];
-      const startDate = arr[0];
-      const endDate = arr[1];
-      const fn = (i) => dateUtils.formatStandardDate(i);
-      const dom = document.getElementsByClassName('el-picker-panel__shortcut');
-      if (new Date(endDate).getTime() === 0) {
-        state.start = [startDate];
-        dateRange().forEach((i, index) => {
-          if (fn(i.value[0]) === fn(startDate)) {
-            nextTick(() => dom[index].style.color = '#296DD3').then((r) => console.log(r));
-          }
-        });
-      }
-    });
+    // watch(() => state.start, (newVal) => {
+    //   const arr = toRaw(newVal) || [];
+    //   const startDate = arr[0];
+    //   const endDate = arr[1];
+    //   const fn = (i) => dateUtils.formatStandardDate(i);
+    //   const dom = document.getElementsByClassName('el-picker-panel__shortcut');
+    //   if (new Date(endDate).getTime() === 0) {
+    //     state.start = [startDate];
+    //     dateRange().forEach((i, index) => {
+    //       if (fn(i.value[0]) === fn(startDate)) {
+    //         nextTick(() => dom[index].style.color = '#296DD3').then((r) => console.log(r));
+    //       }
+    //     });
+    //   }
+    // });
     // 日期控件做前后限制
     const disabledStartDate = (startTime, prop) => {
       if (state[prop]) {
@@ -76,7 +81,7 @@ export default defineComponent({
   },
   render() {
     const {
-      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur, tableType,
     } = this;
     return (
       <div className="content-right-query">
@@ -131,14 +136,26 @@ export default defineComponent({
                 onBlur={() => handleBlur('parsingTitle')}
               />
             </el-form-item>
-            <el-form-item label="负责人/机构：" prop='orgName'>
-              <el-input
-                v-model={state.orgName}
-                placeholder="负责人/机构名称"
-                style={{ width: '215px' }}
-                maxlength="100"
-                onBlur={() => handleBlur('orgName')}
-              />
+            <el-form-item label="拍卖状态：" prop='pmStatus'>
+              <el-select v-model={state.pmStatus} placeholder="请选择" style={{ width: '96px' }}>
+                {
+                  AUCTION_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
+                }
+              </el-select>
+            </el-form-item>
+            <el-form-item label="状态：" prop='status'>
+              <el-select v-model={state.status} placeholder="请选择" style={{ width: '96px' }}>
+                {
+                  PUSH_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
+                }
+              </el-select>
+            </el-form-item>
+            <el-form-item label="审核情况：" prop='status' v-show={tableType !== '1' && tableType !== '5'}>
+              <el-select v-model={state.status} placeholder="请选择" style={{ width: '96px' }}>
+                {
+                  PUSH_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
+                }
+              </el-select>
             </el-form-item>
             <el-form-item label="匹配时间：" prop="createTimeStart" style={{ marginRight: 0 }}>
               <el-date-picker
@@ -157,20 +174,6 @@ export default defineComponent({
                 style="width: 130px"
                 disabledDate={(val) => disabledEndDate(val, 'createTimeStart')}
               />
-            </el-form-item>
-            <el-form-item label="拍卖状态：" prop='pmStatus'>
-              <el-select v-model={state.pmStatus} placeholder="请选择" style={{ width: '96px' }}>
-                {
-                  AUCTION_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
-                }
-              </el-select>
-            </el-form-item>
-            <el-form-item label="状态：" prop='status'>
-              <el-select v-model={state.status} placeholder="请选择" style={{ width: '96px' }}>
-                {
-                  PUSH_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
-                }
-              </el-select>
             </el-form-item>
           </div>
           <div className="line">
@@ -192,21 +195,26 @@ export default defineComponent({
                 disabledDate={(val) => disabledEndDate(val, 'approveTimeStart')}
               />
             </el-form-item>
-            <el-form-item label="开拍时间：" prop="start" class="section-date" >
+
+            <el-form-item label="开拍时间：" prop="startStart" style={{ marginRight: 0 }}>
               <el-date-picker
-                v-model={state.start}
-                type="daterange"
-                unlink-panels
-                style={{ width: '280px' }}
-                range-separator="至"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                shortcuts={dateRange()}
-                popper-class="date-picker-kp"
-                key={state.start}
-              >
-              </el-date-picker>
+                type="date"
+                placeholder="开始时间"
+                v-model={state.startStart}
+                style="width: 130px"
+                disabledDate={(val) => disabledStartDate(val, 'startEnd')}
+              />
             </el-form-item>
+            <el-form-item label="至" prop="startEnd" class="time-end" style="margin-right: 13px;">
+              <el-date-picker
+                type="date"
+                placeholder="结束时间"
+                v-model={state.startEnd}
+                style="width: 130px"
+                disabledDate={(val) => disabledEndDate(val, 'startStart')}
+              />
+            </el-form-item>
+
             <el-form-item label="更新时间：" prop="updateTimeStart" style={{ marginRight: 0 }}>
               <el-date-picker
                 type="date"
