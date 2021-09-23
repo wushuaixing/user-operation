@@ -42,6 +42,7 @@ import {
   ElCheckboxGroup,
   ElCheckboxButton,
   ElRadioButton,
+  ElProgress,
 } from 'element-plus';
 
 ['success', 'warning', 'info', 'error'].forEach((type) => {
@@ -105,6 +106,7 @@ const list = [
   ElCheckboxGroup,
   ElCheckboxButton,
   ElRadioButton,
+  ElProgress,
 ];
 
 export default (app) => {

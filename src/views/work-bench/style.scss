@@ -11,12 +11,12 @@
   }
   .workbench-top-content{
     display: flex;
-    justify-content: space-between;
     &-item{
-      width: 316px;
+      width: calc((100% - 80px) / 5);
       padding: 20px;
       border-radius: 4px;
       background-color: #fff;
+      margin-right: 20px;
       .item-up{
         display: flex;
         height: 40px;

@@ -49,7 +49,7 @@ export default defineComponent({
         },
       ],
       dialogVisible: false,
-      total: 10,
+      total: 100,
       page: 1,
     });
     const toExport = () => {
