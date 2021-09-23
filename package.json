@@ -13,6 +13,7 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "dayjs": "^1.10.4",
+    "echarts": "^5.2.1",
     "element-plus": "^1.0.2-beta.28",
     "js-cookie": "^2.2.1",
     "moment": "^2.29.1",
