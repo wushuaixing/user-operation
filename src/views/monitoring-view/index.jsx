@@ -118,7 +118,7 @@ export default defineComponent({
               </el-radio-group>
             </div>
             <div>
-              <el-progress type="circle" percentage={87} v-slots={this.progress} />
+              <el-progress type="circle" stroke-width={10} color={['#000', '#fff']} percentage={87} v-slots={this.progress} />
             </div>
           </div>
         </div>

@@ -61,9 +61,6 @@ export default defineComponent({
     const pageChange = (page) => {
       console.log(page);
     };
-    const sizeChange = (size) => {
-      console.log(size);
-    };
     onMounted(() => {
       const myChart = echarts.init(document.getElementById('echarts-main'));
       myChart.setOption({
@@ -89,7 +86,6 @@ export default defineComponent({
       toExport,
       sortChange,
       pageChange,
-      sizeChange,
     };
   },
   render() {
@@ -146,12 +142,11 @@ export default defineComponent({
               {columns.map((i) => <el-table-column {...i} />)}
             </el-table>
             <el-pagination
-            onCurrentChange={this.pageChange}
-            onSizeChange={this.sizeChange}
-            current-page="page"
-            layout="total, prev, pager, next, jumper"
-            total={this.state.total}
-          />
+              onCurrentChange={this.pageChange}
+              current-page="page"
+              layout="total, prev, pager, next, jumper"
+              total={this.state.total}
+            />
           </div>
         </div>
         <div className="workbench-container workbench-login-data">
@@ -159,7 +154,7 @@ export default defineComponent({
             <div className="content-title">平台账号登录数量统计</div>
           </div>
           <div className="workbench-container-echarts">
-            <div id="echarts-main" style={{ width: '600px', height: '400px' }}></div>
+            <div id="echarts-main" style={{ width: '600px', height: '400px' }} />
           </div>
         </div>
       </div>
