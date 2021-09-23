@@ -323,8 +323,8 @@ const ASSETS_INFO = [
     key: 'address',
   },
   {
-    lable: '负责人/机构',
-    key: 'orgName',
+    lable: '客户使用机构',
+    key: 'conSumerName',
   },
   {
     lable: '更新时间',

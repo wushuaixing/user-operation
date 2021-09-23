@@ -250,16 +250,10 @@ const auditColumn = [
     width: '22%',
   },
   {
-    prop: 'conSumerName',
-    label: '客户使用机构',
-    sort: false,
-    width: '13.3%',
-  },
-  {
     prop: 'remarkInfo',
     label: '匹配备注信息',
     sort: false,
-    width: '18%',
+    width: '31.3%',
   },
   {
     prop: 'auctionInfo',
