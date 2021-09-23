@@ -23,6 +23,11 @@ export const normalRoutes = [
     component: () => import('@/views/document/serch/index.vue'),
   },
   {
+    path: '/customerDetail/:id',
+    name: 'customerDetail',
+    component: () => import('@/views/customer-management/component/customer-detail.vue'),
+  },
+  {
     path: '/structureCheck/:auctionId',
     name: 'structureCheck',
     component: () => import('@/views/other-detail/check/index'),
