@@ -1,6 +1,7 @@
 import { defineComponent, onMounted } from 'vue';
 import * as echarts from 'echarts';
 import './index.scss';
+import '@/assets/scroll-number.scss';
 import totalData from '@/assets/img/total_data.png';
 import es from '@/assets/img/es.png';
 
