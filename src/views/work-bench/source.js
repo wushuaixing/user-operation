@@ -48,41 +48,41 @@ const workbenchTopAsset = [
 ];
 const columns = [
   {
-    prop: 'orgName',
+    prop: 'name',
     label: '顶级合作机构',
     align: 'left',
     key: 1,
   },
   {
-    prop: 'endDate',
+    prop: 'end',
     label: '合同结束日期',
     align: 'left',
     sortable: 'custom',
     key: 2,
   },
   {
-    prop: 'newAddDebtor',
+    prop: 'lastDayObligor',
     label: '昨日新增债务人数',
     align: 'center',
     sortable: 'custom',
     key: 3,
   },
   {
-    prop: 'yesterdayNum',
+    prop: 'lastDayPush',
     label: '昨日推送量',
     align: 'center',
     sortable: 'custom',
     key: 4,
   },
   {
-    prop: 'lastWeekDebtor',
+    prop: 'lastWeekObligor',
     label: '上周新增债务人数',
     align: 'center',
     sortable: 'custom',
     key: 5,
   },
   {
-    prop: 'lastWeekNum',
+    prop: 'lastWeekPush',
     label: '上周推送量',
     align: 'center',
     sortable: 'custom',
