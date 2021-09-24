@@ -1,0 +1,17 @@
+.monitor-api-content {
+  margin: 20px;
+  padding: 0 20px;
+  min-height: 89vh;
+  background: #ffffff;
+  &-header {
+    height: 97px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &-title {
+      color: #20242E;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+}
