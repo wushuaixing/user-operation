@@ -32,13 +32,13 @@ const queryApi = (searchParams) => {
 
 const dateUtils = {
   // 时间戳转换为标准日期
-  formatStandardDate(timeStamp) {
+  formatStandardDate(timeStamp, format = 'YYYY-MM-DD') {
     return timeStamp === ''
       || timeStamp === '--'
       || timeStamp === undefined
       || timeStamp === null
       ? timeStamp
-      : moment(timeStamp).format('YYYY-MM-DD');
+      : moment(timeStamp).format(format);
   },
 };
 

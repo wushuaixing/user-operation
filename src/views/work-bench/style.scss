@@ -136,8 +136,11 @@
   margin: 0 auto;
   .el-dialog__body{
     padding: 32px 0 40px 50px!important;
-    .el-date-editor.el-date-editor--date{
+    .el-date-editor--month{
       width: 220px;
     }
+  }
+  .el-form-item__error{
+    left: 0!important;
   }
 }

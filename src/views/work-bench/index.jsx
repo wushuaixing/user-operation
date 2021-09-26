@@ -3,22 +3,19 @@ import {
   reactive,
   onMounted,
   computed,
+  watch,
   getCurrentInstance,
 } from 'vue';
 import './style.scss';
 import '@/assets/scroll-number.scss';
 import icon from '@/assets/img/icon.png';
-import CountTo from 'vue-count-to';
+// import CountTo from 'vue-count-to';
 import NumberScroll from '@/components/number-scroll';
-// import numScroll from '@/utils/number-scroll';
 import WorkbenchApi from '@/server/api/workbench';
-import { clearEmpty } from '@/utils';
+import { clearEmpty, dateUtils, fileDownload } from '@/utils';
 import { workbenchTopAsset, columns } from './source';
 
 export default defineComponent({
-  components: {
-    CountTo,
-  },
   setup() {
     const { proxy } = getCurrentInstance();
     const state = reactive({
@@ -36,6 +33,7 @@ export default defineComponent({
         willExpireFormalOrg: 444,
         willExpireTrialOrg: 555,
       },
+      // 列表数据
       orgTableData: [
         {
           name: 'a机构',
@@ -67,7 +65,12 @@ export default defineComponent({
         if (state.params.type === '0') return '推送数据导出-试用机构';
         return '推送数据导出-正式机构';
       }),
-      date: '',
+      // 导出日期
+      date: new Date(),
+      rules: {
+        date: [{ required: true, message: '请选择推送时间', trigger: 'change' }],
+      },
+      // 查询列表参数
       params: {
         name: '',
         num: 10,
@@ -97,28 +100,38 @@ export default defineComponent({
       });
     };
 
+    // 顶级机构名称输入框blur事件
     const onBlur = () => {
       getList(state.params);
     };
 
+    // 顶级机构名称输入框keyup(enter)事件
     const onKeyup = (e) => {
       if (e.keyCode === 13) {
         getList(state.params);
       }
     };
 
+    // 正式机构与试用机构tab切换
     const tabClick = () => {
       proxy.$refs.sortTable.clearSort();
       getList(state.params);
     };
 
+    // 导出操作
     const doExport = () => {
-      const { params: { type }, date } = state;
-      WorkbenchApi.export(date, type).then((res) => {
-        console.log(res.data);
+      const { params: { type }, date: _date } = state;
+      const date = dateUtils.formatStandardDate(_date, 'YYYY-MM');
+      proxy.$refs.dialogForm.validate((valid) => {
+        if (valid) {
+          WorkbenchApi.export(date, type).then((res) => {
+            fileDownload(res);
+          });
+        }
       });
     };
 
+    // 列表排序
     const sortChange = ({ prop, order }) => {
       const sortField = {
         end: 'EXPIRE',
@@ -132,13 +145,26 @@ export default defineComponent({
       getList(state.params);
     };
 
+    // 页码change
     const pageChange = (page) => {
       state.params.page = page;
       getList(state.params);
     };
 
+    const disabledDate = (time) => {
+      if (state.date) {
+        return time > new Date();
+      }
+      return false;
+    };
+
+    watch(() => state.dialogVisible, () => {
+      if (!state.dialogVisible) {
+        proxy.$refs.dialogForm.resetFields();
+      }
+    });
+
     onMounted(() => {
-      // numScroll('#first_left', 121231);
       getStatistics();
       getList(state.params);
     });
@@ -159,6 +185,7 @@ export default defineComponent({
       onBlur,
       onKeyup,
       tabClick,
+      disabledDate,
       footerSlot,
     };
   },
@@ -230,10 +257,16 @@ export default defineComponent({
               v-model={state.dialogVisible}
               v-slots={this.footerSlot}
             >
-              <el-form-item rules={[{ required: true, message: '请选择推送时间' }]}>
-                <span><span style="color: #FD4D4F">*</span>推送时间：</span>
-                <el-date-picker type="date" placeholder="请选择" value-format="YYYY-MM" format="YYYY-MM" v-model={this.state.date} />
-              </el-form-item>
+              <el-form ref="dialogForm" model={state} rules={state.rules} label-width="90px">
+                <el-form-item prop="date" label="推送时间：">
+                  <el-date-picker
+                    type="month"
+                    placeholder="请选择"
+                    disabledDate={this.disabledDate}
+                    v-model={state.date}
+                  />
+                </el-form-item>
+              </el-form>
             </el-dialog>
           </div>
           <div className="workbench-container-table">
