@@ -9,7 +9,7 @@ import {
 import './style.scss';
 import '@/assets/scroll-number.scss';
 import icon from '@/assets/img/icon.png';
-// import CountTo from 'vue-count-to';
+import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import NumberScroll from '@/components/number-scroll';
 import WorkbenchApi from '@/server/api/workbench';
 import { clearEmpty, dateUtils, fileDownload } from '@/utils';
@@ -24,7 +24,7 @@ export default defineComponent({
         expiredOrg: 1212,
         formalContractOrg: 12123,
         formalOrgObligor: 431,
-        historyContract: 234,
+        historyContract: 12,
         incrFormalOrg: 250,
         incrTrialOrg: 687,
         lastDayPush: 111,
@@ -79,7 +79,7 @@ export default defineComponent({
         sortOrder: '',
         type: '1',
       },
-      total: 10,
+      total: 100,
     });
 
     // 获取各数量
@@ -115,6 +115,8 @@ export default defineComponent({
     // 正式机构与试用机构tab切换
     const tabClick = () => {
       proxy.$refs.sortTable.clearSort();
+      state.params.name = '';
+      state.params.page = 1;
       getList(state.params);
     };
 
@@ -203,7 +205,9 @@ export default defineComponent({
                   {i.describe
                     ? <p className="describe">
                       <span className="label">{i.describe}</span>
-                      <span className="num">{state.dataNum[i.field[2]]}</span>
+                      <span className="num">
+                        <CountTo startVal={0} endVal={state.dataNum[i.field[2]]} />
+                      </span>
                     </p>
                     : ''}
                 </div>
@@ -275,7 +279,7 @@ export default defineComponent({
             </el-table>
             <el-pagination
               onCurrentChange={this.pageChange}
-              current-page="page"
+              current-page={state.params.page}
               layout="total, prev, pager, next, jumper"
               total={state.total}
             />
