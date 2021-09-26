@@ -1,12 +1,18 @@
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, reactive } from 'vue';
 import * as echarts from 'echarts';
 import './index.scss';
 import '@/assets/scroll-number.scss';
+import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import totalData from '@/assets/img/total_data.png';
 import es from '@/assets/img/es.png';
 
 export default defineComponent({
   setup() {
+    const state = reactive({
+      percent: 87,
+      startVal: 0,
+      endVal: 0,
+    });
     onMounted(() => {
       // data: 数据; match: 匹配; statistics: 统计; distribute: 分布; trend: 趋势; recall: 召回;
       // 匹配与推送情况统计图
@@ -77,15 +83,23 @@ export default defineComponent({
       const chartDom5 = document.getElementById('recall-statistics');
       const myChart5 = echarts.init(chartDom5);
       myChart5.setOption(option);
+      const timer = setInterval(() => {
+        state.endVal += (2000 / state.percent);
+        if (state.endVal >= state.percent) {
+          state.endVal = state.percent;
+          clearInterval(timer);
+        }
+      }, 1000 / 60);
     });
     const progress = {
       title: null,
       default: () => <>
         <span className="percentage-label">数据同步率</span><br />
-        <span className="percentage-value">87%</span>
+        <CountTo startVal={0} endVal={87} suffix="%" />
       </>,
     };
     return {
+      state,
       progress,
     };
   },
@@ -119,7 +133,7 @@ export default defineComponent({
               </el-radio-group>
             </div>
             <div>
-              <el-progress type="circle" stroke-width={10} percentage={87} v-slots={this.progress} />
+              <el-progress type="circle" stroke-width={10} percentage={this.state.endVal} v-slots={this.progress} />
             </div>
           </div>
         </div>
