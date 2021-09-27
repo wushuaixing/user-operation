@@ -20,18 +20,18 @@ export default defineComponent({
     const { proxy } = getCurrentInstance();
     const state = reactive({
       dataNum: {
-        avgPush: 1231,
-        expiredOrg: 1212,
-        formalContractOrg: 12123,
-        formalOrgObligor: 431,
-        historyContract: 12,
-        incrFormalOrg: 250,
-        incrTrialOrg: 687,
-        lastDayPush: 111,
-        trialContractOrg: 222,
-        trialOrgObligor: 333,
-        willExpireFormalOrg: 444,
-        willExpireTrialOrg: 555,
+        avgPush: 0,
+        expiredOrg: 0,
+        formalContractOrg: 0,
+        formalOrgObligor: 0,
+        historyContract: 0,
+        incrFormalOrg: 0,
+        incrTrialOrg: 0,
+        lastDayPush: 0,
+        trialContractOrg: 0,
+        trialOrgObligor: 0,
+        willExpireFormalOrg: 0,
+        willExpireTrialOrg: 0,
       },
       // 列表数据
       orgTableData: [
@@ -43,23 +43,8 @@ export default defineComponent({
           lastWeekObligor: 12,
           lastWeekPush: 124,
         },
-        {
-          name: 'a机构',
-          end: '2021-09-22',
-          lastDayObligor: 123,
-          lastDayPush: 123,
-          lastWeekObligor: 12,
-          lastWeekPush: 124,
-        },
-        {
-          name: 'a机构',
-          end: '2021-09-22',
-          lastDayObligor: 123,
-          lastDayPush: 123,
-          lastWeekObligor: 12,
-          lastWeekPush: 124,
-        },
       ],
+      tableLoading: false,
       dialogVisible: false,
       dialogTitle: computed(() => {
         if (state.params.type === '0') return '推送数据导出-试用机构';
@@ -86,17 +71,24 @@ export default defineComponent({
     const getStatistics = () => {
       WorkbenchApi.getStatistics().then((res) => {
         if (res.data.code === 200) {
-          console.log(res.data);
+          const { data = {} } = res.data;
+          state.dataNum = data;
         }
       });
     };
 
     // 获取列表数据
     const getList = (params) => {
+      state.tableLoading = true;
       WorkbenchApi.getList(clearEmpty(params)).then((res) => {
         if (res.data.code === 200) {
-          console.log(res.data);
+          state.tableLoading = false;
+          // const { data = [], total } = res.data;
+          // state.orgTableData = data;
+          // state.total = total;
         }
+      }).finally(() => {
+        state.tableLoading = false;
       });
     };
 
@@ -274,7 +266,7 @@ export default defineComponent({
             </el-dialog>
           </div>
           <div className="workbench-container-table">
-            <el-table ref="sortTable" data={state.orgTableData} onSortChange={this.sortChange}>
+            <el-table ref="sortTable" data={state.orgTableData} onSortChange={this.sortChange} v-loading={state.tableLoading}>
               {columns.map((i) => <el-table-column {...i} />)}
             </el-table>
             <el-pagination

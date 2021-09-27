@@ -133,9 +133,7 @@ export default defineComponent({
                 <el-radio-button label="2">近一周</el-radio-button>
               </el-radio-group>
             </div>
-            <div>
-              <CircleProgress stroke-width={10} percentage={87} width={120} />
-            </div>
+            <CircleProgress stroke-width={10} percentage={87} width={120} />
           </div>
         </div>
         <div className="monitor-view-container">

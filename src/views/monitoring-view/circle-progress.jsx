@@ -100,8 +100,8 @@ export default defineComponent({
           <svg viewBox="0 0 100 100">
             <defs>
               <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#13D59A;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#32C5FF;stop-opacity:1" />
+                <stop offset="0%" style="stop-color:#1BBA7C;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#6BE7D8;stop-opacity:1" />
               </linearGradient>
             </defs>
             <path d={this.d} stroke="#e5e9f2" stroke-width={this.strokeWidth} fill="none" className="el-progress-circle__track" style={this.trailPathStyle}>
