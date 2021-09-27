@@ -37,6 +37,34 @@
       border-radius: 2px;
       height: 262px;
       margin-top: 20px;
+      &-content{
+        display: flex;
+        justify-content: space-evenly;
+        padding: 40px;
+        .desc{
+          text-align: right;
+          &>div{
+            font-size: 14px;
+            img{
+              width: 14px;
+              height: 14px;
+              margin-right: 4px;
+            }
+            i{
+              font-size: 14px;
+              margin-right: 4px;
+            }
+            span:first-child{
+              color: #7D8699;;
+            }
+            span:nth-child(2){
+              font-size: 20px;
+              font-weight: bold;
+              color: #20242E;
+            }
+          }
+        }
+      }
     }
     &-up{
       display: flex;
@@ -60,6 +88,12 @@
           color: #7D8699;
           line-height: 14px;
           margin-top: 10px;
+          img{
+            width: 14px;
+            height: 14px;
+            vertical-align: middle;
+            margin-left: 4px;
+          }
           &+div{
             color: #20242E;
             margin-top: 16px;
@@ -121,5 +155,18 @@
   .monitor-view-container~.monitor-view-container{
     background-color: #fff;
     border-radius: 2px;
+  }
+  .el-progress-bar__innerText{
+    width: 100%;
+    .percentage-label{
+      font-size: 14px;
+      color: #7D8699;
+      margin-bottom: 5px;
+    }
+    span{
+      font-size: 20px;
+      font-weight: bold;
+      color: #20242E;
+    }
   }
 }

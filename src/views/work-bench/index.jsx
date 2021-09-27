@@ -10,8 +10,8 @@ import './style.scss';
 import '@/assets/scroll-number.scss';
 import icon from '@/assets/img/icon.png';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
-import NumberScroll from '@/components/number-scroll';
 import WorkbenchApi from '@/server/api/workbench';
+import numScroll from '@/utils/number-scroll';
 import { clearEmpty, dateUtils, fileDownload } from '@/utils';
 import { workbenchTopAsset, columns } from './source';
 
@@ -20,46 +20,31 @@ export default defineComponent({
     const { proxy } = getCurrentInstance();
     const state = reactive({
       dataNum: {
-        avgPush: 1231,
-        expiredOrg: 1212,
-        formalContractOrg: 12123,
-        formalOrgObligor: 431,
-        historyContract: 12,
-        incrFormalOrg: 250,
-        incrTrialOrg: 687,
-        lastDayPush: 111,
-        trialContractOrg: 222,
-        trialOrgObligor: 333,
-        willExpireFormalOrg: 444,
-        willExpireTrialOrg: 555,
+        // avgPush: 0,
+        // expiredOrg: 0,
+        // formalContractOrg: 0,
+        // formalOrgObligor: 0,
+        // historyContract: 0,
+        // incrFormalOrg: 0,
+        // incrTrialOrg: 0,
+        // lastDayPush: 0,
+        // trialContractOrg: 0,
+        // trialOrgObligor: 0,
+        // willExpireFormalOrg: 0,
+        // willExpireTrialOrg: 0,
       },
       // 列表数据
       orgTableData: [
-        {
-          name: 'a机构',
-          end: '2021-09-22',
-          lastDayObligor: 123,
-          lastDayPush: 123,
-          lastWeekObligor: 12,
-          lastWeekPush: 124,
-        },
-        {
-          name: 'a机构',
-          end: '2021-09-22',
-          lastDayObligor: 123,
-          lastDayPush: 123,
-          lastWeekObligor: 12,
-          lastWeekPush: 124,
-        },
-        {
-          name: 'a机构',
-          end: '2021-09-22',
-          lastDayObligor: 123,
-          lastDayPush: 123,
-          lastWeekObligor: 12,
-          lastWeekPush: 124,
-        },
+        // {
+        //   name: 'a机构',
+        //   end: '2021-09-22',
+        //   lastDayObligor: 123,
+        //   lastDayPush: 123,
+        //   lastWeekObligor: 12,
+        //   lastWeekPush: 124,
+        // },
       ],
+      tableLoading: false,
       dialogVisible: false,
       dialogTitle: computed(() => {
         if (state.params.type === '0') return '推送数据导出-试用机构';
@@ -79,45 +64,60 @@ export default defineComponent({
         sortOrder: '',
         type: '1',
       },
-      total: 100,
+      total: 0,
     });
+
+    const dealNumScroll = () => {
+      workbenchTopAsset.forEach((item) => {
+        numScroll(`#${item.left.id}`, state.dataNum[item.left.field]);
+        numScroll(`#${item.right.id}`, state.dataNum[item.right.field]);
+      });
+    };
 
     // 获取各数量
     const getStatistics = () => {
       WorkbenchApi.getStatistics().then((res) => {
         if (res.data.code === 200) {
-          console.log(res.data);
+          const { data = {} } = res.data;
+          state.dataNum = data;
+          dealNumScroll();
         }
       });
     };
 
     // 获取列表数据
     const getList = (params) => {
+      state.tableLoading = true;
       WorkbenchApi.getList(clearEmpty(params)).then((res) => {
         if (res.data.code === 200) {
-          console.log(res.data);
+          state.tableLoading = false;
+          const { list = [], total } = res.data.data;
+          state.orgTableData = list;
+          state.total = total;
         }
+      }).finally(() => {
+        state.tableLoading = false;
       });
+    };
+
+    const doSearch = () => {
+      proxy.$refs.sortTable.clearSort();
+      state.params.page = 1;
+      state.params.sortOrder = '';
+      state.params.sortColumn = 'DEFAULT';
+      getList(state.params);
     };
 
     // 顶级机构名称输入框blur事件
     const onBlur = () => {
-      getList(state.params);
+      doSearch();
     };
 
     // 顶级机构名称输入框keyup(enter)事件
     const onKeyup = (e) => {
       if (e.keyCode === 13) {
-        getList(state.params);
+        doSearch();
       }
-    };
-
-    // 正式机构与试用机构tab切换
-    const tabClick = () => {
-      proxy.$refs.sortTable.clearSort();
-      state.params.name = '';
-      state.params.page = 1;
-      getList(state.params);
     };
 
     // 导出操作
@@ -126,6 +126,7 @@ export default defineComponent({
       const date = dateUtils.formatStandardDate(_date, 'YYYY-MM');
       proxy.$refs.dialogForm.validate((valid) => {
         if (valid) {
+          state.dialogVisible = false;
           WorkbenchApi.export(date, type).then((res) => {
             fileDownload(res);
           });
@@ -166,6 +167,11 @@ export default defineComponent({
       }
     });
 
+    watch(() => state.params.type, () => {
+      state.params.name = '';
+      doSearch();
+    });
+
     onMounted(() => {
       getStatistics();
       getList(state.params);
@@ -174,7 +180,7 @@ export default defineComponent({
     const footerSlot = {
       title: null,
       footer: () => <>
-        <span class="dialog-footer">
+        <span className="dialog-footer">
           <el-button onClick={() => state.dialogVisible = false}>取消</el-button>
           <el-button type="primary" onClick={doExport}>确定</el-button>
         </span>
@@ -186,7 +192,6 @@ export default defineComponent({
       pageChange,
       onBlur,
       onKeyup,
-      tabClick,
       disabledDate,
       footerSlot,
     };
@@ -201,12 +206,20 @@ export default defineComponent({
               <div className="item-up">
                 <div className="left-block"><img src={i.img} alt="" /></div>
                 <div className="right-block">
-                  <p className="title">{i.title}{i.icon ? <img src={icon} style="width: 14px;margin-left: 5px;"/> : ''}</p>
+                  <p className="title">{i.title}{i.icon
+                    ? <el-tooltip
+                      className="item"
+                      effect="dark"
+                      content="合同结束日期距今日三个月内"
+                      placement="top"
+                    >
+                      <img src={icon} style="width: 14px;margin-left: 5px;" alt=""/>
+                    </el-tooltip> : ''}</p>
                   {i.describe
                     ? <p className="describe">
                       <span className="label">{i.describe}</span>
                       <span className="num">
-                        <CountTo startVal={0} endVal={state.dataNum[i.field[2]]} />
+                        <CountTo startVal={0} endVal={state.dataNum[i.up.field]} />
                       </span>
                     </p>
                     : ''}
@@ -214,17 +227,13 @@ export default defineComponent({
               </div>
               <div className="item-down">
                 <div className="item-down-child">
-                  <div className="subtitle">{i.subtitle_left}</div>
-                  <div className="num">
-                    <NumberScroll id={`${i.id}_left`} num={state.dataNum[i.field[0]]} />
-                  </div>
+                  <div className="subtitle">{i.left.subtitle}</div>
+                  <div className="num" id={i.left.id}>{state.dataNum[i.left.field]}</div>
                 </div>
                 <div className="vertical-line" />
                 <div className="item-down-child">
-                  <div className="subtitle">{i.subtitle_right}</div>
-                  <div className="num">
-                    <NumberScroll id={`${i.id}_right`} num={state.dataNum[i.field[1]]} />
-                  </div>
+                  <div className="subtitle">{i.right.subtitle}</div>
+                  <div className="num" id={i.right.id}>{state.dataNum[i.right.field]}</div>
                 </div>
               </div>
             </div>)
@@ -233,7 +242,7 @@ export default defineComponent({
         <div className="workbench-container workbench-org-data">
           <div className="workbench-container-head">
             <div className="content-title">机构数据统计</div>
-            <el-tabs onTabClick={this.tabClick} v-model={state.params.type}>
+            <el-tabs v-model={state.params.type}>
               <el-tab-pane label="正式机构" name="1" />
               <el-tab-pane label="试用机构" name="0" />
             </el-tabs>
@@ -274,7 +283,7 @@ export default defineComponent({
             </el-dialog>
           </div>
           <div className="workbench-container-table">
-            <el-table ref="sortTable" data={state.orgTableData} onSortChange={this.sortChange}>
+            <el-table ref="sortTable" data={state.orgTableData} onSortChange={this.sortChange} v-loading={state.tableLoading}>
               {columns.map((i) => <el-table-column {...i} />)}
             </el-table>
             <el-pagination
