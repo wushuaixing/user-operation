@@ -111,7 +111,7 @@ export default defineComponent({
           </svg>
         </div>
         <div className="el-progress-bar__innerText" style={this.slotStyle}>
-          <span className="percentage-label">数据同步率</span><br />
+          <div className="percentage-label">数据同步率</div>
           <CountTo startVal={0} endVal={this.percentage} suffix="%" />
         </div>
       </div>

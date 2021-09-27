@@ -206,7 +206,15 @@ export default defineComponent({
               <div className="item-up">
                 <div className="left-block"><img src={i.img} alt="" /></div>
                 <div className="right-block">
-                  <p className="title">{i.title}{i.icon ? <img src={icon} style="width: 14px;margin-left: 5px;" alt=""/> : ''}</p>
+                  <p className="title">{i.title}{i.icon
+                    ? <el-tooltip
+                      className="item"
+                      effect="dark"
+                      content="合同结束日期距今日三个月内"
+                      placement="top"
+                    >
+                      <img src={icon} style="width: 14px;margin-left: 5px;" alt=""/>
+                    </el-tooltip> : ''}</p>
                   {i.describe
                     ? <p className="describe">
                       <span className="label">{i.describe}</span>
