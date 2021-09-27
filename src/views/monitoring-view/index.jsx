@@ -5,6 +5,7 @@ import '@/assets/scroll-number.scss';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import totalData from '@/assets/img/total_data.png';
 import es from '@/assets/img/es.png';
+import CircleProgress from './circle-progress';
 
 export default defineComponent({
   setup() {
@@ -91,7 +92,7 @@ export default defineComponent({
         }
       }, 1000 / 60);
     });
-    const progress = {
+    const progressSlot = {
       title: null,
       default: () => <>
         <span className="percentage-label">数据同步率</span><br />
@@ -100,7 +101,7 @@ export default defineComponent({
     };
     return {
       state,
-      progress,
+      progressSlot,
     };
   },
   render() {
@@ -133,7 +134,7 @@ export default defineComponent({
               </el-radio-group>
             </div>
             <div>
-              <el-progress type="circle" stroke-width={10} percentage={this.state.endVal} v-slots={this.progress} />
+              <CircleProgress stroke-width={10} percentage={87} width={120} />
             </div>
           </div>
         </div>

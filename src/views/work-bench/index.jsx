@@ -174,7 +174,7 @@ export default defineComponent({
     const footerSlot = {
       title: null,
       footer: () => <>
-        <span class="dialog-footer">
+        <span className="dialog-footer">
           <el-button onClick={() => state.dialogVisible = false}>取消</el-button>
           <el-button type="primary" onClick={doExport}>确定</el-button>
         </span>
@@ -201,7 +201,7 @@ export default defineComponent({
               <div className="item-up">
                 <div className="left-block"><img src={i.img} alt="" /></div>
                 <div className="right-block">
-                  <p className="title">{i.title}{i.icon ? <img src={icon} style="width: 14px;margin-left: 5px;"/> : ''}</p>
+                  <p className="title">{i.title}{i.icon ? <img src={icon} style="width: 14px;margin-left: 5px;" alt=""/> : ''}</p>
                   {i.describe
                     ? <p className="describe">
                       <span className="label">{i.describe}</span>
