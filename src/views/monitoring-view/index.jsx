@@ -5,6 +5,10 @@ import '@/assets/scroll-number.scss';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import totalData from '@/assets/img/total_data.png';
 import es from '@/assets/img/es.png';
+import iconfont from '@/assets/img/iconsifapaimaishuju.png';
+import icon from '@/assets/img/icon.png';
+
+import CircleProgress from './circle-progress';
 
 export default defineComponent({
   setup() {
@@ -91,7 +95,7 @@ export default defineComponent({
         }
       }, 1000 / 60);
     });
-    const progress = {
+    const progressSlot = {
       title: null,
       default: () => <>
         <span className="percentage-label">数据同步率</span><br />
@@ -100,7 +104,7 @@ export default defineComponent({
     };
     return {
       state,
-      progress,
+      progressSlot,
     };
   },
   render() {
@@ -118,7 +122,17 @@ export default defineComponent({
             <div className="right">
               <div><img src={es} alt=""/></div>
               <div>
-                <div className="desc">ES同步情况</div>
+                <div className="desc">ES同步情况<span>
+                  <el-tooltip
+                    className="item"
+                    effect="dark"
+                    content="同步后的数据与原表数据差值情况"
+                    placement="top"
+                  >
+                    <img src={icon} alt=""/>
+                  </el-tooltip>
+                </span>
+                </div>
                 <div><span className="light">少</span><span className="num">111</span><span className="light">条</span></div>
               </div>
             </div>
@@ -132,8 +146,13 @@ export default defineComponent({
                 <el-radio-button label="2">近一周</el-radio-button>
               </el-radio-group>
             </div>
-            <div>
-              <el-progress type="circle" stroke-width={10} percentage={this.state.endVal} v-slots={this.progress} />
+            <div className="monitor-view-container-down-content">
+              <div className="desc">
+                <div style="margin-bottom: 5px;"><span><img src={iconfont} alt=""/>司法拍卖结构化数据量：</span><span>12312</span></div>
+                <i className="iconfont iconjiantou1" style="font-size: 60px; color: #2F7EEC;" />
+                <div style="margin-top: 5px;"><span><i className="iconfont iconESshujuzengliang" style="color: #FE8E31;" />ES数据增量：</span><span>12312</span></div>
+              </div>
+              <CircleProgress stroke-width={10} percentage={87} width={120} />
             </div>
           </div>
         </div>

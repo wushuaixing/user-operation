@@ -56,9 +56,15 @@ const fileDownload = (res, isReport = false) => {
     fileName = decodeURIComponent(name);
   } else {
     // 从返回数据中获取文件名称
-    const name = res.headers['content-disposition'].split('"')[1];
-    // 由于中文出现乱码 需要转码
-    fileName = decodeURIComponent(name).replace(/(.xlsx)/g, '');
+    const str = res.headers['content-disposition'];
+    const name = str.split('"')[1];
+    if (name) {
+      // 由于中文出现乱码 需要转码
+      fileName = decodeURIComponent(name).replace(/(.xlsx)/g, '');
+    } else {
+      const [, a] = str.split('=');
+      fileName = a;
+    }
   }
   // 创建a标签
   const elink = document.createElement('a');
