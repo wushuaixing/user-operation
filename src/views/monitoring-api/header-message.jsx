@@ -1,10 +1,13 @@
 import { defineComponent } from 'vue';
 import '@/views/my-org/header/style.scss';
+import tipImg from '../../assets/img/icon.png';
 
 const App = defineComponent({
   props: {
-    data: Object,
-    type: Number,
+    data: {
+      type: Object,
+      default: () => {},
+    },
   },
   render() {
     const {
@@ -25,6 +28,7 @@ const App = defineComponent({
         number: apiExpireNums,
         img: '#iconguoqijigou',
         hasUnit: false,
+        showTip: true,
       },
       {
         title: 'divide',
@@ -46,6 +50,13 @@ const App = defineComponent({
                     <use xlink:href={item.img}/>
                   </svg>
                   <span>{item.title}</span>
+                  <el-tooltip
+                    effect="dark"
+                    content="合同结束日期距今日三个月内"
+                    placement="top"
+                  >
+                    <img src={tipImg} v-show={item.showTip} style="margin-left: 5px"/>
+                  </el-tooltip>
                 </div>
                 <div className="down">
                   {item.number}
