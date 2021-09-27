@@ -6,7 +6,7 @@ import $ from 'jquery';
   "use strict";
   const defaults = {
     deVal: 0,       //传入值
-    className:'dataNums',   //样式名称
+    className:'',   //样式名称
     digit:''    //默认显示几位数字
   };
   function rollNumDaq(obj, options){
@@ -63,6 +63,7 @@ const numScroll = (el, num) => {
   $(() => {
     $(el).rollNumDaq({
       deVal: num,
+      className: `number-scroll-${el.replace('#', '')}`
     });
   });
 };
