@@ -22,12 +22,12 @@ export default defineComponent({
       dataNum: {
         avgPush: 0,
         expiredOrg: 0,
-        formalContractOrg: 0,
+        formalContractOrg: 123,
         formalOrgObligor: 0,
         historyContract: 0,
-        incrFormalOrg: 0,
+        incrFormalOrg: 2131,
         incrTrialOrg: 0,
-        lastDayPush: 0,
+        lastDayPush: 12,
         trialContractOrg: 0,
         trialOrgObligor: 0,
         willExpireFormalOrg: 0,
@@ -35,14 +35,14 @@ export default defineComponent({
       },
       // 列表数据
       orgTableData: [
-        {
-          name: 'a机构',
-          end: '2021-09-22',
-          lastDayObligor: 123,
-          lastDayPush: 123,
-          lastWeekObligor: 12,
-          lastWeekPush: 124,
-        },
+        // {
+        //   name: 'a机构',
+        //   end: '2021-09-22',
+        //   lastDayObligor: 123,
+        //   lastDayPush: 123,
+        //   lastWeekObligor: 12,
+        //   lastWeekPush: 124,
+        // },
       ],
       tableLoading: false,
       dialogVisible: false,
@@ -64,14 +64,14 @@ export default defineComponent({
         sortOrder: '',
         type: '1',
       },
-      total: 100,
+      total: 0,
     });
 
     // 获取各数量
     const getStatistics = () => {
       WorkbenchApi.getStatistics().then((res) => {
         if (res.data.code === 200) {
-          const { data = {} } = res.data;
+          const { data } = res.data;
           state.dataNum = data;
         }
       });
@@ -83,13 +83,22 @@ export default defineComponent({
       WorkbenchApi.getList(clearEmpty(params)).then((res) => {
         if (res.data.code === 200) {
           state.tableLoading = false;
-          // const { data = [], total } = res.data;
-          // state.orgTableData = data;
-          // state.total = total;
+          const { list = [], total } = res.data.data;
+          state.orgTableData = list;
+          state.total = total;
         }
       }).finally(() => {
         state.tableLoading = false;
       });
+    };
+
+    const doReset = () => {
+      proxy.$refs.sortTable.clearSort();
+      state.params.name = '';
+      state.params.page = 1;
+      state.params.sortOrder = '';
+      state.params.sortColumn = 'DEFAULT';
+      getList(state.params);
     };
 
     // 顶级机构名称输入框blur事件
@@ -100,16 +109,12 @@ export default defineComponent({
     // 顶级机构名称输入框keyup(enter)事件
     const onKeyup = (e) => {
       if (e.keyCode === 13) {
-        getList(state.params);
+        if (!state.params.state) {
+          doReset();
+        } else {
+          getList(state.params);
+        }
       }
-    };
-
-    // 正式机构与试用机构tab切换
-    const tabClick = () => {
-      proxy.$refs.sortTable.clearSort();
-      state.params.name = '';
-      state.params.page = 1;
-      getList(state.params);
     };
 
     // 导出操作
@@ -158,6 +163,10 @@ export default defineComponent({
       }
     });
 
+    watch(() => state.params.type, () => {
+      doReset();
+    });
+
     onMounted(() => {
       getStatistics();
       getList(state.params);
@@ -178,7 +187,6 @@ export default defineComponent({
       pageChange,
       onBlur,
       onKeyup,
-      tabClick,
       disabledDate,
       footerSlot,
     };
@@ -225,7 +233,7 @@ export default defineComponent({
         <div className="workbench-container workbench-org-data">
           <div className="workbench-container-head">
             <div className="content-title">机构数据统计</div>
-            <el-tabs onTabClick={this.tabClick} v-model={state.params.type}>
+            <el-tabs v-model={state.params.type}>
               <el-tab-pane label="正式机构" name="1" />
               <el-tab-pane label="试用机构" name="0" />
             </el-tabs>
