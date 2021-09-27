@@ -10,8 +10,8 @@ import './style.scss';
 import '@/assets/scroll-number.scss';
 import icon from '@/assets/img/icon.png';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
-import NumberScroll from '@/components/number-scroll';
 import WorkbenchApi from '@/server/api/workbench';
+import numScroll from '@/utils/number-scroll';
 import { clearEmpty, dateUtils, fileDownload } from '@/utils';
 import { workbenchTopAsset, columns } from './source';
 
@@ -20,18 +20,18 @@ export default defineComponent({
     const { proxy } = getCurrentInstance();
     const state = reactive({
       dataNum: {
-        avgPush: 0,
-        expiredOrg: 0,
-        formalContractOrg: 123,
-        formalOrgObligor: 0,
-        historyContract: 0,
-        incrFormalOrg: 2131,
-        incrTrialOrg: 0,
-        lastDayPush: 12,
-        trialContractOrg: 0,
-        trialOrgObligor: 0,
-        willExpireFormalOrg: 0,
-        willExpireTrialOrg: 0,
+        // avgPush: 0,
+        // expiredOrg: 0,
+        // formalContractOrg: 0,
+        // formalOrgObligor: 0,
+        // historyContract: 0,
+        // incrFormalOrg: 0,
+        // incrTrialOrg: 0,
+        // lastDayPush: 0,
+        // trialContractOrg: 0,
+        // trialOrgObligor: 0,
+        // willExpireFormalOrg: 0,
+        // willExpireTrialOrg: 0,
       },
       // 列表数据
       orgTableData: [
@@ -67,12 +67,20 @@ export default defineComponent({
       total: 0,
     });
 
+    const dealNumScroll = () => {
+      workbenchTopAsset.forEach((item) => {
+        numScroll(`#${item.left.id}`, state.dataNum[item.left.field]);
+        numScroll(`#${item.right.id}`, state.dataNum[item.right.field]);
+      });
+    };
+
     // 获取各数量
     const getStatistics = () => {
       WorkbenchApi.getStatistics().then((res) => {
         if (res.data.code === 200) {
-          const { data } = res.data;
+          const { data = {} } = res.data;
           state.dataNum = data;
+          dealNumScroll();
         }
       });
     };
@@ -92,9 +100,8 @@ export default defineComponent({
       });
     };
 
-    const doReset = () => {
+    const doSearch = () => {
       proxy.$refs.sortTable.clearSort();
-      state.params.name = '';
       state.params.page = 1;
       state.params.sortOrder = '';
       state.params.sortColumn = 'DEFAULT';
@@ -103,17 +110,13 @@ export default defineComponent({
 
     // 顶级机构名称输入框blur事件
     const onBlur = () => {
-      getList(state.params);
+      doSearch();
     };
 
     // 顶级机构名称输入框keyup(enter)事件
     const onKeyup = (e) => {
       if (e.keyCode === 13) {
-        if (!state.params.state) {
-          doReset();
-        } else {
-          getList(state.params);
-        }
+        doSearch();
       }
     };
 
@@ -123,6 +126,7 @@ export default defineComponent({
       const date = dateUtils.formatStandardDate(_date, 'YYYY-MM');
       proxy.$refs.dialogForm.validate((valid) => {
         if (valid) {
+          state.dialogVisible = false;
           WorkbenchApi.export(date, type).then((res) => {
             fileDownload(res);
           });
@@ -164,7 +168,8 @@ export default defineComponent({
     });
 
     watch(() => state.params.type, () => {
-      doReset();
+      state.params.name = '';
+      doSearch();
     });
 
     onMounted(() => {
@@ -206,7 +211,7 @@ export default defineComponent({
                     ? <p className="describe">
                       <span className="label">{i.describe}</span>
                       <span className="num">
-                        <CountTo startVal={0} endVal={state.dataNum[i.field[2]]} />
+                        <CountTo startVal={0} endVal={state.dataNum[i.up.field]} />
                       </span>
                     </p>
                     : ''}
@@ -214,17 +219,13 @@ export default defineComponent({
               </div>
               <div className="item-down">
                 <div className="item-down-child">
-                  <div className="subtitle">{i.subtitle_left}</div>
-                  <div className="num">
-                    <NumberScroll id={`${i.id}_left`} num={state.dataNum[i.field[0]]} />
-                  </div>
+                  <div className="subtitle">{i.left.subtitle}</div>
+                  <div className="num" id={i.left.id}>{state.dataNum[i.left.field]}</div>
                 </div>
                 <div className="vertical-line" />
                 <div className="item-down-child">
-                  <div className="subtitle">{i.subtitle_right}</div>
-                  <div className="num">
-                    <NumberScroll id={`${i.id}_right`} num={state.dataNum[i.field[1]]} />
-                  </div>
+                  <div className="subtitle">{i.right.subtitle}</div>
+                  <div className="num" id={i.right.id}>{state.dataNum[i.right.field]}</div>
                 </div>
               </div>
             </div>)
