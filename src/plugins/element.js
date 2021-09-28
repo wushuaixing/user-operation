@@ -36,6 +36,7 @@ import {
   ElDivider,
   ElTimeline,
   ElTimelineItem,
+  ElPopover,
   ElCol,
   ElRadioGroup,
   ElRadio,
@@ -107,6 +108,7 @@ const list = [
   ElCheckboxButton,
   ElRadioButton,
   ElProgress,
+  ElPopover,
 ];
 
 export default (app) => {
