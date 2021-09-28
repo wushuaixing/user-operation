@@ -60,10 +60,34 @@
         font-family: inherit;
       }
     }
-    .update-time {
-      display: flex;
-      .el-form-item {
-        margin-bottom: 0;
+    .form-date {
+      label:first-child {
+        position: relative;
+        &:before {
+          content: '*';
+          color: #f93535;
+          position: absolute;
+          top: 0;
+          left: 57px;
+        }
+      }
+      .update-time {
+        display: flex;
+        .el-form-item {
+          margin-bottom: 0;
+        }
+      }
+    }
+    .form-remark {
+      label:first-child {
+        position: relative;
+        &:before {
+          content: '*';
+          color: #f93535;
+          position: absolute;
+          top: 0;
+          left: 113px;
+        }
       }
     }
     .remark-items {
@@ -92,6 +116,7 @@
       }
     }
     .record-area {
+      width: 402px;
       .el-timeline-item__timestamp.is-top {
         margin-bottom: 0;
         padding-top: 0;
