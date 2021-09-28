@@ -113,6 +113,12 @@ export const ruleProcess = (_this) => {
 
 export const adminMenu = [
   {
+    text: '工作台',
+    icon: 'iconfont iconguquanchuantoutu',
+    path: '/workBench',
+    key: 'WorkBench',
+  },
+  {
     text: '账号管理',
     icon: 'iconfont iconyonghuyunying-zhanghaoguanli',
     path: '/index',
@@ -136,12 +142,6 @@ export const adminMenu = [
     icon: 'iconfont iconguquanchuantoutu',
     path: '/taskAssign',
     key: 'TaskAssign',
-  },
-  {
-    text: '工作台',
-    icon: 'iconfont iconguquanchuantoutu',
-    path: '/workBench',
-    key: 'WorkBench',
   },
   {
     text: '监控视图概览',

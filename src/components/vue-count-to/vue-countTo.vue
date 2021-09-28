@@ -177,12 +177,12 @@ export default {
       const x = num.split('.');
       let x1 = x[0];
       const x2 = x.length > 1 ? this.decimal + x[1] : '';
-      const rgx = /(\d+)(\d{3})/;
-      if (this.separator && !this.isNumber(this.separator)) {
-        while (rgx.test(x1)) {
-          x1 = x1.replace(rgx, `$1${this.separator}$2`);
-        }
-      }
+      // const rgx = /(\d+)(\d{3})/;
+      // if (this.separator && !this.isNumber(this.separator)) {
+      //   while (rgx.test(x1)) {
+      //     x1 = x1.replace(rgx, `$1${this.separator}$2`);
+      //   }
+      // }
       return this.prefix + x1 + x2 + this.suffix;
     },
   },

@@ -12,7 +12,12 @@ import icon from '@/assets/img/icon.png';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import WorkbenchApi from '@/server/api/workbench';
 import numScroll from '@/utils/number-scroll';
-import { clearEmpty, dateUtils, fileDownload } from '@/utils';
+import {
+  clearEmpty,
+  dateUtils,
+  fileDownload,
+  replaceEmpty,
+} from '@/utils';
 import { workbenchTopAsset, columns } from './source';
 
 export default defineComponent({
@@ -67,12 +72,12 @@ export default defineComponent({
       total: 0,
     });
 
-    const dealNumScroll = () => {
-      workbenchTopAsset.forEach((item) => {
-        numScroll(`#${item.left.id}`, state.dataNum[item.left.field]);
-        numScroll(`#${item.right.id}`, state.dataNum[item.right.field]);
-      });
-    };
+    // const dealNumScroll = () => {
+    //   workbenchTopAsset.forEach((item) => {
+    //     numScroll(`#${item.left.id}`, state.dataNum[item.left.field]);
+    //     numScroll(`#${item.right.id}`, state.dataNum[item.right.field]);
+    //   });
+    // };
 
     // 获取各数量
     const getStatistics = () => {
@@ -80,7 +85,8 @@ export default defineComponent({
         if (res.data.code === 200) {
           const { data = {} } = res.data;
           state.dataNum = data;
-          dealNumScroll();
+          numScroll('#first_left', state.dataNum.lastDayPush);
+          numScroll('#second_left', state.dataNum.incrFormalOrg);
         }
       });
     };
@@ -92,7 +98,7 @@ export default defineComponent({
         if (res.data.code === 200) {
           state.tableLoading = false;
           const { list = [], total } = res.data.data;
-          state.orgTableData = list;
+          state.orgTableData = replaceEmpty(list);
           state.total = total;
         }
       }).finally(() => {
