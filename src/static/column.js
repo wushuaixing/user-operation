@@ -275,6 +275,7 @@ const monitorApiColumn = [
     prop: 'id',
     label: 'ID',
     sort: false,
+    width: 80,
   },
   {
     prop: 'orgName',

@@ -248,7 +248,7 @@ export default {
         const { code, data } = res.data || {};
         if (code === 200) {
           const { list, totalOrgNum, totalOperatedOrgNum } = data;
-          this.activities = list;
+          this.activities = list.map((i) => ({ ...i, showPopover: false }));
           this.totalOrgNum = totalOrgNum;
           this.totalOperatedOrgNum = totalOperatedOrgNum;
         }

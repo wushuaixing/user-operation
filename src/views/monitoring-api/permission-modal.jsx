@@ -3,6 +3,7 @@ import {
 } from 'vue';
 import { dateUtils } from '@/utils';
 import monitorApi from '@/server/api/monitor-api';
+import rule from './rule';
 import './style.scss';
 
 const remarkItemList = ['延期', '续约', '赠送服务', '提前终止'];
@@ -10,36 +11,29 @@ export default defineComponent({
   data() {
     return {
       dataForm: {
+        id: '',
         endDate: '',
         isLimitedDebtorNums: 0,
         limitedDebtorNums: 0,
         isLimitedSearchNums: 0,
         limitedSearchNums: 0,
-        orgNames: '',
+        orgName: '',
         remark: '',
         startDate: '',
       },
     };
   },
-  setup() {
+  emits: ['resetList'],
+  setup(props, { emit }) {
     // 区分弹窗
     const { proxy } = getCurrentInstance();
     const modalData = reactive({
       visible: false,
       loading: false,
-      id: '',
-      domain: 'wwwwwwwwwwww',
-      recordData: [{
-        id: 1111,
-        processDate: '2021-9-26',
-        remark: 'lalallaal',
-      },
-      {
-        id: 1112,
-        processDate: '2021-9-26',
-        remark: 'lalallaal',
-      },
-      ],
+      domain: '',
+      recordData: [],
+      debtors: 0,
+      useTimes: 0,
     });
     const optionList = ref([]);
     const getDetail = (id) => {
@@ -47,26 +41,48 @@ export default defineComponent({
         const { code, data } = res.data || {};
         if (code === 200) {
           const {
-            id: orgId, domain, records, ...state
+            domain, records, ...state
           } = data || {};
-          modalData.id = orgId;
           modalData.domain = domain;
           modalData.recordData = records;
-          proxy.dataForm = state;
+          proxy.dataForm = Object.assign(proxy.dataForm, state);
         }
       });
     };
+    const resetList = () => {
+      emit('resetList');
+    };
     const handleOpen = (row) => {
       // 通过id获取详情信息  获取
-      const { id } = row;
+      const { id, debtors, useTimes } = row;
       modalData.visible = true;
-      modalData.id = id;
+      modalData.debtors = debtors;
+      modalData.useTimes = useTimes;
       getDetail(id);
     };
     const handleClick = () => {
       proxy.$refs.dataForm.validate((volid) => {
         if (volid) {
-          modalData.visible = false;
+          const params = { ...proxy.dataForm };
+          if (!params.remark) {
+            proxy.$message.warning('备注不允许为空');
+          } else {
+            params.startDate = dateUtils.formatStandardDate(params.startDate);
+            params.endDate = dateUtils.formatStandardDate(params.endDate);
+            params.remark = params.remark.replace(/(\n)+/g, '\n');
+            modalData.loading = true;
+            monitorApi.save(params).then((res) => {
+              const { code } = res.data || {};
+              modalData.loading = false;
+              if (code === 200) {
+                proxy.$message.success('操作成功');
+                resetList();
+                modalData.visible = false;
+              } else {
+                proxy.$message.error('请求出错');
+              }
+            });
+          }
         }
       });
     };
@@ -104,15 +120,6 @@ export default defineComponent({
         remarkItemList.map((i) => <div className="item" onClick={() => addRemark(i)}>{i}</div>)
       }
     </div>;
-    const recordList = <el-timeline class="record-area">
-      {
-        modalData.recordData.map((i) => <el-timeline-item placement="top" key={i.id} hollow>
-          <div className="record-area-time">{`处理时间：${i.processDate}`}</div>
-          <div className="record-area-cont">{`备注内容：${i.remark}`}</div>
-        </el-timeline-item>)
-      }
-    </el-timeline>;
-    const rule = {};
     return {
       modalData,
       optionList,
@@ -121,9 +128,7 @@ export default defineComponent({
       disabledEndDate,
       modalSlots,
       handleOpen,
-      rule,
       remarkList,
-      recordList,
     };
   },
   render() {
@@ -134,9 +139,7 @@ export default defineComponent({
       disabledStartDate,
       disabledEndDate,
       modalSlots,
-      rule,
       remarkList,
-      recordList,
     } = this;
     return (
       <el-dialog
@@ -144,6 +147,7 @@ export default defineComponent({
         v-model={modalData.visible}
         onClosed={handleClose}
         width="600px"
+        custom-class="monitor-api-dialog"
         v-slots={modalSlots}
       >
         <el-form
@@ -154,16 +158,20 @@ export default defineComponent({
           class="permission-form"
           labelWidth="166px"
         >
-          <el-form-item label="ID：">
-            <span>{modalData.id}</span>
+          <el-form-item label="ID：" class="form-text">
+            <span>{dataForm.id}</span>
           </el-form-item>
-          <el-form-item label="域名名称：">
+          <el-form-item label="域名名称：" class="form-text">
             <span>{modalData.domain || '-'}</span>
           </el-form-item>
-          <el-form-item label="合作机构名称：">
-            <el-input v-model={dataForm.orgNames} placeholder="请输入合作机构名称" style={{ width: '402px' }}/>
+          <el-form-item label="合作机构名称：" prop="orgName">
+            <el-input
+              v-model={dataForm.orgName}
+              placeholder="请输入合作机构名称"
+              onBlur={(val) => dataForm.orgName = val.target.value.trim()}
+              style={{ width: '402px' }}/>
           </el-form-item>
-          <el-form-item label="合同起止日期：">
+          <el-form-item label="合同起止日期：" class="form-date">
             <div className="update-time">
               <el-form-item prop="startDate">
                 <el-date-picker
@@ -173,7 +181,6 @@ export default defineComponent({
                   style="width: 190px"
                   disabledDate={disabledStartDate}
                   append-to-body={false}
-                  value-format="YYYY-MM-DD"
                 />
               </el-form-item>
               <span className="line" style="margin: 0 4px">至</span>
@@ -185,12 +192,15 @@ export default defineComponent({
                   style="width: 190px"
                   disabledDate={disabledEndDate}
                   append-to-body={false}
-                  value-format="YYYY-MM-DD"
                 />
               </el-form-item>
             </div>
           </el-form-item>
-          <el-form-item label="限制查询次数：" prop="isLimitedSearchNums">
+          <el-form-item
+            label="限制查询次数："
+            prop="isLimitedSearchNums"
+            class={dataForm.isLimitedSearchNums === 1 ? '' : 'form-text'}
+          >
             <el-col span={10}>
               <el-radio-group size="medium" v-model={dataForm.isLimitedSearchNums}>
                 <el-radio label={0}>不限</el-radio>
@@ -198,17 +208,21 @@ export default defineComponent({
               </el-radio-group>
             </el-col>
             <el-col span={14} v-show={dataForm.isLimitedSearchNums === 1}>
-            <el-form-item label="上限：" labelWidth="87px" prop="limitedSearchNums">
+            <el-form-item label="上限：" labelWidth="87px" prop="limitedSearchNums" class="item-in-form">
               <el-input-number
                 v-model={dataForm.limitedSearchNums}
                 autocomplete="off"
-                min={0}
+                min={modalData.useTimes}
                 max={999999999}
                 style={{ width: '180px' }}/>
               </el-form-item>
             </el-col>
           </el-form-item>
-          <el-form-item label="限制监控债务人数：" prop="isLimitedDebtorNums">
+          <el-form-item
+            label="限制监控债务人数："
+            prop="isLimitedDebtorNums"
+            class={dataForm.isLimitedDebtorNums === 1 ? '' : 'form-text'}
+          >
             <el-col span={10}>
               <el-radio-group v-model={dataForm.isLimitedDebtorNums} size="medium">
                 <el-radio label={0}>不限</el-radio>
@@ -216,29 +230,42 @@ export default defineComponent({
               </el-radio-group>
             </el-col>
             <el-col span={14} v-show={dataForm.isLimitedDebtorNums === 1}>
-              <el-form-item label="上限："prop="limitedDebtorNums" labelWidth="87px">
+              <el-form-item label="上限：" prop="limitedDebtorNums" labelWidth="87px" class="item-in-form">
                 <el-input-number
                   v-model={dataForm.limitedDebtorNums}
                   autocomplete="off"
-                  min={0}
+                  min={modalData.debtors}
                   max={999999999}
                   style={{ width: '180px' }}/>
               </el-form-item>
             </el-col>
           </el-form-item>
-          <el-form-item label="备注：" prop="remark">
+          <el-form-item label="备注：" class="form-remark">
             <el-input
               v-model={dataForm.remark}
               autosize
               type="textarea"
+              style="width: 402px"
               placeholder="请输入备注"
               show-word-limit={true}
+              onBlur={(val) => dataForm.remark = val.target.value.trim()}
               maxlength={1000}>
             </el-input>
             {remarkList}
           </el-form-item>
-          <el-form-item label="处理记录：">
-            {recordList}
+          <el-form-item label="处理记录：" class="form-records">
+            {
+              modalData.recordData.length
+                ? <el-timeline className="record-area">
+                  {
+                    modalData.recordData.map((i) => <el-timeline-item placement="top" key={i.id} hollow>
+                      <div className="record-area-time">{`处理时间：${i.processDate}`}</div>
+                      <div className="record-area-cont">{`备注内容：${i.remark}`}</div>
+                    </el-timeline-item>)
+                  }
+                </el-timeline>
+                : <div style="line-height: 14px;">-</div>
+            }
           </el-form-item>
         </el-form>
       </el-dialog>

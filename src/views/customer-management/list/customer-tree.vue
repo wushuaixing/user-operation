@@ -21,9 +21,10 @@
     </div>
     <div class="customer-tree-content">
       <div
-        v-for="(item, index) in activities"
+        v-for="(item, index) in showList"
         :key="item.id"
         class="customer-tree-content-item"
+        @click.right="() => showPopover(index)"
       >
         <span :class="{ active: isActive === index }" class="itemText" @click="handleSelect('item', index, item)">
           <div class="itemText-ellipsis">
@@ -37,8 +38,24 @@
             </el-tooltip>
             <span v-else>{{item.name}}</span>
           </div>
-          {{setText(item)}}</span
-        >
+          {{setText(item)}}
+          <el-popover
+            placement="right"
+            trigger="click"
+            popper-class="tree-popover"
+            :visible="item.showPopover"
+          >
+            <template #reference>
+              <span style="width: 1px;height: 32px;"></span>
+            </template>
+            <div class="popover-area">
+              <svg class="icon popover-icon" aria-hidden="true">
+                <use :xlink:href="item.sortOrder >= 1 ? '#iconquxiaozhiding' : '#iconzhiding'"></use>
+              </svg>
+              {{item.sortOrder >= 1 ? '取消置顶' : '机构置顶'}}
+            </div>
+          </el-popover>
+        </span>
         <!-- 横线 -->
         <div
           class="itemS"
@@ -54,6 +71,7 @@
   </div>
 </template>
 <script>
+
 export default {
   name: 'CustomerTree',
   props: {
@@ -107,6 +125,17 @@ export default {
     return {
       selectAll: true,
       isActive: -1,
+      show1: false,
+    };
+  },
+  computed: {
+    showList() {
+      return this.activities;
+    },
+  },
+  mounted() {
+    document.getElementById('customerTree').oncontextmenu = function () {
+      return false;
     };
   },
   methods: {
@@ -122,6 +151,7 @@ export default {
     },
     // 点击选中某一项
     handleSelect(val, index, item) {
+      this.closePopover();
       if (val === 'all') {
         this.selectAll = true;
         this.isActive = -1;
@@ -133,6 +163,15 @@ export default {
         this.isActive = index;
         this.$emit('handleClick', '', item);
       }
+    },
+    closePopover() {
+      this.showList.forEach((item, index) => {
+        if (item.showPopover) this.showList[index].showPopover = false;
+      });
+    },
+    showPopover(index) {
+      this.closePopover();
+      this.showList[index].showPopover = true;
     },
   },
 };
@@ -175,6 +214,11 @@ export default {
           overflow: hidden;
           white-space: nowrap;
           vertical-align: top;
+          position: relative;
+          .item-rightClick {
+            height: 34px;
+            width: 100px;
+          }
         }
       }
       .itemText:hover {
@@ -236,5 +280,19 @@ export default {
 }
 .customer-tree::-webkit-scrollbar-track:hover{
   background-color:#fff;
+}
+.popover-area {
+  text-align: center;
+  cursor: pointer;
+  line-height: 14px;
+  .popover-icon {
+    font-size: 14px;
+    &:hover {
+      fill: #296DD3;
+    }
+  }
+  &:hover {
+    color: #296DD3;
+  }
 }
 </style>

@@ -53,7 +53,7 @@ export default defineComponent({
           tableData.page = page;
           tableData.total = total;
         } else {
-          message.error(message);
+          proxy.$message.error(message);
         }
       });
     };
@@ -63,7 +63,7 @@ export default defineComponent({
         if (code === 200) {
           tableData.headerData = { ...data };
         } else {
-          message.error(message);
+          proxy.$message.error(message);
         }
       });
     };
@@ -88,11 +88,16 @@ export default defineComponent({
     const action = ({ row }) => <div>
       <a className="action-span" onClick={() => showPermissionModal(row)}>权限管理</a>
     </div>;
+    const resetList = () => {
+      getList();
+      getNums();
+    };
     return {
       tableData,
       handleSortChange,
       pageChange,
       action,
+      resetList,
     };
   },
   render() {
@@ -101,6 +106,7 @@ export default defineComponent({
       handleSortChange,
       pageChange,
       action,
+      resetList,
     } = this;
     return (
       <div className="monitor-api-content">
@@ -121,6 +127,7 @@ export default defineComponent({
               label={i.label}
               key={`${i.label}${index}`}
               prop={i.prop}
+              width={i.width}
               align={i.align}
               sortable={i.sort} />)}
               <el-table-column label="操作" key="action" v-slots={(scope) => action(scope)}/>
@@ -134,7 +141,7 @@ export default defineComponent({
             key={tableData.page}
             hide-on-single-page={tableData.total === 0}
           />
-          <Permission-modal ref="permissionModal"/>
+          <Permission-modal ref="permissionModal" onResetList={resetList}/>
         </div>
       </div>
     );
