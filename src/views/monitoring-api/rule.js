@@ -1,6 +1,6 @@
 const rule = {
-  orgNames: [
-    { required: true, message: '请输入合作机构名称', trigger: 'change' },
+  orgName: [
+    { required: true, message: '请输入合作机构名称', trigger: 'blur' },
   ],
   startDate: [
     {
@@ -36,8 +36,5 @@ const rule = {
       required: true, message: '请输入上限', trigger: 'blur',
     },
   ],
-  remark: [{
-    required: true, message: '请输入备注', trigger: 'blur',
-  }],
 };
 export default rule;

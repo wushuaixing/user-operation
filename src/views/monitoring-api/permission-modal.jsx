@@ -11,15 +11,15 @@ export default defineComponent({
   data() {
     return {
       dataForm: {
-        id: '1111111111',
-        endDate: '2021-10-24',
+        id: '',
+        endDate: '',
         isLimitedDebtorNums: 0,
         limitedDebtorNums: 0,
         isLimitedSearchNums: 0,
         limitedSearchNums: 0,
-        orgNames: '',
+        orgName: '',
         remark: '',
-        startDate: '2021-10-23',
+        startDate: '',
       },
     };
   },
@@ -30,18 +30,10 @@ export default defineComponent({
     const modalData = reactive({
       visible: false,
       loading: false,
-      domain: 'wwwwwwwwwwww',
-      recordData: [{
-        id: 1111,
-        processDate: '2021-9-26',
-        remark: 'lalallaal',
-      },
-      {
-        id: 1112,
-        processDate: '2021-9-26',
-        remark: 'lalallaal',
-      },
-      ],
+      domain: '',
+      recordData: [],
+      debtors: 0,
+      useTimes: 0,
     });
     const optionList = ref([]);
     const getDetail = (id) => {
@@ -53,7 +45,7 @@ export default defineComponent({
           } = data || {};
           modalData.domain = domain;
           modalData.recordData = records;
-          proxy.dataForm = state;
+          proxy.dataForm = Object.assign(proxy.dataForm, state);
         }
       });
     };
@@ -62,29 +54,35 @@ export default defineComponent({
     };
     const handleOpen = (row) => {
       // 通过id获取详情信息  获取
-      const { id } = row;
+      const { id, debtors, useTimes } = row;
       modalData.visible = true;
+      modalData.debtors = debtors;
+      modalData.useTimes = useTimes;
       getDetail(id);
     };
     const handleClick = () => {
       proxy.$refs.dataForm.validate((volid) => {
         if (volid) {
           const params = { ...proxy.dataForm };
-          params.startDate = dateUtils.formatStandardDate(params.startDate);
-          params.endDate = dateUtils.formatStandardDate(params.endDate);
-          params.remark = params.remark.replace(/(\n)+/g, '\n');
-          modalData.loading = true;
-          monitorApi.save(params).then((res) => {
-            const { code } = res.data || {};
-            modalData.loading = false;
-            if (code === 200) {
-              proxy.$message.success('操作成功');
-              resetList();
-              modalData.visible = false;
-            } else {
-              proxy.$message.error('请求出错');
-            }
-          });
+          if (!params.remark) {
+            proxy.$message.warning('备注不允许为空');
+          } else {
+            params.startDate = dateUtils.formatStandardDate(params.startDate);
+            params.endDate = dateUtils.formatStandardDate(params.endDate);
+            params.remark = params.remark.replace(/(\n)+/g, '\n');
+            modalData.loading = true;
+            monitorApi.save(params).then((res) => {
+              const { code } = res.data || {};
+              modalData.loading = false;
+              if (code === 200) {
+                proxy.$message.success('操作成功');
+                resetList();
+                modalData.visible = false;
+              } else {
+                proxy.$message.error('请求出错');
+              }
+            });
+          }
         }
       });
     };
@@ -122,14 +120,6 @@ export default defineComponent({
         remarkItemList.map((i) => <div className="item" onClick={() => addRemark(i)}>{i}</div>)
       }
     </div>;
-    const recordList = <el-timeline class="record-area">
-      {
-        modalData.recordData.map((i) => <el-timeline-item placement="top" key={i.id} hollow>
-          <div className="record-area-time">{`处理时间：${i.processDate}`}</div>
-          <div className="record-area-cont">{`备注内容：${i.remark}`}</div>
-        </el-timeline-item>)
-      }
-    </el-timeline>;
     return {
       modalData,
       optionList,
@@ -139,7 +129,6 @@ export default defineComponent({
       modalSlots,
       handleOpen,
       remarkList,
-      recordList,
     };
   },
   render() {
@@ -151,7 +140,6 @@ export default defineComponent({
       disabledEndDate,
       modalSlots,
       remarkList,
-      recordList,
     } = this;
     return (
       <el-dialog
@@ -176,10 +164,14 @@ export default defineComponent({
           <el-form-item label="域名名称：" class="form-text">
             <span>{modalData.domain || '-'}</span>
           </el-form-item>
-          <el-form-item label="合作机构名称：" prop="orgNames">
-            <el-input v-model={dataForm.orgNames} placeholder="请输入合作机构名称" style={{ width: '402px' }}/>
+          <el-form-item label="合作机构名称：" prop="orgName">
+            <el-input
+              v-model={dataForm.orgName}
+              placeholder="请输入合作机构名称"
+              onBlur={(val) => dataForm.orgName = val.target.value.trim()}
+              style={{ width: '402px' }}/>
           </el-form-item>
-          <el-form-item label="合同起止日期：">
+          <el-form-item label="合同起止日期：" class="form-date">
             <div className="update-time">
               <el-form-item prop="startDate">
                 <el-date-picker
@@ -220,7 +212,7 @@ export default defineComponent({
               <el-input-number
                 v-model={dataForm.limitedSearchNums}
                 autocomplete="off"
-                min={0}
+                min={modalData.useTimes}
                 max={999999999}
                 style={{ width: '180px' }}/>
               </el-form-item>
@@ -242,25 +234,38 @@ export default defineComponent({
                 <el-input-number
                   v-model={dataForm.limitedDebtorNums}
                   autocomplete="off"
-                  min={0}
+                  min={modalData.debtors}
                   max={999999999}
                   style={{ width: '180px' }}/>
               </el-form-item>
             </el-col>
           </el-form-item>
-          <el-form-item label="备注：" prop="remark">
+          <el-form-item label="备注：" class="form-remark">
             <el-input
               v-model={dataForm.remark}
               autosize
               type="textarea"
+              style="width: 402px"
               placeholder="请输入备注"
               show-word-limit={true}
+              onBlur={(val) => dataForm.remark = val.target.value.trim()}
               maxlength={1000}>
             </el-input>
             {remarkList}
           </el-form-item>
           <el-form-item label="处理记录：" class="form-records">
-            {recordList}
+            {
+              modalData.recordData.length
+                ? <el-timeline className="record-area">
+                  {
+                    modalData.recordData.map((i) => <el-timeline-item placement="top" key={i.id} hollow>
+                      <div className="record-area-time">{`处理时间：${i.processDate}`}</div>
+                      <div className="record-area-cont">{`备注内容：${i.remark}`}</div>
+                    </el-timeline-item>)
+                  }
+                </el-timeline>
+                : <div style="line-height: 14px;">-</div>
+            }
           </el-form-item>
         </el-form>
       </el-dialog>
