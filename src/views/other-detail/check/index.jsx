@@ -106,7 +106,19 @@ export default defineComponent({
       state.value = value || text;
     };
     const handleConfirm = () => {
-      window.close();
+      const { params: { auctionId } } = proxy.$route;
+      CommonApi.confirm(auctionId).then((res) => {
+        const { code, message } = res.data || {};
+        if (code === 200) {
+          proxy.$message.success({
+            message: '操作成功',
+            duration: 1000,
+            onClose: () => window.close(),
+          });
+        } else {
+          proxy.$message.error(message);
+        }
+      });
     };
     onMounted(() => {
       const { params: { auctionId } } = proxy.$route;
