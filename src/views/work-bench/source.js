@@ -11,7 +11,7 @@ const workbenchTopAsset = [
     title: '正式机构数据推送量',
     describe: '',
     left: { id: 'first_left', field: 'lastDayPush', subtitle: '昨日数据推送量' },
-    right: { id: 'first_right', field: 'avgPush', subtitle: '昨日数据推送量' },
+    right: { id: 'first_right', field: 'avgPush', subtitle: '近半年日均推送量' },
   },
   {
     id: 'second',
@@ -56,7 +56,7 @@ const workbenchTopAsset = [
 const columns = [
   {
     prop: 'name',
-    label: '顶级合作机构',
+    label: '顶级合作机构名称',
     align: 'left',
     key: 1,
   },

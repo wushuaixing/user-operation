@@ -160,7 +160,7 @@ const dateRange = () => [{
 const replaceEmpty = (arr = []) => {
   const fn = (obj = {}) => {
     const newObj = {};
-    Object.keys(obj).forEach((i) => newObj[i] = obj[i] ? obj[i] : '-');
+    Object.keys(obj).forEach((i) => newObj[i] = (obj[i] || obj[i] === 0) ? obj[i] : '-');
     return newObj;
   };
   return arr.map((i) => fn(i));
