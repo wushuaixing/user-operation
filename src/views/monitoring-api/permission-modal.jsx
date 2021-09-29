@@ -240,7 +240,7 @@ export default defineComponent({
               </el-form-item>
             </el-col>
           </el-form-item>
-          <el-form-item label="备注：" class="form-remark">
+          <el-form-item label="备注：" prop="remark" class="form-remark">
             <el-input
               v-model={dataForm.remark}
               autosize
