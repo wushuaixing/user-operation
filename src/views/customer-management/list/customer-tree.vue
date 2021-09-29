@@ -157,6 +157,15 @@ export default {
       const dom = document.getElementById('customerTree');
       dom.scrollTop = 0;
     },
+    resetIndex() {
+      this.$nextTick(() => {
+        this.activities.forEach((item, index) => {
+          if (item.id === Number(this.activeKey)) {
+            this.isActive = index;
+          }
+        });
+      });
+    },
     // 点击选中某一项
     handleSelect(val, index, item) {
       this.closePopover();

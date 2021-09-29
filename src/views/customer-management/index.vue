@@ -244,7 +244,7 @@ export default {
         });
     },
     // 获取左侧树 数据
-    getCuntomerTreeData() {
+    getCuntomerTreeData(flag = '') {
       AdminApi.orgListDomain().then((res) => {
         const { code, data } = res.data || {};
         if (code === 200) {
@@ -252,6 +252,7 @@ export default {
           this.activities = list.map((i) => ({ ...i, showPopover: false }));
           this.totalOrgNum = totalOrgNum;
           this.totalOperatedOrgNum = totalOperatedOrgNum;
+          if (flag === 'resetIndex') this.$refs.CustomerTree.resetIndex();
         }
       });
     },
@@ -262,7 +263,7 @@ export default {
         const { code, message } = res.data || {};
         if (code === 200) {
           // 刷新左侧树
-          this.getCuntomerTreeData();
+          this.getCuntomerTreeData('resetIndex');
         } else {
           this.$message.error(message);
         }
