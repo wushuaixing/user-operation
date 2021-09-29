@@ -180,7 +180,7 @@ const handleObligors = (arr = []) => {
  * @param arr
  * @returns {{[p: string]: *}[]}
  */
-const handlePermissions = (arr = []) => arr.map((i) => ({ ...i, isSelect: i.group !== 'menu_dljg' }));
+const handlePermissions = (arr = []) => arr.map((i) => ({ ...i, isSelect: i.group !== 'menu_dljg' && i.name !== '业务报告导出' }));
 
 const getCheckedList = (permissions = []) => {
   let list = [];
