@@ -89,11 +89,10 @@ export default defineComponent({
       <a className="action-span" onClick={() => showPermissionModal(row)}>权限管理</a>
     </div>;
     const showExpire = ({ row }) => <span>{row.orgName}
-      <span class="iconfont iconyiguoqi"
-            key={row.id}
-            style="font-size: 17px;color: #F93535;margin-left: 4px"
-            v-show={row.isExpire}
-      /></span>;
+      {row.isExpire ? <i class="iconfont iconyiguoqi"
+                             key={row.id}
+                             style="font-size: 17px;color: #F93535;margin-left: 4px"
+      /> : ''}</span>;
     const resetList = () => {
       getList();
       getNums();
@@ -114,6 +113,7 @@ export default defineComponent({
       pageChange,
       action,
       resetList,
+      showExpire,
     } = this;
     return (
       <div className="monitor-api-content">
@@ -130,14 +130,22 @@ export default defineComponent({
             row-key={(val) => val.id}
             v-slots={tableData.empty}
           >
-            { monitorApiColumn.map((i, index) => <el-table-column
+            { monitorApiColumn.map((i, index) => (i.prop !== 'orgName' ? <el-table-column
               label={i.label}
               key={`${i.label}${index}`}
               prop={i.prop}
               width={i.width}
               align={i.align}
               sortable={i.sort}
-              />)
+              /> : <el-table-column
+                label={i.label}
+                key={`${i.label}${index}`}
+                prop={i.prop}
+                width={i.width}
+                align={i.align}
+                sortable={i.sort}
+                v-slots={(scope) => showExpire(scope)}
+              />))
             }
               <el-table-column label="操作" key="action" v-slots={(scope) => action(scope)}/>
           </el-table>
