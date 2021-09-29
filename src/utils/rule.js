@@ -57,8 +57,8 @@ export const adminRoutes = [
     redirect: '/index',
     children: [
       {
-        path: '/index',
-        name: 'Index',
+        path: '/accountManage',
+        name: 'AccountManage',
         component: () => import('@/views/account-management/index.vue'),
       },
       {
@@ -72,8 +72,8 @@ export const adminRoutes = [
         component: () => import('@/views/task-assign/index.vue'),
       },
       {
-        path: '/workBench',
-        name: 'workBench',
+        path: '/index',
+        name: 'Index',
         component: () => import('@/views/work-bench/index'),
       },
       {
@@ -115,18 +115,18 @@ export const adminMenu = [
   {
     text: '工作台',
     icon: 'iconfont icongongzuotai',
-    path: '/workBench',
+    path: '/index',
     key: 'WorkBench',
   },
   {
     text: '账号管理',
     icon: 'iconfont iconyonghuyunying-zhanghaoguanli',
-    path: '/index',
+    path: '/accountManage',
     key: 'Instructions',
     child: [
       {
         text: '运营账号',
-        path: '/index',
+        path: '/accountManage',
         key: 'Instructions',
       },
     ],
