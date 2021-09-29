@@ -17,6 +17,7 @@
           :activeKey="activeKey"
           :heightStyle="heightStyle"
           @handleClick="customerTreeClick"
+          @toTopAction="toTopAction"
         ></CustomerTree>
       </div>
       <div class="main-content-right">
@@ -251,6 +252,19 @@ export default {
           this.activities = list.map((i) => ({ ...i, showPopover: false }));
           this.totalOrgNum = totalOrgNum;
           this.totalOperatedOrgNum = totalOperatedOrgNum;
+        }
+      });
+    },
+    // 置顶操作 id机构id  flag置顶、取消置顶
+    toTopAction(id, flag) {
+      const api = flag ? () => AdminApi.resetToTop(id) : () => AdminApi.setToTop(id);
+      api().then((res) => {
+        const { code, message } = res.data || {};
+        if (code === 200) {
+          // 刷新左侧树
+          this.getCuntomerTreeData();
+        } else {
+          this.$message.error(message);
         }
       });
     },
