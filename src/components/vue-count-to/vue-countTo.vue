@@ -172,7 +172,7 @@ export default {
       return !Number.isNaN(parseFloat(val));
     },
     formatNumber(num) {
-      num = num.toFixed(this.decimals);
+      num = Number(num).toFixed(this.decimals);
       num += '';
       const x = num.split('.');
       let x1 = x[0];
