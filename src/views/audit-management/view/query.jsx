@@ -1,7 +1,9 @@
 import {
   defineComponent, getCurrentInstance, reactive,
 } from 'vue';
-import { AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS } from '@/static';
+import {
+  AUCTION_STATUS, IMPORTANT_TYPE, PUSH_STATUS, AUDITTYPE,
+} from '@/static';
 import { dateUtils } from '@/utils';
 
 // 审核管理-右侧搜索条件
@@ -25,6 +27,7 @@ export default defineComponent({
       createTimeEnd: '', // 匹配结束时间
       pmStatus: '', // 拍卖状态 1:'即将开始', 3:'进行中',5:'已成交',7:'已流拍',9:'中止',11:'撤回'
       status: '', // 状态 0未推送 1已推送 5不推送 2已召回 3已退回 4已修改
+      auditType: '', // 审核情况 0自动审核 1人工审核
       approveTimeStart: '', // 审核开始时间
       approveTimeEnd: '', // 审核结束时间
       updateTimeEnd: '', // 更新结束时间 ,示例值(2021-01-01)
@@ -42,22 +45,6 @@ export default defineComponent({
     const handleSearch = () => {
       proxy.$emit('handleSearch', 'search');
     };
-    // 监听开拍时间，选择日期范围后,结束日期置空
-    // watch(() => state.start, (newVal) => {
-    //   const arr = toRaw(newVal) || [];
-    //   const startDate = arr[0];
-    //   const endDate = arr[1];
-    //   const fn = (i) => dateUtils.formatStandardDate(i);
-    //   const dom = document.getElementsByClassName('el-picker-panel__shortcut');
-    //   if (new Date(endDate).getTime() === 0) {
-    //     state.start = [startDate];
-    //     dateRange().forEach((i, index) => {
-    //       if (fn(i.value[0]) === fn(startDate)) {
-    //         nextTick(() => dom[index].style.color = '#296DD3').then((r) => console.log(r));
-    //       }
-    //     });
-    //   }
-    // });
     // 日期控件做前后限制
     const disabledStartDate = (startTime, prop) => {
       if (state[prop]) {
@@ -75,13 +62,37 @@ export default defineComponent({
     };
     // 失焦去空格
     const handleBlur = (key) => state[key] = state[key].replace(/\s+/g, '');
+    const shortcuts = reactive({
+      shortcuts: [{
+        text: '近一个月及以后',
+        value: (() => {
+          const start = new Date();
+          start.setMonth(start.getMonth() - 1);
+          return start;
+        })(),
+      }, {
+        text: '近三个月及以后',
+        value: (() => {
+          const start = new Date();
+          start.setMonth(start.getMonth() - 3);
+          return start;
+        })(),
+      }, {
+        text: '近半年及以后',
+        value: (() => {
+          const start = new Date();
+          start.setMonth(start.getMonth() - 6);
+          return start;
+        })(),
+      }],
+    });
     return {
-      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur,
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur, shortcuts,
     };
   },
   render() {
     const {
-      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur, tableType,
+      state, resetForm, handleSearch, disabledEndDate, disabledStartDate, handleBlur, tableType, shortcuts,
     } = this;
     return (
       <div className="content-right-query">
@@ -139,21 +150,21 @@ export default defineComponent({
             <el-form-item label="拍卖状态：" prop='pmStatus'>
               <el-select v-model={state.pmStatus} placeholder="请选择" style={{ width: '96px' }}>
                 {
-                  AUCTION_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
+                  AUCTION_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}/>)
                 }
               </el-select>
             </el-form-item>
             <el-form-item label="状态：" prop='status'>
               <el-select v-model={state.status} placeholder="请选择" style={{ width: '96px' }}>
                 {
-                  PUSH_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
+                  PUSH_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}/>)
                 }
               </el-select>
             </el-form-item>
-            <el-form-item label="审核情况：" prop='status' v-show={tableType !== '1' && tableType !== '5'}>
-              <el-select v-model={state.status} placeholder="请选择" style={{ width: '96px' }}>
+            <el-form-item label="审核情况：" prop='auditType' v-show={tableType !== '1' && tableType !== '5'}>
+              <el-select v-model={state.auditType} placeholder="请选择" style={{ width: '96px' }}>
                 {
-                  PUSH_STATUS.map((i) => <el-option key={i.value} label={i.label} value={i.value}></el-option>)
+                  AUDITTYPE.map((i) => <el-option key={i.value} label={i.label} value={i.value}/>)
                 }
               </el-select>
             </el-form-item>
@@ -200,9 +211,11 @@ export default defineComponent({
               <el-date-picker
                 type="date"
                 placeholder="开始时间"
+                popper-class="date-picker-kp"
                 v-model={state.startStart}
                 style="width: 130px"
                 disabledDate={(val) => disabledStartDate(val, 'startEnd')}
+                shortcuts={shortcuts.shortcuts}
               />
             </el-form-item>
             <el-form-item label="至" prop="startEnd" class="time-end" style="margin-right: 13px;">
