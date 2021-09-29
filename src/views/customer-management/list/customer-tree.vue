@@ -26,7 +26,7 @@
         class="customer-tree-content-item"
         @click.right="() => showPopover(index)"
       >
-        <span :class="{ active: isActive === index }" class="itemText" @click="handleSelect('item', index, item)">
+        <span :class="{ active: isActive === index, isTop: item.sortOrder >= 1 }" class="itemText" @click="handleSelect('item', index, item)">
           <div class="itemText-ellipsis">
             <el-tooltip
               effect="dark"
@@ -48,10 +48,8 @@
             <template #reference>
               <span style="width: 1px;height: 32px;"></span>
             </template>
-            <div class="popover-area">
-              <svg class="icon popover-icon" aria-hidden="true">
-                <use :xlink:href="item.sortOrder >= 1 ? '#iconquxiaozhiding' : '#iconzhiding'"></use>
-              </svg>
+            <div class="popover-area" @click="handleActionToTop(item, item.sortOrder >= 1)">
+              <i :class="`iconfont ${item.sortOrder >= 1 ? 'iconquxiaozhiding' : 'iconzhiding'} zhiding`"></i>
               {{item.sortOrder >= 1 ? '取消置顶' : '机构置顶'}}
             </div>
           </el-popover>
@@ -134,9 +132,19 @@ export default {
     },
   },
   mounted() {
+    // 取消树区域的默认浏览器右键事件
     document.getElementById('customerTree').oncontextmenu = function () {
       return false;
     };
+    // 处理 点击树以外的地方就将置顶弹窗收起
+    document.addEventListener('click', (e) => {
+      const dom = document.getElementById('customerTree');
+      if (dom) {
+        if (!dom.contains(e.target)) {
+          this.closePopover();
+        }
+      }
+    });
   },
   methods: {
     // 设置文字+数字
@@ -148,6 +156,15 @@ export default {
       this.isActive = -1;
       const dom = document.getElementById('customerTree');
       dom.scrollTop = 0;
+    },
+    resetIndex() {
+      this.$nextTick(() => {
+        this.activities.forEach((item, index) => {
+          if (item.id === Number(this.activeKey)) {
+            this.isActive = index;
+          }
+        });
+      });
     },
     // 点击选中某一项
     handleSelect(val, index, item) {
@@ -164,14 +181,22 @@ export default {
         this.$emit('handleClick', '', item);
       }
     },
+    // 关闭置顶浮窗
     closePopover() {
       this.showList.forEach((item, index) => {
         if (item.showPopover) this.showList[index].showPopover = false;
       });
     },
+    // 显示置顶浮窗
     showPopover(index) {
       this.closePopover();
       this.showList[index].showPopover = true;
+    },
+    // 点击操作调接口
+    handleActionToTop(item, flag) {
+      this.closePopover();
+      const { id } = item;
+      this.$emit('toTopAction', id, flag);
     },
   },
 };
@@ -227,6 +252,9 @@ export default {
       .active {
         color: #296dd3;
         font-weight: bold;
+      }
+      .isTop {
+        background-color: #EEF1F7;
       }
       .itemS {
         position: absolute;
@@ -285,14 +313,11 @@ export default {
   text-align: center;
   cursor: pointer;
   line-height: 14px;
-  .popover-icon {
-    font-size: 14px;
-    &:hover {
-      fill: #296DD3;
-    }
-  }
   &:hover {
     color: #296DD3;
+  }
+  .zhiding {
+    font-size: 14px;
   }
 }
 </style>

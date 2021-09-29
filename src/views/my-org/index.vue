@@ -3,8 +3,8 @@
     <div class="my-org-header">
       <div class="tabs-button">
         <el-radio-group v-model="tabKey" @change="showTab">
-          <el-radio-button :label="1">正式机构</el-radio-button>
-          <el-radio-button :label="0">试用机构</el-radio-button>
+          <el-radio-button :label="1" key="1">正式机构</el-radio-button>
+          <el-radio-button :label="0" key="2">试用机构</el-radio-button>
         </el-radio-group>
       </div>
       <OrgMessage :data="orgMessage" :type="tabKey"></OrgMessage>
@@ -147,7 +147,7 @@
             :label="item.label"
             :sortable="item.sort"
             :min-width="item.width"
-            :key="item.class"
+            :key="item.prop"
             :align="item.align"
             :class-name="item.class"
           />
@@ -173,13 +173,13 @@
                 <a class="table-action-more">
                   更多
                 </a>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item @click="handleOpenModal('report', scope.row)">客户报告导出</el-dropdown-item>
-                    <el-dropdown-item @click="handleOpenModal('data', scope.row)">综合数据导出</el-dropdown-item>
-                    <el-dropdown-item @click="handleOpenModal('record', scope.row)">账号使用情况导出</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
+<!--                <template #dropdown>-->
+<!--                  <el-dropdown-menu>-->
+<!--                    <el-dropdown-item @click="handleOpenModal('report', scope.row)">客户报告导出</el-dropdown-item>-->
+<!--                    <el-dropdown-item @click="handleOpenModal('data', scope.row)">综合数据导出</el-dropdown-item>-->
+<!--                    <el-dropdown-item @click="handleOpenModal('record', scope.row)">账号使用情况导出</el-dropdown-item>-->
+<!--                  </el-dropdown-menu>-->
+<!--                </template>-->
               </el-dropdown>
             </template>
           </el-table-column>
