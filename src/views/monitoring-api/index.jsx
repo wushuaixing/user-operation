@@ -88,6 +88,11 @@ export default defineComponent({
     const action = ({ row }) => <div>
       <a className="action-span" onClick={() => showPermissionModal(row)}>权限管理</a>
     </div>;
+    const showExpire = ({ row }) => <span>{row.orgName}
+      <span class="iconfont iconyiguoqi"
+            style="font-size: 17px;color: #F93535;margin-left: 4px"
+            v-show={row.isExpire}
+      /></span>;
     const resetList = () => {
       getList();
       getNums();
@@ -98,6 +103,7 @@ export default defineComponent({
       pageChange,
       action,
       resetList,
+      showExpire,
     };
   },
   render() {
@@ -107,6 +113,7 @@ export default defineComponent({
       pageChange,
       action,
       resetList,
+      showExpire,
     } = this;
     return (
       <div className="monitor-api-content">
@@ -129,7 +136,10 @@ export default defineComponent({
               prop={i.prop}
               width={i.width}
               align={i.align}
-              sortable={i.sort} />)}
+              sortable={i.sort}
+              v-slots={i.prop === 'orgName' ? (scope) => showExpire(scope) : null}
+              />)
+            }
               <el-table-column label="操作" key="action" v-slots={(scope) => action(scope)}/>
           </el-table>
           <el-pagination
