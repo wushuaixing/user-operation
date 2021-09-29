@@ -90,6 +90,7 @@ export default defineComponent({
     </div>;
     const showExpire = ({ row }) => <span>{row.orgName}
       <span class="iconfont iconyiguoqi"
+            key={row.id}
             style="font-size: 17px;color: #F93535;margin-left: 4px"
             v-show={row.isExpire}
       /></span>;
@@ -113,7 +114,6 @@ export default defineComponent({
       pageChange,
       action,
       resetList,
-      showExpire,
     } = this;
     return (
       <div className="monitor-api-content">
@@ -137,7 +137,6 @@ export default defineComponent({
               width={i.width}
               align={i.align}
               sortable={i.sort}
-              v-slots={i.prop === 'orgName' ? (scope) => showExpire(scope) : null}
               />)
             }
               <el-table-column label="操作" key="action" v-slots={(scope) => action(scope)}/>

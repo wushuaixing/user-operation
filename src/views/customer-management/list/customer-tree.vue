@@ -137,16 +137,20 @@ export default {
       return false;
     };
     // 处理 点击树以外的地方就将置顶弹窗收起
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) => this.handleClosePopover(e));
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', (e) => this.handleClosePopover(e));
+  },
+  methods: {
+    handleClosePopover(e) {
       const dom = document.getElementById('customerTree');
       if (dom) {
         if (!dom.contains(e.target)) {
           this.closePopover();
         }
       }
-    });
-  },
-  methods: {
+    },
     // 设置文字+数字
     setText(item) {
       return `(${item.operatedOrgNum}/${item.orgNum})`;
