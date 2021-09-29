@@ -50,7 +50,6 @@ export default defineComponent({
     });
 
     const radioChange = (value, which) => {
-      console.log(value, which);
       switch (which) {
         case 'radio1':
           getSyncView(value).then((res) => {
@@ -98,7 +97,7 @@ export default defineComponent({
             if (res.data.code === 200) {
               const { data } = res.data;
               state.loading.third = false;
-              drawEcharts(data, 'match-distribute');
+              drawEcharts(data, 'match-distribute', val);
             }
           }).finally(() => {
             state.loading.third = false;
@@ -110,7 +109,7 @@ export default defineComponent({
             if (res.data.code === 200) {
               const { data } = res.data;
               state.loading.fourth = false;
-              drawEcharts(data, 'data-distribute');
+              drawEcharts(data, 'data-distribute', val);
             }
           }).finally(() => {
             state.loading.fourth = false;
@@ -120,8 +119,8 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      numScroll('#scroll-focus', 123456);
       const { model } = state;
+      const chart = {};
       Promise.all([
         getTotalAuctionNum(),
         getSyncDiffNum(),
@@ -132,14 +131,29 @@ export default defineComponent({
         getDataIncrViewOfDay(model.date2),
         getRecallView(),
       ]).then((res) => {
-        console.log('@@@', res);
-        drawEcharts(res[4].data.data, 'data-trend');
-        drawEcharts(res[7].data.data, 'recall-statistics');
-      }).catch().finally(() => {
+        state.totalNum = res[0].data.data;
+        numScroll('#scroll-focus', state.totalNum, '条');
+        state.esDiffNum = res[1].data.data;
+        state.syncView = res[2].data.data;
+        // chart.echarts1 = drawEcharts(res[3].data.data, 'match-statistics');
+        chart.echarts2 = drawEcharts(res[4].data.data, 'data-trend', state.model.date1);
+        // chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute');
+        chart.echarts4 = drawEcharts(res[6].data.data, 'data-distribute', state.model.date2);
+        chart.echarts5 = drawEcharts(res[7].data.data, 'recall-statistics');
+      }).catch(() => {
+        console.log('请求失败...');
+      }).finally(() => {
         Object.keys(state.loading).forEach((key) => {
           state.loading[key] = false;
         });
       });
+
+      window.onresize = () => {
+        Object.keys(chart).forEach((key) => {
+          chart[key].resize();
+        });
+      };
+
       // data: 数据; match: 匹配; statistics: 统计; distribute: 分布; trend: 趋势; recall: 召回;
       // 匹配与推送情况统计图
       const chartDom1 = document.getElementById('match-statistics');
@@ -237,25 +251,10 @@ export default defineComponent({
       };
       myChart1.setOption(option);
 
-      // 数据增量趋势图
-      // const chartDom2 = document.getElementById('data-trend');
-      // const myChart2 = echarts.init(chartDom2);
-      // myChart2.setOption(option);
-
       // 匹配与推送时间段分布图
       const chartDom3 = document.getElementById('match-distribute');
       const myChart3 = echarts.init(chartDom3);
       myChart3.setOption(option);
-
-      // 数据增量时间段分布图
-      const chartDom4 = document.getElementById('data-distribute');
-      const myChart4 = echarts.init(chartDom4);
-      myChart4.setOption(option);
-
-      // 召回情况统计图
-      const chartDom5 = document.getElementById('recall-statistics');
-      const myChart5 = echarts.init(chartDom5);
-      myChart5.setOption(option);
     });
     return { state, dateChange, radioChange };
   },
@@ -269,7 +268,7 @@ export default defineComponent({
               <div><img src={totalData} alt=""/></div>
               <div>
                 <div className="desc">司法拍卖结构化数据总量</div>
-                <div><div className="num" id="scroll-focus">{state.totalNum}</div>条</div>
+                <div><div className="num" id="scroll-focus">{state.totalNum}</div></div>
               </div>
             </div>
             <div className="right">
@@ -319,7 +318,7 @@ export default defineComponent({
             </el-radio-group>
           </div>
           <div className="monitor-view-container-content">
-            <div className="echarts-block" id="match-statistics" />
+            <div className="echarts-block" id="match-statistics"></div>
             <p>分析参考：两条曲线重合度越高，说明当前推送情况越好</p>
           </div>
         </div>

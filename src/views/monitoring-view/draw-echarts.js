@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as echarts from 'echarts';
 
-const drawEcharts = (dataList, el) => {
+const drawEcharts = (dataList = [], el, date) => {
   const obj = {};
   const xData = [];
   const series = [];
@@ -38,7 +38,6 @@ const drawEcharts = (dataList, el) => {
             <div>${params[2].seriesName}：${params[2].data}%(少${params[3].data}条)</div>
         `),
         },
-        min: 500,
       },
     },
     'data-trend': {
@@ -61,7 +60,6 @@ const drawEcharts = (dataList, el) => {
             <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
         `),
         },
-        min: 500,
       },
     },
     'match-distribute': {
@@ -79,12 +77,11 @@ const drawEcharts = (dataList, el) => {
         tooltip: {
           formatter: (params) => (`
             <div>全部</div>
-            <div>${params[0].name}</div>
+            <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
             <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
             <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
         `),
         },
-        min: 500,
       },
     },
     'data-distribute': {
@@ -102,12 +99,11 @@ const drawEcharts = (dataList, el) => {
         tooltip: {
           formatter: (params) => (`
             <div>全部</div>
-            <div>${params[0].name}</div>
+            <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
             <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
             <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
         `),
         },
-        min: 500,
       },
     },
     'recall-statistics': {
@@ -136,7 +132,10 @@ const drawEcharts = (dataList, el) => {
             <div class="before red">${params[2].seriesName}：${params[2].data}%</div>
         `),
         },
-        max: 100,
+        yFormatter: (value) => (`
+          ${Number(value).toFixed(2)}%
+          `
+        ),
       },
     },
   };
@@ -190,7 +189,7 @@ const drawEcharts = (dataList, el) => {
     legend: {
       data: legendData,
       top: 16,
-      right: 24,
+      right: 30,
       itemGap: 40,
       lineStyle: {
         width: 0,
@@ -205,7 +204,7 @@ const drawEcharts = (dataList, el) => {
     },
     grid: {
       left: '4%',
-      right: '4%',
+      right: '10%',
       bottom: '4%',
       containLabel: true,
     },
@@ -225,8 +224,7 @@ const drawEcharts = (dataList, el) => {
     },
     yAxis: {
       type: 'value',
-      max: baseInfo[el].other.max,
-      min: baseInfo[el].other.min,
+      max: el === 'recall-statistics' ? Math.min(Math.max(...obj.rate) * 1.2, 100) : null,
       axisLine: {
         show: true,
         lineStyle: {
@@ -235,6 +233,7 @@ const drawEcharts = (dataList, el) => {
       },
       axisLabel: {
         color: '#7D8699',
+        formatter: baseInfo[el].other.yFormatter,
       },
     },
     series,
@@ -242,5 +241,6 @@ const drawEcharts = (dataList, el) => {
   const chartDom = document.getElementById(el);
   const myChart = echarts.init(chartDom);
   myChart.setOption(option);
+  return myChart;
 };
 export default drawEcharts;

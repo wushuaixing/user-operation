@@ -1,8 +1,9 @@
 import {
   defineComponent,
   reactive,
-  onUnmounted,
   computed,
+  watch,
+  onMounted,
 } from 'vue';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 
@@ -39,13 +40,16 @@ export default defineComponent({
     const currentVal = reactive({
       value: 0,
     });
-    const timer = setInterval(() => {
-      currentVal.value += (props.duration / props.percentage);
-      if (currentVal.value >= props.percentage) {
-        currentVal.value = props.percentage;
-        clearInterval(timer);
-      }
-    }, 1000 / 60);
+
+    const changeCircleValue = () => {
+      const timer = setInterval(() => {
+        currentVal.value += (props.duration / props.percentage);
+        if (currentVal.value >= props.percentage) {
+          currentVal.value = props.percentage;
+          clearInterval(timer);
+        }
+      }, 1000 / 60);
+    };
 
     const radius = computed(() => {
       if (props.type === 'circle' || props.type === 'dashboard') {
@@ -80,17 +84,15 @@ export default defineComponent({
       textAlign: 'center',
     };
 
-    // watch(() => props.percentage, () => {
-    //   if (timer) {
-    //     clearInterval(timer);
-    //   }
-    // });
-
-    onUnmounted(() => {
-      if (timer) {
-        clearInterval(timer);
-      }
+    watch(() => props.percentage, () => {
+      currentVal.value = 0;
+      changeCircleValue();
     });
+
+    onMounted(() => {
+      changeCircleValue();
+    });
+
     return {
       currentVal,
       d,

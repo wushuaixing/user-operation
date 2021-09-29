@@ -24,8 +24,12 @@ import $ from 'jquery';
         for(let i = 0; i<  valLen; i++){
           strHtml += '<li class="dataOne "><div class="dataBoc"><div class="tt" t="38"><span class="num0">0</span> <span class="num1">1</span> <span class="num2">2</span> <span class="num3">3</span> <span class="num4">4</span><span class="num5">5</span> <span class="num6">6</span> <span class="num7">7</span> <span class="num8">8</span> <span class="num9">9</span><span class="num0">0</span> <span class="num1">1</span> <span class="num2">2</span> <span class="num3">3</span> <span class="num4">4</span><span class="num5">5</span> <span class="num6">6</span> <span class="num7">7</span> <span class="num8">8</span> <span class="num9">9</span></div></div></li>';
         }
-        strHtml += '</ul>';
+        strHtml += `</ul><span class="scroll-prefix">${options.prefix}</span>`;
         obj.html(strHtml);
+        $('.scroll-prefix').css({
+          position: 'absolute',
+          left: $('.number-scroll-scroll-focus').width() + 8,
+        })
       }
       this.scroNum(options);
     },
@@ -59,10 +63,11 @@ import $ from 'jquery';
   };
 })($, window, document);
 
-const numScroll = (el, num) => {
+const numScroll = (el, num, prefix) => {
   $(() => {
     $(el).rollNumDaq({
       deVal: num,
+      prefix: prefix || '',
       className: `number-scroll-${el.replace('#', '')}`
     });
   });
