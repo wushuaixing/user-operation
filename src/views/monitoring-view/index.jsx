@@ -346,6 +346,7 @@ export default defineComponent({
                 placeholder="请选择"
                 style="width: 150px"
                 v-model={model.date1}
+                editable={false}
                 onChange={(value) => this.dateChange(value, 'date1')}
               />
             </el-form-item>
@@ -365,6 +366,7 @@ export default defineComponent({
                 placeholder="请选择"
                 style="width: 150px"
                 v-model={model.date2}
+                editable={false}
                 onChange={(value) => this.dateChange(value, 'date2')}
               />
             </el-form-item>

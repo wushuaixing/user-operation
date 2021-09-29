@@ -281,6 +281,7 @@ export default defineComponent({
                   <el-date-picker
                     type="month"
                     placeholder="请选择"
+                    editable={false}
                     disabledDate={this.disabledDate}
                     v-model={state.date}
                   />
