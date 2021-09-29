@@ -169,4 +169,26 @@
       color: #20242E;
     }
   }
+  .before{
+    &::before{
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 5px;
+      border-radius: 50%;
+    }
+    &.blue::before{
+      background-image: linear-gradient(#5BB4F7, #3180EC);
+    }
+    &.green::before{
+      background-image: linear-gradient(#5BDFC6, #1BBA7C);
+    }
+    &.yellow::before{
+      background-image: linear-gradient(#FEB754, #FF871C);
+    }
+    &.red::before{
+      background-image: linear-gradient(#FF8C8D, #FF3134);
+    }
+  }
 }
