@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "24692153",
+      "name": "顶级机构分配",
+      "font_class": "dingjijigoufenpei",
+      "unicode": "e6b4",
+      "unicode_decimal": 59060
+    },
+    {
       "icon_id": "24458669",
       "name": "工作台",
       "font_class": "gongzuotai",
