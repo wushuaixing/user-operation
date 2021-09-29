@@ -18,7 +18,7 @@ export default defineComponent({
     },
     percentage: {
       type: Number,
-      default: () => 87,
+      default: () => 0,
     },
     width: {
       type: Number,
@@ -80,6 +80,12 @@ export default defineComponent({
       textAlign: 'center',
     };
 
+    // watch(() => props.percentage, () => {
+    //   if (timer) {
+    //     clearInterval(timer);
+    //   }
+    // });
+
     onUnmounted(() => {
       if (timer) {
         clearInterval(timer);
@@ -112,7 +118,7 @@ export default defineComponent({
         </div>
         <div className="el-progress-bar__innerText" style={this.slotStyle}>
           <div className="percentage-label">数据同步率</div>
-          <CountTo startVal={0} endVal={this.percentage} suffix="%" />
+          <CountTo startVal={0} endVal={this.percentage} suffix="%" decimals={2} />
         </div>
       </div>
     );

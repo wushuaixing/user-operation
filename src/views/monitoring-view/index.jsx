@@ -8,13 +8,31 @@ import iconfont from '@/assets/img/iconsifapaimaishuju.png';
 import icon from '@/assets/img/icon.png';
 import monitorViewApi from '@/server/api/monitor-view';
 import numScroll from '@/utils/number-scroll';
-// import drawEcharts from '@/views/monitoring-view/draw-echarts';
+import { dateUtils } from '@/utils';
+import drawEcharts from '@/views/monitoring-view/draw-echarts';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import CircleProgress from './circle-progress';
 
 export default defineComponent({
   setup() {
+    const {
+      getTotalAuctionNum,
+      getSyncDiffNum,
+      getSyncView,
+      getPushView,
+      getDataIncrView,
+      getPushViewOfDay,
+      getDataIncrViewOfDay,
+      getRecallView,
+    } = monitorViewApi;
     const state = reactive({
+      loading: {
+        first: true,
+        second: true,
+        third: true,
+        fourth: true,
+        fifth: true,
+      },
       totalNum: 0,
       esDiffNum: 12,
       syncView: {
@@ -22,21 +40,105 @@ export default defineComponent({
         esNum: 123412,
         rate: 86,
       },
-      percent: 87,
-      startVal: 0,
-      endVal: 0,
       model: {
         radio1: '1',
         radio2: '1',
         radio3: '1',
-        date1: '',
-        date2: '',
+        date1: dateUtils.formatStandardDate(new Date(), 'YYYY-MM-DD'),
+        date2: dateUtils.formatStandardDate(new Date(), 'YYYY-MM-DD'),
       },
     });
+
+    const radioChange = (value, which) => {
+      console.log(value, which);
+      switch (which) {
+        case 'radio1':
+          getSyncView(value).then((res) => {
+            if (res.data.code === 200) {
+              const { data } = res.data;
+              state.syncView = data;
+            }
+          });
+          break;
+        case 'radio2':
+          state.loading.first = true;
+          getPushView(value).then((res) => {
+            if (res.data.code === 200) {
+              const { data } = res.data;
+              state.loading.first = false;
+              drawEcharts(data, 'match-statistics');
+            }
+          }).finally(() => {
+            state.loading.first = false;
+          });
+          break;
+        case 'radio3':
+          state.loading.second = true;
+          getDataIncrView(value).then((res) => {
+            if (res.data.code === 200) {
+              const { data } = res.data;
+              state.loading.second = false;
+              drawEcharts(data, 'data-trend');
+            }
+          }).finally(() => {
+            state.loading.second = false;
+          });
+          break;
+        default:
+          break;
+      }
+    };
+
+    const dateChange = (value, which) => {
+      const val = dateUtils.formatStandardDate(value, 'YYYY-MM-DD');
+      if (val) {
+        if (which === 'date1') {
+          state.loading.third = true;
+          getPushViewOfDay(val).then((res) => {
+            if (res.data.code === 200) {
+              const { data } = res.data;
+              state.loading.third = false;
+              drawEcharts(data, 'match-distribute');
+            }
+          }).finally(() => {
+            state.loading.third = false;
+          });
+        }
+        if (which === 'date2') {
+          state.loading.fourth = true;
+          getDataIncrViewOfDay(val).then((res) => {
+            if (res.data.code === 200) {
+              const { data } = res.data;
+              state.loading.fourth = false;
+              drawEcharts(data, 'data-distribute');
+            }
+          }).finally(() => {
+            state.loading.fourth = false;
+          });
+        }
+      }
+    };
+
     onMounted(() => {
       numScroll('#scroll-focus', 123456);
-      Promise.all([monitorViewApi.getTotalAuctionNum(), monitorViewApi.getSyncDiffNum()]).then((res) => {
-        console.log('@@@', res[0].data, res[1].data);
+      const { model } = state;
+      Promise.all([
+        getTotalAuctionNum(),
+        getSyncDiffNum(),
+        getSyncView(model.radio1),
+        getPushView(model.radio2),
+        getDataIncrView(model.radio3),
+        getPushViewOfDay(model.date1),
+        getDataIncrViewOfDay(model.date2),
+        getRecallView(),
+      ]).then((res) => {
+        console.log('@@@', res);
+        drawEcharts(res[4].data.data, 'data-trend');
+        drawEcharts(res[7].data.data, 'recall-statistics');
+      }).catch().finally(() => {
+        Object.keys(state.loading).forEach((key) => {
+          state.loading[key] = false;
+        });
       });
       // data: 数据; match: 匹配; statistics: 统计; distribute: 分布; trend: 趋势; recall: 召回;
       // 匹配与推送情况统计图
@@ -51,9 +153,15 @@ export default defineComponent({
             fontSize: 14,
             fontWeight: 'normal',
           },
+          formatter: (params) => (`
+            <div>匹配推送情况</div>
+            <div>${params[0].name}</div>
+            <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
+            <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
+        `),
         },
         legend: {
-          data: ['匹配数据量', '推送数据量'],
+          data: ['匹配数据量', '实际推送量'],
           top: 16,
           right: 24,
           itemGap: 40,
@@ -64,6 +172,8 @@ export default defineComponent({
             fontSize: 14,
             color: '#4E5566',
           },
+          itemWidth: 8,
+          itemHeight: 8,
           selectedMode: false,
         },
         grid: {
@@ -103,7 +213,7 @@ export default defineComponent({
             data: [120, 132, 101, 134, 90, 230, 210],
           },
           {
-            name: '推送数据量',
+            name: '实际推送量',
             type: 'line',
             stack: 'Total',
             symbol: 'circle',
@@ -128,9 +238,9 @@ export default defineComponent({
       myChart1.setOption(option);
 
       // 数据增量趋势图
-      const chartDom2 = document.getElementById('data-trend');
-      const myChart2 = echarts.init(chartDom2);
-      myChart2.setOption(option);
+      // const chartDom2 = document.getElementById('data-trend');
+      // const myChart2 = echarts.init(chartDom2);
+      // myChart2.setOption(option);
 
       // 匹配与推送时间段分布图
       const chartDom3 = document.getElementById('match-distribute');
@@ -146,18 +256,11 @@ export default defineComponent({
       const chartDom5 = document.getElementById('recall-statistics');
       const myChart5 = echarts.init(chartDom5);
       myChart5.setOption(option);
-      const timer = setInterval(() => {
-        state.endVal += (2000 / state.percent);
-        if (state.endVal >= state.percent) {
-          state.endVal = state.percent;
-          clearInterval(timer);
-        }
-      }, 1000 / 60);
     });
-    return { state };
+    return { state, dateChange, radioChange };
   },
   render() {
-    const { state: { model }, state } = this;
+    const { state: { model, loading }, state } = this;
     return (
       <div className="monitor-view-wrapper">
         <div className="monitor-view-container">
@@ -190,7 +293,7 @@ export default defineComponent({
           <div className="monitor-view-container-down">
             <div className="monitor-view-container-head">
               <div className="title">数据同步情况监控</div>
-              <el-radio-group v-model={model.radio1}>
+              <el-radio-group onChange={(value) => this.radioChange(value, 'radio1')} v-model={model.radio1}>
                 <el-radio-button label="1">昨天</el-radio-button>
                 <el-radio-button label="2">前天</el-radio-button>
                 <el-radio-button label="3">近一周</el-radio-button>
@@ -206,10 +309,10 @@ export default defineComponent({
             </div>
           </div>
         </div>
-        <div className="monitor-view-container">
+        <div className="monitor-view-container" v-loading={loading.first}>
           <div className="monitor-view-container-head">
             <div className="title">匹配与推送情况统计图</div>
-            <el-radio-group v-model={model.radio2}>
+            <el-radio-group onChange={(value) => this.radioChange(value, 'radio2')} v-model={model.radio2}>
               <el-radio-button label="1">近一周</el-radio-button>
               <el-radio-button label="2">近一年</el-radio-button>
               <el-radio-button label="3">全年</el-radio-button>
@@ -220,10 +323,10 @@ export default defineComponent({
             <p>分析参考：两条曲线重合度越高，说明当前推送情况越好</p>
           </div>
         </div>
-        <div className="monitor-view-container">
+        <div className="monitor-view-container" v-loading={loading.second}>
           <div className="monitor-view-container-head">
             <div className="title">数据增量趋势图</div>
-            <el-radio-group v-model={model.radio3}>
+            <el-radio-group onChange={(value) => this.radioChange(value, 'radio3')} v-model={model.radio3}>
               <el-radio-button label="1">近一周</el-radio-button>
               <el-radio-button label="2">近一年</el-radio-button>
               <el-radio-button label="3">全年</el-radio-button>
@@ -234,7 +337,7 @@ export default defineComponent({
             <p>分析参考：数据统计截止到每日凌晨六点，曲线重合度越高，说明数据同步进程越稳定</p>
           </div>
         </div>
-        <div className="monitor-view-container">
+        <div className="monitor-view-container" v-loading={loading.third}>
           <div className="monitor-view-container-head">
             <div className="title">匹配与推送时间段分布图<span>今日统计截止24时</span></div>
             <el-form-item label-width="50px">
@@ -244,6 +347,7 @@ export default defineComponent({
                 placeholder="请选择"
                 style="width: 150px"
                 v-model={model.date1}
+                onChange={(value) => this.dateChange(value, 'date1')}
               />
             </el-form-item>
           </div>
@@ -252,7 +356,7 @@ export default defineComponent({
             <p>分析参考：两条曲线重合度越高，说明当前推送情况越好</p>
           </div>
         </div>
-        <div className="monitor-view-container">
+        <div className="monitor-view-container" v-loading={loading.fourth}>
           <div className="monitor-view-container-head">
             <div className="title">数据增量时间段分布图<span>今日统计截止24时</span></div>
             <el-form-item label-width="50px">
@@ -262,6 +366,7 @@ export default defineComponent({
                 placeholder="请选择"
                 style="width: 150px"
                 v-model={model.date2}
+                onChange={(value) => this.dateChange(value, 'date2')}
               />
             </el-form-item>
           </div>
@@ -270,7 +375,7 @@ export default defineComponent({
             <p>分析参考：曲线重合度越高，说明当前数据新增及同步情况越好</p>
           </div>
         </div>
-        <div className="monitor-view-container">
+        <div className="monitor-view-container" v-loading={loading.fifth}>
           <div className="monitor-view-container-head">
             <div className="title">召回情况统计图</div>
           </div>
