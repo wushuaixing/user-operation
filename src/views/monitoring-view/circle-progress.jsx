@@ -112,7 +112,7 @@ export default defineComponent({
                 <stop offset="100%" style="stop-color:#6BE7D8;stop-opacity:1" />
               </linearGradient>
             </defs>
-            <path d={this.d} stroke="#e5e9f2" stroke-width={this.strokeWidth} fill="none" className="el-progress-circle__track" style={this.trailPathStyle}>
+            <path d={this.d} stroke="#E5E8F0" stroke-width={this.strokeWidth} fill="none" className="el-progress-circle__track" style={this.trailPathStyle}>
             </path>
             <path d={this.d} stroke="url(#blue)" fill="none" stroke-linecap="round" stroke-width={this.strokeWidth} className="el-progress-circle__path" style={this.circlePathStyle}>
             </path>

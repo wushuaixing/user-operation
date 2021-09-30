@@ -1,4 +1,3 @@
-/* eslint-disable */
 import * as echarts from 'echarts';
 
 const drawEcharts = (dataList = [], el, date) => {
@@ -10,12 +9,12 @@ const drawEcharts = (dataList = [], el, date) => {
     'match-statistics': {
       matchNum: {
         name: '匹配数据量',
-        legendName: '匹配数据量',
+        legendName: null,
         color: ['#5BB4F7', '#3180EC'],
       },
       pushNum: {
         name: '实际推送量',
-        legendName: '实际推送量',
+        legendName: null,
         color: ['#5BDFC6', '#1BBA7C'],
       },
       rate: {
@@ -31,11 +30,13 @@ const drawEcharts = (dataList = [], el, date) => {
       other: {
         tooltip: {
           formatter: (params) => (`
-            <div>匹配推送情况</div>
-            <div>${params[0].name}</div>
-            <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
-            <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
-            <div>${params[2].seriesName}：${params[2].data}%(少${params[3].data}条)</div>
+            <div class="tooltip-custom">
+              <div>匹配推送情况</div>
+              <div>${params[0].name}</div>
+              <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
+              <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
+              <div>${params[2].seriesName}：${(params[2].data * 100).toFixed(2)}% (少${Math.abs(params[3].data)}条)</div>
+            </div>
         `),
         },
       },
@@ -54,10 +55,12 @@ const drawEcharts = (dataList = [], el, date) => {
       other: {
         tooltip: {
           formatter: (params) => (`
-            <div>数据增量统计</div>
-            <div>${params[0].name}</div>
-            <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
-            <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
+            <div class="tooltip-custom">
+              <div>数据增量统计</div>
+              <div>${params[0].name}</div>
+              <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
+              <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
+            </div>
         `),
         },
       },
@@ -76,10 +79,12 @@ const drawEcharts = (dataList = [], el, date) => {
       other: {
         tooltip: {
           formatter: (params) => (`
-            <div>全部</div>
-            <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
-            <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
-            <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
+            <div class="tooltip-custom">
+              <div>全部</div>
+              <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
+              <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
+              <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
+            </div>
         `),
         },
       },
@@ -98,10 +103,12 @@ const drawEcharts = (dataList = [], el, date) => {
       other: {
         tooltip: {
           formatter: (params) => (`
-            <div>全部</div>
-            <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
-            <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
-            <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
+            <div class="tooltip-custom">
+              <div>全部</div>
+              <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
+              <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
+              <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
+            </div>
         `),
         },
       },
@@ -125,11 +132,13 @@ const drawEcharts = (dataList = [], el, date) => {
       other: {
         tooltip: {
           formatter: (params) => (`
-            <div>召回情况</div>
-            <div>${params[0].name}</div>
-            <div>${params[0].seriesName}：${params[0].data}条</div>
-            <div>${params[1].seriesName}：${params[1].data}条</div>
-            <div class="before red">${params[2].seriesName}：${params[2].data}%</div>
+            <div class="tooltip-custom">
+              <div>召回情况</div>
+              <div>${params[0].name}</div>
+              <div>${params[0].seriesName}：${params[0].data}条</div>
+              <div>${params[1].seriesName}：${params[1].data}条</div>
+              <div class="before red">${params[2].seriesName}：${params[2].data}%</div>
+            </div>
         `),
         },
         yFormatter: (value) => (`
@@ -141,18 +150,18 @@ const drawEcharts = (dataList = [], el, date) => {
   };
   dataList.forEach((item) => {
     xData.push(item.x);
-  })
-  for (const key1 in baseInfo[el]) {
-    if (key1 !== 'other') {
-      obj[key1] = [];
-      legendData.push(baseInfo[el][key1].legendName);
+  });
+  Object.keys(baseInfo[el]).forEach((key) => {
+    if (key !== 'other') {
+      obj[key] = [];
+      legendData.push(baseInfo[el][key].legendName);
       dataList.forEach((item) => {
-        obj[key1].push(item[key1]);
+        obj[key].push(item[key]);
       });
     }
-  }
-  for (const key2 in obj) {
-    const { name, color } = baseInfo[el][key2];
+  });
+  Object.keys(obj).forEach((key) => {
+    const { name, color } = baseInfo[el][key];
     const temp = {
       name,
       type: 'line',
@@ -160,21 +169,21 @@ const drawEcharts = (dataList = [], el, date) => {
       symbolSize: 7,
       showSymbol: false,
       itemStyle: {
-      color: (color instanceof Array) ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-        { offset: 0, color: color[0] },
-        { offset: 1, color: color[1] },
-      ]) : color,
-    },
+        color: (color instanceof Array) ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: color[0] },
+          { offset: 1, color: color[1] },
+        ]) : color,
+      },
       lineStyle: {
         color: (color instanceof Array) ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
           { offset: 0, color: color[0] },
           { offset: 1, color: color[1] },
         ]) : color,
       },
-      data: obj[key2],
-    }
-    series.push(temp)
-  }
+      data: obj[key],
+    };
+    series.push(temp);
+  });
   const option = {
     tooltip: {
       trigger: 'axis',
@@ -204,9 +213,15 @@ const drawEcharts = (dataList = [], el, date) => {
     },
     grid: {
       left: '4%',
-      right: '10%',
+      right: '6%',
       bottom: '4%',
       containLabel: true,
+    },
+    axisPointer: {
+      lineStyle: {
+        color: '#20242E',
+        type: 'solid',
+      },
     },
     xAxis: {
       type: 'category',
@@ -224,6 +239,7 @@ const drawEcharts = (dataList = [], el, date) => {
     },
     yAxis: {
       type: 'value',
+      min: 0,
       max: el === 'recall-statistics' ? Math.min(Math.max(...obj.rate) * 1.2, 100) : null,
       axisLine: {
         show: true,
