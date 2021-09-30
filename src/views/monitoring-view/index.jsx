@@ -1,11 +1,16 @@
-import { defineComponent, onMounted, reactive } from 'vue';
-import * as echarts from 'echarts';
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  onUnmounted,
+} from 'vue';
 import './index.scss';
 import '@/assets/scroll-number.scss';
 import totalData from '@/assets/img/total_data.png';
 import es from '@/assets/img/es.png';
 import iconfont from '@/assets/img/iconsifapaimaishuju.png';
 import icon from '@/assets/img/icon.png';
+import arrowDown from '@/assets/img/arrow_down.png';
 import monitorViewApi from '@/server/api/monitor-view';
 import numScroll from '@/utils/number-scroll';
 import { dateUtils } from '@/utils';
@@ -49,6 +54,7 @@ export default defineComponent({
       },
     });
 
+    // radio
     const radioChange = (value, which) => {
       switch (which) {
         case 'radio1':
@@ -88,6 +94,7 @@ export default defineComponent({
       }
     };
 
+    // 选择日期
     const dateChange = (value, which) => {
       const val = dateUtils.formatStandardDate(value, 'YYYY-MM-DD');
       if (val) {
@@ -118,6 +125,17 @@ export default defineComponent({
       }
     };
 
+    // 每分钟轮询一次
+    const timer = setInterval(() => {
+      Promise.all([getTotalAuctionNum(), getSyncDiffNum()]).then((res) => {
+        state.totalNum = res[0].data.data;
+        numScroll('#scroll-focus', state.totalNum, '条');
+        state.esDiffNum = res[1].data.data;
+      }).catch(() => {
+        console.log('网络异常...');
+      });
+    }, 60000);
+
     onMounted(() => {
       const { model } = state;
       const chart = {};
@@ -135,9 +153,9 @@ export default defineComponent({
         numScroll('#scroll-focus', state.totalNum, '条');
         state.esDiffNum = res[1].data.data;
         state.syncView = res[2].data.data;
-        // chart.echarts1 = drawEcharts(res[3].data.data, 'match-statistics');
+        chart.echarts1 = drawEcharts(res[3].data.data, 'match-statistics');
         chart.echarts2 = drawEcharts(res[4].data.data, 'data-trend', state.model.date1);
-        // chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute');
+        chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute');
         chart.echarts4 = drawEcharts(res[6].data.data, 'data-distribute', state.model.date2);
         chart.echarts5 = drawEcharts(res[7].data.data, 'recall-statistics');
       }).catch(() => {
@@ -153,108 +171,10 @@ export default defineComponent({
           chart[key].resize();
         });
       };
+    });
 
-      // data: 数据; match: 匹配; statistics: 统计; distribute: 分布; trend: 趋势; recall: 召回;
-      // 匹配与推送情况统计图
-      const chartDom1 = document.getElementById('match-statistics');
-      const myChart1 = echarts.init(chartDom1);
-      const option = {
-        tooltip: {
-          trigger: 'axis',
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          textStyle: {
-            color: '#FFFFFF',
-            fontSize: 14,
-            fontWeight: 'normal',
-          },
-          formatter: (params) => (`
-            <div>匹配推送情况</div>
-            <div>${params[0].name}</div>
-            <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
-            <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
-        `),
-        },
-        legend: {
-          data: ['匹配数据量', '实际推送量'],
-          top: 16,
-          right: 24,
-          itemGap: 40,
-          lineStyle: {
-            width: 0,
-          },
-          textStyle: {
-            fontSize: 14,
-            color: '#4E5566',
-          },
-          itemWidth: 8,
-          itemHeight: 8,
-          selectedMode: false,
-        },
-        grid: {
-          left: '4%',
-          right: '4%',
-          bottom: '4%',
-          containLabel: true,
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        },
-        yAxis: {
-          type: 'value',
-        },
-        series: [
-          {
-            name: '匹配数据量',
-            type: 'line',
-            stack: 'Total',
-            symbol: 'circle',
-            symbolSize: 7,
-            showSymbol: false,
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#3180EC' },
-                { offset: 1, color: '#5BB4F7' },
-              ]),
-            },
-            lineStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#3180EC' },
-                { offset: 1, color: '#5BB4F7' },
-              ]),
-            },
-            data: [120, 132, 101, 134, 90, 230, 210],
-          },
-          {
-            name: '实际推送量',
-            type: 'line',
-            stack: 'Total',
-            symbol: 'circle',
-            symbolSize: 7,
-            showSymbol: false,
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#1BBA7C' },
-                { offset: 1, color: '#5BDFC6' },
-              ]),
-            },
-            lineStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#1BBA7C' },
-                { offset: 1, color: '#5BDFC6' },
-              ]),
-            },
-            data: [220, 182, 191, 234, 290, 330, 310],
-          },
-        ],
-      };
-      myChart1.setOption(option);
-
-      // 匹配与推送时间段分布图
-      const chartDom3 = document.getElementById('match-distribute');
-      const myChart3 = echarts.init(chartDom3);
-      myChart3.setOption(option);
+    onUnmounted(() => {
+      if (timer) clearInterval(timer);
     });
     return { state, dateChange, radioChange };
   },
@@ -285,7 +205,7 @@ export default defineComponent({
                   </el-tooltip>
                 </span>
                 </div>
-                <div><span className="light">少</span><span className="num"><CountTo startVal={0} endVal={state.esDiffNum} /></span><span className="light">条</span></div>
+                <div><span className="light">少</span><span className="num" style="margin: 0 8px;"><CountTo startVal={0} endVal={state.esDiffNum} /></span><span className="light">条</span></div>
               </div>
             </div>
           </div>
@@ -300,9 +220,15 @@ export default defineComponent({
             </div>
             <div className="monitor-view-container-down-content">
               <div className="desc">
-                <div style="margin-bottom: 5px;"><span><img src={iconfont} alt=""/>司法拍卖结构化数据量：</span><CountTo startVal={0} endVal={state.syncView.auctionNum} /></div>
-                <i className="iconfont iconjiantou1" style="font-size: 60px; color: #2F7EEC;" />
-                <div style="margin-top: 5px;"><span><i className="iconfont iconESshujuzengliang" style="color: #FE8E31;" />ES数据增量：</span><CountTo startVal={0} endVal={state.syncView.esNum} /></div>
+                <div className="left">
+                  <div><span><img src={iconfont} alt=""/>司法拍卖结构化数据量：</span></div>
+                  <div><span><i className="iconfont iconESshujuzengliang" style="color: #FE8E31;" />ES数据增量：</span></div>
+                </div>
+                <div className="right">
+                  <div className="weight"><CountTo startVal={0} endVal={state.syncView.auctionNum} /></div>
+                  <div style="text-align: center;"><img style="width: 12px;height: 60px" src={arrowDown} alt="" /></div>
+                  <div className="weight"><CountTo startVal={0} endVal={state.syncView.esNum} /></div>
+                </div>
               </div>
               <CircleProgress stroke-width={10} percentage={state.syncView.rate} width={120} />
             </div>
@@ -317,8 +243,19 @@ export default defineComponent({
               <el-radio-button label="3">全年</el-radio-button>
             </el-radio-group>
           </div>
-          <div className="monitor-view-container-content">
-            <div className="echarts-block" id="match-statistics"></div>
+          <div className="monitor-view-container-content relative">
+            <div className="echarts-block" id="match-statistics" />
+            <div className="legend-custom">
+              <span className="before blue">匹配数据量</span>
+              <span className="before green">实际推送量</span>
+              <el-tooltip
+                effect="dark"
+                content="实际推送量为当天匹配数据中实际推送的数据量"
+                placement="top"
+              >
+                <img src={icon} alt="" />
+              </el-tooltip>
+            </div>
             <p>分析参考：两条曲线重合度越高，说明当前推送情况越好</p>
           </div>
         </div>
@@ -351,8 +288,9 @@ export default defineComponent({
               />
             </el-form-item>
           </div>
-          <div className="monitor-view-container-content">
+          <div className="monitor-view-container-content relative">
             <div className="echarts-block" id="match-distribute" />
+            <div className="x-unit">(时)</div>
             <p>分析参考：两条曲线重合度越高，说明当前推送情况越好</p>
           </div>
         </div>
@@ -371,8 +309,9 @@ export default defineComponent({
               />
             </el-form-item>
           </div>
-          <div className="monitor-view-container-content">
+          <div className="monitor-view-container-content relative">
             <div className="echarts-block" id="data-distribute" />
+            <div className="x-unit">(时)</div>
             <p>分析参考：曲线重合度越高，说明当前数据新增及同步情况越好</p>
           </div>
         </div>
