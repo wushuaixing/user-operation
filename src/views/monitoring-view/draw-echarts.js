@@ -35,7 +35,7 @@ const drawEcharts = (dataList = [], el, date) => {
               <div>${params[0].name}</div>
               <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
               <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
-              <div>${params[2].seriesName}：${(params[2].data * 100).toFixed(2)}% (少${Math.abs(params[3].data)}条)</div>
+              <div>${params[2].seriesName}：${params[2].data ? (params[2].data * 100).toFixed(2) : 0}% (少${Math.abs(params[3].data)}条)</div>
             </div>
         `),
         },
@@ -137,7 +137,7 @@ const drawEcharts = (dataList = [], el, date) => {
               <div>${params[0].name}</div>
               <div>${params[0].seriesName}：${params[0].data}条</div>
               <div>${params[1].seriesName}：${params[1].data}条</div>
-              <div class="before red">${params[2].seriesName}：${params[2].data}%</div>
+              <div class="before red">${params[2].seriesName}：${params[2].data ? params[2].data.toFixed(2) : 0}%</div>
             </div>
         `),
         },
