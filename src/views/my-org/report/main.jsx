@@ -125,13 +125,10 @@ const main = () => {
     ],
   };
   const rules = reactive({
-    org: [
+    id: [
       { required: true, message: '请选择机构名称', trigger: 'change' },
     ],
-    time: [
-      { required: true, message: '请选择更新时间', trigger: 'change' },
-    ],
-    startTime: [
+    start: [
       {
         required: true,
         message: '请选择开始时间',
@@ -139,7 +136,7 @@ const main = () => {
         type: 'date',
       },
     ],
-    endTime: [
+    end: [
       {
         required: true,
         message: '请选择结束时间',
@@ -147,7 +144,7 @@ const main = () => {
         type: 'date',
       },
     ],
-    end: [
+    endTime: [
       {
         required: true,
         message: '请选择截止日期',

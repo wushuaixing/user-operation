@@ -11,6 +11,7 @@ export default defineComponent({
     return {
       reportForm: {
         time: '',
+        id: '',
       },
     };
   },
@@ -38,6 +39,7 @@ export default defineComponent({
       reportVisible: false,
       orgId: 0,
       title: '',
+      optionList: [],
     });
     const msg = reactive({
       buttonLoading: false,
@@ -47,6 +49,18 @@ export default defineComponent({
       report.reportVisible = true;
       report.orgId = id;
       report.title = `客户报告-${name}`;
+      // 通过id获取机构列表
+      MyOrgApi.subOrgList(id).then((res) => {
+        const { code, data, message } = res.data || {};
+        if (code === 200) {
+          const list = data.length ? [...data] : [];
+          list.unshift({ id, value: name });
+          report.optionList = list;
+          proxy.reportForm.id = id;
+        } else {
+          proxy.$message.error(message);
+        }
+      });
     };
     const close = () => {
       proxy.$refs.reportForm.resetFields();
@@ -76,6 +90,8 @@ export default defineComponent({
             end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
             id: report.orgId,
           };
+          const { fxck, zcwj } = checkList;
+          params.list = [...fxck.checkedData, ...zcwj.checkedData];
           const modalMsg = proxy.$message.warning({
             message: '正在下载，请稍等...',
             duration: 1000,
@@ -147,6 +163,15 @@ export default defineComponent({
           labelWidth="138px"
           class="report-modal-form"
         >
+          <el-form-item label="机构名称：" prop="id" rules={[
+            { required: true, message: '请选择机构名称', trigger: 'change' },
+          ]}>
+            <el-select style="width: 468px" v-model={reportForm.id} key={reportForm.id}>
+              {report.optionList.map((i) => (
+                <el-option key={i.id} value={i.id} label={i.value} />
+              ))}
+            </el-select>
+          </el-form-item>
           <el-form-item label="更新时间：" prop="time" rules={[{ required: true, message: '请选择更新时间', trigger: 'change' }]}>
             <el-date-picker
               style={{ width: '468px' }}
