@@ -83,6 +83,7 @@ export default defineComponent({
       proxy.dataForm.end = undefined;
       proxy.dataForm.endTime = undefined;
       proxy.$refs.dataForm.resetFields();
+      modalData.loading = false;
       modalData.visible = false;
     };
     // 日期控件做前后限制
