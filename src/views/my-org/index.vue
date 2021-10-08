@@ -2,9 +2,9 @@
   <div class="yc-container my-org">
     <div class="my-org-header">
       <div class="tabs-button">
-        <el-radio-group v-model="tabKey" @change="showTab">
-          <el-radio-button :label="1" key="1">正式机构</el-radio-button>
-          <el-radio-button :label="0" key="2">试用机构</el-radio-button>
+        <el-radio-group v-model="tabKey">
+          <el-radio-button :label="1">正式机构</el-radio-button>
+          <el-radio-button :label="0">试用机构</el-radio-button>
         </el-radio-group>
       </div>
       <OrgMessage :data="orgMessage" :type="tabKey"></OrgMessage>
@@ -170,16 +170,16 @@
               </el-button>
               <el-divider direction="vertical"></el-divider>
               <el-dropdown trigger="click">
-                <a class="table-action-more">
+                <span class="table-action-more">
                   更多
-                </a>
-<!--                <template #dropdown>-->
-<!--                  <el-dropdown-menu>-->
-<!--                    <el-dropdown-item @click="handleOpenModal('report', scope.row)">客户报告导出</el-dropdown-item>-->
-<!--                    <el-dropdown-item @click="handleOpenModal('data', scope.row)">综合数据导出</el-dropdown-item>-->
-<!--                    <el-dropdown-item @click="handleOpenModal('record', scope.row)">账号使用情况导出</el-dropdown-item>-->
-<!--                  </el-dropdown-menu>-->
-<!--                </template>-->
+                </span>
+                <template #dropdown>
+                  <div class="table-action-list">
+                    <div class="list-item" @click="handleOpenModal('report', scope.row)">客户报告导出</div>
+                    <div class="list-item" @click="handleOpenModal('data', scope.row)">综合数据导出</div>
+                    <div class="list-item" @click="handleOpenModal('record', scope.row)">账号使用情况导出</div>
+                  </div>
+                </template>
               </el-dropdown>
             </template>
           </el-table-column>
@@ -197,7 +197,7 @@
         />
       </div>
     </div>
-    <Report ref="Report"></Report>
+    <Report ref="Report"/>
     <DataModal ref="DataModal"/>
   </div>
 </template>
@@ -211,8 +211,8 @@ import { dateUtils, fileDownload, clearEmpty } from '@/utils';
 import { toRaw } from 'vue';
 import $modalConfirm from '@/utils/better-el';
 // import Query from './query/query';
-import Report from '@/views/my-org/report/report';
-import DataModal from '@/views/my-org/report/synthesize-data-modal';
+import Report from './report/report';
+import DataModal from './report/synthesize-data-modal';
 import OrgMessage from './header/org-message';
 
 export default {
@@ -258,9 +258,6 @@ export default {
     document.title = '我的机构';
   },
   methods: {
-    showTab(val) {
-      console.log(val, this.tabKey, 'tab');
-    },
     getData() {
       this.getList();
     },

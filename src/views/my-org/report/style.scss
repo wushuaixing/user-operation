@@ -48,4 +48,16 @@
     display: flex;
     align-items: center;
   }
+  .time-form {
+    label:first-child {
+      position: relative;
+      &:before {
+        content: '*';
+        color: #f93535;
+        position: absolute;
+        top: 0;
+        left: 38px;
+      }
+    }
+  }
 }
