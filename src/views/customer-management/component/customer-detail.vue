@@ -28,7 +28,7 @@
                     <use xlink:href="#icondingjihezuojigou"></use>
                   </svg>
                   顶级合作机构</span>
-                <i class="iconfont iconbianji2 editI" @click="() => editable = true"></i>
+                <i class="iconfont iconbianji editI" @click="() => editable = true"></i>
               </template>
               <template v-else>
                 <el-input
