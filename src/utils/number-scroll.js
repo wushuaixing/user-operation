@@ -27,8 +27,8 @@ import $ from 'jquery';
         strHtml += `</ul><span class="scroll-prefix">${options.prefix}</span>`;
         obj.html(strHtml);
         $('.scroll-prefix').css({
-          position: 'absolute',
-          left: $('.number-scroll-scroll-focus').width() + 8,
+          display: 'inline-block',
+          marginLeft: $('.number-scroll-scroll-focus').width() + 8,
         })
       }
       this.scroNum(options);
