@@ -39,11 +39,11 @@ export default defineComponent({
         fifth: true,
       },
       totalNum: 0,
-      esDiffNum: 12,
+      esDiffNum: 0,
       syncView: {
-        auctionNum: 2342,
-        esNum: 123412,
-        rate: 86,
+        auctionNum: 0,
+        esNum: 0,
+        rate: 0,
       },
       model: {
         radio1: '1',
@@ -154,8 +154,8 @@ export default defineComponent({
         state.esDiffNum = res[1].data.data;
         state.syncView = res[2].data.data;
         chart.echarts1 = drawEcharts(res[3].data.data, 'match-statistics');
-        chart.echarts2 = drawEcharts(res[4].data.data, 'data-trend', state.model.date1);
-        chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute');
+        chart.echarts2 = drawEcharts(res[4].data.data, 'data-trend');
+        chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute', state.model.date1);
         chart.echarts4 = drawEcharts(res[6].data.data, 'data-distribute', state.model.date2);
         chart.echarts5 = drawEcharts(res[7].data.data, 'recall-statistics');
       }).catch(() => {

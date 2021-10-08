@@ -39,16 +39,7 @@ export default defineComponent({
         // willExpireTrialOrg: 0,
       },
       // 列表数据
-      orgTableData: [
-        // {
-        //   name: 'a机构',
-        //   end: '2021-09-22',
-        //   lastDayObligor: 123,
-        //   lastDayPush: 123,
-        //   lastWeekObligor: 12,
-        //   lastWeekPush: 124,
-        // },
-      ],
+      orgTableData: [],
       tableLoading: false,
       dialogVisible: false,
       dialogTitle: computed(() => {
@@ -71,13 +62,6 @@ export default defineComponent({
       },
       total: 0,
     });
-
-    // const dealNumScroll = () => {
-    //   workbenchTopAsset.forEach((item) => {
-    //     numScroll(`#${item.left.id}`, state.dataNum[item.left.field]);
-    //     numScroll(`#${item.right.id}`, state.dataNum[item.right.field]);
-    //   });
-    // };
 
     // 获取各数量
     const getStatistics = () => {
@@ -160,12 +144,7 @@ export default defineComponent({
       getList(state.params);
     };
 
-    const disabledDate = (time) => {
-      if (state.date) {
-        return time > new Date();
-      }
-      return false;
-    };
+    const disabledDate = (time) => time > new Date();
 
     watch(() => state.dialogVisible, () => {
       if (!state.dialogVisible) {
