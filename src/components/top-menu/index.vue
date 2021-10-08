@@ -5,7 +5,7 @@
       <span>源诚用户运营平台</span>
     </div>
     <div class="user-message">
-      <el-dropdown trigger="click" @visible-change="handleToggle" class="user-message-dropdown">
+      <el-dropdown trigger="click" @visible-change="handleToggle" popper-class="user-dropdown">
         <span class="el-dropdown-link">
           hi，{{ name }}
           <i class="el-icon-caret-top" v-if="iconToggle"></i>
@@ -244,29 +244,6 @@ export default {
         height: 50px;
         align-items: center;
         justify-content: center;
-      }
-    }
-    &-dropdown {
-      top: 0 !important;
-      left: unset !important;
-      right: 0 !important;
-      min-width: 117px;
-      border-radius: 0;
-
-      .el-dropdown-menu {
-        padding: 0;
-        &__item {
-          height: 39px;
-          line-height: 39px;
-          span {
-            position: relative;
-            top: 1px;
-          }
-        }
-      }
-
-      .el-popper__arrow::before {
-        content: none;
       }
     }
   }
