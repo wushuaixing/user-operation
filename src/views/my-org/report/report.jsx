@@ -11,6 +11,7 @@ export default defineComponent({
     return {
       reportForm: {
         time: '',
+        id: '',
       },
     };
   },
@@ -19,15 +20,15 @@ export default defineComponent({
     const checkList = reactive({
       zcwj: {
         checkAll: true,
-        checkedData: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '12'],
+        checkedData: ['1', '2,3,4', '5,6,7,8', '9,10,11', '12', '13', '14', '15,16,17', '18', '19', '23'],
         isIndeterminate: false,
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '18'],
+        options: ['1', '2,3,4', '5,6,7,8', '9,10,11', '12', '13', '14', '15,16,17', '18', '19', '20,21,22', '23', '666'],
       },
       fxck: {
         checkAll: true,
-        checkedData: ['13', '14', '15', '19', '20'],
+        checkedData: ['24', '25', '26', '27', '28'],
         isIndeterminate: false,
-        options: ['13', '14', '15', '16', '17', '19', '20'],
+        options: ['24', '25', '26', '27', '28', '29,30,31', '32,33,34,35,36,37'],
       },
     });
 
@@ -38,6 +39,7 @@ export default defineComponent({
       reportVisible: false,
       orgId: 0,
       title: '',
+      optionList: [],
     });
     const msg = reactive({
       buttonLoading: false,
@@ -47,6 +49,18 @@ export default defineComponent({
       report.reportVisible = true;
       report.orgId = id;
       report.title = `客户报告-${name}`;
+      // 通过id获取机构列表
+      MyOrgApi.subOrgList(id).then((res) => {
+        const { code, data, message } = res.data || {};
+        if (code === 200) {
+          const list = data.length ? [...data] : [];
+          list.unshift({ id, value: name });
+          report.optionList = list;
+          proxy.reportForm.id = id;
+        } else {
+          proxy.$message.error(message);
+        }
+      });
     };
     const close = () => {
       proxy.$refs.reportForm.resetFields();
@@ -76,6 +90,9 @@ export default defineComponent({
             end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
             id: report.orgId,
           };
+          const { fxck, zcwj } = checkList;
+          const list = [...fxck.checkedData, ...zcwj.checkedData];
+          params.list = list.join(',').split(',');
           const modalMsg = proxy.$message.warning({
             message: '正在下载，请稍等...',
             duration: 1000,
@@ -147,6 +164,15 @@ export default defineComponent({
           labelWidth="138px"
           class="report-modal-form"
         >
+          <el-form-item label="机构名称：" prop="id" rules={[
+            { required: true, message: '请选择机构名称', trigger: 'change' },
+          ]}>
+            <el-select style="width: 468px" v-model={reportForm.id} key={reportForm.id}>
+              {report.optionList.map((i) => (
+                <el-option key={i.id} value={i.id} label={i.value} />
+              ))}
+            </el-select>
+          </el-form-item>
           <el-form-item label="更新时间：" prop="time" rules={[{ required: true, message: '请选择更新时间', trigger: 'change' }]}>
             <el-date-picker
               style={{ width: '468px' }}
@@ -186,6 +212,7 @@ export default defineComponent({
                         <el-checkbox
                           label={child.val}
                           key={child.val}
+                          disabled={child.label === '电子报'}
                           >{ child.label }
                         </el-checkbox>
                       ))
