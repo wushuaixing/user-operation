@@ -79,6 +79,9 @@ export default defineComponent({
       });
     };
     const handleClose = () => {
+      proxy.dataForm.start = undefined;
+      proxy.dataForm.end = undefined;
+      proxy.dataForm.endTime = undefined;
       proxy.$refs.dataForm.resetFields();
       modalData.visible = false;
     };

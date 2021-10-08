@@ -20,15 +20,15 @@ export default defineComponent({
     const checkList = reactive({
       zcwj: {
         checkAll: true,
-        checkedData: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '12'],
+        checkedData: ['1', '2,3,4', '5,6,7,8', '9,10,11', '12', '13', '14', '15,16,17', '18', '19', '23'],
         isIndeterminate: false,
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '18'],
+        options: ['1', '2,3,4', '5,6,7,8', '9,10,11', '12', '13', '14', '15,16,17', '18', '19', '20,21,22', '23', '666'],
       },
       fxck: {
         checkAll: true,
-        checkedData: ['13', '14', '15', '19', '20'],
+        checkedData: ['24', '25', '26', '27', '28'],
         isIndeterminate: false,
-        options: ['13', '14', '15', '16', '17', '19', '20'],
+        options: ['24', '25', '26', '27', '28', '29,30,31', '32,33,34,35,36,37'],
       },
     });
 
@@ -91,7 +91,8 @@ export default defineComponent({
             id: report.orgId,
           };
           const { fxck, zcwj } = checkList;
-          params.list = [...fxck.checkedData, ...zcwj.checkedData];
+          const list = [...fxck.checkedData, ...zcwj.checkedData];
+          params.list = list.join(',').split(',');
           const modalMsg = proxy.$message.warning({
             message: '正在下载，请稍等...',
             duration: 1000,
@@ -211,6 +212,7 @@ export default defineComponent({
                         <el-checkbox
                           label={child.val}
                           key={child.val}
+                          disabled={child.label === '电子报'}
                           >{ child.label }
                         </el-checkbox>
                       ))
