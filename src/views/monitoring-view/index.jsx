@@ -50,10 +50,12 @@ export default defineComponent({
         radio1: '1',
         radio2: '1',
         radio3: '1',
-        date1: dateUtils.formatStandardDate(new Date(), 'YYYY-MM-DD'),
-        date2: dateUtils.formatStandardDate(new Date(), 'YYYY-MM-DD'),
+        date1: dateUtils.formatStandardDate(new Date()),
+        date2: dateUtils.formatStandardDate(new Date()),
       },
     });
+
+    const disabledDate = (time) => time > new Date();
 
     // radio
     const radioChange = (value, which) => {
@@ -100,6 +102,7 @@ export default defineComponent({
       const val = dateUtils.formatStandardDate(value, 'YYYY-MM-DD');
       if (val) {
         if (which === 'date1') {
+          state.model.date1 = val;
           state.loading.third = true;
           getPushViewOfDay(val).then((res) => {
             if (res.data.code === 200) {
@@ -112,6 +115,7 @@ export default defineComponent({
           });
         }
         if (which === 'date2') {
+          state.model.date2 = val;
           state.loading.fourth = true;
           getDataIncrViewOfDay(val).then((res) => {
             if (res.data.code === 200) {
@@ -129,9 +133,10 @@ export default defineComponent({
     // 每分钟轮询一次
     const timer = setInterval(() => {
       Promise.all([getTotalAuctionNum(), getSyncDiffNum()]).then((res) => {
-        state.totalNum = res[0].data.data;
-        numScroll('#scroll-focus', state.totalNum, '条');
-        state.esDiffNum = res[1].data.data;
+        const [{ data: { data: totalNum } }, { data: { data: esDiffNum } }] = res;
+        state.totalNum = totalNum;
+        numScroll('#scroll-focus', totalNum, '条');
+        state.esDiffNum = esDiffNum;
       }).catch(() => {
         console.log('网络异常...');
       });
@@ -152,15 +157,25 @@ export default defineComponent({
         getDataIncrViewOfDay(model.date2),
         getRecallView(),
       ]).then((res) => {
-        state.totalNum = res[0].data.data;
-        numScroll('#scroll-focus', state.totalNum, '条');
-        state.esDiffNum = res[1].data.data;
-        state.syncView = res[2].data.data;
-        chart.echarts1 = drawEcharts(res[3].data.data, 'match-statistics');
-        chart.echarts2 = drawEcharts(res[4].data.data, 'data-trend');
-        chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute', state.model.date1);
-        chart.echarts4 = drawEcharts(res[6].data.data, 'data-distribute', state.model.date2);
-        chart.echarts5 = drawEcharts(res[7].data.data, 'recall-statistics');
+        const [
+          { data: { data: totalNum } },
+          { data: { data: esDiffNum } },
+          { data: { data: syncView } },
+          { data: { data: echartsList1 } },
+          { data: { data: echartsList2 } },
+          { data: { data: echartsList3 } },
+          { data: { data: echartsList4 } },
+          { data: { data: echartsList5 } },
+        ] = res;
+        state.totalNum = totalNum;
+        numScroll('#scroll-focus', totalNum, '条');
+        state.esDiffNum = esDiffNum;
+        state.syncView = syncView;
+        chart.echarts1 = drawEcharts(echartsList1, 'match-statistics');
+        chart.echarts2 = drawEcharts(echartsList2, 'data-trend');
+        chart.echarts3 = drawEcharts(echartsList3, 'match-distribute', state.model.date1);
+        chart.echarts4 = drawEcharts(echartsList4, 'data-distribute', state.model.date2);
+        chart.echarts5 = drawEcharts(echartsList5, 'recall-statistics');
       }).catch(() => {
         console.log('请求失败...');
       }).finally(() => {
@@ -179,7 +194,12 @@ export default defineComponent({
     onUnmounted(() => {
       if (timer) clearInterval(timer);
     });
-    return { state, dateChange, radioChange };
+    return {
+      state,
+      dateChange,
+      radioChange,
+      disabledDate,
+    };
   },
   render() {
     const { state: { model, loading }, state } = this;
@@ -273,12 +293,12 @@ export default defineComponent({
           </div>
           <div className="monitor-view-container-content">
             <div className="echarts-block" id="data-trend" />
-            <p>分析参考：数据统计截止到每日凌晨六点，曲线重合度越高，说明数据同步进程越稳定</p>
+            <p>分析参考：曲线重合度越高，说明数据同步进程越稳定</p>
           </div>
         </div>
         <div className="monitor-view-container" v-loading={loading.third}>
           <div className="monitor-view-container-head">
-            <div className="title">匹配与推送时间段分布图<span>今日统计截止24时</span></div>
+            <div className="title">匹配与推送时间段分布图{dateUtils.formatStandardDate(new Date()) === state.model.date1 ? <span>今日统计截止{new Date().getHours()}时</span> : ''}</div>
             <el-form-item label-width="50px">
               <span>日期：</span>
               <el-date-picker
@@ -287,6 +307,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date1}
                 editable={false}
+                disabledDate={this.disabledDate}
                 popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date1')}
               />
@@ -300,7 +321,7 @@ export default defineComponent({
         </div>
         <div className="monitor-view-container" v-loading={loading.fourth}>
           <div className="monitor-view-container-head">
-            <div className="title">数据增量时间段分布图<span>今日统计截止24时</span></div>
+            <div className="title">数据增量时间段分布图{dateUtils.formatStandardDate(new Date()) === state.model.date2 ? <span>今日统计截止{new Date().getHours()}时</span> : ''}</div>
             <el-form-item label-width="50px">
               <span>日期：</span>
               <el-date-picker
@@ -309,6 +330,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date2}
                 editable={false}
+                disabledDate={this.disabledDate}
                 popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date2')}
               />
