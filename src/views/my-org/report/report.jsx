@@ -171,6 +171,7 @@ export default defineComponent({
         v-model={reportVisible}
         onClosed={ close }
         width="638px"
+        custom-class="report-dialog-class"
         destroy-on-close
         v-slots={modalSlots}
       >

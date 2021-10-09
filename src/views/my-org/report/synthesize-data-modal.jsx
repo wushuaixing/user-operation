@@ -136,6 +136,7 @@ export default defineComponent({
         v-model={modalData.visible}
         onClosed={handleClose}
         width="500px"
+        custom-class="report-dialog-class"
         v-slots={modalSlots}
       >
         <el-form
