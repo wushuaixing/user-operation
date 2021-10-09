@@ -239,7 +239,7 @@ export default defineComponent({
             <div className="title">匹配与推送情况统计图</div>
             <el-radio-group onChange={(value) => this.radioChange(value, 'radio2')} v-model={model.radio2}>
               <el-radio-button label="1">近一周</el-radio-button>
-              <el-radio-button label="2">近一年</el-radio-button>
+              <el-radio-button label="2">近一月</el-radio-button>
               <el-radio-button label="3">全年</el-radio-button>
             </el-radio-group>
           </div>
@@ -264,7 +264,7 @@ export default defineComponent({
             <div className="title">数据增量趋势图</div>
             <el-radio-group onChange={(value) => this.radioChange(value, 'radio3')} v-model={model.radio3}>
               <el-radio-button label="1">近一周</el-radio-button>
-              <el-radio-button label="2">近一年</el-radio-button>
+              <el-radio-button label="2">近一月</el-radio-button>
               <el-radio-button label="3">全年</el-radio-button>
             </el-radio-group>
           </div>
