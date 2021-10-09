@@ -14,6 +14,7 @@ import arrowDown from '@/assets/img/arrow_down.png';
 import monitorViewApi from '@/server/api/monitor-view';
 import numScroll from '@/utils/number-scroll';
 import { dateUtils } from '@/utils';
+import $ from 'jquery';
 import drawEcharts from '@/views/monitoring-view/draw-echarts';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import CircleProgress from './circle-progress';
@@ -137,6 +138,8 @@ export default defineComponent({
     }, 60000);
 
     onMounted(() => {
+      $('.el-picker-panel__footer_custom-style .el-picker-panel__footer .el-button--text span')
+        .text('今天');
       const { model } = state;
       const chart = {};
       Promise.all([
@@ -205,7 +208,7 @@ export default defineComponent({
                   </el-tooltip>
                 </span>
                 </div>
-                <div><span className="light">少</span><span className="num" style="margin: 0 8px;"><CountTo startVal={0} endVal={state.esDiffNum} /></span><span className="light">条</span></div>
+                <div><span className="light">{state.esDiffNum > 0 ? '多' : '少'}</span><span className="num" style="margin: 0 8px;"><CountTo startVal={0} endVal={Math.abs(state.esDiffNum)} /></span><span className="light">条</span></div>
               </div>
             </div>
           </div>
@@ -239,7 +242,7 @@ export default defineComponent({
             <div className="title">匹配与推送情况统计图</div>
             <el-radio-group onChange={(value) => this.radioChange(value, 'radio2')} v-model={model.radio2}>
               <el-radio-button label="1">近一周</el-radio-button>
-              <el-radio-button label="2">近一年</el-radio-button>
+              <el-radio-button label="2">近一月</el-radio-button>
               <el-radio-button label="3">全年</el-radio-button>
             </el-radio-group>
           </div>
@@ -264,7 +267,7 @@ export default defineComponent({
             <div className="title">数据增量趋势图</div>
             <el-radio-group onChange={(value) => this.radioChange(value, 'radio3')} v-model={model.radio3}>
               <el-radio-button label="1">近一周</el-radio-button>
-              <el-radio-button label="2">近一年</el-radio-button>
+              <el-radio-button label="2">近一月</el-radio-button>
               <el-radio-button label="3">全年</el-radio-button>
             </el-radio-group>
           </div>
@@ -284,6 +287,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date1}
                 editable={false}
+                popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date1')}
               />
             </el-form-item>
@@ -305,6 +309,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date2}
                 editable={false}
+                popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date2')}
               />
             </el-form-item>

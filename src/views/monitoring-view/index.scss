@@ -35,7 +35,7 @@
     &-down{
       background-color: #fff;
       border-radius: 2px;
-      height: 262px;
+      height: 260px;
       margin-top: 20px;
       &-content{
         display: flex;
@@ -234,6 +234,15 @@
     }
     &.red::before{
       background-image: linear-gradient(#FF8C8D, #FF3134);
+    }
+  }
+}
+.el-picker-panel__footer_custom-style{
+  .el-picker-panel__footer{
+    display: block!important;
+    text-align: center;
+    .el-button.el-button--default{
+      display: none;
     }
   }
 }
