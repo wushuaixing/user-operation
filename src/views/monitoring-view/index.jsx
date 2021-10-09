@@ -50,10 +50,12 @@ export default defineComponent({
         radio1: '1',
         radio2: '1',
         radio3: '1',
-        date1: dateUtils.formatStandardDate(new Date(), 'YYYY-MM-DD'),
-        date2: dateUtils.formatStandardDate(new Date(), 'YYYY-MM-DD'),
+        date1: dateUtils.formatStandardDate(new Date()),
+        date2: dateUtils.formatStandardDate(new Date()),
       },
     });
+
+    const disabledDate = (time) => time > new Date();
 
     // radio
     const radioChange = (value, which) => {
@@ -100,6 +102,7 @@ export default defineComponent({
       const val = dateUtils.formatStandardDate(value, 'YYYY-MM-DD');
       if (val) {
         if (which === 'date1') {
+          state.model.date1 = val;
           state.loading.third = true;
           getPushViewOfDay(val).then((res) => {
             if (res.data.code === 200) {
@@ -112,6 +115,7 @@ export default defineComponent({
           });
         }
         if (which === 'date2') {
+          state.model.date2 = val;
           state.loading.fourth = true;
           getDataIncrViewOfDay(val).then((res) => {
             if (res.data.code === 200) {
@@ -190,7 +194,12 @@ export default defineComponent({
     onUnmounted(() => {
       if (timer) clearInterval(timer);
     });
-    return { state, dateChange, radioChange };
+    return {
+      state,
+      dateChange,
+      radioChange,
+      disabledDate,
+    };
   },
   render() {
     const { state: { model, loading }, state } = this;
@@ -289,7 +298,7 @@ export default defineComponent({
         </div>
         <div className="monitor-view-container" v-loading={loading.third}>
           <div className="monitor-view-container-head">
-            <div className="title">匹配与推送时间段分布图<span>今日统计截止24时</span></div>
+            <div className="title">匹配与推送时间段分布图{dateUtils.formatStandardDate(new Date()) === state.model.date1 ? <span>今日统计截止{new Date().getHours()}时</span> : ''}</div>
             <el-form-item label-width="50px">
               <span>日期：</span>
               <el-date-picker
@@ -298,6 +307,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date1}
                 editable={false}
+                disabledDate={this.disabledDate}
                 popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date1')}
               />
@@ -311,7 +321,7 @@ export default defineComponent({
         </div>
         <div className="monitor-view-container" v-loading={loading.fourth}>
           <div className="monitor-view-container-head">
-            <div className="title">数据增量时间段分布图<span>今日统计截止24时</span></div>
+            <div className="title">数据增量时间段分布图{dateUtils.formatStandardDate(new Date()) === state.model.date2 ? <span>今日统计截止{new Date().getHours()}时</span> : ''}</div>
             <el-form-item label-width="50px">
               <span>日期：</span>
               <el-date-picker
@@ -320,6 +330,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date2}
                 editable={false}
+                disabledDate={this.disabledDate}
                 popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date2')}
               />
