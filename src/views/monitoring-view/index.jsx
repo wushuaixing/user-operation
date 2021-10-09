@@ -14,6 +14,7 @@ import arrowDown from '@/assets/img/arrow_down.png';
 import monitorViewApi from '@/server/api/monitor-view';
 import numScroll from '@/utils/number-scroll';
 import { dateUtils } from '@/utils';
+import $ from 'jquery';
 import drawEcharts from '@/views/monitoring-view/draw-echarts';
 import CountTo from '@/components/vue-count-to/vue-countTo.vue';
 import CircleProgress from './circle-progress';
@@ -137,6 +138,8 @@ export default defineComponent({
     }, 60000);
 
     onMounted(() => {
+      $('.el-picker-panel__footer_custom-style .el-picker-panel__footer .el-button--text span')
+        .text('今天');
       const { model } = state;
       const chart = {};
       Promise.all([
@@ -284,6 +287,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date1}
                 editable={false}
+                popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date1')}
               />
             </el-form-item>
@@ -305,6 +309,7 @@ export default defineComponent({
                 style="width: 150px"
                 v-model={model.date2}
                 editable={false}
+                popper-class="el-picker-panel__footer_custom-style"
                 onChange={(value) => this.dateChange(value, 'date2')}
               />
             </el-form-item>
