@@ -237,3 +237,12 @@
     }
   }
 }
+.el-picker-panel__footer_custom-style{
+  .el-picker-panel__footer{
+    display: block!important;
+    text-align: center;
+    .el-button.el-button--default{
+      display: none;
+    }
+  }
+}
