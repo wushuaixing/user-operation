@@ -198,7 +198,7 @@ export default defineComponent({
                       content="合同结束日期距今日三个月内"
                       placement="top"
                     >
-                      <img src={icon} style="width: 14px;margin-left: 5px;" alt=""/>
+                      <img src={icon} style="width: 14px;margin-left: 5px;vertical-align: -1px" alt=""/>
                     </el-tooltip> : ''}</p>
                   {i.describe
                     ? <p className="describe">
