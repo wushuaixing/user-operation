@@ -15,6 +15,9 @@
     }
   }
   &-body {
+    .el-table tr td {
+      padding: 14px 0;
+    }
     .action-span {
       cursor: pointer;
       &:hover {
