@@ -6,26 +6,23 @@ const main = () => {
   const shortcuts = [{
     text: '最近一天',
     value: (() => {
-      const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24);
-      return [start, end];
+      return start;
     })(),
   }, {
     text: '最近一周',
     value: (() => {
-      const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      return [start, end];
+      return start;
     })(),
   }, {
     text: '最近一个月',
     value: (() => {
-      const end = new Date();
       const start = new Date();
       start.setMonth(start.getMonth() - 1);
-      return [start, end];
+      return start;
     })(),
   }];
   const reportFormOptions = {
@@ -192,11 +189,33 @@ const main = () => {
       },
     ],
   });
+  const reportRules = reactive({
+    id: [
+      { required: true, message: '请选择机构名称', trigger: 'change' },
+    ],
+    start: [
+      {
+        required: true,
+        message: '请选择开始时间',
+        trigger: 'change',
+        type: 'date',
+      },
+    ],
+    end: [
+      {
+        required: true,
+        message: '请选择结束时间',
+        trigger: 'change',
+        type: 'date',
+      },
+    ],
+  });
   return {
     rules,
     shortcuts,
     reportFormOptions,
     typeArr,
+    reportRules,
   };
 };
 export default main;

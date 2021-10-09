@@ -1,5 +1,5 @@
 import {
-  reactive, defineComponent, getCurrentInstance,
+  reactive, defineComponent, getCurrentInstance, onMounted,
 } from 'vue';
 import MyOrgApi from '@/server/api/my-org';
 import { dateUtils } from '@/utils';
@@ -10,8 +10,9 @@ export default defineComponent({
   data() {
     return {
       reportForm: {
-        time: '',
         id: '',
+        start: undefined,
+        end: undefined,
       },
     };
   },
@@ -60,7 +61,8 @@ export default defineComponent({
     };
     const close = () => {
       proxy.$refs.reportForm.resetFields();
-      proxy.reportForm.time = '';
+      proxy.reportForm.start = '';
+      proxy.reportForm.end = '';
       report.reportVisible = false;
       if (msg.buttonLoading) msg.buttonLoading = false;
     };
@@ -76,7 +78,39 @@ export default defineComponent({
       checkList[key].checkAll = count === checkList[key].options.length;
       checkList[key].isIndeterminate = count > 0 && count < checkList[key].options.length;
     };
+    // 日期控件做前后限制
+    const disabledStartDate = (startTime) => {
+      if (proxy.reportForm.end) {
+        const time = dateUtils.formatStandardDate(proxy.reportForm.end);
+        return startTime.getTime() > new Date(`${time} 00:00:00`).getTime();
+      }
+      return false;
+    };
+    const disabledEndDate = (endTime) => {
+      if (proxy.reportForm.start) {
+        const time = dateUtils.formatStandardDate(proxy.reportForm.start);
+        return endTime.getTime() < new Date(`${time} 00:00:00`).getTime();
+      }
+      return false;
+    };
+    const setEndTime = () => {
+      proxy.reportForm.end = new Date();
+    };
+    const handleFocus = () => {
+      const dom = document.querySelectorAll('.el-picker-panel__shortcut');
+      dom.forEach((item) => {
+        item.addEventListener('click', () => setEndTime());
+      });
+    };
+    const handleBlur = () => {
+      const dom = document.querySelectorAll('.el-picker-panel__shortcut');
+      dom.forEach((item) => {
+        item.removeEventListener('click', () => setEndTime());
+      });
+    };
+    onMounted(() => {
 
+    });
     const download = (baseString, fileName) => {
       const str = window.atob(baseString.replace(/-/g, '+').replace(/_/g, '/'));
       const ia = new Uint8Array(str.length);
@@ -102,8 +136,8 @@ export default defineComponent({
       proxy.$refs.reportForm.validate((valid) => {
         if (valid) {
           const params = {
-            start: dateUtils.formatStandardDate(proxy.reportForm.time[0]),
-            end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
+            start: dateUtils.formatStandardDate(proxy.reportForm.start),
+            end: dateUtils.formatStandardDate(proxy.reportForm.end),
             id: proxy.reportForm.id,
           };
           const { fxck, zcwj } = checkList;
@@ -151,6 +185,10 @@ export default defineComponent({
       handlereport,
       modalSlots,
       msg,
+      disabledStartDate,
+      disabledEndDate,
+      handleFocus,
+      handleBlur,
     };
   },
   render() {
@@ -162,15 +200,19 @@ export default defineComponent({
       modalSlots,
       handleCheckAllChange,
       handleCheckedItemChange,
+      disabledStartDate,
+      disabledEndDate,
+      handleFocus,
+      handleBlur,
     } = this;
-    const { shortcuts, reportFormOptions } = main();
+    const { shortcuts, reportFormOptions, reportRules } = main();
     const { title, reportVisible = false } = report;
     return (
       <el-dialog
         title={title}
         v-model={reportVisible}
         onClosed={ close }
-        width="638px"
+        width="712px"
         custom-class="report-dialog-class"
         destroy-on-close
         v-slots={modalSlots}
@@ -179,31 +221,46 @@ export default defineComponent({
           model={reportForm}
           ref="reportForm"
           labelPosition="right"
-          labelWidth="138px"
+          labelWidth="166px"
+          rules={reportRules}
           class="report-modal-form"
         >
-          <el-form-item label="机构名称：" prop="id" rules={[
-            { required: true, message: '请选择机构名称', trigger: 'change' },
-          ]}>
-            <el-select style="width: 468px" v-model={reportForm.id} key={reportForm.id}>
+          <el-form-item label="机构名称：" prop="id">
+            <el-select style="width: 514px" v-model={reportForm.id} key={reportForm.id}>
               {report.optionList.map((i) => (
                 <el-option key={i.id} value={i.id} label={i.value} />
               ))}
             </el-select>
           </el-form-item>
-          <el-form-item label="更新时间：" prop="time" rules={[{ required: true, message: '请选择更新时间', trigger: 'change' }]}>
-            <el-date-picker
-              style={{ width: '468px' }}
-              v-model={reportForm.time}
-              class="report-date"
-              type="daterange"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              shortcuts={shortcuts}
-            />
-            </el-form-item>
+          <el-form-item label="更新时间：" class="time-report-form">
+            <div className="update-time">
+              <el-form-item prop="start">
+                <el-date-picker
+                  type="date"
+                  placeholder="开始时间"
+                  v-model={reportForm.start}
+                  style="width: 242px"
+                  shortcuts={shortcuts}
+                  disabledDate={disabledStartDate}
+                  class="yc-query-date-picker"
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  append-to-body={false}
+                />
+              </el-form-item>
+              <span className="line" style="margin: 0 8px">至</span>
+              <el-form-item prop="end">
+                <el-date-picker
+                  type="date"
+                  placeholder="结束时间"
+                  v-model={reportForm.end}
+                  style="width: 242px"
+                  disabledDate={disabledEndDate}
+                  append-to-body={false}
+                />
+              </el-form-item>
+            </div>
+          </el-form-item>
           <el-form-item label="全部数据类型：" rules={[{ required: true }]}>
           <div className="zcjk-rules-box">
             {
