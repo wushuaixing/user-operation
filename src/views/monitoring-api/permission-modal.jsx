@@ -113,7 +113,8 @@ export default defineComponent({
     };
     const addRemark = (text) => {
       const { remark } = proxy.dataForm;
-      proxy.dataForm.remark += remark ? `\n${text}` : text;
+      const cont = `${remark}${remark ? `\n${text}` : text}`;
+      proxy.dataForm.remark = cont.length > 1000 ? cont.slice(0, 1000) : cont;
     };
     const remarkList = <div className="remark-items">
       {
