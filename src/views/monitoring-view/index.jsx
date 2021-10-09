@@ -208,7 +208,7 @@ export default defineComponent({
                   </el-tooltip>
                 </span>
                 </div>
-                <div><span className="light">少</span><span className="num" style="margin: 0 8px;"><CountTo startVal={0} endVal={state.esDiffNum} /></span><span className="light">条</span></div>
+                <div><span className="light">{state.esDiffNum > 0 ? '多' : '少'}</span><span className="num" style="margin: 0 8px;"><CountTo startVal={0} endVal={Math.abs(state.esDiffNum)} /></span><span className="light">条</span></div>
               </div>
             </div>
           </div>
