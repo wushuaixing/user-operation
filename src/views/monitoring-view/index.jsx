@@ -129,9 +129,10 @@ export default defineComponent({
     // 每分钟轮询一次
     const timer = setInterval(() => {
       Promise.all([getTotalAuctionNum(), getSyncDiffNum()]).then((res) => {
-        state.totalNum = res[0].data.data;
-        numScroll('#scroll-focus', state.totalNum, '条');
-        state.esDiffNum = res[1].data.data;
+        const [{ data: { data: totalNum } }, { data: { data: esDiffNum } }] = res;
+        state.totalNum = totalNum;
+        numScroll('#scroll-focus', totalNum, '条');
+        state.esDiffNum = esDiffNum;
       }).catch(() => {
         console.log('网络异常...');
       });
@@ -152,15 +153,25 @@ export default defineComponent({
         getDataIncrViewOfDay(model.date2),
         getRecallView(),
       ]).then((res) => {
-        state.totalNum = res[0].data.data;
-        numScroll('#scroll-focus', state.totalNum, '条');
-        state.esDiffNum = res[1].data.data;
-        state.syncView = res[2].data.data;
-        chart.echarts1 = drawEcharts(res[3].data.data, 'match-statistics');
-        chart.echarts2 = drawEcharts(res[4].data.data, 'data-trend');
-        chart.echarts3 = drawEcharts(res[5].data.data, 'match-distribute', state.model.date1);
-        chart.echarts4 = drawEcharts(res[6].data.data, 'data-distribute', state.model.date2);
-        chart.echarts5 = drawEcharts(res[7].data.data, 'recall-statistics');
+        const [
+          { data: { data: totalNum } },
+          { data: { data: esDiffNum } },
+          { data: { data: syncView } },
+          { data: { data: echartsList1 } },
+          { data: { data: echartsList2 } },
+          { data: { data: echartsList3 } },
+          { data: { data: echartsList4 } },
+          { data: { data: echartsList5 } },
+        ] = res;
+        state.totalNum = totalNum;
+        numScroll('#scroll-focus', totalNum, '条');
+        state.esDiffNum = esDiffNum;
+        state.syncView = syncView;
+        chart.echarts1 = drawEcharts(echartsList1, 'match-statistics');
+        chart.echarts2 = drawEcharts(echartsList2, 'data-trend');
+        chart.echarts3 = drawEcharts(echartsList3, 'match-distribute', state.model.date1);
+        chart.echarts4 = drawEcharts(echartsList4, 'data-distribute', state.model.date2);
+        chart.echarts5 = drawEcharts(echartsList5, 'recall-statistics');
       }).catch(() => {
         console.log('请求失败...');
       }).finally(() => {
