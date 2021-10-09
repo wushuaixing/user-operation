@@ -124,6 +124,45 @@ const main = () => {
       },
     ],
   };
+  const typeArr = {
+    1: 'AUCTION',
+    2: 'LAND_TRANSFER',
+    3: 'LAND_TRANSACTION',
+    4: 'LAND_MORTGAGE',
+    5: 'INTANGIBLE_EMISSION',
+    6: 'INTANGIBLE_MINING',
+    7: 'INTANGIBLE_TRADEMARKRIGHT',
+    8: 'INTANGIBLE_CONSTRUCT',
+    9: 'TRIAL_SUBROGATION',
+    10: 'COURT_SUBROGATION',
+    11: 'JUDGMENT_SUBROGATION',
+    12: 'PLEDGE',
+    13: 'MORTGAGE',
+    14: 'UNSEAL',
+    15: 'ON_BUILD_PROJECT_INFO',
+    16: 'ON_BUILD_PROJECT_BIDDING',
+    17: 'ON_BUILD_CONSTRUCTION_LICENCE',
+    18: 'ESTATE_REGISTER',
+    19: 'VEHICLE_INFORMATION',
+    20: 'FINANCE_AUCTIONBIDDING',
+    21: 'FINANCE_INVESTMENT',
+    22: 'FINANCE_FINANCE',
+    23: 'BIDDING',
+    24: 'BANKRUPTCY',
+    25: 'RISK_EXECPERSON',
+    26: 'RISK_EXEC_END_CASE',
+    27: 'DISHONEST',
+    28: 'LIMITHEIGHT',
+    29: 'TRIAL_LAWSUIT',
+    30: 'COURT_LAWSUIT',
+    31: 'JUDGMENT_LAWSUIT',
+    32: 'RISK_ABNORMAL',
+    33: 'RISK_CHANGE',
+    34: 'RISK_ILLEGAL',
+    35: 'RISK_TAX',
+    36: 'RISK_PUNISHMENT',
+    37: 'RISK_EPB',
+  };
   const rules = reactive({
     id: [
       { required: true, message: '请选择机构名称', trigger: 'change' },
@@ -157,6 +196,7 @@ const main = () => {
     rules,
     shortcuts,
     reportFormOptions,
+    typeArr,
   };
 };
 export default main;

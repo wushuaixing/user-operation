@@ -14,7 +14,7 @@ const MyOrgApi = {
   // 监控管理导出
   auditExport: (params) => axios.post('/api/user/operate/auditExport', clearEmpty(params), { responseType: 'blob' }),
   // 客户报告
-  exportOther: (params) => axios.post('/api/user/operate/exportOther', clearEmpty(params), { responseType: 'blob' }),
+  exportOther: (params) => axios.post('/api/user/operate/exportOther', clearEmpty(params)),
   // 综合数据导出
   exportIntegratedData: (params) => axios.post('/api/user/operate/exportIntegratedData', clearEmpty(params), { responseType: 'blob' }),
   // 账号使用情况导出

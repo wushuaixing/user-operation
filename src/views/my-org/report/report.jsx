@@ -2,7 +2,7 @@ import {
   reactive, defineComponent, getCurrentInstance,
 } from 'vue';
 import MyOrgApi from '@/server/api/my-org';
-import { dateUtils, fileDownload } from '@/utils';
+import { dateUtils } from '@/utils';
 import main from './main';
 import './style.scss';
 
@@ -31,10 +31,6 @@ export default defineComponent({
         options: ['24', '25', '26', '27', '28', '29,30,31', '32,33,34,35,36,37'],
       },
     });
-
-    const timeChange = (val) => {
-      console.log(val, proxy.reportForm.time, '3');
-    };
     const report = reactive({
       reportVisible: false,
       orgId: 0,
@@ -81,6 +77,26 @@ export default defineComponent({
       checkList[key].isIndeterminate = count > 0 && count < checkList[key].options.length;
     };
 
+    const download = (baseString, fileName) => {
+      const str = window.atob(baseString.replace(/-/g, '+').replace(/_/g, '/'));
+      const ia = new Uint8Array(str.length);
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < str.length; i++) {
+        ia[i] = str.charCodeAt(i);
+      }
+      const blod = new Blob([ia], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      // 创建a标签
+      const elink = document.createElement('a');
+      elink.style.display = 'none';
+      elink.setAttribute('download', fileName);
+      elink.href = URL.createObjectURL(blod);
+      document.body.appendChild(elink);
+      elink.click();
+      window.URL.revokeObjectURL(elink.href); // 释放URL 对象
+      document.body.removeChild(elink); // 移除a标签
+    };
     // 点击确定
     const handlereport = () => {
       proxy.$refs.reportForm.validate((valid) => {
@@ -88,11 +104,13 @@ export default defineComponent({
           const params = {
             start: dateUtils.formatStandardDate(proxy.reportForm.time[0]),
             end: dateUtils.formatStandardDate(proxy.reportForm.time[1]),
-            id: report.orgId,
+            id: proxy.reportForm.id,
           };
           const { fxck, zcwj } = checkList;
           const list = [...fxck.checkedData, ...zcwj.checkedData];
-          params.list = list.join(',').split(',');
+          const { typeArr } = main();
+          params.dataTypes = list.join(',').split(',').map((i) => typeArr[i]);
+          params.orgName = report.optionList.filter((res) => res.id === params.id)[0].value;
           const modalMsg = proxy.$message.warning({
             message: '正在下载，请稍等...',
             duration: 1000,
@@ -100,9 +118,10 @@ export default defineComponent({
           msg.buttonLoading = true;
           MyOrgApi.exportOther(params).then((res) => {
             msg.buttonLoading = false;
-            const { code = 200, message = '导出失败' } = res.data || {};
+            const { code = 200, data, message = '导出失败' } = res.data || {};
             if (code === 200) {
-              fileDownload(res);
+              const fileName = `${params.id}${params.orgName}_${dateUtils.formatStandardDate(new Date())}`;
+              download(data, fileName);
               report.reportVisible = false;
             } else {
               proxy.$message.error(message);
@@ -127,7 +146,6 @@ export default defineComponent({
       report,
       open,
       close,
-      timeChange,
       handleCheckAllChange,
       handleCheckedItemChange,
       handlereport,
@@ -140,7 +158,6 @@ export default defineComponent({
       checkList,
       reportForm,
       report,
-      timeChange,
       close,
       modalSlots,
       handleCheckAllChange,
@@ -183,7 +200,6 @@ export default defineComponent({
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
-              onChange={timeChange}
               shortcuts={shortcuts}
             />
             </el-form-item>
