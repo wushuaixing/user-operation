@@ -169,9 +169,10 @@
                 监控管理
               </el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-dropdown trigger="click">
+              <el-dropdown trigger="click" @visible-change="(val) => visibleChange(val, scope.$index)">
                 <span class="table-action-more">
                   更多
+                  <i :class="isUplist[scope.$index] ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i>
                 </span>
                 <template #dropdown>
                   <div class="table-action-list">
@@ -251,6 +252,7 @@ export default {
       },
       queryOption: {},
       topOrgNameList: [],
+      isUplist: [true, true, true, true, true, true, true, true, true, true, true],
     };
   },
   created() {
@@ -286,6 +288,7 @@ export default {
             });
             this.total = total;
             this.page = page;
+            this.resetUpList();
           } else {
             this.$message.error('请求出错');
           }
@@ -436,6 +439,15 @@ export default {
         const { handleOpen } = this.$refs.DataModal;
         handleOpen(flag, row);
       }
+    },
+    resetUpList() {
+      const list = [...this.isUplist];
+      this.isUplist = list.map(() => true);
+    },
+    visibleChange(val, index) {
+      const list = [...this.isUplist];
+      list[index] = !val;
+      this.isUplist = list;
     },
   },
   watch: {
