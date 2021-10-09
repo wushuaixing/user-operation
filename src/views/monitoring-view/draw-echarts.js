@@ -1,10 +1,16 @@
 import * as echarts from 'echarts';
+import { dateUtils } from '@/utils';
 
-const drawEcharts = (dataList = [], el, date) => {
+const drawEcharts = (_dataList = [], el, date) => {
   const obj = {};
   const xData = [];
   const series = [];
   const legendData = [];
+  const today = new Date();
+  let dataList = JSON.parse(JSON.stringify(_dataList));
+  if (date === dateUtils.formatStandardDate(today)) {
+    dataList = dataList.filter((item) => item.x <= today.getHours());
+  }
   const baseInfo = {
     'match-statistics': {
       matchNum: {
