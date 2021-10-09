@@ -143,7 +143,7 @@ const drawEcharts = (_dataList = [], el, date) => {
               <div>${params[0].name}</div>
               <div>${params[0].seriesName}：${params[0].data}条</div>
               <div>${params[1].seriesName}：${params[1].data}条</div>
-              <div class="before red">${params[2].seriesName}：${params[2].data ? params[2].data.toFixed(2) : 0}%</div>
+              <div class="before red">${params[2].seriesName}：${params[2].data ? params[2].data.toFixed(2) * 100 : 0}%</div>
             </div>
         `),
         },
