@@ -3,7 +3,7 @@
     <div class="yc-bread-crumb-title">
       <div class="title" v-if="!editStatus">
         {{ text }}
-        <i class="iconfont iconbianji2 editI" v-if="editable" @click="showEdit"></i>
+        <i class="iconfont iconbianji editI" v-if="editable" @click="showEdit"></i>
       </div>
       <div v-else>
         <el-input style="width: 300px"
