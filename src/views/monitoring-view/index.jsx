@@ -293,7 +293,7 @@ export default defineComponent({
           </div>
           <div className="monitor-view-container-content">
             <div className="echarts-block" id="data-trend" />
-            <p>分析参考：数据统计截止到每日凌晨六点，曲线重合度越高，说明数据同步进程越稳定</p>
+            <p>分析参考：曲线重合度越高，说明数据同步进程越稳定</p>
           </div>
         </div>
         <div className="monitor-view-container" v-loading={loading.third}>
