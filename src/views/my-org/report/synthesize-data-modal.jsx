@@ -145,7 +145,7 @@ export default defineComponent({
           rules={rule}
           labelPosition="right"
           labelWidth="118px"
-          className="data-modal-form"
+          className="report-modal-form"
         >
           <el-form-item label="机构名称：" prop="id">
             <el-select style="width: 342px" v-model={dataForm.id} key={dataForm.id}>
@@ -154,31 +154,31 @@ export default defineComponent({
               ))}
             </el-select>
           </el-form-item>
-            <el-form-item label="更新时间：" v-show={isData} class="time-form">
-              <div className="update-time">
-                <el-form-item prop={isData ? 'start' : ''}>
-                  <el-date-picker
-                    type="date"
-                    placeholder="开始时间"
-                    v-model={dataForm.start}
-                    style="width: 158px"
-                    disabledDate={disabledStartDate}
-                    append-to-body={false}
-                  />
-                </el-form-item>
-                <span className="line" style="margin: 0 6px">至</span>
-                <el-form-item prop={isData ? 'end' : ''}>
-                  <el-date-picker
-                    type="date"
-                    placeholder="结束时间"
-                    v-model={dataForm.end}
-                    style="width: 158px"
-                    disabledDate={disabledEndDate}
-                    append-to-body={false}
-                  />
-                </el-form-item>
-              </div>
-            </el-form-item>
+          <el-form-item label="更新时间：" v-show={isData} class="time-form">
+            <div className="update-time">
+              <el-form-item prop={isData ? 'start' : ''}>
+                <el-date-picker
+                  type="date"
+                  placeholder="开始时间"
+                  v-model={dataForm.start}
+                  style="width: 158px"
+                  disabledDate={disabledStartDate}
+                  append-to-body={false}
+                />
+              </el-form-item>
+              <span className="line" style="margin: 0 6px">至</span>
+              <el-form-item prop={isData ? 'end' : ''}>
+                <el-date-picker
+                  type="date"
+                  placeholder="结束时间"
+                  v-model={dataForm.end}
+                  style="width: 158px"
+                  disabledDate={disabledEndDate}
+                  append-to-body={false}
+                />
+              </el-form-item>
+            </div>
+          </el-form-item>
           <el-form-item label="截止日期：" prop={!isData ? 'endTime' : ''} v-show={!isData}>
             <el-date-picker
               type="date"
