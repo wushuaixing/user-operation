@@ -114,8 +114,10 @@ export default defineComponent({
             </defs>
             <path d={this.d} stroke="#E5E8F0" stroke-width={this.strokeWidth} fill="none" className="el-progress-circle__track" style={this.trailPathStyle}>
             </path>
-            <path d={this.d} stroke="url(#blue)" fill="none" stroke-linecap="round" stroke-width={this.strokeWidth} className="el-progress-circle__path" style={this.circlePathStyle}>
-            </path>
+            {
+              Number(this.percentage) ? <path d={this.d} stroke="url(#blue)" fill="none" stroke-linecap="round" stroke-width={this.strokeWidth} className="el-progress-circle__path" style={this.circlePathStyle}>
+              </path> : ''
+            }
           </svg>
         </div>
         <div className="el-progress-bar__innerText" style={this.slotStyle}>

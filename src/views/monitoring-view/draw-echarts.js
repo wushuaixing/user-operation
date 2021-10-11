@@ -17,11 +17,13 @@ const drawEcharts = (_dataList = [], el, date) => {
         name: '匹配数据量',
         legendName: null,
         color: ['#5BB4F7', '#3180EC'],
+        shadowColor: 'rgba(49,128,236, 0.27)',
       },
       pushNum: {
         name: '实际推送量',
         legendName: null,
         color: ['#5BDFC6', '#1BBA7C'],
+        shadowColor: 'rgba(28,187,124, 0.19)',
       },
       rate: {
         name: '推送率',
@@ -52,11 +54,13 @@ const drawEcharts = (_dataList = [], el, date) => {
         name: '监控库增量',
         legendName: '监控库增量',
         color: ['#5BB4F7', '#3180EC'],
+        shadowColor: 'rgba(49,128,236, 0.27)',
       },
       esIncr: {
         name: 'ES增量',
         legendName: 'ES增量',
         color: ['#FEB754', '#FF871C'],
+        shadowColor: 'rgba(253,134,44, 0.38)',
       },
       other: {
         tooltip: {
@@ -76,11 +80,13 @@ const drawEcharts = (_dataList = [], el, date) => {
         name: '匹配数据量',
         legendName: '匹配数据量',
         color: ['#5BB4F7', '#3180EC'],
+        shadowColor: 'rgba(49,128,236, 0.27)',
       },
       pushNum: {
         name: '实际推送量',
         legendName: '实际推送量',
         color: ['#5BDFC6', '#5BDFC6'],
+        shadowColor: 'rgba(28,187,124, 0.19)',
       },
       other: {
         tooltip: {
@@ -100,11 +106,13 @@ const drawEcharts = (_dataList = [], el, date) => {
         name: '监控库增量',
         legendName: '监控库增量',
         color: ['#5BB4F7', '#3180EC'],
+        shadowColor: 'rgba(49,128,236, 0.27)',
       },
       esIncr: {
         name: 'ES增量',
         legendName: 'ES增量',
         color: ['#FEB754', '#FF871C'],
+        shadowColor: 'rgba(253,134,44, 0.38)',
       },
       other: {
         tooltip: {
@@ -134,6 +142,7 @@ const drawEcharts = (_dataList = [], el, date) => {
         name: '召回率',
         legendName: '召回率',
         color: ['#FF8C8D', '#FF3134'],
+        shadowColor: 'rgba(254,49,51, 0.27)',
       },
       other: {
         tooltip: {
@@ -148,7 +157,7 @@ const drawEcharts = (_dataList = [], el, date) => {
         `),
         },
         yFormatter: (value) => (`
-          ${Number(value).toFixed(2)}%
+          ${(value * 100).toFixed(2)}%
           `
         ),
       },
@@ -167,7 +176,7 @@ const drawEcharts = (_dataList = [], el, date) => {
     }
   });
   Object.keys(obj).forEach((key) => {
-    const { name, color } = baseInfo[el][key];
+    const { name, color, shadowColor } = baseInfo[el][key];
     const temp = {
       name,
       type: 'line',
@@ -175,6 +184,8 @@ const drawEcharts = (_dataList = [], el, date) => {
       symbolSize: 7,
       showSymbol: false,
       itemStyle: {
+        borderWidth: 2,
+        borderColor: '#fff',
         color: (color instanceof Array) ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
           { offset: 0, color: color[0] },
           { offset: 1, color: color[1] },
@@ -185,6 +196,11 @@ const drawEcharts = (_dataList = [], el, date) => {
           { offset: 0, color: color[0] },
           { offset: 1, color: color[1] },
         ]) : color,
+        shadowColor,
+        shadowOffsetX: 2,
+        shadowOffsetY: 2,
+        shadowBlur: 5,
+
       },
       data: obj[key],
     };
@@ -200,11 +216,12 @@ const drawEcharts = (_dataList = [], el, date) => {
         fontWeight: 'normal',
       },
       formatter: baseInfo[el].other.tooltip.formatter,
+      borderWidth: 0,
     },
     legend: {
       data: legendData,
       top: 16,
-      right: 30,
+      right: 33,
       itemGap: 40,
       lineStyle: {
         width: 0,
@@ -214,12 +231,12 @@ const drawEcharts = (_dataList = [], el, date) => {
         color: '#4E5566',
       },
       selectedMode: false,
-      itemWidth: 8,
-      itemHeight: 8,
+      itemWidth: 10,
+      itemHeight: 10,
     },
     grid: {
       left: '4%',
-      right: '6%',
+      right: '5%',
       bottom: '4%',
       containLabel: true,
     },
@@ -228,6 +245,7 @@ const drawEcharts = (_dataList = [], el, date) => {
         color: '#20242E',
         type: 'solid',
       },
+      z: 0,
     },
     xAxis: {
       type: 'category',
