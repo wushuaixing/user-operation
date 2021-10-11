@@ -169,7 +169,10 @@
                 监控管理
               </el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-dropdown trigger="click" @visible-change="(val) => visibleChange(val, scope.$index)">
+              <el-dropdown
+                trigger="click"
+                popper-class="myOrg-dropdown"
+                @visible-change="(val) => visibleChange(val, scope.$index)">
                 <span class="table-action-more">
                   更多
                   <i :class="isUplist[scope.$index] ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i>
