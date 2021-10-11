@@ -58,12 +58,13 @@ const App = defineComponent({
                     <img src={tipImg} v-show={item.showTip} style="margin-left: 5px"/>
                   </el-tooltip>
                 </div>
-                <div className="down">
+                <div className="down" style="font-weight: bold">
                   {item.number}
                   {item.hasUnit
                     ? <span style={{
                       fontSize: '14px',
                       marginLeft: '4px',
+                      fontWeight: '400',
                     }}>名</span>
                     : ''}
                 </div>
