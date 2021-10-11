@@ -48,8 +48,13 @@
             font-size: 14px;
             line-height: 14px;
             color: #7D8699;
+            div{
+              span{
+                line-height: 20px;
+              }
+            }
             div:last-child{
-              margin-top: 72px;
+              margin-top: 64px;
             }
             img{
               width: 14px;
@@ -157,7 +162,7 @@
         .legend-custom{
           position: absolute;
           top: 16px;
-          right: 30px;
+          right: 35px;
           font-size: 14px;
           color: #4E5566;
           .before{
@@ -175,7 +180,7 @@
         }
         .x-unit{
           position: absolute;
-          right: 16px;
+          right: 12px;
           bottom: 53px;
           font-size: 12px;
           color: #7D8699;

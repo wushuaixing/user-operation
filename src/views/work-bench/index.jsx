@@ -235,7 +235,7 @@ export default defineComponent({
           <div className="workbench-container-operate">
             <el-input
               placeholder="顶级机构名称"
-              prefix-icon="el-icon-search"
+              prefix-icon="iconfont iconsousuo"
               v-model_trim={state.params.name}
               onBlur={this.onBlur}
               onKeyup={this.onKeyup}

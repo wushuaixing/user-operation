@@ -58,6 +58,7 @@ const columns = [
     prop: 'name',
     label: '顶级合作机构名称',
     align: 'left',
+    width: 360,
     key: 1,
   },
   {
