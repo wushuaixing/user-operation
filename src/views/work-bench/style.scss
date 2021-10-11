@@ -132,6 +132,15 @@
       margin-top: 30px;
     }
   }
+  td.is-center{
+    padding-right: 24px;
+  }
+  .sort-caret.ascending{
+    border-bottom-color: #7D8699;
+  }
+  .sort-caret.descending{
+    border-top-color: #7D8699;
+  }
 }
 .export-dialog{
   width: 500px!important;

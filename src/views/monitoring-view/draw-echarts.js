@@ -148,7 +148,7 @@ const drawEcharts = (_dataList = [], el, date) => {
         `),
         },
         yFormatter: (value) => (`
-          ${Number(value).toFixed(2)}%
+          ${(value * 100).toFixed(2)}%
           `
         ),
       },

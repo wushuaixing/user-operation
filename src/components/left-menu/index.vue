@@ -136,6 +136,7 @@ export default {
     margin-right: 8px;
     position: relative;
     top: -1px;
+    color: rgba(255, 255, 255, 0.8);
   }
   .is-active {
     opacity: 1;
