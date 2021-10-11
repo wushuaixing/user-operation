@@ -156,6 +156,7 @@ textarea{
 .table-action-list {
   padding: 12px 16px;
   .list-item {
+    color: #4E5566;
     margin-bottom: 16px;
     line-height: 14px;
     font-size: 14px;
@@ -190,4 +191,7 @@ textarea{
   .el-popper__arrow::before {
     content: none;
   }
+}
+.myOrg-dropdown {
+  margin-left: -9px !important;
 }

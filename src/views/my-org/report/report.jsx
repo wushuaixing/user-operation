@@ -242,7 +242,6 @@ export default defineComponent({
                   style="width: 242px"
                   shortcuts={shortcuts}
                   disabledDate={disabledStartDate}
-                  class="yc-query-date-picker"
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   append-to-body={false}
@@ -261,7 +260,7 @@ export default defineComponent({
               </el-form-item>
             </div>
           </el-form-item>
-          <el-form-item label="全部数据类型：" rules={[{ required: true }]}>
+          <el-form-item label="全部数据类型：" rules={[{ required: true }]} class="all-data-type">
           <div className="zcjk-rules-box">
             {
               reportFormOptions.itemsChecked.map((item) => (
