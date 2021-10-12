@@ -47,6 +47,11 @@ export const normalRoutes = [
     name: 'sourceWeb',
     component: () => import('@/views/source-web/source-web'),
   },
+  {
+    path: '/operationRecord',
+    name: 'OperationRecord',
+    component: () => import('@/views/customer-management/component/operation-record.vue'),
+  },
 ];
 
 export const adminRoutes = [
