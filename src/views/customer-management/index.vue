@@ -537,5 +537,6 @@ export default {
 }
 .add-org-modal {
   padding-right: 40px;
+  padding-bottom: 14px;
 }
 </style>
