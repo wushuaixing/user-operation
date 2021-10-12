@@ -150,7 +150,7 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="资产监控权限：" style="margin-top: 11px">
+      <el-form-item label="资产监控权限：" style="margin-top: 11px;margin-bottom: 0;">
         <div class="zcjk-rules-box">
           <div
             class="zcjk-rules-box-item"
@@ -379,43 +379,10 @@ export default {
 <style lang="scss">
 .rules-modal {
   margin-top: 5vh !important;
-  .el-dialog__body{
-    height: 720px;
-    overflow: auto;
-    position: relative;
-    //滚动条的宽度
-    &::-webkit-scrollbar {
-      width:4px;
-    }
-
-    //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
-    &::-webkit-scrollbar-track {
-      width: 4px;
-      background-color:#FFF;
-    }
-
-    //滚动条的设置
-    &::-webkit-scrollbar-thumb {
-      background-color:#B2B8C9;
-      background-clip:padding-box;
-      min-height:49px;
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      border-radius:5px;
-    }
-    //滚动条移上去的背景
-
-    &::-webkit-scrollbar-thumb:hover{
-      background-color:#B2B8C9;
-    }
-    &::-webkit-scrollbar-track:hover{
-      background-color:#E2E4E9;
-    }
-  }
-
   &-form {
     padding-right: 28px;
-    padding-bottom: 18px;
+    height: 720px;
+    overflow-y: auto;
     .el-form-item {
       &__content {
         line-height: 32px !important;
@@ -470,10 +437,39 @@ export default {
         }
       }
     }
+    //滚动条的宽度
+    &::-webkit-scrollbar {
+      width:4px;
+    }
+
+    //外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果
+    &::-webkit-scrollbar-track {
+      width: 4px;
+      background-color:#FFF;
+    }
+
+    //滚动条的设置
+    &::-webkit-scrollbar-thumb {
+      background-color:#B2B8C9;
+      background-clip:padding-box;
+      min-height:49px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius:5px;
+    }
+    //滚动条移上去的背景
+
+    &::-webkit-scrollbar-thumb:hover{
+      background-color:#B2B8C9;
+    }
+    &::-webkit-scrollbar-track:hover{
+      background-color:#E2E4E9;
+    }
   }
   .el-dialog__body {
     padding-top: 24px !important;
     position: relative;
+    padding-bottom: 40px !important;
   }
 }
 .data-picker{
