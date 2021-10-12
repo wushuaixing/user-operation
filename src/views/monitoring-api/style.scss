@@ -114,7 +114,6 @@
     }
     .form-records {
       margin-top: 4px;
-      margin-bottom: 40px;
       .el-form-item__label {
         line-height: 14px;
       }
@@ -201,5 +200,6 @@
 .monitor-api-dialog {
   .el-dialog__body {
     padding-top: 24px !important;
+    padding-bottom: 40px !important;
   }
 }
