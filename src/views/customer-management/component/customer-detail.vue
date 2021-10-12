@@ -28,7 +28,7 @@
                     <use xlink:href="#icondingjihezuojigou"></use>
                   </svg>
                   顶级合作机构</span>
-                <i class="iconfont iconbianji editI" @click="() => editable = true"></i>
+                <i class="iconfont iconbianji editI" @click="handleShowEdit"></i>
               </template>
               <template v-else>
                 <el-input
@@ -38,7 +38,7 @@
                   @change="(val) => activeCustonerName = val.replace(/\s+/g, '')"
                 ></el-input>
                 <el-button type="primary" style="margin-left: 32px" @click="save">保存</el-button>
-                <el-button @click="() => editable = false">取消</el-button>
+                <el-button @click="handleCancelEdit">取消</el-button>
               </template>
             </div>
             <div class="list" v-if="activeLevel < 8">
@@ -174,6 +174,7 @@
                   <template #default="scope">
                     <el-button
                       type="text"
+                      class="button-link"
                       @click="handleDelete(scope.row, 'account')"
                     >
                       删除
@@ -181,12 +182,14 @@
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
+                      class="button-link"
                       @click="handleAction(scope.row, 'account', 'edit')"
                       >编辑
                     </el-button>
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
+                      class="button-link"
                       @click="handleDelete(scope.row, 'reset')"
                     >
                       重置密码
@@ -194,6 +197,7 @@
                     <el-divider direction="vertical"></el-divider>
                     <el-button
                       type="text"
+                      class="button-link"
                       @click="handleToRecord(scope.row)"
                       >操作记录
                     </el-button>
@@ -242,6 +246,7 @@ export default {
       accountData: [],
       acountList: ['首', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
       activeCustonerName: '',
+      activeCustonerNameCopy: '',
       isHasOrg: true, // 是否有子机构
       roleList: [], // 角色列表 modal中创建编辑账号使用
       saveName: '',
@@ -292,7 +297,6 @@ export default {
           this.treeData = [tree];
           document.title = tree.name;
           // 设置斑马
-          console.log(this.$refs.SearchTree, '2323');
           const { hightlight, setSearchList, setTreeColor } = this.$refs.SearchTree;
           setTreeColor();
           if (type === 'init') {
@@ -436,6 +440,14 @@ export default {
           this.activeLevel = item.level;
         }
       });
+    },
+    handleShowEdit() {
+      this.editable = true;
+      this.activeCustonerNameCopy = this.activeCustonerName;
+    },
+    handleCancelEdit() {
+      this.editable = false;
+      this.activeCustonerName = this.activeCustonerNameCopy;
     },
     // 机构名称编辑
     save() {
