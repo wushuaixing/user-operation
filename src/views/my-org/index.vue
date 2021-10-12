@@ -151,7 +151,7 @@
             :align="item.align"
             :class-name="item.class"
           />
-          <el-table-column label="操作" min-width="15%">
+          <el-table-column label="操作" min-width="15%" key="ACTION">
             <template #default="scope">
               <el-button
                 type="text"
@@ -169,22 +169,23 @@
                 监控管理
               </el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-dropdown
+              <el-popover
+                placement="bottom"
                 trigger="click"
                 popper-class="myOrg-dropdown"
-                @visible-change="(val) => visibleChange(val, scope.$index)">
-                <span class="table-action-more">
-                  更多
-                  <i :class="isUplist[scope.$index] ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i>
-                </span>
-                <template #dropdown>
-                  <div class="table-action-list">
-                    <div class="list-item" @click="handleOpenModal('report', scope.row)">客户报告导出</div>
-                    <div class="list-item" @click="handleOpenModal('data', scope.row)">综合数据导出</div>
-                    <div class="list-item" @click="handleOpenModal('record', scope.row)">账号使用情况导出</div>
-                  </div>
+                @show="() => morePopoverAction(true, scope.$index)"
+                @hide="() => morePopoverAction(false, scope.$index)"
+              >
+                <template #reference>
+                  <span class="table-action-more">更多
+                  <i :class="isUplist[scope.$index] ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
                 </template>
-              </el-dropdown>
+                <div class="table-action-list">
+                  <div class="list-item" @click="handleOpenModal('report', scope.row)">客户报告导出</div>
+                  <div class="list-item" @click="handleOpenModal('data', scope.row)">综合数据导出</div>
+                  <div class="list-item" @click="handleOpenModal('record', scope.row)">账号使用情况导出</div>
+                </div>
+              </el-popover>
             </template>
           </el-table-column>
         </el-table>
@@ -356,7 +357,6 @@ export default {
     // （取消）批量管理
     handleBatchCheck(isChecked) {
       this.isChecked = isChecked;
-      if (!isChecked) this.$refs.multipleTable.clearSelection();
     },
     // 日期控件做前后限制
     disabledStartDate(startTime) {
@@ -447,7 +447,7 @@ export default {
       const list = [...this.isUplist];
       this.isUplist = list.map(() => true);
     },
-    visibleChange(val, index) {
+    morePopoverAction(val, index) {
       const list = [...this.isUplist];
       list[index] = !val;
       this.isUplist = list;
@@ -455,12 +455,16 @@ export default {
   },
   watch: {
     tabKey() {
-      this.resetOptions();
+      this.$nextTick(() => {
+        this.resetOptions();
+      });
     },
     isChecked(val) {
       if (!val) {
-        this.multipleSelection = [];
-        this.$refs.multipleTable.clearSelection();
+        this.$nextTick(() => {
+          this.multipleSelection = [];
+          this.$refs.multipleTable.clearSelection();
+        });
       }
     },
   },
