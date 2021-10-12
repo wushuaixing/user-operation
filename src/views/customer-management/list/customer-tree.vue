@@ -138,6 +138,8 @@ export default {
     };
     // 处理 点击树以外的地方就将置顶弹窗收起
     document.addEventListener('click', (e) => this.handleClosePopover(e));
+
+    document.getElementById('customerTree').onscroll = () => this.closePopover();
   },
   beforeUnmount() {
     document.removeEventListener('click', (e) => this.handleClosePopover(e));
