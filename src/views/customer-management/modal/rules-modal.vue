@@ -415,6 +415,7 @@ export default {
 
   &-form {
     padding-right: 28px;
+    padding-bottom: 18px;
     .el-form-item {
       &__content {
         line-height: 32px !important;
