@@ -109,11 +109,13 @@ export default defineComponent({
               {
                 showTabs.map((item) => (
                   <div key={item.name} onClick={() => tabChange(item)} className={tab.tabKey === item.name ? 'yc-source-web-tab-item active' : 'yc-source-web-tab-item'}>
-                    {item.isImgTab && <svg class="icon hasImg" aria-hidden="true" style={{ fontSize: '17px' }}>
-                      <use xlink:href="#icontu"/>
-                    </svg>
-                    }
-                    <a href={`#${item.name}`}>{item.label}</a>
+                    <a href={`#${item.name}`}>
+                      {item.isImgTab && <svg class="icon hasImg" aria-hidden="true" style={{ fontSize: '17px' }}>
+                        <use xlink:href="#icontu"/>
+                      </svg>
+                      }
+                      {item.label}
+                    </a>
                   </div>
                 ))
               }
