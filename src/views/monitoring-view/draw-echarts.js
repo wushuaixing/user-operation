@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as echarts from 'echarts';
 import { dateUtils } from '@/utils';
 
@@ -93,7 +94,7 @@ const drawEcharts = (_dataList = [], el, date) => {
           formatter: (params) => (`
             <div class="tooltip-custom">
               <div>全部</div>
-              <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
+              <div>${date}&nbsp;&nbsp;${(params[0].name - 1) < 10 ? ('0' + (params[0].name - 1)) : (params[0].name - 1)}时~${params[0].name < 10 ? ('0' + params[0].name) : params[0].name}时</div>
               <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
               <div class="before green">${params[1].seriesName}：${params[1].data}条</div>
             </div>
@@ -119,7 +120,7 @@ const drawEcharts = (_dataList = [], el, date) => {
           formatter: (params) => (`
             <div class="tooltip-custom">
               <div>全部</div>
-              <div>${date}&nbsp;&nbsp;${params[0].name}时</div>
+              <div>${date}&nbsp;&nbsp;${(params[0].name - 1) < 10 ? ('0' + (params[0].name - 1)) : (params[0].name - 1)}时~${params[0].name < 10 ? ('0' + params[0].name) : params[0].name}时</div>
               <div class="before blue">${params[0].seriesName}：${params[0].data}条</div>
               <div class="before yellow">${params[1].seriesName}：${params[1].data}条</div>
             </div>
