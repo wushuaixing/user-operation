@@ -22,7 +22,7 @@ const AssetInfo = (props) => <div className='asset-info'>
     {
       ASSETS_INFO.map((i) => (
         <li className='asset-info-item'>
-          <span className='asset-info-item-label'>{i.lable}：</span>
+          <span className={`asset-info-item-label${i.key === 'conSumerName' ? ' conSumerName' : ''}`}>{i.lable}：</span>
           <span className='asset-info-item-detail'>{setShow(props, i.key)} </span>
         </li>
       ))
