@@ -24,10 +24,12 @@
       height: 42px;
       line-height: 42px;
       position: relative;
-      padding: 0 13px;
       margin: 0 27px 0 8px;
       a {
         color: #20242E;
+        height: 100%;
+        display: block;
+        padding: 0 13px;
       }
       .hasImg {
         margin-right: 10px;
